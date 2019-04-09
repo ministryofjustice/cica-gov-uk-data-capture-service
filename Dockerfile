@@ -14,9 +14,13 @@ WORKDIR /usr/src/app
 # where available (npm@5+)
 COPY package*.json ./
 
+# Defult to production. npm will ignore devDependencies in production mode
+ARG NODE_ENV=production
+ENV NODE_ENV=${NODE_ENV}
+
 # RUN npm install
 # If you are building your code for production
-RUN npm install --only=production
+RUN npm install
 
 # Bundle app source
 COPY . .

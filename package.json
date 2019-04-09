@@ -2,7 +2,7 @@
     "name": "data-capture-service",
     "version": "0.0.0",
     "scripts": {
-        "start:dev": "nodemon -e .js,.json,.njk ./bin/www",
+        "start:dev": "nodemon -L --inspect=0.0.0.0:9229 -e .js,.json,.njk ./bin/www",
         "start": "node ./bin/www"
     },
     "dependencies": {
