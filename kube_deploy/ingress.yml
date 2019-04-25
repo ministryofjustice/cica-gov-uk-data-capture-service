@@ -17,7 +17,7 @@ spec:
       - path: /
         backend:
           serviceName: dcs-service-uat
-          servicePort: 3100
+          servicePort: 80
   - host: data-capture-service.uat.claim-criminal-injuries-compensation.service.justice.gov.uk
     http:
       paths:
