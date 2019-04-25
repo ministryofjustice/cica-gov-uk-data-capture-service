@@ -1359,6 +1359,22 @@ module.exports = {
                         '\n                <p class="govuk-body-l">If the crime has not been reported to the police we can not pay compensation.</p>\n                <p class="govuk-body">You may continue your application, but any future application for the same injuries will be refused.</p>\n            '
                 }
             }
+        },
+        system: {
+            $schema: 'http://json-schema.org/draft-07/schema#',
+            type: 'object',
+            required: ['case-reference'],
+            additionalProperties: false,
+            properties: {
+                'case-reference': {
+                    type: 'string',
+                    pattern: '^[0-9]{2}\\[0-9]{6}$',
+                    errorMessages: {
+                        required: 'Case reference is required',
+                        pattern: 'Invalid case reference'
+                    }
+                }
+            }
         }
     },
     routes: {
