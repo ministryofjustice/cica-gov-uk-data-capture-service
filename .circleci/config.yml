@@ -1,0 +1,103 @@
+# Javascript Node CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-javascript/ for more details
+#
+version: 2.1
+executors:
+  docker-publisher:
+    environment:
+      IMAGE_NAME: $IMAGE_CONTAINER
+    docker:
+      # Image tool container
+      - image: 754256621582.dkr.ecr.eu-west-2.amazonaws.com/cloud-platform/tools:circleci 
+      # - image: ${ECR_REPOSITORY}/${ECR_REPO_NAME}:image-tools-circleci
+jobs:
+  build:
+    executor: docker-publisher
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Build docker image
+          command: |
+              docker build --no-cache -t $IMAGE_CONTAINER:latest .
+      - run:
+          name: Archive Docker Image
+          command: |
+              docker save -o image.tar $IMAGE_CONTAINER:latest
+      - persist_to_workspace:
+           root: .
+           paths:
+             - ./image.tar
+  publish_latest:
+    executor: docker-publisher
+    steps:
+      - attach_workspace:
+          at: /tmp/workspace
+      - setup_remote_docker
+      - run:
+          name: Load archived Docker image
+          command: docker load -i /tmp/workspace/image.tar
+#      - run:
+#          name: Install test tools
+#          command: curl -fsSL https://goss.rocks/install | sh
+      - run:
+          name: Test the container
+          command: |
+              docker run -d -p 3001:3001 --restart=always --name data-capture-service $IMAGE_CONTAINER:latest
+              docker ps
+              docker stop data-capture-service
+              docker ps
+  push_image:
+    executor: docker-publisher
+    steps:
+      - attach_workspace:
+          at: /tmp/workspace
+      - setup_remote_docker
+      - run:
+          name: Load archived Docker image
+          command: docker load -i /tmp/workspace/image.tar
+      - run:
+          name: Authenticate and push image to ecr
+          command: |
+              $(aws ecr get-login --region eu-west-2 --no-include-email)
+              if [ "${CIRCLE_BRANCH}" == "data-capture-service-circleci" ]; then
+                 docker tag cica/data-capture-service ${ECR_REPOSITORY}/${ECR_REPO_NAME}:data-capture-service
+                 docker push ${ECR_REPOSITORY}/${ECR_REPO_NAME}:data-capture-service
+              fi
+  deploy_to_dev:
+    executor: docker-publisher
+    steps:
+      - setup_remote_docker
+      - run:
+          name: Deploy to the cluster
+          command: |
+              $(aws ecr get-login --region eu-west-2 --no-include-email)
+              setup-kube-auth
+              kubectl config use-context development
+              if [ "${CIRCLE_BRANCH}" == "develop" ]; then
+                 kubectl apply -f kube_deploy/ --namespace claim-criminal-injuries-compensation-uat
+              else
+                 echo "You cannot deploy ${CIRCLE_BRANCH} branche.. Only develop brache can be deployed!"
+              fi
+workflows:
+  version: 2
+  build-test-push-deploy:
+    jobs:
+      - build
+      - publish_latest:
+           requires:
+             - build
+      - push_image:
+           requires:
+             - publish_latest
+           filters:
+             branches:
+               only: data-capture-service-circleci
+      - deploy_to_dev:
+           type: approval
+           requires:
+             - push_image
+           filters:
+             branches:
+               only: data-capture-service-circleci
