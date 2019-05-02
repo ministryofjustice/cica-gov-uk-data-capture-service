@@ -62,8 +62,8 @@ jobs:
           command: |
               $(aws ecr get-login --region eu-west-2 --no-include-email)
               if [ "${CIRCLE_BRANCH}" == "data-capture-service-circleci" ]; then
-                 docker tag cica/data-capture-service ${ECR_REPOSITORY}/${ECR_REPO_NAME}:data-capture-service
-                 docker push ${ECR_REPOSITORY}/${ECR_REPO_NAME}:data-capture-service
+                 docker tag cica/data-capture-service ${ECR_REPOSITORY}/${ECR_UAT_REPO_NAME}:data-capture-service
+                 docker push ${ECR_REPOSITORY}/${ECR_UAT_REPO_NAME}:data-capture-service
               fi
   deploy_to_dev:
     executor: docker-publisher
@@ -94,7 +94,7 @@ workflows:
            filters:
              branches:
                only: data-capture-service-circleci
-      - deploy_to_dev:
+      - deploy_to_uat:
            type: approval
            requires:
              - push_image
