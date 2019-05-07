@@ -74,7 +74,7 @@ jobs:
           command: |
               $(aws ecr get-login --region eu-west-2 --no-include-email)
               setup-kube-auth
-              kubectl config use-context uat
+              kubectl config use-context development
               if [ "${CIRCLE_BRANCH}" == "data-capture-service-circleci" ]; then
                  kubectl apply -f kube_deploy/ --namespace claim-criminal-injuries-compensation-uat
               else
