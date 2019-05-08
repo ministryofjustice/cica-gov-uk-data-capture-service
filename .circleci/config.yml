@@ -60,6 +60,7 @@ jobs:
       - run:
           name: Authenticate and push image to ecr
           command: |
+              echo "run aws"
               $(aws ecr get-login --region eu-west-2 --no-include-email)
               if [ "${CIRCLE_BRANCH}" == "data-capture-service-circleci" ]; then
                  docker tag cica/data-capture-service ${ECR_REPOSITORY}/${ECR_UAT_REPO_NAME}:data-capture-service
@@ -72,9 +73,12 @@ jobs:
       - run:
           name: Deploy to the cluster
           command: |
+              echo "deploy before aws ecr" 
               $(aws ecr get-login --region eu-west-2 --no-include-email)
+              echo "deploy after aws ecr"
               setup-kube-auth
-              kubectl config use-context uat
+              echo "deploy after setup-kube-auth" 
+             kubectl config use-context uat
               if [ "${CIRCLE_BRANCH}" == "data-capture-service-circleci" ]; then
                  kubectl apply -f kube_deploy/ --namespace claim-criminal-injuries-compensation-uat
               else
