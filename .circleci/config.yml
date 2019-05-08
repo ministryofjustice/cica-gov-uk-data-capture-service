@@ -78,7 +78,7 @@ jobs:
               echo "deploy after aws ecr"
               setup-kube-auth
               echo "deploy after setup-kube-auth" 
-             kubectl config use-context uat
+              kubectl config use-context uat
               if [ "${CIRCLE_BRANCH}" == "data-capture-service-circleci" ]; then
                  kubectl apply -f kube_deploy/ --namespace claim-criminal-injuries-compensation-uat
               else
