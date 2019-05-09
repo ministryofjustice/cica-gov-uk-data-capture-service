@@ -97,11 +97,11 @@ workflows:
              - publish_latest
            filters:
              branches:
-               only: data-capture-service-circleci
+               only: master
       - deploy_to_uat:
            type: approval
            requires:
              - push_image
            filters:
              branches:
-               only: data-capture-service-circleci
+               only: master
