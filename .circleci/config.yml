@@ -84,12 +84,12 @@ jobs:
           name: Deploy to the cluster
           command: |
             echo "deploy before aws ecr"
-            kubectl set image -f kube_deploy/deploy.yml data-capture-service=${ECR_REPOSITORY}/cica/cica-repo-uat:${CIRCLE_SHA1} --local -o yaml \
+            kubectl set image -f kube_deploy/uat/deploy.yml data-capture-service=${ECR_REPOSITORY}/cica/cica-repo-uat:${CIRCLE_SHA1} --local -o yaml \
             | kubectl apply -f -
             kubectl apply \
-                -f kube_deploy/service.yml \
-                -f kube_deploy/ingress.yml \
-                -f kube_deploy/cert.yml
+                -f kube_deploy/uat/service.yml \
+                -f kube_deploy/uat/ingress.yml \
+                -f kube_deploy/uat/cert.yml
 workflows:
   version: 2
   build-test-push-deploy:
