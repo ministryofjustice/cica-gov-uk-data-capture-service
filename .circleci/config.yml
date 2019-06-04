@@ -98,7 +98,7 @@ jobs:
           name: Kubectl deployment
           command: |
             setup-kube-auth
-            kubectl config use-context Production
+            kubectl config use-context production
       - setup_remote_docker
       - deploy:
           name: Deploy to the cluster
