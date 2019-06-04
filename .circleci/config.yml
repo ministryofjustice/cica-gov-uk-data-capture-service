@@ -131,7 +131,7 @@ workflows:
            filters:
              branches:
                only: cica-dcs-prod
-        - deploy_to_prod:
+      - deploy_to_prod:
           type: approval
            requires:
              - push_image
