@@ -132,10 +132,10 @@ workflows:
              branches:
                only: cica-dcs-prod
       - deploy_to_prod:
-#          type: approval
-          requires:
+           type: approval
+           requires:
              - push_image
              - deploy_to_uat
-          filters:
-            branches:
-              only: cica-dcs-prod
+           filters:
+             branches:
+               only: cica-dcs-prod
