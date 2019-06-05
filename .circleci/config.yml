@@ -144,4 +144,4 @@ workflows:
              - deploy_to_prod_approval
            filters:
              branches:
-               only: RCcircleCI
+               only: cica-dcs-prod
