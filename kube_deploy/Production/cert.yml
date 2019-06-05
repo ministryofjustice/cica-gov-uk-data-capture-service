@@ -15,7 +15,7 @@ spec:
       domains:
       - dcs.claim-criminal-injuries-compensation.service.justice.gov.uk
       - data-capture-service.claim-criminal-injuries-compensation.service.justice.gov.uk
-  commonName: claim-criminal-injuries-compensation.service.justice.gov.uk
+  commonName: dcs.claim-criminal-injuries-compensation.service.justice.gov.uk
   dnsNames:
   - dcs.claim-criminal-injuries-compensation.service.justice.gov.uk
   - data-capture-service.claim-criminal-injuries-compensation.service.justice.gov.uk

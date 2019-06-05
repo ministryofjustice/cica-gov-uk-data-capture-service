@@ -90,9 +90,29 @@ jobs:
                 -f kube_deploy/Uat/service.yml \
                 -f kube_deploy/Uat/ingress.yml \
                 -f kube_deploy/Uat/cert.yml
+  deploy_to_prod:
+    executor: docker-publisher
+    steps:
+      - checkout
+      - run:
+          name: Kubectl deployment
+          command: |
+            setup-kube-auth
+            kubectl config use-context production
+      - setup_remote_docker
+      - deploy:
+          name: Deploy to the cluster
+          command: |
+            echo "deploy before aws ecr"
+            kubectl set image -f kube_deploy/Production/deploy.yml data-capture-service=${ECR_REPOSITORY}/cica/cica-repo-uat:${CIRCLE_SHA1} --local -o yaml \
+            | kubectl apply -f -
+            kubectl apply \
+                -f kube_deploy/Production/service.yml \
+                -f kube_deploy/Production/ingress.yml \
+                -f kube_deploy/Production/cert.yml
 workflows:
   version: 2
-  build-test-push-deploy:
+  build-test-push-deployuat-deploytoprodapproval-deployprod:
     jobs:
       - build
       - publish_latest:
@@ -108,6 +128,20 @@ workflows:
 #          type: approval
            requires:
              - push_image
+           filters:
+             branches:
+               only: cica-dcs-prod
+      - deploy_to_prod_approval:
+           type: approval
+           requires:
+             - push_image
+             - deploy_to_uat
+           filters:
+             branches:
+               only: cica-dcs-prod
+      - deploy_to_prod:
+           requires:
+             - deploy_to_prod_approval
            filters:
              branches:
                only: cica-dcs-prod
