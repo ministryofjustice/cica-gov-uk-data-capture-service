@@ -1,10 +1,10 @@
 apiVersion: certmanager.k8s.io/v1alpha1
 kind: Certificate
 metadata:
-  name: data-capture-service-cert-uat
-  namespace: claim-criminal-injuries-compensation-uat
+  name: data-capture-service-cert-dev
+  namespace: claim-criminal-injuries-compensation-dev
 spec:
-  secretName: data-capture-service-cert-secret-uat
+  secretName: data-capture-service-cert-secret-dev
   issuerRef:
     name: letsencrypt-production
     kind: ClusterIssuer
@@ -14,8 +14,8 @@ spec:
         provider: route53-cloud-platform
       domains:
       - claim-criminal-injuries-compensation.service.justice.gov.uk
-      - data-capture-service.uat.claim-criminal-injuries-compensation.service.justice.gov.uk
+      - dev.claim-criminal-injuries-compensation.service.justice.gov.uk
   commonName: claim-criminal-injuries-compensation.service.justice.gov.uk
   dnsNames:
   - claim-criminal-injuries-compensation.service.justice.gov.uk
-  - data-capture-service.uat.claim-criminal-injuries-compensation.service.justice.gov.uk
+  - dev.claim-criminal-injuries-compensation.service.justice.gov.uk
