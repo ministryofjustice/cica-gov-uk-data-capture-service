@@ -14,8 +14,8 @@ spec:
         provider: route53-cloud-platform
       domains:
       - claim-criminal-injuries-compensation.service.justice.gov.uk
-      - dev.claim-criminal-injuries-compensation.service.justice.gov.uk
+      - data-capture-service.dev.claim-criminal-injuries-compensation.service.justice.gov.uk
   commonName: claim-criminal-injuries-compensation.service.justice.gov.uk
   dnsNames:
   - claim-criminal-injuries-compensation.service.justice.gov.uk
-  - dev.claim-criminal-injuries-compensation.service.justice.gov.uk
+  - data-capture-service.dev.claim-criminal-injuries-compensation.service.justice.gov.uk
