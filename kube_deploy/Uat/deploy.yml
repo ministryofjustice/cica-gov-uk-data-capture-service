@@ -21,3 +21,8 @@ spec:
             secretKeyRef:
               name: data-capture-service
               key: secret
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: dcsjs
+              key: url
