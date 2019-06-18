@@ -15,6 +15,12 @@
 !package-lock.json
 !app.js
 !bin
-!questionnaire
+!db
 !docs
+!middleware
 !openapi
+!questionnaire
+
+
+
+

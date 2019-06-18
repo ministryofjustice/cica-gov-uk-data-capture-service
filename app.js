@@ -1,8 +1,12 @@
+'use strict';
+
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const helmet = require('helmet');
+const {OpenApiValidator} = require('express-openapi-validator');
 
+const errorHandler = require('./middleware/error-handler');
 const docsRouter = require('./docs/routes');
 const questionnaireRouter = require('./questionnaire/routes');
 
@@ -18,11 +22,17 @@ app.use(cookieParser());
 
 app.use('/docs', docsRouter);
 
-// Default to JSON:API content type for all responses
+// Default to JSON:API content type for all subsequent responses
 app.use((req, res, next) => {
     res.type('application/vnd.api+json');
     next();
 });
+
+// Install the OpenApiValidator onto express app
+new OpenApiValidator({
+    apiSpecPath: './openapi/openapi.json'
+}).install(app);
+
 app.use('/api/v1/questionnaires', questionnaireRouter);
 
 // Express doesn't treat 404s as errors. If the following handler has been reached then nothing else matched e.g. a 404
@@ -38,61 +48,6 @@ app.use(req => {
 // Central error handler
 // https://www.joyent.com/node-js/production/design/errors
 // https://github.com/i0natan/nodebestpractices/blob/master/sections/errorhandling/centralizedhandling.md
-app.use(async (err, req, res, next) => {
-    const error = {errors: []};
-
-    if (err.statusCode === 400) {
-        error.errors.push({
-            status: 400,
-            title: err.error,
-            detail: err.message
-        });
-
-        return res.status(400).json(error);
-    }
-
-    if (err.statusCode === 403) {
-        error.errors.push({
-            status: 403,
-            title: err.error,
-            detail: err.message
-        });
-
-        return res.status(403).json(error);
-    }
-
-    if (err.statusCode === 404) {
-        error.errors.push({
-            status: 404,
-            title: err.error,
-            detail: err.message
-        });
-
-        return res.status(404).json(error);
-    }
-
-    if (err.statusCode === 409) {
-        error.errors.push({
-            status: 409,
-            title: err.error,
-            detail: err.message
-        });
-
-        return res.status(409).json(error);
-    }
-
-    if (err.name === 'UnauthorizedError') {
-        error.errors.push({
-            status: 401,
-            title: err.error,
-            detail: err.message
-        });
-
-        return res.status(401).json(error);
-    }
-
-    // Non-operational error
-    return next(err);
-});
+app.use(errorHandler);
 
 module.exports = app;
