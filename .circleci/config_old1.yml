@@ -104,7 +104,7 @@ jobs:
           name: Deploy to the cluster
           command: |
             echo "deploy before aws ecr"
-            kubectl set image -f kube_deploy/Uat/deploy.yml data-capture-service=${ECR_REPOSITORY}/cica/cica-repo-dev:${CIRCLE_SHA1} --local -o yaml \
+            kubectl set image -f kube_deploy/Uat/deploy.yml data-capture-service=${ECR_REPOSITORY}/cica/cica-repo-uat:${CIRCLE_SHA1} --local -o yaml \
             | kubectl apply -f -
             kubectl apply \
                 -f kube_deploy/Uat/service.yml \
@@ -124,7 +124,7 @@ jobs:
           name: Deploy to the cluster
           command: |
             echo "deploy before aws ecr"
-            kubectl set image -f kube_deploy/Production/deploy.yml data-capture-service=${ECR_REPOSITORY}/cica/cica-repo-dev:${CIRCLE_SHA1} --local -o yaml \
+            kubectl set image -f kube_deploy/Production/deploy.yml data-capture-service=${ECR_REPOSITORY}/cica/cica-repo-uat:${CIRCLE_SHA1} --local -o yaml \
             | kubectl apply -f -
             kubectl apply \
                 -f kube_deploy/Production/service.yml \

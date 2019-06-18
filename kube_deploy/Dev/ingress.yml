@@ -1,0 +1,27 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: dcs-ingress-dev
+  namespace: claim-criminal-injuries-compensation-dev
+spec:
+  tls:
+  - hosts:
+    - data-capture-service.dev.claim-criminal-injuries-compensation.apps.live-1.cloud-platform.service.justice.gov.uk
+  - hosts:
+    - data-capture-service.dev.claim-criminal-injuries-compensation.service.justice.gov.uk
+    secretName: data-capture-service-cert-secret-dev
+  rules:
+  - host: data-capture-service.dev.claim-criminal-injuries-compensation.apps.live-1.cloud-platform.service.justice.gov.uk
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: dcs-service-dev
+          servicePort: 80
+  - host: data-capture-service.dev.claim-criminal-injuries-compensation.service.justice.gov.uk
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: dcs-service-dev
+          servicePort: 80
