@@ -6,6 +6,7 @@
         "start:dev": "nodemon -L --inspect=0.0.0.0:9229 -e .js,.json,.njk,.yml --ignore openapi/openapi.json --exec npm run build:run",
         "openapi:build": "speccy lint openapi/src/openapi-src.json -j && speccy resolve ./openapi/src/openapi-src.json -j | yaml2json --pretty --indentation 4 --save - > ./openapi/openapi.json && node ./openapi/src/dereference-openapi.js",
         "build:run": "npm run openapi:build && npm run start",
+        "pretestx": "eslint .",
         "test": "jest",
         "coverage": "jest --coverage",
         "dump-eslint-conf": "eslint --print-config ./app.js > ./stuff/eslint-conf.json",
@@ -13,7 +14,9 @@
         "lint:fix": "eslint --fix ."
     },
     "dependencies": {
+        "@netflix/nerror": "^1.1.0",
         "ajv": "^6.10.0",
+        "ajv-errors": "^1.0.1",
         "cookie-parser": "~1.4.3",
         "debug": "~2.6.9",
         "express": "~4.16.0",
@@ -21,10 +24,14 @@
         "express-jwt-authz": "^2.3.1",
         "express-openapi-validator": "^0.53.3",
         "helmet": "^3.15.0",
-        "morgan": "~1.9.0",
+        "morgan": "^1.9.1",
         "pg": "^7.11.0",
+        "pino": "^5.12.6",
+        "pino-http": "^4.2.0",
+        "q-router": "git+https://github.com/CriminalInjuriesCompensationAuthority/q-router.git",
         "swagger-ui-express": "^4.0.2",
-        "uuid": "^3.3.2"
+        "uuid": "^3.3.2",
+        "verror": "^1.10.0"
     },
     "devDependencies": {
         "eslint": "^5.8.0",
@@ -42,10 +49,12 @@
         "lodash.merge": "^4.6.1",
         "nanoid": "^2.0.1",
         "nodemon": "^1.18.9",
+        "pino-pretty": "^3.2.0",
         "prettier": "^1.14.3",
         "q-base-config": "github:CriminalInjuriesCompensationAuthority/q-base-config#semver:<1.0.0",
         "speccy": "github:wework/speccy#740d19d88935db7735250c16abc2ad09256b5854",
         "supertest": "^4.0.2",
+        "uuidv4": "^4.0.0",
         "yamljs": "^0.3.0"
     },
     "license": "MIT",
@@ -66,8 +75,8 @@
         "blocks": [
             ".eslintignore",
             ".eslintrc.js",
-            ".huskyrc.js",
             ".lintstagedrc.js",
+            ".huskyrc.js",
             ".prettierrc.js",
             "jest.config.js",
             ".gitignore"

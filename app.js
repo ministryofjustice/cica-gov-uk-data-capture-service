@@ -2,18 +2,39 @@
 
 const express = require('express');
 const cookieParser = require('cookie-parser');
-const logger = require('morgan');
 const helmet = require('helmet');
 const {OpenApiValidator} = require('express-openapi-validator');
-
+const pino = require('pino-http');
 const errorHandler = require('./middleware/error-handler');
 const docsRouter = require('./docs/routes');
 const questionnaireRouter = require('./questionnaire/routes');
 
 const app = express();
+const logger = pino({
+    level: process.env.DCS_LOG_LEVEL,
+    prettyPrint: {
+        levelFirst: true,
+        colorize: true,
+        translateTime: true
+        // errorProps: 'req,res'
+    },
+    customLogLevel: (res, err) => {
+        if (res.statusCode >= 400 && res.statusCode < 500) {
+            return 'warn';
+        }
 
+        if (res.statusCode >= 500 || err) {
+            return 'error';
+        }
+
+        return 'info';
+    }
+});
+
+// security
 app.use(helmet());
-app.use(logger('dev'));
+// logging
+app.use(logger);
 // https://expressjs.com/en/api.html#express.json
 app.use(express.json({type: 'application/vnd.api+json'}));
 // https://expressjs.com/en/api.html#express.urlencoded
@@ -43,6 +64,15 @@ app.use(req => {
     err.statusCode = 404;
     err.error = '404 Not Found';
     throw err;
+});
+
+app.use((err, req, res, next) => {
+    // Get pino to attach the correct error and stack trace to the log entry
+    // https://github.com/pinojs/pino-http/issues/61
+    res.err = err;
+
+    // forward the centralised error handler
+    next(err);
 });
 
 // Central error handler

@@ -1,5 +1,7 @@
 'use strict';
 
+const VError = require('verror');
+
 // Central error handler
 // https://www.joyent.com/node-js/production/design/errors
 // https://github.com/i0natan/nodebestpractices/blob/master/sections/errorhandling/centralizedhandling.md
@@ -75,6 +77,16 @@ module.exports = async (err, req, res, next) => {
         return res.status(400).json(error);
     }
 
+    if (err.name === 'JSONSchemaValidationError') {
+        error.errors.push({
+            status: 400,
+            title: 'JSONSchemaValidationError',
+            detail: VError.info(err).schemaErrors
+        });
+
+        return res.status(400).json(error);
+    }
+
     if (err.statusCode === 400) {
         error.errors.push({
             status: 400,
@@ -96,6 +108,16 @@ module.exports = async (err, req, res, next) => {
     }
 
     if (err.statusCode === 404) {
+        error.errors.push({
+            status: 404,
+            title: '404 Not Found',
+            detail: err.message
+        });
+
+        return res.status(404).json(error);
+    }
+
+    if (err.name === 'ResourceNotFound') {
         error.errors.push({
             status: 404,
             title: '404 Not Found',

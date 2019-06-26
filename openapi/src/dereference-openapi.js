@@ -14,6 +14,7 @@ const fs = require('fs');
         }
 
         // success case, the file was saved
+        // eslint-disable-next-line
         console.log('dereferenced contract saved');
     });
 })();
