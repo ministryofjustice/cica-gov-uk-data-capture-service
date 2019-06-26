@@ -29,11 +29,20 @@
                             "type": "string",
                             "pattern": "^[a-zA-Z0-9-]{1,30}$"
                         },
+                        "version": {
+                            "type": "string"
+                        },
                         "sections": {
                             "type": "object"
                         },
                         "routes": {
                             "type": "object"
+                        },
+                        "answers": {
+                            "type": "object"
+                        },
+                        "progress": {
+                            "type": "array"
                         }
                     }
                 }

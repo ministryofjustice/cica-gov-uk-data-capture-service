@@ -3,12 +3,11 @@
 const express = require('express');
 const validateJWT = require('express-jwt');
 
-const questionnaireService = require('./questionnaire-service')();
+const createQuestionnaireService = require('./questionnaire-service');
 const q = require('./questionnaire');
 const permissions = require('../middleware/route-permissions');
 
 const router = express.Router();
-const rxCaseReference = /^[0-9]{2}\\[0-9]{6}$/;
 const rxTemplateName = /^[a-zA-Z0-9-]{1,30}$/;
 
 // Ensure JWT is valid
@@ -31,6 +30,7 @@ router.route('/').post(permissions('create:questionnaires'), async (req, res, ne
 
         const {templateName} = req.body.data.attributes;
 
+        const questionnaireService = createQuestionnaireService({logger: req.log});
         const response = await questionnaireService.createQuestionnaire(templateName);
 
         res.status(201).json(response);
@@ -41,7 +41,7 @@ router.route('/').post(permissions('create:questionnaires'), async (req, res, ne
 
 router.route('/:questionnaireId/sections/answers').get(permissions('read:answers'), (req, res) => {
     // /questionnaires/68653be7-877f-4106-b91e-4ba8dac883f3/sections/answers
-    if (req.params.questionnaireId !== '68653be7-877f-4106-b91e-4ba8dac883f3') {
+    if (req.params.questionnaireId !== '285cb104-0c15-4a9c-9840-cb1007f098fb') {
         const err = Error(`Resource ${req.originalUrl} does not exist`);
         err.name = 'HTTPError';
         err.statusCode = 404;
@@ -69,41 +69,42 @@ router.route('/:questionnaireId/sections/answers').get(permissions('read:answers
 
 router
     .route('/:questionnaireId/sections/system/answers')
-    .post(permissions('create:system-answers'), (req, res) => {
-        if (req.params.questionnaireId !== '68653be7-877f-4106-b91e-4ba8dac883f3') {
-            const err = Error(`Resource ${req.originalUrl} does not exist`);
-            err.name = 'HTTPError';
-            err.statusCode = 404;
-            err.error = '404 Not Found';
-            throw err;
+    .post(permissions('create:system-answers'), async (req, res, next) => {
+        try {
+            // There can only every be one "answers" block per section
+            // TODO: handle multiple attempts to "create" answers
+            const answers = req.body.data.attributes;
+            const questionnaireService = createQuestionnaireService({logger: req.log});
+            const response = await questionnaireService.createAnswers(
+                req.params.questionnaireId,
+                'system',
+                answers
+            );
+
+            res.status(201).json(response);
+        } catch (err) {
+            next(err);
         }
+    });
 
-        if (
-            req.body.data &&
-            req.body.data.attributes &&
-            req.body.data.attributes['case-reference'] &&
-            rxCaseReference.test(req.body.data.attributes['case-reference'])
-        ) {
-            q.answers.system = {
-                'case-reference': req.body.data.attributes['case-reference']
-            };
-        } else {
-            const err = Error(`Bad request`);
-            err.name = 'HTTPError';
-            err.statusCode = 400;
-            err.error = '400 Bad Request';
-            throw err;
+router
+    .route('/:questionnaireId/sections/:sectionId/answers')
+    .post(permissions('create:answers'), async (req, res, next) => {
+        try {
+            // There can only every be one "answers" block per section
+            // TODO: handle multiple attempts to "create" answers
+            const answers = req.body.data.attributes;
+            const questionnaireService = createQuestionnaireService({logger: req.log});
+            const response = await questionnaireService.createAnswers(
+                req.params.questionnaireId,
+                req.params.sectionId,
+                answers
+            );
+
+            res.status(201).json(response);
+        } catch (err) {
+            next(err);
         }
-
-        const response = {
-            data: {
-                type: 'answers',
-                id: 'system',
-                attributes: q.answers.system
-            }
-        };
-
-        res.status(201).json(response);
     });
 
 module.exports = router;

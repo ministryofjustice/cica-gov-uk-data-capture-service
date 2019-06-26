@@ -159,11 +159,21 @@
                                                             "type": "string",
                                                             "pattern": "^[a-zA-Z0-9-]{1,30}$"
                                                         },
+                                                        "version": {
+                                                            "type": "string"
+                                                        },
                                                         "sections": {
                                                             "type": "object"
                                                         },
                                                         "routes": {
                                                             "type": "object"
+                                                        },
+                                                        "answers": {
+                                                            "type": "object"
+                                                        },
+                                                        "progress": {
+                                                            "type": "array",
+                                                            "items": {}
                                                         }
                                                     }
                                                 }
@@ -363,7 +373,7 @@
                             "format": "UUIDv4",
                             "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
                         },
-                        "example": "68653be7-877f-4106-b91e-4ba8dac883f3"
+                        "example": "285cb104-0c15-4a9c-9840-cb1007f098fb"
                     },
                     {
                         "name": "sectionId",
@@ -680,7 +690,7 @@
                             "format": "UUIDv4",
                             "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
                         },
-                        "example": "68653be7-877f-4106-b91e-4ba8dac883f3"
+                        "example": "285cb104-0c15-4a9c-9840-cb1007f098fb"
                     }
                 ],
                 "x-scopes": ["read:answers"],
@@ -898,7 +908,7 @@
                     "format": "UUIDv4",
                     "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
                 },
-                "example": "68653be7-877f-4106-b91e-4ba8dac883f3"
+                "example": "285cb104-0c15-4a9c-9840-cb1007f098fb"
             },
             "sectionId": {
                 "name": "sectionId",

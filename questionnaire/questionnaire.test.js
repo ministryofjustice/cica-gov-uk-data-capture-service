@@ -1,5 +1,6 @@
 'use strict';
 
+const VError = require('verror');
 const request = require('supertest');
 const {matchersWithOptions} = require('jest-json-schema');
 
@@ -14,12 +15,26 @@ const tokens = {
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJkYXRhLWNhcHR1cmUtc2VydmljZSIsImlzcyI6IiQuYXVkIiwianRpIjoiMDdhMmNkNzYtNjMyNC00OTYwLTk2YTEtNTA3M2MxNDljZTQ5Iiwic3ViIjoiY2ljYS13ZWIiLCJzY29wZSI6ImNyZWF0ZTpkdW1teS1yZXNvdXJjZSIsImlhdCI6MTU2MDE3OTc2MH0.gfYTKMib2_Hu8WBYHl23vzptJTvV6jIDisiHKd0G-wA'
 };
 const createQuestionnaireResponse = require('./test-fixtures/res/post_questionnaire.json');
+const getQuestionnaireResponse = require('./test-fixtures/res/get_questionnaire.json');
 
 // mock the DAL db integration
 jest.doMock('./questionnaire-dal.js', () =>
     // return a modified factory function, that returns an object with a method, that returns a valid created response
     jest.fn(() => ({
-        createQuestionnaire: () => createQuestionnaireResponse
+        createQuestionnaire: () => createQuestionnaireResponse,
+        getQuestionnaire(questionnaireId) {
+            if (questionnaireId === '285cb104-0c15-4a9c-9840-cb1007f098fb') {
+                return getQuestionnaireResponse;
+            }
+
+            throw new VError(
+                {
+                    name: 'ResourceNotFound'
+                },
+                `Questionnaire "${questionnaireId}" not found`
+            );
+        },
+        updateQuestionnaire: () => undefined
     }))
 );
 
@@ -78,8 +93,11 @@ describe('/questionnaires', () => {
                                                 '^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$'
                                         },
                                         type: {type: 'string', pattern: '^[a-zA-Z0-9-]{1,30}$'},
+                                        version: {type: 'string'},
                                         sections: {type: 'object'},
-                                        routes: {type: 'object'}
+                                        routes: {type: 'object'},
+                                        answers: {type: 'object'},
+                                        progress: {type: 'array'}
                                     }
                                 }
                             }
@@ -234,7 +252,7 @@ describe('/questionnaires/{questionnaireId}/sections/{sectionId}/answers', () =>
             it('should Created', async () => {
                 const res = await request(app)
                     .post(
-                        '/api/v1/questionnaires/68653be7-877f-4106-b91e-4ba8dac883f3/sections/system/answers'
+                        '/api/v1/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/sections/system/answers'
                     )
                     .set('Authorization', `Bearer ${tokens['create:system-answers']}`)
                     .set('Content-Type', 'application/vnd.api+json')
@@ -275,7 +293,7 @@ describe('/questionnaires/{questionnaireId}/sections/{sectionId}/answers', () =>
             it('should There is an issue with the request', async () => {
                 const res = await request(app)
                     .post(
-                        '/api/v1/questionnaires/68653be7-877f-4106-b91e-4ba8dac883f3/sections/system/answers'
+                        '/api/v1/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/sections/system/answers'
                     )
                     .set('Authorization', `Bearer ${tokens['create:system-answers']}`)
                     .set('Content-Type', 'application/vnd.api+json')
@@ -314,7 +332,7 @@ describe('/questionnaires/{questionnaireId}/sections/{sectionId}/answers', () =>
             it('should Access token is missing or invalid', async () => {
                 const res = await request(app)
                     .post(
-                        '/api/v1/questionnaires/68653be7-877f-4106-b91e-4ba8dac883f3/sections/system/answers'
+                        '/api/v1/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/sections/system/answers'
                     )
                     .set('Content-Type', 'application/vnd.api+json')
                     .send({data: {type: 'answers', attributes: {'case-reference': '11\\111111'}}});
@@ -346,7 +364,7 @@ describe('/questionnaires/{questionnaireId}/sections/{sectionId}/answers', () =>
             it("should The JWT doesn't permit access to this endpoint", async () => {
                 const res = await request(app)
                     .post(
-                        '/api/v1/questionnaires/68653be7-877f-4106-b91e-4ba8dac883f3/sections/system/answers'
+                        '/api/v1/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/sections/system/answers'
                     )
                     .set('Authorization', `Bearer ${tokens['create:dummy-resource']}`)
                     .set('Content-Type', 'application/vnd.api+json')
@@ -416,7 +434,7 @@ describe('/questionnaires/{questionnaireId}/sections/answers', () => {
             it('should Success', async () => {
                 const res = await request(app)
                     .get(
-                        '/api/v1/questionnaires/68653be7-877f-4106-b91e-4ba8dac883f3/sections/answers'
+                        '/api/v1/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/sections/answers'
                     )
                     .set('Authorization', `Bearer ${tokens['read:answers']}`);
 
@@ -479,7 +497,7 @@ describe('/questionnaires/{questionnaireId}/sections/answers', () => {
         describe('401', () => {
             it('should Access token is missing or invalid', async () => {
                 const res = await request(app).get(
-                    '/api/v1/questionnaires/68653be7-877f-4106-b91e-4ba8dac883f3/sections/answers'
+                    '/api/v1/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/sections/answers'
                 );
 
                 expect(res.statusCode).toBe(401);
