@@ -4,16 +4,90 @@ const express = require('express');
 const validateJWT = require('express-jwt');
 
 const createQuestionnaireService = require('./questionnaire-service');
-const q = require('./questionnaire');
+const createProgressEntriesService = require('../services/progress-entries/progress-entries-service');
 const permissions = require('../middleware/route-permissions');
 
 const router = express.Router();
-const rxTemplateName = /^[a-zA-Z0-9-]{1,30}$/;
+// const rxCaseReference = /^[0-9]{2}\\[0-9]{6}$/;
+const rxTemplateName = /^[a-zA-Z0-9-]{1,60}$/;
+const rxValidQuestionnaireId = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
+const rxValidSectionId = /^p--?([a-z0-9-]+)$/;
+const rxValidSectionName = /^(?!p)([a-z0-9-]+)$/;
 
 // Ensure JWT is valid
 router.use(validateJWT({secret: process.env.SECRET}));
 
-router.route('/').post(permissions('create:questionnaires'), async (req, res, next) => {
+router
+    .route('/progress-entries')
+    .get(permissions('read-write:questionnaires'), async (req, res, next) => {
+        try {
+            const reqQueryParams = req.query;
+            const {questionnaireId} = reqQueryParams; // TODO: get from CICA web session data.
+            // https://jsonapi.org/examples/#pagination
+
+            // page: {
+            //     JSON:API standard compliant:
+            //     before: 'p-applicant-british-citizen-or-eu-national', // get the progress entry for the section before the specified section.
+            //     after: 'p-applicant-declaration', // get the progress entry for the section after the specified section.
+            //     size: 1, // number of progress entries returned. defaulted to `1`.
+            //
+            //     non-compliant:
+            //     id: 0, // index of the progress entry you want.
+            //     sectionId: 'p-applicant-declaration', // get the progress entry relating to this section (if it is present in the progress).
+            // }
+            const page = {
+                before: reqQueryParams.progressEntryBefore,
+                // after: reqQueryParams.after, // currently unused.
+                // size: 1, // currently unused.
+                id: reqQueryParams.progressEntryId,
+                sectionId: reqQueryParams.sectionId
+            };
+
+            // for each of the properties of `page`, we need to check that they
+            // exist, then check if they conform to the required pattern.
+            if (
+                !rxValidQuestionnaireId.test(questionnaireId) ||
+                (page.before && !rxValidSectionId.test(page.before)) ||
+                (page.id && Number.parseInt(page.id, 10) === page.id && page.id > -1) ||
+                (page.sectionId && !rxValidSectionId.test(page.sectionId))
+            ) {
+                const err = Error(`Bad request`);
+                err.name = 'HTTPError';
+                err.statusCode = 400;
+                err.error = '400 Bad Request';
+                throw err;
+            }
+
+            const questionnaireService = createQuestionnaireService({logger: req.log});
+            const response = await questionnaireService.getQuestionnaire(questionnaireId);
+
+            if (!response.rows[0]) {
+                const err = Error(`Resource ${req.originalUrl} does not exist`);
+                err.name = 'HTTPError';
+                err.statusCode = 404;
+                err.error = '404 Not Found';
+                throw err;
+            }
+            const {questionnaire} = response.rows[0];
+
+            const progressEntriesService = createProgressEntriesService();
+            const progressEntry = progressEntriesService.getProgressEntry(page, questionnaire);
+
+            if (!progressEntry) {
+                const err = Error(`Resource ${req.originalUrl} does not exist`);
+                err.name = 'HTTPError';
+                err.statusCode = 404;
+                err.error = '404 Not Found';
+                throw err;
+            }
+
+            res.json(progressEntry);
+        } catch (err) {
+            next(err);
+        }
+    });
+
+router.route('/').post(permissions('read-write:questionnaires'), async (req, res, next) => {
     try {
         if (
             req.body.data &&
@@ -39,41 +113,108 @@ router.route('/').post(permissions('create:questionnaires'), async (req, res, ne
     }
 });
 
-router.route('/:questionnaireId/sections/answers').get(permissions('read:answers'), (req, res) => {
-    // /questionnaires/68653be7-877f-4106-b91e-4ba8dac883f3/sections/answers
-    if (req.params.questionnaireId !== '285cb104-0c15-4a9c-9840-cb1007f098fb') {
-        const err = Error(`Resource ${req.originalUrl} does not exist`);
-        err.name = 'HTTPError';
-        err.statusCode = 404;
-        err.error = '404 Not Found';
-        throw err;
-    }
+router
+    .route('/:questionnaireId')
+    .get(permissions('read-write:questionnaires'), async (req, res, next) => {
+        try {
+            const {questionnaireId} = req.params;
 
-    // Return resource collection
-    const resourceCollection = Object.keys(q.answers).reduce((acc, sectionAnswersId) => {
-        const sectionAnswers = q.answers[sectionAnswersId];
+            if (!rxValidQuestionnaireId.test(questionnaireId)) {
+                const err = Error(`Bad request`);
+                err.name = 'HTTPError';
+                err.statusCode = 400;
+                err.error = '400 Bad Request';
+                throw err;
+            }
 
-        acc.push({
-            type: 'answers',
-            id: sectionAnswersId,
-            attributes: sectionAnswers
-        });
+            const questionnaireService = createQuestionnaireService({logger: req.log});
+            const response = await questionnaireService.getQuestionnaire(questionnaireId);
 
-        return acc;
-    }, []);
+            if (!response.rows[0]) {
+                const err = Error(`Resource ${req.originalUrl} does not exist`);
+                err.name = 'HTTPError';
+                err.statusCode = 404;
+                err.error = '404 Not Found';
+                throw err;
+            }
 
-    res.json({
-        data: resourceCollection
+            const {questionnaire} = response.rows[0];
+
+            res.status(200).json({
+                data: {
+                    type: 'questionnaire',
+                    id: questionnaireId,
+                    attributes: questionnaire
+                }
+            });
+        } catch (err) {
+            next(err);
+        }
     });
-});
+
+router
+    .route('/:questionnaireId/sections/answers')
+    .get(permissions('read-write:questionnaires'), async (req, res, next) => {
+        try {
+            const {questionnaireId} = req.params;
+
+            if (!rxValidQuestionnaireId.test(questionnaireId)) {
+                const err = Error(`Bad request`);
+                err.name = 'HTTPError';
+                err.statusCode = 400;
+                err.error = '400 Bad Request';
+                throw err;
+            }
+
+            const questionnaireService = createQuestionnaireService({logger: req.log});
+            const response = await questionnaireService.getQuestionnaire(questionnaireId);
+            if (!response.rows[0]) {
+                const err = Error(`Resource ${req.originalUrl} does not exist`);
+                err.name = 'HTTPError';
+                err.statusCode = 404;
+                err.error = '404 Not Found';
+                throw err;
+            }
+
+            const {questionnaire} = response.rows[0];
+
+            // Return resource collection
+            // const resourceCollection = Object.keys(questionnaire.answers).reduce(
+            //     (acc, sectionAnswersId) => {
+            //         const sectionAnswers = questionnaire.answers[sectionAnswersId];
+
+            //         acc.push({
+            //             type: 'answers',
+            //             id: sectionAnswersId,
+            //             attributes: sectionAnswers
+            //         });
+
+            //         return acc;
+            //     },
+            //     []
+            // );
+            const resourceCollection = [];
+            resourceCollection.push({
+                type: 'answers',
+                id: questionnaireId,
+                attributes: questionnaire.answers
+            });
+
+            res.status(200).json({
+                data: resourceCollection
+            });
+        } catch (err) {
+            next(err);
+        }
+    });
 
 router
     .route('/:questionnaireId/sections/system/answers')
-    .post(permissions('create:system-answers'), async (req, res, next) => {
+    .post(permissions('read-write:questionnaires'), async (req, res, next) => {
         try {
             // There can only every be one "answers" block per section
             // TODO: handle multiple attempts to "create" answers
-            const answers = req.body.data.attributes;
+            const answers = req.body.data[0].attributes;
             const questionnaireService = createQuestionnaireService({logger: req.log});
             const response = await questionnaireService.createAnswers(
                 req.params.questionnaireId,
@@ -88,20 +229,313 @@ router
     });
 
 router
-    .route('/:questionnaireId/sections/:sectionId/answers')
-    .post(permissions('create:answers'), async (req, res, next) => {
+    .route('/:questionnaireId/sections/:sectionName/answers')
+    .get(permissions('read-write:questionnaires'), async (req, res, next) => {
         try {
-            // There can only every be one "answers" block per section
-            // TODO: handle multiple attempts to "create" answers
-            const answers = req.body.data.attributes;
+            const {questionnaireId} = req.params;
+            const {sectionName} = req.params;
+
+            if (
+                !rxValidSectionName.test(sectionName) ||
+                !rxValidQuestionnaireId.test(questionnaireId)
+            ) {
+                const err = Error(`Bad request`);
+                err.name = 'HTTPError';
+                err.statusCode = 400;
+                err.error = '400 Bad Request';
+                throw err;
+            }
+
             const questionnaireService = createQuestionnaireService({logger: req.log});
-            const response = await questionnaireService.createAnswers(
-                req.params.questionnaireId,
-                req.params.sectionId,
-                answers
+            const response = await questionnaireService.getQuestionnaire(questionnaireId);
+
+            if (!response.rows[0]) {
+                const err = Error(`Resource ${req.originalUrl} does not exist`);
+                err.name = 'HTTPError';
+                err.statusCode = 404;
+                err.error = '404 Not Found';
+                throw err;
+            }
+
+            const {questionnaire} = response.rows[0];
+            let prefixedSectionId;
+
+            if (questionnaire.sections[sectionName]) {
+                prefixedSectionId = sectionName;
+            } else if (questionnaire.sections[`p-${sectionName}`]) {
+                prefixedSectionId = `p-${sectionName}`;
+            } else if (questionnaire.sections[`p--${sectionName}`]) {
+                prefixedSectionId = `p--${sectionName}`;
+            }
+
+            // if the section doesn't exist in the questionnaire...
+            if (!questionnaire.sections[prefixedSectionId]) {
+                const err = Error(`Resource ${req.originalUrl} does not exist`);
+                err.name = 'HTTPError';
+                err.statusCode = 404;
+                err.error = '404 Not Found';
+                throw err;
+            }
+
+            // answers may be empty. return them anyway.
+            const questionnaireSectionAnswers = questionnaire.answers[prefixedSectionId] || {};
+
+            const resourceCollection = [];
+
+            resourceCollection.push({
+                type: 'answers',
+                id: prefixedSectionId,
+                attributes: questionnaireSectionAnswers
+            });
+
+            res.status(200).json({
+                data: resourceCollection
+            });
+        } catch (err) {
+            next(err);
+        }
+    })
+    .post(permissions('read-write:questionnaires'), async (req, res, next) => {
+        try {
+            const {questionnaireId} = req.params;
+            const {sectionName} = req.params;
+            if (
+                !rxValidSectionName.test(sectionName) ||
+                !rxValidQuestionnaireId.test(questionnaireId)
+            ) {
+                const err = Error(`Bad request`);
+                err.name = 'HTTPError';
+                err.statusCode = 400;
+                err.error = '400 Bad Request';
+                throw err;
+            }
+
+            const questionnaireService = createQuestionnaireService({logger: req.log});
+            const responseQuestionnaire = await questionnaireService.getQuestionnaire(
+                questionnaireId
             );
 
-            res.status(201).json(response);
+            if (!responseQuestionnaire.rows[0]) {
+                const err = Error(`Resource ${req.originalUrl} does not exist`);
+                err.name = 'HTTPError';
+                err.statusCode = 404;
+                err.error = '404 Not Found';
+                throw err;
+            }
+            const {questionnaire} = responseQuestionnaire.rows[0];
+            let prefixedSectionId;
+
+            if (questionnaire.sections[sectionName]) {
+                prefixedSectionId = sectionName;
+            } else if (questionnaire.sections[`p-${sectionName}`]) {
+                prefixedSectionId = `p-${sectionName}`;
+            } else if (questionnaire.sections[`p--${sectionName}`]) {
+                prefixedSectionId = `p--${sectionName}`;
+            }
+
+            // There can only every be one "answers" block per section
+            // TODO: handle multiple attempts to "create" answers
+            const answers = req.body.data[0].attributes;
+
+            // already got answers in the answers object relating to this section?
+            // if so do an update (200), else do a create(201).
+
+            const progressEntriesService = createProgressEntriesService();
+            const progressEntry = progressEntriesService.getProgressEntryBySectionId(
+                questionnaire,
+                prefixedSectionId
+            );
+
+            if (!progressEntry) {
+                const err = Error(`Resource ${req.originalUrl} does not exist`);
+                err.name = 'HTTPError';
+                err.statusCode = 404;
+                err.error = '404 Not Found';
+                throw err;
+            }
+
+            const answersInclude = progressEntry.included.filter(x => x.type === 'answers');
+            const existingAnswers = answersInclude[0].attributes;
+            if (existingAnswers) {
+                // update.
+                const response = await questionnaireService.updateAnswers(
+                    questionnaireId,
+                    sectionName,
+                    answers
+                );
+                res.status(200).json(response);
+            } else {
+                // create.
+                const response = await questionnaireService.createAnswers(
+                    questionnaireId,
+                    sectionName,
+                    answers
+                );
+                res.status(201).json(response);
+            }
+        } catch (err) {
+            next(err);
+        }
+    });
+
+router
+    .route('/:questionnaireId/sections/:sectionName')
+    .get(permissions('read-write:questionnaires'), async (req, res, next) => {
+        try {
+            const {questionnaireId} = req.params;
+            const {sectionName} = req.params;
+
+            if (
+                !rxValidSectionName.test(sectionName) ||
+                !rxValidQuestionnaireId.test(questionnaireId)
+            ) {
+                const err = Error(`Bad request`);
+                err.name = 'HTTPError';
+                err.statusCode = 400;
+                err.error = '400 Bad Request';
+                throw err;
+            }
+
+            const questionnaireService = createQuestionnaireService({logger: req.log});
+            const response = await questionnaireService.getQuestionnaire(questionnaireId);
+
+            if (!response.rows[0]) {
+                const err = Error(`Resource ${req.originalUrl} does not exist`);
+                err.name = 'HTTPError';
+                err.statusCode = 404;
+                err.error = '404 Not Found';
+                throw err;
+            }
+            // refactor this to be abstracted out of the controller.
+            const {questionnaire} = response.rows[0];
+            let section;
+            let prefixedSectionId;
+
+            if (questionnaire.sections[sectionName]) {
+                section = questionnaire.sections[sectionName];
+                prefixedSectionId = sectionName;
+            } else if (questionnaire.sections[`p-${sectionName}`]) {
+                section = questionnaire.sections[`p-${sectionName}`];
+                prefixedSectionId = `p-${sectionName}`;
+            } else if (questionnaire.sections[`p--${sectionName}`]) {
+                section = questionnaire.sections[`p--${sectionName}`];
+                prefixedSectionId = `p--${sectionName}`;
+            }
+
+            if (!section) {
+                const err = Error(`Resource ${req.originalUrl} does not exist`);
+                err.name = 'HTTPError';
+                err.statusCode = 404;
+                err.error = '404 Not Found';
+                throw err;
+            }
+
+            const resourceCollection = [];
+            resourceCollection.push({
+                type: 'section',
+                id: prefixedSectionId,
+                attributes: section
+            });
+
+            const includedResource = [];
+
+            // if there are answers.
+            if (questionnaire.answers[prefixedSectionId]) {
+                includedResource.push({
+                    links: {
+                        self: `/api/v1/questionnaires/${questionnaireId}/sections/${prefixedSectionId}/answers`
+                    },
+                    type: 'answers',
+                    id: prefixedSectionId,
+                    attributes: questionnaire.answers[prefixedSectionId] || {}
+                });
+            }
+
+            const meta = {
+                initial: questionnaire.routes.initial,
+                final: !!(
+                    questionnaire.routes.states[prefixedSectionId] &&
+                    questionnaire.routes.states[prefixedSectionId].type &&
+                    questionnaire.routes.states[prefixedSectionId].type === 'final'
+                ),
+                summary: questionnaire.routes.summary
+            };
+
+            res.status(200).json({
+                data: resourceCollection,
+                included: includedResource,
+                meta
+            });
+        } catch (err) {
+            next(err);
+        }
+    });
+
+router
+    .route('/:questionnaireId/sections/:sectionName/previous')
+    .get(permissions('read-write:questionnaires'), async (req, res, next) => {
+        try {
+            const {questionnaireId} = req.params;
+            const {sectionName} = req.params;
+
+            if (
+                !rxValidSectionName.test(sectionName) ||
+                !rxValidQuestionnaireId.test(questionnaireId)
+            ) {
+                const err = Error(`Bad request`);
+                err.name = 'HTTPError';
+                err.statusCode = 400;
+                err.error = '400 Bad Request';
+                throw err;
+            }
+
+            const questionnaireService = createQuestionnaireService({logger: req.log});
+            const result = await questionnaireService.getQuestionnaire(questionnaireId);
+            const {questionnaire} = result.rows[0];
+            let prefixedSectionId;
+
+            if (questionnaire.sections[sectionName]) {
+                prefixedSectionId = sectionName;
+            } else if (questionnaire.sections[`p-${sectionName}`]) {
+                prefixedSectionId = `p-${sectionName}`;
+            } else if (questionnaire.sections[`p--${sectionName}`]) {
+                prefixedSectionId = `p--${sectionName}`;
+            }
+
+            if (!prefixedSectionId) {
+                const err = Error(`Resource ${req.originalUrl} does not exist`);
+                err.name = 'HTTPError';
+                err.statusCode = 404;
+                err.error = '404 Not Found';
+                throw err;
+            }
+
+            // get previous section from questionnaireId and sectionID
+            const progressEntriesService = createProgressEntriesService();
+            const progressEntry = progressEntriesService.getPreviousProgressEntry(
+                questionnaire,
+                prefixedSectionId
+            );
+
+            if (!progressEntry) {
+                const err = Error(`Resource ${req.originalUrl} does not exist`);
+                err.name = 'HTTPError';
+                err.statusCode = 404;
+                err.error = '404 Not Found';
+                throw err;
+            }
+
+            const previousSectionId = progressEntry.data[0].attributes.sectionId;
+
+            res.json({
+                data: {
+                    type: 'sectionId',
+                    id: prefixedSectionId,
+                    attributes: {
+                        sectionId: previousSectionId
+                    }
+                }
+            });
         } catch (err) {
             next(err);
         }

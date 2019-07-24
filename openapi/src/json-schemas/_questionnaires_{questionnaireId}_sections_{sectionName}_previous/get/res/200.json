@@ -4,23 +4,25 @@
     "required": ["data"],
     "properties": {
         "data": {
-            "type": "array",
+            "type": "object",
             "items": {
                 "type": "object",
                 "required": ["type", "id", "attributes"],
                 "properties": {
                     "type": {
-                        "const": "answers"
+                        "const": "sectionId"
                     },
                     "id": {
                         "type": "string",
-                        "pattern": "^[a-z0-9]{1,30}(--[a-z0-9]{1,30})?(-[a-z0-9]{1,30})*$"
+                        "pattern": "^p--?([a-z0-9-]+)$"
                     },
                     "attributes": {
                         "type": "object",
-                        "patternProperties": {
-                            "^q-": {
-                                "type": ["string", "number", "object", "array", "boolean"]
+                        "required": ["sectionId"],
+                        "properties": {
+                            "sectionId": {
+                                "type": "string",
+                                "pattern": "^q([a-z0-9-]+)$"
                             }
                         }
                     }

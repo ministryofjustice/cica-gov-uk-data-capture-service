@@ -58,14 +58,27 @@ function questionnaireDAL(spec) {
         } catch (err) {
             throw err;
         }
-
         return questionnaire;
+    }
+
+    async function createQuestionnaireSubmitted(questionnaire) {
+        try {
+            await db.query(
+                'INSERT INTO questionnaire_submitted (id, questionnaire, created, modified) VALUES($1, $2, current_timestamp, current_timestamp)',
+                [questionnaire.id, questionnaire]
+            );
+        } catch (err) {
+            throw err;
+        }
+
+        return true;
     }
 
     return Object.freeze({
         createQuestionnaire,
         updateQuestionnaire,
-        getQuestionnaire
+        getQuestionnaire,
+        createQuestionnaireSubmitted
     });
 }
 

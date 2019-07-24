@@ -22,15 +22,146 @@
             "bearerAuth": []
         }
     ],
-    "tags": [{"name": "Answers"}, {"name": "Questionnaires"}],
+    "tags": [
+        {
+            "name": "Answers"
+        },
+        {
+            "name": "Questionnaires"
+        },
+        {
+            "name": "Sections"
+        },
+        {
+            "name": "Progress"
+        }
+    ],
     "paths": {
+        "/questionnaires/progress-entries": {
+            "get": {
+                "tags": ["Progress"],
+                "summary": "Get progress details",
+                "description": "Gets the progress details for a questionnaire instance",
+                "operationId": "getProgressEntries",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/queryQuestionnaireId"
+                    },
+                    {
+                        "$ref": "#/components/parameters/progressEntryId"
+                    },
+                    {
+                        "$ref": "#/components/parameters/progressEntryBefore"
+                    },
+                    {
+                        "$ref": "#/components/parameters/querySectionId"
+                    }
+                ],
+                "x-scopes": ["read-write:questionnaires"],
+                "x-requests": {
+                    "400": {
+                        "parameters": [
+                            {
+                                "name": "questionnaireId",
+                                "example": "NOT-A-UUID"
+                            }
+                        ]
+                    },
+                    "401": {
+                        "auth": false
+                    },
+                    "403": {
+                        "x-scopes": ["create:dummy-resource"]
+                    },
+                    "404": {
+                        "parameters": [
+                            {
+                                "name": "questionnaireId",
+                                "example": "c85cb104-0c15-4a9c-9840-cb1007f098fb"
+                            }
+                        ]
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/vnd.api+json": {
+                                "schema": {
+                                    "$ref": "json-schemas/_questionnaires_progress-entries/get/res/200.json"
+                                },
+                                "example": {
+                                    "data": [
+                                        {
+                                            "type": "progress-entries",
+                                            "id": 1,
+                                            "attributes": {
+                                                "sectionId": "p-applicant-british-citizen-or-eu-national"
+                                            },
+                                            "relationships": {
+                                                "section": {
+                                                    "links": {
+                                                        "related": "/api/v1/questionnaires/e78a8266-bb06-426b-bf06-56211ed56f5f/sections/p-applicant-british-citizen-or-eu-national"
+                                                    }
+                                                }
+                                            },
+                                            "links": {
+                                                "self": "/api/v1/progress-entries/?progressEntryId=1&questionnaireId=e78a8266-bb06-426b-bf06-56211ed56f5f",
+                                                "first": "/api/v1/progress-entries/?progressEntryId=0&questionnaireId=e78a8266-bb06-426b-bf06-56211ed56f5f",
+                                                "prev": "/api/v1/progress-entries/?progressEntryId=0&questionnaireId=e78a8266-bb06-426b-bf06-56211ed56f5f"
+                                            }
+                                        }
+                                    ],
+                                    "included": [
+                                        {
+                                            "links": {
+                                                "self": "/api/v1/questionnaires/e78a8266-bb06-426b-bf06-56211ed56f5f/sections/p-applicant-british-citizen-or-eu-national"
+                                            },
+                                            "type": "sections",
+                                            "id": "p-applicant-british-citizen-or-eu-national",
+                                            "attributes": {
+                                                "id": "p-applicant-british-citizen-or-eu-national",
+                                                "questionnaireId": "e78a8266-bb06-426b-bf06-56211ed56f5f"
+                                            }
+                                        },
+                                        {
+                                            "links": {
+                                                "self": "/api/v1/questionnaires/e78a8266-bb06-426b-bf06-56211ed56f5f/sections/p-applicant-british-citizen-or-eu-national/answers"
+                                            },
+                                            "type": "answers",
+                                            "id": "p-applicant-british-citizen-or-eu-national",
+                                            "attributes": {
+                                                "id": "p-applicant-british-citizen-or-eu-national",
+                                                "questionnaireId": "e78a8266-bb06-426b-bf06-56211ed56f5f"
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/UnauthorizedError"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/Forbidden"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    }
+                }
+            }
+        },
         "/questionnaires": {
             "post": {
                 "tags": ["Questionnaires"],
                 "summary": "Create a new questionnaire from a specified template",
                 "description": "Create a questionnaire",
                 "operationId": "createQuestionnaires",
-                "x-scopes": ["create:questionnaires"],
+                "x-scopes": ["read-write:questionnaires"],
                 "x-requests": {
                     "400": {
                         "requestBody": {
@@ -124,7 +255,160 @@
                 }
             }
         },
-        "/questionnaires/{questionnaireId}/sections/{sectionId}/answers": {
+        "/questionnaires/{questionnaireId}": {
+            "get": {
+                "tags": ["Questionnaires"],
+                "summary": "Get questionnaire instance",
+                "description": "Gets an entire questionnaire instance",
+                "operationId": "getQuestionnaireInstance",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/questionnaireId"
+                    }
+                ],
+                "x-scopes": ["read-write:questionnaires"],
+                "x-requests": {
+                    "400": {
+                        "parameters": [
+                            {
+                                "name": "questionnaireId",
+                                "example": "NOT-A-UUID"
+                            }
+                        ]
+                    },
+                    "401": {
+                        "auth": false
+                    },
+                    "403": {
+                        "x-scopes": ["create:dummy-resource"]
+                    },
+                    "404": {
+                        "parameters": [
+                            {
+                                "name": "questionnaireId",
+                                "example": "c85cb104-0c15-4a9c-9840-cb1007f098fb"
+                            }
+                        ]
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/vnd.api+json": {
+                                "schema": {
+                                    "$ref": "json-schemas/_questionnaires_{questionnaireId}/get/res/200.json"
+                                },
+                                "example": {
+                                    "data": [
+                                        {
+                                            "type": "questionnaire",
+                                            "id": "69031525-1441-492c-9ce3-995ff9faa8bd",
+                                            "attributes": {}
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/UnauthorizedError"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/Forbidden"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    }
+                }
+            }
+        },
+        "/questionnaires/{questionnaireId}/sections/{sectionName}/answers": {
+            "get": {
+                "tags": ["Answers"],
+                "summary": "Get all answers for a questionnaire section",
+                "description": "Gets all answers for a specific section",
+                "operationId": "getSectionAnswers",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/questionnaireId"
+                    },
+                    {
+                        "$ref": "#/components/parameters/sectionName"
+                    }
+                ],
+                "x-scopes": ["read-write:questionnaires"],
+                "x-requests": {
+                    "400": {
+                        "parameters": [
+                            {
+                                "name": "questionnaireId",
+                                "example": "NOT-A-UUID"
+                            },
+                            {
+                                "name": "sectionName",
+                                "example": "NOT-£_A_VALID@S3CTION"
+                            }
+                        ]
+                    },
+                    "401": {
+                        "auth": false
+                    },
+                    "403": {
+                        "x-scopes": ["create:dummy-resource"]
+                    },
+                    "404": {
+                        "parameters": [
+                            {
+                                "name": "questionnaireId",
+                                "example": "285cb104-0c15-4a9c-9840-cb1007f098fb"
+                            },
+                            {
+                                "name": "sectionName",
+                                "example": "applicant-what-is-your-favourite-colour"
+                            }
+                        ]
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/vnd.api+json": {
+                                "schema": {
+                                    "$ref": "json-schemas/_questionnaires_{questionnaireId}_sections_{sectionName}_answers/get/res/200.json"
+                                },
+                                "example": {
+                                    "data": [
+                                        {
+                                            "type": "answers",
+                                            "id": "p-applicant-british-citizen-or-eu-national",
+                                            "attributes": {
+                                                "q-applicant-british-citizen-or-eu-national": true
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/UnauthorizedError"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/Forbidden"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    }
+                }
+            },
             "post": {
                 "tags": ["Answers"],
                 "summary": "Create answer(s) for a specified section",
@@ -135,22 +419,24 @@
                         "$ref": "#/components/parameters/questionnaireId"
                     },
                     {
-                        "$ref": "#/components/parameters/sectionId"
+                        "$ref": "#/components/parameters/sectionName"
                     }
                 ],
-                "x-scopes": ["create:system-answers"],
+                "x-scopes": ["read-write:questionnaires"],
                 "x-requests": {
                     "400": {
                         "requestBody": {
                             "content": {
                                 "application/vnd.api+json": {
                                     "example": {
-                                        "data": {
-                                            "THIS-IS-NOT-A-VALID-PROPERTY-NAME": "answers",
-                                            "attributes": {
-                                                "case-reference": "11\\111111"
+                                        "data": [
+                                            {
+                                                "type": "THIS-IS-NOT-A-VALID-PROPERTY",
+                                                "attributes": {
+                                                    "case-reference": "11\\111111"
+                                                }
                                             }
-                                        }
+                                        ]
                                     }
                                 }
                             }
@@ -166,7 +452,7 @@
                         "parameters": [
                             {
                                 "name": "questionnaireId",
-                                "example": "68653be7-877f-4106-b91e-4ba8dac883f4"
+                                "example": "c85cb104-0c15-4a9c-9840-cb1007f098fb"
                             }
                         ]
                     }
@@ -177,35 +463,37 @@
                     "content": {
                         "application/vnd.api+json": {
                             "schema": {
-                                "$ref": "./json-schemas/_questionnaires_{questionnaireId}_sections_{sectionId}_answers/post/req/201.json"
+                                "$ref": "./json-schemas/_questionnaires_{questionnaireId}_sections_{sectionName}_answers/post/req/200.json"
                             },
                             "example": {
-                                "data": {
-                                    "type": "answers",
-                                    "attributes": {
-                                        "case-reference": "11\\111111"
+                                "data": [
+                                    {
+                                        "type": "answers",
+                                        "attributes": {}
                                     }
-                                }
+                                ]
                             }
                         }
                     }
                 },
                 "responses": {
-                    "201": {
-                        "description": "Created",
+                    "200": {
+                        "description": "Success",
                         "content": {
                             "application/vnd.api+json": {
                                 "schema": {
-                                    "$ref": "./json-schemas/_questionnaires_{questionnaireId}_sections_{sectionId}_answers/post/res/201.json"
+                                    "$ref": "./json-schemas/_questionnaires_{questionnaireId}_sections_{sectionName}_answers/post/res/200.json"
                                 },
                                 "example": {
-                                    "data": {
-                                        "type": "answers",
-                                        "id": "p-some-id",
-                                        "attributes": {
-                                            "case-reference": "11\\111111"
+                                    "data": [
+                                        {
+                                            "type": "answers",
+                                            "id": "p-some-id",
+                                            "attributes": {
+                                                "case-reference": "11\\111111"
+                                            }
                                         }
-                                    }
+                                    ]
                                 }
                             }
                         }
@@ -230,13 +518,13 @@
                 "tags": ["Answers"],
                 "summary": "Get all answers for a questionnaire",
                 "description": "Gets all answers for all sections",
-                "operationId": "getAnswers",
+                "operationId": "getSectionsAnswers",
                 "parameters": [
                     {
                         "$ref": "#/components/parameters/questionnaireId"
                     }
                 ],
-                "x-scopes": ["read:answers"],
+                "x-scopes": ["read-write:questionnaires"],
                 "x-requests": {
                     "400": {
                         "parameters": [
@@ -249,11 +537,14 @@
                     "401": {
                         "auth": false
                     },
+                    "403": {
+                        "x-scopes": ["create:dummy-resource"]
+                    },
                     "404": {
                         "parameters": [
                             {
                                 "name": "questionnaireId",
-                                "example": "68653be7-877f-4106-b91e-4ba8dac883f4"
+                                "example": "c85cb104-0c15-4a9c-9840-cb1007f098fb"
                             }
                         ]
                     }
@@ -298,6 +589,188 @@
                     }
                 }
             }
+        },
+        "/questionnaires/{questionnaireId}/sections/{sectionName}": {
+            "get": {
+                "tags": ["Sections"],
+                "summary": "Get a section of a questionnaire",
+                "description": "Gets a section from a questionnaire instance",
+                "operationId": "getSection",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/questionnaireId"
+                    },
+                    {
+                        "$ref": "#/components/parameters/sectionName"
+                    }
+                ],
+                "x-scopes": ["read-write:questionnaires"],
+                "x-requests": {
+                    "400": {
+                        "parameters": [
+                            {
+                                "name": "questionnaireId",
+                                "example": "NOT-A-UUID"
+                            },
+                            {
+                                "name": "sectionName",
+                                "example": "NOT-£_A_VALID@S3CTION"
+                            }
+                        ]
+                    },
+                    "401": {
+                        "auth": false
+                    },
+                    "403": {
+                        "x-scopes": ["create:dummy-resource"]
+                    },
+                    "404": {
+                        "parameters": [
+                            {
+                                "name": "questionnaireId",
+                                "example": "285cb104-0c15-4a9c-9840-cb1007f098fb"
+                            },
+                            {
+                                "name": "sectionName",
+                                "example": "applicant-what-is-your-favourite-colour"
+                            }
+                        ]
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/vnd.api+json": {
+                                "schema": {
+                                    "$ref": "json-schemas/_questionnaires_{questionnaireId}_sections_{sectionName}/get/res/200.json"
+                                },
+                                "example": {
+                                    "data": [
+                                        {
+                                            "type": "section",
+                                            "id": "p-applicant-british-citizen-or-eu-national",
+                                            "attributes": {
+                                                "required": [
+                                                    "q-applicant-british-citizen-or-eu-national"
+                                                ],
+                                                "errorMessage": {
+                                                    "required": {
+                                                        "q-applicant-british-citizen-or-eu-national": "Select yes if you are a British citizen or EU national"
+                                                    }
+                                                },
+                                                "additionalProperties": false,
+                                                "$schema": "http://json-schema.org/draft-07/schema#",
+                                                "type": "object",
+                                                "properties": {
+                                                    "q-applicant-british-citizen-or-eu-national": {
+                                                        "type": "boolean",
+                                                        "title": "Are you a British citizen or EU national?"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/UnauthorizedError"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/Forbidden"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    }
+                }
+            }
+        },
+        "/questionnaires/{questionnaireId}/sections/{sectionName}/previous": {
+            "get": {
+                "tags": ["Sections"],
+                "summary": "Get a previous section of a questionnaire",
+                "description": "Gets a previous section from a questionnaire instance",
+                "operationId": "getPreviousSection",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/questionnaireId"
+                    },
+                    {
+                        "$ref": "#/components/parameters/sectionName"
+                    }
+                ],
+                "x-scopes": ["read-write:questionnaires"],
+                "x-requests": {
+                    "400": {
+                        "parameters": [
+                            {
+                                "name": "questionnaireId",
+                                "example": "NOT-A-UUID"
+                            },
+                            {
+                                "name": "sectionName",
+                                "example": "NOT-£_A_VALID@S3CTION"
+                            }
+                        ]
+                    },
+                    "401": {
+                        "auth": false
+                    },
+                    "403": {
+                        "x-scopes": ["create:dummy-resource"]
+                    },
+                    "404": {
+                        "parameters": [
+                            {
+                                "name": "questionnaireId",
+                                "example": "285cb104-0c15-4a9c-9840-cb1007f098fb"
+                            },
+                            {
+                                "name": "sectionName",
+                                "example": "applicant-what-is-your-favourite-colour"
+                            }
+                        ]
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/vnd.api+json": {
+                                "schema": {
+                                    "$ref": "json-schemas/_questionnaires_{questionnaireId}_sections_{sectionName}_previous/get/res/200.json"
+                                },
+                                "example": {
+                                    "data": {
+                                        "type": "sectionId",
+                                        "id": "p-applicant-british-citizen-or-eu-national",
+                                        "attributes": {
+                                            "sectionId": "p-applicant-british-citizen-or-eu-national"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/UnauthorizedError"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/Forbidden"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    }
+                }
+            }
         }
     },
     "components": {
@@ -313,7 +786,7 @@
                 "name": "questionnaireId",
                 "in": "path",
                 "required": true,
-                "description": "The id of the specific questionnaire instance. Format UUIDv4.",
+                "description": "The ID of the specific questionnaire instance. Format UUIDv4.",
                 "schema": {
                     "$ref": "./json-schemas/parameters/questionnaireId.json"
                 },
@@ -323,11 +796,61 @@
                 "name": "sectionId",
                 "in": "path",
                 "required": true,
-                "description": "The id of the specific questionnaire section.",
+                "description": "The ID of the specific questionnaire section.",
                 "schema": {
                     "$ref": "./json-schemas/parameters/sectionId.json"
                 },
-                "example": "system"
+                "example": "p-applicant-declaration"
+            },
+            "querySectionId": {
+                "name": "sectionId",
+                "in": "query",
+                "required": false,
+                "description": "The ID of the specific questionnaire section.",
+                "schema": {
+                    "$ref": "./json-schemas/parameters/sectionId.json"
+                },
+                "example": "p-applicant-declaration"
+            },
+            "sectionName": {
+                "name": "sectionName",
+                "in": "path",
+                "required": true,
+                "description": "The name of the specific questionnaire section. sectionId without the p-(-) prefix.",
+                "schema": {
+                    "$ref": "./json-schemas/parameters/sectionName.json"
+                },
+                "example": "applicant-british-citizen-or-eu-national"
+            },
+            "queryQuestionnaireId": {
+                "name": "questionnaireId",
+                "in": "query",
+                "required": true,
+                "description": "The ID of the specific questionnaire instance. Format UUIDv4.",
+                "schema": {
+                    "$ref": "./json-schemas/parameters/questionnaireId.json"
+                },
+                "example": "285cb104-0c15-4a9c-9840-cb1007f098fb"
+            },
+            "progressEntryId": {
+                "name": "progressEntryId",
+                "in": "query",
+                "required": false,
+                "description": "ID of a progress entry",
+                "schema": {
+                    "$ref": "./json-schemas/parameters/progressEntryId.json"
+                },
+                "example": "0"
+            },
+            "progressEntryBefore": {
+                "name": "progressEntryBefore",
+                "in": "query",
+                "required": false,
+                "description": "ID of the section that is after the desired section in the progress",
+                "schema": {
+                    "$ref": "./json-schemas/parameters/sectionId.json"
+                },
+                "example": "p-applicant-british-citizen-or-eu-national"
             }
         },
         "responses": {
@@ -399,7 +922,7 @@
                                 {
                                     "status": 404,
                                     "title": "404 Not Found",
-                                    "detail": "Resource /api/v1/questionnaires/2d7caf89-2c72-469f-b19d-17f2a22270b6/sections/answers does not exist"
+                                    "detail": "Resource does not exist"
                                 }
                             ]
                         }
@@ -418,7 +941,7 @@
                                 {
                                     "status": 409,
                                     "title": "409 conflict",
-                                    "detail": "Endpoint /api/v1/questionnaires/68653be7-877f-4106-b91e-4ba8dac883f3/sections/system/answers accepts only resources of type \"answers\""
+                                    "detail": "Endpoint /api/v1/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/sections/system/answers accepts only resources of type \"answers\""
                                 }
                             ]
                         }

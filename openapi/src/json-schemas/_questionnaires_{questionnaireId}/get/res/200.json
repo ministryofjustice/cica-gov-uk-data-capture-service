@@ -1,0 +1,62 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "required": ["data"],
+    "properties": {
+        "data": {
+            "type": "object",
+            "items": {
+                "type": "object",
+                "required": ["type", "id", "attributes"],
+                "properties": {
+                    "type": {
+                        "const": "questionnaire"
+                    },
+                    "id": {
+                        "type": "string",
+                        "pattern": "^[a-z0-9]{1,30}(--[a-z0-9]{1,30})?(-[a-z0-9]{1,30})*$"
+                    },
+                    "attributes": {
+                        "type": "object",
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "id",
+                                "type",
+                                "routes",
+                                "answers",
+                                "progress",
+                                "sections",
+                                "version"
+                            ],
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "pattern": "^[a-z0-9]{1,30}(--[a-z0-9]{1,30})?(-[a-z0-9]{1,30})*$"
+                                },
+                                "type": {
+                                    "type": "string"
+                                },
+                                "routes": {
+                                    "type": "object"
+                                },
+                                "answers": {
+                                    "type": "object"
+                                },
+                                "progress": {
+                                    "type": "array"
+                                },
+                                "sections": {
+                                    "type": "object"
+                                },
+                                "version": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

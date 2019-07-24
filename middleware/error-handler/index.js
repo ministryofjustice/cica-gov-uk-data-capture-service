@@ -147,6 +147,26 @@ module.exports = async (err, req, res, next) => {
         return res.status(401).json(error);
     }
 
+    if (err.statusCode === 503) {
+        error.errors.push({
+            status: 503,
+            title: '503 Service Unavailable',
+            detail: err.message
+        });
+
+        return res.status(504).json(error);
+    }
+
+    if (err.statusCode === 504) {
+        error.errors.push({
+            status: 504,
+            title: '504 Gateway Timeout',
+            detail: err.message
+        });
+
+        return res.status(504).json(error);
+    }
+
     // Non-operational error
     return next(err);
 };

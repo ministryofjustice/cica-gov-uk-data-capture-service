@@ -2,19 +2,16 @@
     "$schema": "http://json-schema.org/draft-07/schema#",
     "type": "object",
     "required": ["data"],
+    "additionalProperties": false,
     "properties": {
         "data": {
             "type": "array",
             "items": {
                 "type": "object",
-                "required": ["type", "id", "attributes"],
+                "required": ["type", "attributes"],
                 "properties": {
                     "type": {
                         "const": "answers"
-                    },
-                    "id": {
-                        "type": "string",
-                        "pattern": "^[a-z0-9]{1,30}(--[a-z0-9]{1,30})?(-[a-z0-9]{1,30})*$"
                     },
                     "attributes": {
                         "type": "object",
@@ -26,6 +23,9 @@
                     }
                 }
             }
+        },
+        "included": {
+            "type": "array"
         }
     }
 }
