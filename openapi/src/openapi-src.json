@@ -22,7 +22,14 @@
             "bearerAuth": []
         }
     ],
-    "tags": [{"name": "Answers"}, {"name": "Questionnaires"}],
+    "tags": [
+        {
+            "name": "Answers"
+        },
+        {
+            "name": "Questionnaires"
+        }
+    ],
     "paths": {
         "/questionnaires": {
             "post": {
@@ -236,7 +243,7 @@
                         "$ref": "#/components/parameters/questionnaireId"
                     }
                 ],
-                "x-scopes": ["read:answers"],
+                "x-scopes": ["create:answers"],
                 "x-requests": {
                     "400": {
                         "parameters": [
@@ -283,6 +290,169 @@
                                             }
                                         }
                                     ]
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/UnauthorizedError"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    }
+                }
+            }
+        },
+        "/questionnaires/{questionnaireId}/submissions": {
+            "post": {
+                "tags": ["Submissions"],
+                "summary": "Submit a questionnaire",
+                "description": "Persists a questionnaire",
+                "operationId": "SubmitQuestionnaire",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/questionnaireId"
+                    }
+                ],
+                "x-scopes": ["update:questionnaires"],
+                "x-requests": {
+                    "400": {
+                        "requestBody": {
+                            "content": {
+                                "application/vnd.api+json": {
+                                    "example": {
+                                        "data": {
+                                            "THIS-IS-NOT-A-VALID-PROPERTY-NAME": "submissions",
+                                            "attributes": {
+                                                "questionnaireId": "285cb104-0c15-4a9c-9840-cb1007f098fb"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "auth": false
+                    },
+                    "403": {
+                        "x-scopes": ["create:dummy-resource"]
+                    },
+                    "404": {
+                        "parameters": [
+                            {
+                                "name": "questionnaireId",
+                                "example": "68653be7-877f-4106-b91e-4ba8dac883f4"
+                            }
+                        ]
+                    }
+                },
+                "requestBody": {
+                    "description": "Questionnaire ID",
+                    "required": true,
+                    "content": {
+                        "application/vnd.api+json": {
+                            "schema": {
+                                "$ref": "./json-schemas/_questionnaires_{questionnaireId}_submissions/post/req/201.json"
+                            },
+                            "example": {
+                                "data": {
+                                    "type": "submissions",
+                                    "attributes": {
+                                        "questionnaireId": "285cb104-0c15-4a9c-9840-cb1007f098fb"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Success",
+                        "content": {
+                            "application/vnd.api+json": {
+                                "schema": {
+                                    "$ref": "./json-schemas/_questionnaires_{questionnaireId}_submissions/post/res/201.json"
+                                },
+                                "example": {
+                                    "data": {
+                                        "type": "submissions",
+                                        "attributes": {
+                                            "questionnaireId": "285cb104-0c15-4a9c-9840-cb1007f098fb",
+                                            "submitted": true,
+                                            "status": "COMPLETE"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/UnauthorizedError"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/Forbidden"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    }
+                }
+            },
+            "get": {
+                "tags": ["Submissions"],
+                "summary": "Get all answers for a questionnaire",
+                "description": "Gets all answers for all sections",
+                "operationId": "getSubmissions",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/questionnaireId"
+                    }
+                ],
+                "x-scopes": ["read:questionnaires"],
+                "x-requests": {
+                    "400": {
+                        "parameters": [
+                            {
+                                "name": "questionnaireId",
+                                "example": "NOT-A-UUID"
+                            }
+                        ]
+                    },
+                    "401": {
+                        "auth": false
+                    },
+                    "404": {
+                        "parameters": [
+                            {
+                                "name": "questionnaireId",
+                                "example": "68653be7-877f-4106-b91e-4ba8dac883f4"
+                            }
+                        ]
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/vnd.api+json": {
+                                "schema": {
+                                    "$ref": "./json-schemas/_questionnaires_{questionnaireId}_submissions/get/res/200.json"
+                                },
+                                "example": {
+                                    "data": {
+                                        "type": "submissions",
+                                        "attributes": {
+                                            "questionnaireId": "285cb104-0c15-4a9c-9840-cb1007f098fb",
+                                            "submitted": false,
+                                            "status": "IN_PROGRESS"
+                                        }
+                                    }
                                 }
                             }
                         }
