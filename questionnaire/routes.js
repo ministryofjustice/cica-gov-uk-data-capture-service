@@ -39,33 +39,35 @@ router.route('/').post(permissions('create:questionnaires'), async (req, res, ne
     }
 });
 
-router.route('/:questionnaireId/sections/answers').get(permissions('read:answers'), (req, res) => {
-    // /questionnaires/68653be7-877f-4106-b91e-4ba8dac883f3/sections/answers
-    if (req.params.questionnaireId !== '285cb104-0c15-4a9c-9840-cb1007f098fb') {
-        const err = Error(`Resource ${req.originalUrl} does not exist`);
-        err.name = 'HTTPError';
-        err.statusCode = 404;
-        err.error = '404 Not Found';
-        throw err;
-    }
+router
+    .route('/:questionnaireId/sections/answers')
+    .get(permissions('read:questionnaires'), (req, res) => {
+        // /questionnaires/68653be7-877f-4106-b91e-4ba8dac883f3/sections/answers
+        if (req.params.questionnaireId !== '285cb104-0c15-4a9c-9840-cb1007f098fb') {
+            const err = Error(`Resource ${req.originalUrl} does not exist`);
+            err.name = 'HTTPError';
+            err.statusCode = 404;
+            err.error = '404 Not Found';
+            throw err;
+        }
 
-    // Return resource collection
-    const resourceCollection = Object.keys(q.answers).reduce((acc, sectionAnswersId) => {
-        const sectionAnswers = q.answers[sectionAnswersId];
+        // Return resource collection
+        const resourceCollection = Object.keys(q.answers).reduce((acc, sectionAnswersId) => {
+            const sectionAnswers = q.answers[sectionAnswersId];
 
-        acc.push({
-            type: 'answers',
-            id: sectionAnswersId,
-            attributes: sectionAnswers
+            acc.push({
+                type: 'answers',
+                id: sectionAnswersId,
+                attributes: sectionAnswers
+            });
+
+            return acc;
+        }, []);
+
+        res.json({
+            data: resourceCollection
         });
-
-        return acc;
-    }, []);
-
-    res.json({
-        data: resourceCollection
     });
-});
 
 router
     .route('/:questionnaireId/sections/system/answers')
@@ -89,7 +91,7 @@ router
 
 router
     .route('/:questionnaireId/sections/:sectionId/answers')
-    .post(permissions('create:answers'), async (req, res, next) => {
+    .post(permissions('create:questionnaires'), async (req, res, next) => {
         try {
             // There can only every be one "answers" block per section
             // TODO: handle multiple attempts to "create" answers

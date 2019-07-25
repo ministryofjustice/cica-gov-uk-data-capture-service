@@ -5,15 +5,20 @@ const request = require('supertest');
 const {matchersWithOptions} = require('jest-json-schema');
 
 const tokens = {
-    'read:answers':
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJkYXRhLWNhcHR1cmUtc2VydmljZSIsImlzcyI6IiQuYXVkIiwianRpIjoiMjkyMTUwOTktZWVjZS00ZmY4LWFlNmItMTk1MzVmNTA5YjIwIiwic3ViIjoiYXBwbGljYXRpb24tc2VydmljZSIsInNjb3BlIjoicmVhZDphbnN3ZXJzIiwiaWF0IjoxNTU4NjI0NDE5fQ.WLmgv_tQ4yPVkqZce1q6wnMTfLj_UlFWyJvHpPKtBmk',
-    'create:system-answers':
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJkYXRhLWNhcHR1cmUtc2VydmljZSIsImlzcyI6IiQuYXVkIiwianRpIjoiZjEzNzU0ZTAtNjQ0MS00NjA4LWIzNGMtM2ExOGJmNmYxYjY1Iiwic3ViIjoiYXBwbGljYXRpb24tc2VydmljZSIsInNjb3BlIjoiY3JlYXRlOnN5c3RlbS1hbnN3ZXJzIiwiaWF0IjoxNTU4NjI0NTM0fQ.yfN5_5QoOsfNmr4e9RqYkLKEswSpYxcdwNlM9rBfzh4',
     'create:questionnaires':
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJkYXRhLWNhcHR1cmUtc2VydmljZSIsImlzcyI6IiQuYXVkIiwianRpIjoiZTBhYTJjYWItZGE1ZC00MDc2LTlhNmItYzcxN2M2MzlmNmExIiwic3ViIjoiY2ljYS13ZWIiLCJzY29wZSI6ImNyZWF0ZTpxdWVzdGlvbm5haXJlcyIsImlhdCI6MTU1OTA0NzM0Nn0.dC7pwxcyjiBCT5jHX62BwZmc7W02tOkVV0MnLxE3QBQ',
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJkYXRhLWNhcHR1cmUtc2VydmljZSIsImlzcyI6IiQuYXVkIiwianRpIjoiYzVjNzc4ZWQtNTg4NC00N2YwLWFiYzctZTQ1MmZiYWRlYTcyIiwic3ViIjoiJC5hdWQiLCJzY29wZSI6ImNyZWF0ZTpxdWVzdGlvbm5haXJlcyByZWFkOnF1ZXN0aW9ubmFpcmVzIHVwZGF0ZTpxdWVzdGlvbm5haXJlcyBkZWxldGU6cXVlc3Rpb25uYWlyZXMiLCJpYXQiOjE1NjQwNTgyNTF9.Adv1qgj-HiNGxw_0cdYpPO8Fbw12rgJTTqMReJUmFBs',
+    'read:questionnaires':
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJkYXRhLWNhcHR1cmUtc2VydmljZSIsImlzcyI6IiQuYXVkIiwianRpIjoiYzVjNzc4ZWQtNTg4NC00N2YwLWFiYzctZTQ1MmZiYWRlYTcyIiwic3ViIjoiJC5hdWQiLCJzY29wZSI6ImNyZWF0ZTpxdWVzdGlvbm5haXJlcyByZWFkOnF1ZXN0aW9ubmFpcmVzIHVwZGF0ZTpxdWVzdGlvbm5haXJlcyBkZWxldGU6cXVlc3Rpb25uYWlyZXMiLCJpYXQiOjE1NjQwNTgyNTF9.Adv1qgj-HiNGxw_0cdYpPO8Fbw12rgJTTqMReJUmFBs',
+    'update:questionnaires':
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJkYXRhLWNhcHR1cmUtc2VydmljZSIsImlzcyI6IiQuYXVkIiwianRpIjoiYzVjNzc4ZWQtNTg4NC00N2YwLWFiYzctZTQ1MmZiYWRlYTcyIiwic3ViIjoiJC5hdWQiLCJzY29wZSI6ImNyZWF0ZTpxdWVzdGlvbm5haXJlcyByZWFkOnF1ZXN0aW9ubmFpcmVzIHVwZGF0ZTpxdWVzdGlvbm5haXJlcyBkZWxldGU6cXVlc3Rpb25uYWlyZXMiLCJpYXQiOjE1NjQwNTgyNTF9.Adv1qgj-HiNGxw_0cdYpPO8Fbw12rgJTTqMReJUmFBs',
+    'delete:questionnaires':
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJkYXRhLWNhcHR1cmUtc2VydmljZSIsImlzcyI6IiQuYXVkIiwianRpIjoiYzVjNzc4ZWQtNTg4NC00N2YwLWFiYzctZTQ1MmZiYWRlYTcyIiwic3ViIjoiJC5hdWQiLCJzY29wZSI6ImNyZWF0ZTpxdWVzdGlvbm5haXJlcyByZWFkOnF1ZXN0aW9ubmFpcmVzIHVwZGF0ZTpxdWVzdGlvbm5haXJlcyBkZWxldGU6cXVlc3Rpb25uYWlyZXMiLCJpYXQiOjE1NjQwNTgyNTF9.Adv1qgj-HiNGxw_0cdYpPO8Fbw12rgJTTqMReJUmFBs',
+    'create:system-answers':
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJkYXRhLWNhcHR1cmUtc2VydmljZSIsImlzcyI6IiQuYXVkIiwianRpIjoiYzg3YTU3OWMtN2FkNS00MjNhLWEzZTQtYjhlOWM5NmY3MmJjIiwic3ViIjoiYXBwbGljYXRpb24tc2VydmljZSIsInNjb3BlIjoiY3JlYXRlOnN5c3RlbS1hbnN3ZXJzIiwiaWF0IjoxNTYyNzQ4NjY5fQ.SflL5A9JCayd-F3D3Zxoop2I2upttPbfs-L_lCFqMJM',
     'create:dummy-resource':
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJkYXRhLWNhcHR1cmUtc2VydmljZSIsImlzcyI6IiQuYXVkIiwianRpIjoiMDdhMmNkNzYtNjMyNC00OTYwLTk2YTEtNTA3M2MxNDljZTQ5Iiwic3ViIjoiY2ljYS13ZWIiLCJzY29wZSI6ImNyZWF0ZTpkdW1teS1yZXNvdXJjZSIsImlhdCI6MTU2MDE3OTc2MH0.gfYTKMib2_Hu8WBYHl23vzptJTvV6jIDisiHKd0G-wA'
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJkYXRhLWNhcHR1cmUtc2VydmljZSIsImlzcyI6IiQuYXVkIiwianRpIjoiZTAxMWI2NTAtMzA3MC00ZTVkLTk4NTQtMTU2NDI4Y2VkYTQ1Iiwic3ViIjoiJC5hdWQiLCJzY29wZSI6ImNyZWF0ZTpkdW1teS1yZXNvdXJjZSIsImlhdCI6MTU2MzMwOTQyOH0.4MsH7CpH8fGjb3x2qIOQOSYyYjOKBXNTa9yG9y5wpNc'
 };
+
 const createQuestionnaireResponse = require('./test-fixtures/res/post_questionnaire.json');
 const getQuestionnaireResponse = require('./test-fixtures/res/get_questionnaire.json');
 
@@ -436,7 +441,7 @@ describe('/questionnaires/{questionnaireId}/sections/answers', () => {
                     .get(
                         '/api/v1/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/sections/answers'
                     )
-                    .set('Authorization', `Bearer ${tokens['read:answers']}`);
+                    .set('Authorization', `Bearer ${tokens['update:questionnaires']}`);
 
                 expect(res.statusCode).toBe(200);
                 expect(res.type).toBe('application/vnd.api+json');
@@ -469,7 +474,7 @@ describe('/questionnaires/{questionnaireId}/sections/answers', () => {
             it('should There is an issue with the request', async () => {
                 const res = await request(app)
                     .get('/api/v1/questionnaires/NOT-A-UUID/sections/answers')
-                    .set('Authorization', `Bearer ${tokens['read:answers']}`);
+                    .set('Authorization', `Bearer ${tokens['update:questionnaires']}`);
 
                 expect(res.statusCode).toBe(400);
                 expect(res.type).toBe('application/vnd.api+json');
@@ -529,7 +534,347 @@ describe('/questionnaires/{questionnaireId}/sections/answers', () => {
                     .get(
                         '/api/v1/questionnaires/68653be7-877f-4106-b91e-4ba8dac883f4/sections/answers'
                     )
-                    .set('Authorization', `Bearer ${tokens['read:answers']}`);
+                    .set('Authorization', `Bearer ${tokens['update:questionnaires']}`);
+
+                expect(res.statusCode).toBe(404);
+                expect(res.type).toBe('application/vnd.api+json');
+                expect(res.body).toMatchSchema({
+                    $schema: 'http://json-schema.org/draft-07/schema#',
+                    type: 'object',
+                    required: ['errors'],
+                    properties: {
+                        errors: {
+                            type: 'array',
+                            items: {
+                                type: 'object',
+                                required: ['status', 'title', 'detail'],
+                                properties: {
+                                    status: {const: 404},
+                                    title: {const: '404 Not Found'},
+                                    detail: {type: 'string'}
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+        });
+    });
+});
+describe('/questionnaires/{questionnaireId}/submissions', () => {
+    describe('post', () => {
+        describe('201', () => {
+            it('should Success', async () => {
+                const res = await request(app)
+                    .post('/api/v1/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/submissions')
+                    .set('Authorization', `Bearer ${tokens['update:questionnaires']}`)
+                    .set('Content-Type', 'application/vnd.api+json')
+                    .send({
+                        data: {
+                            type: 'submissions',
+                            attributes: {questionnaireId: '285cb104-0c15-4a9c-9840-cb1007f098fb'}
+                        }
+                    });
+
+                expect(res.statusCode).toBe(201);
+                expect(res.type).toBe('application/vnd.api+json');
+                expect(res.body).toMatchSchema({
+                    $schema: 'http://json-schema.org/draft-07/schema#',
+                    type: 'object',
+                    additionalProperties: false,
+                    required: ['data'],
+                    properties: {
+                        data: {
+                            type: 'object',
+                            additionalProperties: false,
+                            required: ['type', 'attributes'],
+                            properties: {
+                                type: {const: 'submissions'},
+                                attributes: {
+                                    type: 'object',
+                                    additionalProperties: false,
+                                    properties: {
+                                        questionnaireId: {
+                                            type: 'string',
+                                            pattern:
+                                                '^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$'
+                                        },
+                                        submitted: {type: 'boolean'},
+                                        status: {
+                                            enum: [
+                                                'NOT_STARTED',
+                                                'IN_PROGRESS',
+                                                'ON_HOLD',
+                                                'COMPLETED',
+                                                'FAILED',
+                                                'CANCELLED'
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+        });
+        describe('400', () => {
+            it('should There is an issue with the request', async () => {
+                const res = await request(app)
+                    .post('/api/v1/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/submissions')
+                    .set('Authorization', `Bearer ${tokens['update:questionnaires']}`)
+                    .set('Content-Type', 'application/vnd.api+json')
+                    .send({
+                        data: {
+                            type: 'submissions',
+                            attributes: {questionnaireId: '285cb104-0c15-4a9c-9840-cb1007f098fb'},
+                            'THIS-IS-NOT-A-VALID-PROPERTY-NAME': 'submissions'
+                        }
+                    });
+
+                expect(res.statusCode).toBe(400);
+                expect(res.type).toBe('application/vnd.api+json');
+                expect(res.body).toMatchSchema({
+                    $schema: 'http://json-schema.org/draft-07/schema#',
+                    type: 'object',
+                    required: ['errors'],
+                    properties: {
+                        errors: {
+                            type: 'array',
+                            items: {
+                                type: 'object',
+                                required: ['status', 'title', 'detail'],
+                                properties: {
+                                    status: {const: 400},
+                                    title: {const: '400 Bad Request'},
+                                    detail: {type: 'string'}
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+        });
+        describe('401', () => {
+            it('should Access token is missing or invalid', async () => {
+                const res = await request(app)
+                    .post('/api/v1/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/submissions')
+                    .set('Content-Type', 'application/vnd.api+json')
+                    .send({
+                        data: {
+                            type: 'submissions',
+                            attributes: {questionnaireId: '285cb104-0c15-4a9c-9840-cb1007f098fb'}
+                        }
+                    });
+
+                expect(res.statusCode).toBe(401);
+                expect(res.type).toBe('application/vnd.api+json');
+                expect(res.body).toMatchSchema({
+                    $schema: 'http://json-schema.org/draft-07/schema#',
+                    type: 'object',
+                    required: ['errors'],
+                    properties: {
+                        errors: {
+                            type: 'array',
+                            items: {
+                                type: 'object',
+                                required: ['status', 'title', 'detail'],
+                                properties: {
+                                    status: {const: 401},
+                                    title: {const: '401 Unauthorized'},
+                                    detail: {type: 'string'}
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+        });
+        describe('403', () => {
+            it("should The JWT doesn't permit access to this endpoint", async () => {
+                const res = await request(app)
+                    .post('/api/v1/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/submissions')
+                    .set('Authorization', `Bearer ${tokens['create:dummy-resource']}`)
+                    .set('Content-Type', 'application/vnd.api+json')
+                    .send({
+                        data: {
+                            type: 'submissions',
+                            attributes: {questionnaireId: '285cb104-0c15-4a9c-9840-cb1007f098fb'}
+                        }
+                    });
+
+                expect(res.statusCode).toBe(403);
+                expect(res.type).toBe('application/vnd.api+json');
+                expect(res.body).toMatchSchema({
+                    $schema: 'http://json-schema.org/draft-07/schema#',
+                    type: 'object',
+                    required: ['errors'],
+                    properties: {
+                        errors: {
+                            type: 'array',
+                            items: {
+                                type: 'object',
+                                required: ['status', 'title', 'detail'],
+                                properties: {
+                                    status: {const: 403},
+                                    title: {const: '403 Forbidden'},
+                                    detail: {type: 'string'}
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+        });
+        describe('404', () => {
+            it('should The specified resource was not found', async () => {
+                const res = await request(app)
+                    .post('/api/v1/questionnaires/68653be7-877f-4106-b91e-4ba8dac883f4/submissions')
+                    .set('Authorization', `Bearer ${tokens['update:questionnaires']}`)
+                    .set('Content-Type', 'application/vnd.api+json')
+                    .send({
+                        data: {
+                            type: 'submissions',
+                            attributes: {questionnaireId: '285cb104-0c15-4a9c-9840-cb1007f098fb'}
+                        }
+                    });
+
+                expect(res.statusCode).toBe(404);
+                expect(res.type).toBe('application/vnd.api+json');
+                expect(res.body).toMatchSchema({
+                    $schema: 'http://json-schema.org/draft-07/schema#',
+                    type: 'object',
+                    required: ['errors'],
+                    properties: {
+                        errors: {
+                            type: 'array',
+                            items: {
+                                type: 'object',
+                                required: ['status', 'title', 'detail'],
+                                properties: {
+                                    status: {const: 404},
+                                    title: {const: '404 Not Found'},
+                                    detail: {type: 'string'}
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+        });
+    });
+    describe('get', () => {
+        describe('200', () => {
+            it('should Success', async () => {
+                const res = await request(app)
+                    .get('/api/v1/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/submissions')
+                    .set('Authorization', `Bearer ${tokens['read:questionnaires']}`);
+
+                expect(res.statusCode).toBe(200);
+                expect(res.type).toBe('application/vnd.api+json');
+                expect(res.body).toMatchSchema({
+                    $schema: 'http://json-schema.org/draft-07/schema#',
+                    type: 'object',
+                    additionalProperties: false,
+                    required: ['data'],
+                    properties: {
+                        data: {
+                            type: 'object',
+                            additionalProperties: false,
+                            required: ['type', 'attributes'],
+                            properties: {
+                                type: {const: 'submissions'},
+                                attributes: {
+                                    type: 'object',
+                                    additionalProperties: false,
+                                    properties: {
+                                        questionnaireId: {
+                                            type: 'string',
+                                            pattern:
+                                                '^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$'
+                                        },
+                                        submitted: {type: 'boolean'},
+                                        status: {
+                                            enum: [
+                                                'NOT_STARTED',
+                                                'IN_PROGRESS',
+                                                'ON_HOLD',
+                                                'COMPLETED',
+                                                'FAILED',
+                                                'CANCELLED'
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+        });
+        describe('400', () => {
+            it('should There is an issue with the request', async () => {
+                const res = await request(app)
+                    .get('/api/v1/questionnaires/NOT-A-UUID/submissions')
+                    .set('Authorization', `Bearer ${tokens['read:questionnaires']}`);
+
+                expect(res.statusCode).toBe(400);
+                expect(res.type).toBe('application/vnd.api+json');
+                expect(res.body).toMatchSchema({
+                    $schema: 'http://json-schema.org/draft-07/schema#',
+                    type: 'object',
+                    required: ['errors'],
+                    properties: {
+                        errors: {
+                            type: 'array',
+                            items: {
+                                type: 'object',
+                                required: ['status', 'title', 'detail'],
+                                properties: {
+                                    status: {const: 400},
+                                    title: {const: '400 Bad Request'},
+                                    detail: {type: 'string'}
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+        });
+        describe('401', () => {
+            it('should Access token is missing or invalid', async () => {
+                const res = await request(app).get(
+                    '/api/v1/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/submissions'
+                );
+
+                expect(res.statusCode).toBe(401);
+                expect(res.type).toBe('application/vnd.api+json');
+                expect(res.body).toMatchSchema({
+                    $schema: 'http://json-schema.org/draft-07/schema#',
+                    type: 'object',
+                    required: ['errors'],
+                    properties: {
+                        errors: {
+                            type: 'array',
+                            items: {
+                                type: 'object',
+                                required: ['status', 'title', 'detail'],
+                                properties: {
+                                    status: {const: 401},
+                                    title: {const: '401 Unauthorized'},
+                                    detail: {type: 'string'}
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+        });
+        describe('404', () => {
+            it('should The specified resource was not found', async () => {
+                const res = await request(app)
+                    .get('/api/v1/questionnaires/68653be7-877f-4106-b91e-4ba8dac883f4/submissions')
+                    .set('Authorization', `Bearer ${tokens['read:questionnaires']}`);
 
                 expect(res.statusCode).toBe(404);
                 expect(res.type).toBe('application/vnd.api+json');
