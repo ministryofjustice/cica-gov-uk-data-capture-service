@@ -110,8 +110,7 @@ module.exports = async (err, req, res, next) => {
         error.errors.push(...jsonApiErrors);
         error.meta = {
             schema: errorInfo.schema,
-            answers: errorInfo.answers,
-            canswers: errorInfo.coercedAnswers
+            answers: errorInfo.answers
         };
 
         return res.status(400).json(error);
