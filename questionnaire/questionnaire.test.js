@@ -21,6 +21,7 @@ const tokens = {
 
 const createQuestionnaireResponse = require('./test-fixtures/res/post_questionnaire.json');
 const getQuestionnaireResponse = require('./test-fixtures/res/get_questionnaire.json');
+const postSubmissionQueueResponse = require('./test-fixtures/res/post_submissionQueue.json');
 
 // mock the DAL db integration
 jest.doMock('./questionnaire-dal.js', () =>
@@ -39,7 +40,34 @@ jest.doMock('./questionnaire-dal.js', () =>
                 `Questionnaire "${questionnaireId}" not found`
             );
         },
-        updateQuestionnaire: () => undefined
+        updateQuestionnaire: () => undefined,
+        getQuestionnaireSubmissionStatus(questionnaireId) {
+            if (questionnaireId === '285cb104-0c15-4a9c-9840-cb1007f098fb') {
+                return {
+                    rows: [
+                        {
+                            submission_status: 'NOT_STARTED'
+                        }
+                    ]
+                };
+            }
+
+            throw new VError(
+                {
+                    name: 'ResourceNotFound'
+                },
+                `Questionnaire "${questionnaireId}" not found`
+            );
+        },
+        updateQuestionnaireSubmissionStatus: () => undefined,
+        createQuestionnaireSubmission: () => true,
+        retrieveCaseReferenceNumber: () => '12345678'
+    }))
+);
+
+jest.doMock('../services/message-bus/index.js', () =>
+    jest.fn(() => ({
+        post: () => postSubmissionQueueResponse
     }))
 );
 
@@ -564,7 +592,7 @@ describe('/questionnaires/{questionnaireId}/sections/answers', () => {
 describe('/questionnaires/{questionnaireId}/submissions', () => {
     describe('post', () => {
         describe('201', () => {
-            it('should Success', async () => {
+            it('should Created', async () => {
                 const res = await request(app)
                     .post('/api/v1/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/submissions')
                     .set('Authorization', `Bearer ${tokens['update:questionnaires']}`)
@@ -609,7 +637,13 @@ describe('/questionnaires/{questionnaireId}/submissions', () => {
                                                 'FAILED',
                                                 'CANCELLED'
                                             ]
-                                        }
+                                        },
+                                        caseReferenceNumber: {
+                                            type: ['string', 'null'],
+                                            pattern: '^[0-9]{2}\\\\[0-9]{6}$'
+                                        },
+                                        applicantEmail: {type: ['string', 'null'], format: 'email'},
+                                        applicantName: {type: ['string', 'null']}
                                     }
                                 }
                             }
@@ -803,7 +837,13 @@ describe('/questionnaires/{questionnaireId}/submissions', () => {
                                                 'FAILED',
                                                 'CANCELLED'
                                             ]
-                                        }
+                                        },
+                                        caseReferenceNumber: {
+                                            type: ['string', 'null'],
+                                            pattern: '^[0-9]{2}\\\\[0-9]{6}$'
+                                        },
+                                        applicantEmail: {type: ['string', 'null'], format: 'email'},
+                                        applicantName: {type: ['string', 'null']}
                                     }
                                 }
                             }

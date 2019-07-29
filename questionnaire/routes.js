@@ -109,4 +109,101 @@ router
         }
     });
 
+router
+    .route('/:questionnaireId/submissions')
+    .get(permissions('read:questionnaires'), async (req, res, next) => {
+        try {
+            const {questionnaireId} = req.params;
+            const questionnaireService = createQuestionnaireService({logger: req.log});
+            const result = await questionnaireService.getQuestionnaireSubmissionStatus(
+                questionnaireId
+            );
+            const submissionStatus = result.rows && result.rows[0].submission_status;
+            // the default value for this column is "NOT_STARTED", so if it doesn't
+            // exist, then it must not be a valid questionnaire ID.
+            if (!submissionStatus) {
+                const err = Error(
+                    `Questionnaire with questionnaireId "${questionnaireId}" does not exist`
+                );
+                err.name = 'HTTPError';
+                err.statusCode = 404;
+                err.error = '404 Not Found';
+                throw err;
+            }
+
+            const response = await questionnaireService.getSubmissionResponseData({
+                questionnaireId,
+                submissionStatus
+            });
+
+            if (response.data.attributes.submitted) {
+                await questionnaireService.updateQuestionnaireSubmissionStatus(
+                    questionnaireId,
+                    'COMPLETED'
+                );
+                response.data.attributes.status = 'COMPLETED';
+                await questionnaireService.submitQuestionnaire(questionnaireId);
+            }
+
+            // // const notificationResponse = {body: 'Message sent'};
+            // const notificationResponse = await messageBus.post('NotificationQueue', {
+            //     templateId: '1ddf1d87-09b3-4a2b-aa27-d73823f4a886',
+            //     email_address: applicantEmailAddress,
+            //     personalisation: {
+            //         email_address: applicantEmailAddress,
+            //         applicant_name: applicantName,
+            //         case_reference: caseReferenceNumber
+            //     }
+            // });
+
+            res.status(200).json(response);
+        } catch (err) {
+            next(err);
+        }
+    })
+    .post(permissions('update:questionnaires'), async (req, res, next) => {
+        try {
+            const {questionnaireId} = req.params;
+            const questionnaireService = createQuestionnaireService({logger: req.log});
+            const result = await questionnaireService.getQuestionnaireSubmissionStatus(
+                questionnaireId
+            );
+            const submissionStatus = result.rows && result.rows[0].submission_status;
+
+            // the default value for this column is "NOT_STARTED", so if it doesn't
+            // exist, then it must not be a valid questionnaire ID.
+            if (!submissionStatus) {
+                const err = Error(
+                    `Questionnaire with questionnaireId "${questionnaireId}" does not exist`
+                );
+                err.name = 'HTTPError';
+                err.statusCode = 404;
+                err.error = '404 Not Found';
+                throw err;
+            }
+
+            const response = await questionnaireService.getSubmissionResponseData({
+                questionnaireId,
+                submissionStatus
+            });
+
+            // already done? return asap.
+            if (submissionStatus === 'COMPLETED') {
+                res.status(200).json(response);
+            }
+
+            if (submissionStatus === 'IN_PROGRESS') {
+                res.status(200).json(response);
+            }
+
+            if (submissionStatus === 'NOT_STARTED') {
+                await questionnaireService.startSubmission(questionnaireId);
+                response.data.attributes.status = 'IN_PROGRESS';
+                res.status(201).json(response);
+            }
+        } catch (err) {
+            next(err);
+        }
+    });
+
 module.exports = router;

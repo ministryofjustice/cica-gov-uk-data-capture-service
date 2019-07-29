@@ -7,6 +7,7 @@ const createQRouter = require('q-router');
 const uuidv4 = require('uuid/v4');
 const templates = require('./templates');
 const createQuestionaireDAL = require('./questionnaire-dal');
+const createMessageBusCaller = require('../services/message-bus');
 
 function createQuestionnaireService(spec) {
     const {logger} = spec;
@@ -19,6 +20,11 @@ function createQuestionnaireService(spec) {
     }); // options can be passed, e.g. {allErrors: true}
 
     AjvErrors(ajv);
+
+    async function getQuestionnaire(questionnaireId) {
+        const questionnaire = await db.getQuestionnaire(questionnaireId);
+        return questionnaire;
+    }
 
     async function createQuestionnaire(templateName) {
         if (!(templateName in templates)) {
@@ -43,10 +49,14 @@ function createQuestionnaireService(spec) {
         };
     }
 
-    async function getQuestionnaire(questionnaireId) {
-        const questionnaire = await db.getQuestionnaire(questionnaireId);
+    async function getQuestionnaireSubmissionStatus(questionnaireId) {
+        const submissionStatus = await db.getQuestionnaireSubmissionStatus(questionnaireId);
 
-        return questionnaire;
+        return submissionStatus;
+    }
+
+    async function updateQuestionnaireSubmissionStatus(questionnaireId, submissionStatus) {
+        await db.updateQuestionnaireSubmissionStatus(questionnaireId, submissionStatus);
     }
 
     function getSection(sectionId, qRouter) {
@@ -154,9 +164,107 @@ function createQuestionnaireService(spec) {
         return answerResource;
     }
 
+    async function retrieveCaseReferenceNumber(questionnaireId) {
+        // TODO: this is here temporarily until the message bus queue addition actually
+        // kicks things off properly behind the scenes. after that is the case
+        // then this comment and the line below (the return) can be remove.
+        // return '12\\123456';
+        const result = await getQuestionnaire(questionnaireId);
+        const {questionnaire} = result.rows && result.rows[0];
+        const caseReference =
+            questionnaire.answers &&
+            questionnaire.answers.system &&
+            questionnaire.answers.system['case-reference'];
+        if (caseReference) {
+            return caseReference;
+        }
+
+        return null;
+    }
+
+    async function startSubmission(questionnaireId) {
+        await updateQuestionnaireSubmissionStatus(questionnaireId, 'IN_PROGRESS');
+        const messageBus = createMessageBusCaller({logger});
+        const submissionResponse = await messageBus.post('submissionQueue', {
+            applicationId: questionnaireId
+        });
+        if (
+            !submissionResponse ||
+            !submissionResponse.body ||
+            submissionResponse.body !== 'Message sent'
+        ) {
+            await updateQuestionnaireSubmissionStatus(questionnaireId, 'FAILED');
+            await db.createQuestionnaireSubmission(questionnaireId, 'FAILED');
+        }
+    }
+
+    async function getSubmissionResponseData({questionnaireId, submissionStatus = undefined}) {
+        const response = {
+            data: {
+                type: 'submissions',
+                attributes: {
+                    questionnaireId,
+                    submitted: false,
+                    status: submissionStatus,
+                    caseReferenceNumber: null,
+                    applicantEmail: null,
+                    applicantName: null
+                }
+            }
+        };
+
+        // if the case reference number is in the database it means that the questionnaire
+        // has been submitted.
+        const caseReferenceNumber = await retrieveCaseReferenceNumber(questionnaireId);
+
+        if (caseReferenceNumber !== null) {
+            response.data.attributes.submitted = true;
+        }
+        if (response.data.attributes.submitted) {
+            const resultQuestionnaire = await getQuestionnaire(questionnaireId);
+            const {questionnaire} = resultQuestionnaire.rows && resultQuestionnaire.rows[0];
+            const questionAnswers = questionnaire.answers;
+            let applicantEmail = null;
+            let applicantName = null;
+            if (questionAnswers['p-applicant-enter-your-email-address']) {
+                applicantEmail =
+                    questionAnswers['p-applicant-enter-your-email-address'][
+                        'q-applicant-email-address'
+                    ];
+            }
+            if (questionAnswers['p-applicant-enter-your-name']) {
+                applicantName = `${
+                    questionAnswers['p-applicant-enter-your-name']['q-applicant-name-title']
+                } ${questionAnswers['p-applicant-enter-your-name']['q-applicant-name-firstname']} ${
+                    questionAnswers['p-applicant-enter-your-name']['q-applicant-name-lastname']
+                }`;
+            }
+            response.data.attributes.caseReferenceNumber = caseReferenceNumber;
+            response.data.attributes.applicantEmail = applicantEmail;
+            response.data.attributes.applicantName = applicantName;
+        }
+
+        return response;
+    }
+
+    async function submitQuestionnaire(questionnaireId) {
+        try {
+            await db.createQuestionnaireSubmission(questionnaireId, 'COMPLETED');
+        } catch (err) {
+            throw err;
+        }
+    }
+
     return Object.freeze({
         createQuestionnaire,
-        createAnswers
+        createAnswers,
+        getQuestionnaire,
+        getQuestionnaireSubmissionStatus,
+        updateQuestionnaireSubmissionStatus,
+        startSubmission,
+        getSubmissionResponseData,
+        submitQuestionnaire,
+        retrieveCaseReferenceNumber
     });
 }
 
