@@ -621,6 +621,14 @@ describe('/questionnaires/{questionnaireId}/submissions', () => {
                                 attributes: {
                                     type: 'object',
                                     additionalProperties: false,
+                                    required: [
+                                        'questionnaireId',
+                                        'submitted',
+                                        'status',
+                                        'caseReferenceNumber',
+                                        'applicantEmail',
+                                        'applicantName'
+                                    ],
                                     properties: {
                                         questionnaireId: {
                                             type: 'string',
@@ -821,6 +829,14 @@ describe('/questionnaires/{questionnaireId}/submissions', () => {
                                 attributes: {
                                     type: 'object',
                                     additionalProperties: false,
+                                    required: [
+                                        'questionnaireId',
+                                        'submitted',
+                                        'status',
+                                        'caseReferenceNumber',
+                                        'applicantEmail',
+                                        'applicantName'
+                                    ],
                                     properties: {
                                         questionnaireId: {
                                             type: 'string',
