@@ -144,17 +144,6 @@ router
                 await questionnaireService.submitQuestionnaire(questionnaireId);
             }
 
-            // // const notificationResponse = {body: 'Message sent'};
-            // const notificationResponse = await messageBus.post('NotificationQueue', {
-            //     templateId: '1ddf1d87-09b3-4a2b-aa27-d73823f4a886',
-            //     email_address: applicantEmailAddress,
-            //     personalisation: {
-            //         email_address: applicantEmailAddress,
-            //         applicant_name: applicantName,
-            //         case_reference: caseReferenceNumber
-            //     }
-            // });
-
             res.status(200).json(response);
         } catch (err) {
             next(err);
