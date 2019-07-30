@@ -254,13 +254,11 @@ function createQuestionnaireService(spec) {
     return Object.freeze({
         createQuestionnaire,
         createAnswers,
-        getQuestionnaire,
         getQuestionnaireSubmissionStatus,
         updateQuestionnaireSubmissionStatus,
         startSubmission,
         getSubmissionResponseData,
-        submitQuestionnaire,
-        retrieveCaseReferenceNumber
+        submitQuestionnaire
     });
 }
 
