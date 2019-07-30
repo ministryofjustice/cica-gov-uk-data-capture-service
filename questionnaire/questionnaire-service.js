@@ -165,10 +165,6 @@ function createQuestionnaireService(spec) {
     }
 
     async function retrieveCaseReferenceNumber(questionnaireId) {
-        // TODO: this is here temporarily until the message bus queue addition actually
-        // kicks things off properly behind the scenes. after that is the case
-        // then this comment and the line below (the return) can be remove.
-        // return '12\\123456';
         const result = await getQuestionnaire(questionnaireId);
         const {questionnaire} = result.rows && result.rows[0];
         const caseReference =
