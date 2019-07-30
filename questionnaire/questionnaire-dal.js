@@ -63,15 +63,14 @@ function questionnaireDAL(spec) {
     }
 
     async function getQuestionnaireSubmissionStatus(questionnaireId) {
-        let submissionStatus;
+        let result;
 
         try {
-            submissionStatus = await db.query(
-                'SELECT submission_status FROM questionnaire WHERE id = $1',
-                [questionnaireId]
-            );
+            result = await db.query('SELECT submission_status FROM questionnaire WHERE id = $1', [
+                questionnaireId
+            ]);
 
-            if (submissionStatus.rows.length === 0) {
+            if (result.rows.length === 0) {
                 // No instance was found
                 throw new VError(
                     {
@@ -84,7 +83,7 @@ function questionnaireDAL(spec) {
             throw err;
         }
 
-        return submissionStatus;
+        return result.rows[0].submission_status;
     }
 
     async function updateQuestionnaireSubmissionStatus(questionnaireId, submissionStatus) {

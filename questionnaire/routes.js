@@ -115,10 +115,9 @@ router
         try {
             const {questionnaireId} = req.params;
             const questionnaireService = createQuestionnaireService({logger: req.log});
-            const result = await questionnaireService.getQuestionnaireSubmissionStatus(
+            const submissionStatus = await questionnaireService.getQuestionnaireSubmissionStatus(
                 questionnaireId
             );
-            const submissionStatus = result.rows && result.rows[0].submission_status;
             // the default value for this column is "NOT_STARTED", so if it doesn't
             // exist, then it must not be a valid questionnaire ID.
             if (!submissionStatus) {
@@ -165,10 +164,9 @@ router
         try {
             const {questionnaireId} = req.params;
             const questionnaireService = createQuestionnaireService({logger: req.log});
-            const result = await questionnaireService.getQuestionnaireSubmissionStatus(
+            const submissionStatus = await questionnaireService.getQuestionnaireSubmissionStatus(
                 questionnaireId
             );
-            const submissionStatus = result.rows && result.rows[0].submission_status;
 
             // the default value for this column is "NOT_STARTED", so if it doesn't
             // exist, then it must not be a valid questionnaire ID.
