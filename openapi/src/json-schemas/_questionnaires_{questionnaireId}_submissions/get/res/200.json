@@ -32,14 +32,7 @@
                             "type": "boolean"
                         },
                         "status": {
-                            "enum": [
-                                "NOT_STARTED",
-                                "IN_PROGRESS",
-                                "ON_HOLD",
-                                "COMPLETED",
-                                "FAILED",
-                                "CANCELLED"
-                            ]
+                            "enum": ["NOT_STARTED", "IN_PROGRESS", "COMPLETED", "FAILED"]
                         },
                         "caseReferenceNumber": {
                             "type": ["string", "null"],
