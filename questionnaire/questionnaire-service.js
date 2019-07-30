@@ -272,10 +272,7 @@ function createQuestionnaireService(spec) {
         createQuestionnaire,
         createAnswers,
         getQuestionnaireSubmissionStatus,
-        updateQuestionnaireSubmissionStatus,
-        startSubmission,
-        getSubmissionResponseData,
-        submitQuestionnaire
+        getSubmissionResponseData
     });
 }
 
