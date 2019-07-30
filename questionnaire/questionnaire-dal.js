@@ -64,7 +64,6 @@ function questionnaireDAL(spec) {
 
     async function getQuestionnaireSubmissionStatus(questionnaireId) {
         let result;
-
         try {
             result = await db.query('SELECT submission_status FROM questionnaire WHERE id = $1', [
                 questionnaireId

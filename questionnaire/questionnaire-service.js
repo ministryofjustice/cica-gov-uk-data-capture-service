@@ -194,61 +194,78 @@ function createQuestionnaireService(spec) {
         }
     }
 
-    async function getSubmissionResponseData({questionnaireId, submissionStatus = undefined}) {
-        const response = {
-            data: {
-                type: 'submissions',
-                attributes: {
-                    questionnaireId,
-                    submitted: false,
-                    status: submissionStatus,
-                    caseReferenceNumber: null,
-                    applicantEmail: null,
-                    applicantName: null
-                }
-            }
-        };
-
-        // if the case reference number is in the database it means that the questionnaire
-        // has been submitted.
-        const caseReferenceNumber = await retrieveCaseReferenceNumber(questionnaireId);
-
-        if (caseReferenceNumber !== null) {
-            response.data.attributes.submitted = true;
-        }
-        if (response.data.attributes.submitted) {
-            const resultQuestionnaire = await getQuestionnaire(questionnaireId);
-            const {questionnaire} = resultQuestionnaire.rows && resultQuestionnaire.rows[0];
-            const questionAnswers = questionnaire.answers;
-            let applicantEmail = null;
-            let applicantName = null;
-            if (questionAnswers['p-applicant-enter-your-email-address']) {
-                applicantEmail =
-                    questionAnswers['p-applicant-enter-your-email-address'][
-                        'q-applicant-email-address'
-                    ];
-            }
-            if (questionAnswers['p-applicant-enter-your-name']) {
-                applicantName = `${
-                    questionAnswers['p-applicant-enter-your-name']['q-applicant-name-title']
-                } ${questionAnswers['p-applicant-enter-your-name']['q-applicant-name-firstname']} ${
-                    questionAnswers['p-applicant-enter-your-name']['q-applicant-name-lastname']
-                }`;
-            }
-            response.data.attributes.caseReferenceNumber = caseReferenceNumber;
-            response.data.attributes.applicantEmail = applicantEmail;
-            response.data.attributes.applicantName = applicantName;
-        }
-
-        return response;
-    }
-
     async function submitQuestionnaire(questionnaireId) {
         try {
             await db.createQuestionnaireSubmission(questionnaireId, 'COMPLETED');
         } catch (err) {
             throw err;
         }
+    }
+
+    async function getSubmissionResponseData(questionnaireId) {
+        const submissionStatus = await getQuestionnaireSubmissionStatus(questionnaireId);
+
+        let submitted = false;
+        let status = 'NOT_STARTED';
+        let caseReferenceNumber = null;
+        let applicantEmail = null;
+        let applicantName = null;
+
+        // kick things off.
+        if (submissionStatus === 'NOT_STARTED') {
+            await updateQuestionnaireSubmissionStatus(questionnaireId, 'IN_PROGRESS');
+            await startSubmission(questionnaireId);
+        }
+
+        // if the case reference number is in the database it means that the questionnaire
+        // has been submitted.
+        caseReferenceNumber = await retrieveCaseReferenceNumber(questionnaireId);
+
+        // if (caseReferenceNumber !== null) {
+        //     submitted = true;
+        // }
+        // if the caseReferenceNumber exists, then the submission is COMPLETE.
+        if (caseReferenceNumber) {
+            await updateQuestionnaireSubmissionStatus(questionnaireId, 'COMPLETED');
+            await submitQuestionnaire(questionnaireId);
+        }
+
+        submitted = !!caseReferenceNumber;
+        status = await getQuestionnaireSubmissionStatus(questionnaireId);
+
+        // TODO: abstract this out.
+        const resultQuestionnaire = await getQuestionnaire(questionnaireId);
+        const {questionnaire} = resultQuestionnaire.rows && resultQuestionnaire.rows[0];
+        const questionAnswers = questionnaire.answers;
+        if (questionAnswers['p-applicant-enter-your-email-address']) {
+            applicantEmail =
+                questionAnswers['p-applicant-enter-your-email-address'][
+                    'q-applicant-email-address'
+                ];
+        }
+        if (questionAnswers['p-applicant-enter-your-name']) {
+            applicantName = `${
+                questionAnswers['p-applicant-enter-your-name']['q-applicant-name-title']
+            } ${questionAnswers['p-applicant-enter-your-name']['q-applicant-name-firstname']} ${
+                questionAnswers['p-applicant-enter-your-name']['q-applicant-name-lastname']
+            }`;
+        }
+
+        const response = {
+            data: {
+                type: 'submissions',
+                attributes: {
+                    questionnaireId,
+                    submitted,
+                    status,
+                    caseReferenceNumber,
+                    applicantEmail,
+                    applicantName
+                }
+            }
+        };
+
+        return response;
     }
 
     return Object.freeze({

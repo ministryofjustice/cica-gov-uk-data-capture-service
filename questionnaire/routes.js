@@ -130,19 +130,7 @@ router
                 throw err;
             }
 
-            const response = await questionnaireService.getSubmissionResponseData({
-                questionnaireId,
-                submissionStatus
-            });
-
-            if (response.data.attributes.submitted) {
-                await questionnaireService.updateQuestionnaireSubmissionStatus(
-                    questionnaireId,
-                    'COMPLETED'
-                );
-                response.data.attributes.status = 'COMPLETED';
-                await questionnaireService.submitQuestionnaire(questionnaireId);
-            }
+            const response = await questionnaireService.getSubmissionResponseData(questionnaireId);
 
             res.status(200).json(response);
         } catch (err) {
@@ -169,24 +157,12 @@ router
                 throw err;
             }
 
-            const response = await questionnaireService.getSubmissionResponseData({
-                questionnaireId,
-                submissionStatus
-            });
-
-            // already done? return asap.
-            if (submissionStatus === 'COMPLETED') {
-                res.status(200).json(response);
-            }
-
-            if (submissionStatus === 'IN_PROGRESS') {
-                res.status(200).json(response);
-            }
+            const response = await questionnaireService.getSubmissionResponseData(questionnaireId);
 
             if (submissionStatus === 'NOT_STARTED') {
-                await questionnaireService.startSubmission(questionnaireId);
-                response.data.attributes.status = 'IN_PROGRESS';
                 res.status(201).json(response);
+            } else {
+                res.status(200).json(response);
             }
         } catch (err) {
             next(err);
