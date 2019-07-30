@@ -10,7 +10,7 @@ spec:
         app: dcs-app-uat
     spec:
       containers:
-      - name: data-capture-service 
+      - name: data-capture-service
         image: 754256621582.dkr.ecr.eu-west-2.amazonaws.com/cica/cica-repo-uat:latest
         imagePullPolicy: Always
         ports:
