@@ -12,12 +12,15 @@ const questionnaireRouter = require('./questionnaire/routes');
 const app = express();
 const logger = pino({
     level: process.env.DCS_LOG_LEVEL,
-    prettyPrint: {
-        levelFirst: true,
-        colorize: true,
-        translateTime: true
-        // errorProps: 'req,res'
-    },
+    prettyPrint:
+        process.env.NODE_ENV === 'production'
+            ? false
+            : {
+                  levelFirst: true,
+                  colorize: true,
+                  translateTime: true
+                  // errorProps: 'req,res'
+              },
     customLogLevel: (res, err) => {
         if (res.statusCode >= 400 && res.statusCode < 500) {
             return 'warn';
