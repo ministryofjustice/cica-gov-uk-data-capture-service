@@ -157,6 +157,9 @@ router
                 throw err;
             }
 
+            // check all answers are correct.
+            await questionnaireService.validateAllAnswers(questionnaireId);
+
             const response = await questionnaireService.getSubmissionResponseData(questionnaireId);
 
             if (submissionStatus === 'NOT_STARTED') {

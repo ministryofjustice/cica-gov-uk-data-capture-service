@@ -87,6 +87,18 @@ module.exports = async (err, req, res, next) => {
         return res.status(400).json(error);
     }
 
+    // questionnaire submission bulk error response.
+    if (err.name === 'JSONSchemaValidationErrors') {
+        VError.info(err).schemaErrors.forEach(schemaError => {
+            error.errors.push({
+                status: 400,
+                title: 'JSONSchemaValidationError',
+                detail: schemaError
+            });
+        });
+        return res.status(400).json(error);
+    }
+
     if (err.statusCode === 400) {
         error.errors.push({
             status: 400,
