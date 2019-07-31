@@ -93,6 +93,16 @@ function questionnaireDAL(spec) {
                 'UPDATE questionnaire SET submission_status = $1, modified = current_timestamp WHERE id = $2',
                 [submissionStatus, questionnaireId]
             );
+            const resultCheck = await getQuestionnaireSubmissionStatus(questionnaireId);
+            if (resultCheck !== submissionStatus) {
+                // No instance was found
+                throw new VError(
+                    {
+                        name: 'UpdateNotSuccessful'
+                    },
+                    `Questionnaire "${questionnaireId}" submission status not successfully updated to "${submissionStatus}"`
+                );
+            }
         } catch (err) {
             throw err;
         }
