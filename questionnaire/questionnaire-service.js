@@ -79,17 +79,11 @@ function createQuestionnaireService(spec) {
                 context: currentSection.context
             };
         } else {
-            // A section id can be either format: p-some-id or p--some-id
-            // Both formats will never coexist so we can safely check for either
-            // PITA!
-            section = qRouter.current(`p-${sectionId}`);
+            // Ensure the requested sectionId is available
+            section = qRouter.current(sectionId);
 
             if (!section) {
-                section = qRouter.current(`p--${sectionId}`);
-
-                if (!section) {
-                    throw new VError(`Section "${sectionId}" not found`);
-                }
+                throw new VError(`Section "${sectionId}" not found`);
             }
         }
 
@@ -99,6 +93,8 @@ function createQuestionnaireService(spec) {
     async function createAnswers(questionnaireId, sectionId, answers) {
         // TODO: throw if more than one request to create same answers
 
+        // Make a copy of the supplied answers. These will be returned if they fail validation
+        const rawAnswers = JSON.parse(JSON.stringify(answers));
         let answerResource;
 
         try {
@@ -116,6 +112,7 @@ function createQuestionnaireService(spec) {
             const sectionSchema = questionnaire.sections[section.id];
             const validate = ajv.compile(sectionSchema);
             const valid = validate(answers);
+
             if (!valid) {
                 // TODO: Refactor errorhandler to accept a logger and move this in to it
                 logger.error({err: validate.errors}, 'SCHEMA VALIDATION FAILED');
@@ -123,6 +120,8 @@ function createQuestionnaireService(spec) {
                 const validationError = new VError({
                     name: 'JSONSchemaValidationError',
                     info: {
+                        schema: sectionSchema,
+                        answers: rawAnswers,
                         schemaErrors: validate.errors
                     }
                 });

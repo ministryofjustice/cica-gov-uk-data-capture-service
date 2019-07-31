@@ -20,50 +20,22 @@ module.exports = async (err, req, res, next) => {
         return res.status(400).json(error);
     }
 
-    /*
-        {
-            "stack": "Error: should be equal to one of the allowed values\n    at /usr/src/app/node_modules/express-openapi-validator/dist/middlewares/openapi.request.validator.js:57:32\n    at Layer.handle [as handle_request] (/usr/src/app/node_modules/express/lib/router/layer.js:95:5)\n    at trim_prefix (/usr/src/app/node_modules/express/lib/router/index.js:317:13)\n    at /usr/src/app/node_modules/express/lib/router/index.js:284:7\n    at Function.process_params (/usr/src/app/node_modules/express/lib/router/index.js:335:12)\n    at next (/usr/src/app/node_modules/express/lib/router/index.js:275:10)\n    at /usr/src/app/node_modules/express-openapi-validator/dist/middlewares/openapi.multipart.js:40:13\n    at Layer.handle [as handle_request] (/usr/src/app/node_modules/express/lib/router/layer.js:95:5)\n    at trim_prefix (/usr/src/app/node_modules/express/lib/router/index.js:317:13)",
-            "message": "should be equal to one of the allowed values",
-            "status": 400,
-            "errors": [
-                {
-                    "path": "data.type",
-                    "errorCode": "enum.openapi.validation",
-                    "message": "should be equal to one of the allowed values",
-                    "location": "body"
-                },
-                {
-                    "path": "data.attributes.templateName",
-                    "errorCode": "type.openapi.validation",
-                    "message": "should be string",
-                    "location": "body"
-                }
-            ],
-            "name": "Error"
-        }
-
-       {
-        "errors": [
-            {
-            "status": "403",
-            "source": { "pointer": "/data/attributes/secretPowers" },
-            "detail": "Editing secret powers is not authorized on Sundays."
-            },
-            {
-            "status": "422",
-            "source": { "pointer": "/data/attributes/volume" },
-            "detail": "Volume does not, in fact, go to 11."
-            },
-            {
-            "status": "500",
-            "source": { "pointer": "/data/attributes/reputation" },
-            "title": "The backend responded with an error",
-            "detail": "Reputation service not responding after three requests."
-            }
-        ]
-        }
-    */
-    // handle express-openapi-validator request errors
+    // Convert express-openapi-validator errors to JSON:API format
+    // express-openapi-validator errors format:
+    // [
+    //     {
+    //         "path": "data.type",
+    //         "errorCode": "enum.openapi.validation",
+    //         "message": "should be equal to one of the allowed values",
+    //         "location": "body"
+    //     },
+    //     {
+    //         "path": "data.attributes.templateName",
+    //         "errorCode": "type.openapi.validation",
+    //         "message": "should be string",
+    //         "location": "body"
+    //     }
+    // ]
     if (err.status === 400) {
         err.errors.forEach(errorObj => {
             error.errors.push({
@@ -77,12 +49,69 @@ module.exports = async (err, req, res, next) => {
         return res.status(400).json(error);
     }
 
+    // Convert ajv errors to JSON:API format
+    // AJV errors format:
+    // [
+    //     {
+    //         keyword: "additionalProperties",
+    //         dataPath: "",
+    //         schemaPath: "#/additionalProperties",
+    //         params: {
+    //         additionalProperty: "q-applicant-british-citizen-or-eu-nationalz"
+    //         },
+    //         message: "should NOT have additional properties"
+    //     },
+    //     {
+    //         keyword: "additionalProperties",
+    //         dataPath: "",
+    //         schemaPath: "#/additionalProperties",
+    //         params: {
+    //         additionalProperty: "foo"
+    //         },
+    //         message: "should NOT have additional properties"
+    //     },
+    //     {
+    //         keyword: "errorMessage",
+    //         dataPath: "",
+    //         schemaPath: "#/errorMessage",
+    //         params: {
+    //         errors: [
+    //             {
+    //             keyword: "required",
+    //             dataPath: "",
+    //             schemaPath: "#/required",
+    //             params: {
+    //                 missingProperty: "q-applicant-british-citizen-or-eu-national"
+    //             },
+    //             message:
+    //                 "should have required property 'q-applicant-british-citizen-or-eu-national'"
+    //             }
+    //         ]
+    //         },
+    //         message: "Select yes if you are a British citizen or EU national"
+    //     }
+    // ]
     if (err.name === 'JSONSchemaValidationError') {
-        error.errors.push({
+        const errorInfo = VError.info(err);
+        const jsonApiErrors = errorInfo.schemaErrors.map(errorObj => ({
             status: 400,
-            title: 'JSONSchemaValidationError',
-            detail: VError.info(err).schemaErrors
-        });
+            title: '400 Bad Request',
+            detail: errorObj.message,
+            code: errorObj.keyword,
+            // The validation is happening on the properties of /data/attributes. This causes the dataPath
+            // to be empty as it's technically the top level. Prefix all pointers with the parent path.
+            source: {pointer: `/data/attributes${errorObj.dataPath}`},
+            meta: {
+                // include the raw ajv error
+                raw: errorObj
+            }
+        }));
+
+        error.errors.push(...jsonApiErrors);
+        error.meta = {
+            schema: errorInfo.schema,
+            answers: errorInfo.answers
+        };
 
         return res.status(400).json(error);
     }
