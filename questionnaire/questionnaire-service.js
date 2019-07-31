@@ -208,8 +208,6 @@ function createQuestionnaireService(spec) {
         let submitted = false;
         let status = 'NOT_STARTED';
         let caseReferenceNumber = null;
-        let applicantEmail = null;
-        let applicantName = null;
 
         // kick things off.
         if (submissionStatus === 'NOT_STARTED') {
@@ -233,24 +231,6 @@ function createQuestionnaireService(spec) {
         submitted = !!caseReferenceNumber;
         status = await getQuestionnaireSubmissionStatus(questionnaireId);
 
-        // TODO: abstract this out.
-        const resultQuestionnaire = await getQuestionnaire(questionnaireId);
-        const {questionnaire} = resultQuestionnaire.rows && resultQuestionnaire.rows[0];
-        const questionAnswers = questionnaire.answers;
-        if (questionAnswers['p-applicant-enter-your-email-address']) {
-            applicantEmail =
-                questionAnswers['p-applicant-enter-your-email-address'][
-                    'q-applicant-email-address'
-                ];
-        }
-        if (questionAnswers['p-applicant-enter-your-name']) {
-            applicantName = `${
-                questionAnswers['p-applicant-enter-your-name']['q-applicant-name-title']
-            } ${questionAnswers['p-applicant-enter-your-name']['q-applicant-name-firstname']} ${
-                questionAnswers['p-applicant-enter-your-name']['q-applicant-name-lastname']
-            }`;
-        }
-
         const response = {
             data: {
                 type: 'submissions',
@@ -258,9 +238,7 @@ function createQuestionnaireService(spec) {
                     questionnaireId,
                     submitted,
                     status,
-                    caseReferenceNumber,
-                    applicantEmail,
-                    applicantName
+                    caseReferenceNumber
                 }
             }
         };
