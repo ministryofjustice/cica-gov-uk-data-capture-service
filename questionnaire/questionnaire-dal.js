@@ -95,7 +95,6 @@ function questionnaireDAL(spec) {
             );
             const resultCheck = await getQuestionnaireSubmissionStatus(questionnaireId);
             if (resultCheck !== submissionStatus) {
-                // No instance was found
                 throw new VError(
                     {
                         name: 'UpdateNotSuccessful'
