@@ -1,5 +1,7 @@
 'use strict';
 
+// TODO: make this standalone and pass it to a middleware function.
+
 const VError = require('verror');
 
 // Central error handler
