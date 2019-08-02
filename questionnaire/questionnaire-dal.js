@@ -113,9 +113,10 @@ function questionnaireDAL(spec) {
         try {
             const result = await getQuestionnaire(questionnaireId);
             const {questionnaire} = result.rows && result.rows[0];
+            console.log(questionnaire.answers);
             // UPSERT query (refer to end of query for UPSERT syntax).
             await db.query(
-                `INSERT INTO questionnaire_submissions (id, questionnaire, created, modified, submission_status) VALUES($1, $2, current_timestamp, current_timestamp, $3) ON CONFLICT ON CONSTRAINT questionnaire_submissions_pkey DO UPDATE SET submission_status = $3`,
+                `INSERT INTO questionnaire_submissions (id, questionnaire, created, modified, submission_status) VALUES($1, $2, current_timestamp, current_timestamp, $3) ON CONFLICT ON CONSTRAINT questionnaire_submissions_pkey DO UPDATE SET questionnaire = $2, submission_status = $3`,
                 [questionnaire.id, questionnaire, submissionStatus]
             );
         } catch (err) {

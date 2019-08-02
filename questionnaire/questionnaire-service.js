@@ -5,6 +5,7 @@ const AjvErrors = require('ajv-errors');
 const VError = require('verror');
 const createQRouter = require('q-router');
 const uuidv4 = require('uuid/v4');
+const pointer = require('json-pointer');
 const templates = require('./templates');
 const createQuestionaireDAL = require('./questionnaire-dal');
 const createMessageBusCaller = require('../services/message-bus');
@@ -179,8 +180,9 @@ function createQuestionnaireService(spec) {
 
     async function startSubmission(questionnaireId) {
         await updateQuestionnaireSubmissionStatus(questionnaireId, 'IN_PROGRESS');
+        await db.createQuestionnaireSubmission(questionnaireId, 'IN_PROGRESS');
         const messageBus = createMessageBusCaller({logger});
-        const submissionResponse = await messageBus.post('submissionQueue', {
+        const submissionResponse = await messageBus.post('SubmissionQueue', {
             applicationId: questionnaireId
         });
         if (
@@ -201,30 +203,89 @@ function createQuestionnaireService(spec) {
         }
     }
 
-    async function getSubmissionResponseData(questionnaireId) {
-        const submissionStatus = await getQuestionnaireSubmissionStatus(questionnaireId);
+    async function sendConfirmationNotification(questionnaireId) {
+        const result = await getQuestionnaire(questionnaireId);
+        const {questionnaire} = result.rows[0];
+        const messageBus = createMessageBusCaller({logger});
+        const onCompleteTasks =
+            questionnaire.meta &&
+            questionnaire.meta.onComplete &&
+            questionnaire.meta.onComplete.tasks;
+        onCompleteTasks.forEach(async task => {
+            // email to be sent out.
+            if (task.emailTemplateId) {
+                await messageBus.post('NotificationQueue', {
+                    templateId: '1ddf1d87-09b3-4a2b-aa27-d73823f4a886',
+                    email_address: pointer.get(
+                        questionnaire,
+                        task.emailTemplatePlaceholderMap.applicantEmail
+                    ),
+                    personalisation: {
+                        email_address: pointer.get(
+                            questionnaire,
+                            task.emailTemplatePlaceholderMap.applicantEmail
+                        ),
+                        applicant_name: `${pointer.get(
+                            questionnaire,
+                            task.emailTemplatePlaceholderMap.applicantName.title
+                        )} ${pointer.get(
+                            questionnaire,
+                            task.emailTemplatePlaceholderMap.applicantName.firstName
+                        )} ${pointer.get(
+                            questionnaire,
+                            task.emailTemplatePlaceholderMap.applicantName.lastName
+                        )}`,
+                        case_reference: pointer.get(
+                            questionnaire,
+                            task.emailTemplatePlaceholderMap.caseReference
+                        )
+                    }
+                });
+                // TODO: keep track of each tasks success/failure, and send
+                // response accordingly.
+                // if (
+                //     !notificationResponse ||
+                //     !notificationResponse.body ||
+                //     notificationResponse.body !== 'Message sent'
+                // ) {
+                //     await updateQuestionnaireSubmissionStatus(questionnaireId, 'FAILED');
+                //     await db.createQuestionnaireSubmission(questionnaireId, 'FAILED');
+                // }
+            }
+        });
+    }
+
+    async function getSubmissionResponseData(questionnaireId, isPostRequest = false) {
+        let submissionStatus = await getQuestionnaireSubmissionStatus(questionnaireId);
 
         let submitted = false;
         let status = 'NOT_STARTED';
         let caseReferenceNumber = null;
 
-        // kick things off.
-        if (submissionStatus === 'NOT_STARTED') {
-            await updateQuestionnaireSubmissionStatus(questionnaireId, 'IN_PROGRESS');
-            await startSubmission(questionnaireId);
+        // if it is already completed, just get the Case Reference Number then
+        // let it fall through to the return.
+        if (submissionStatus === 'COMPLETED') {
+            caseReferenceNumber = await retrieveCaseReferenceNumber(questionnaireId);
         }
 
-        // if the case reference number is in the database it means that the questionnaire
-        // has been submitted.
-        caseReferenceNumber = await retrieveCaseReferenceNumber(questionnaireId);
+        // kick things off if it is a POST request and it is not yet started.
+        if (isPostRequest === true && submissionStatus === 'NOT_STARTED') {
+            await startSubmission(questionnaireId);
+            // `startSubmission` updates the submission status within the
+            // database so we need to get it again.
+            submissionStatus = await getQuestionnaireSubmissionStatus(questionnaireId);
+        }
 
-        // if (caseReferenceNumber !== null) {
-        //     submitted = true;
-        // }
-        // if the caseReferenceNumber exists, then the submission is COMPLETE.
-        if (caseReferenceNumber) {
-            await updateQuestionnaireSubmissionStatus(questionnaireId, 'COMPLETED');
-            await submitQuestionnaire(questionnaireId);
+        // still waiting on the Case Reference Number.
+        if (submissionStatus === 'IN_PROGRESS') {
+            caseReferenceNumber = await retrieveCaseReferenceNumber(questionnaireId);
+
+            // if the caseReferenceNumber exists, then the submission is COMPLETE.
+            if (caseReferenceNumber) {
+                await updateQuestionnaireSubmissionStatus(questionnaireId, 'COMPLETED');
+                await submitQuestionnaire(questionnaireId);
+                sendConfirmationNotification(questionnaireId);
+            }
         }
 
         submitted = !!caseReferenceNumber;
@@ -249,17 +310,21 @@ function createQuestionnaireService(spec) {
         const result = await getQuestionnaire(questionnaireId);
         const {questionnaire} = result.rows[0];
 
-        // get the section names from the answers array.
+        // get the section names from the progress array.
         // these are the only sections that we need to validate
-        // against because these are the only sections that have
-        // answers against them.
-        const sectionsToValidate = Object.keys(questionnaire.answers);
+        // against because these are the only sections that pertain
+        // to the user's questionnaire. i.e. there may be other answers
+        // in the questionnaire as a result of the user backtracking
+        // and then taking another route of questions. If this is the
+        // case, then just disregard the other answers from the other
+        // route(s).
+        const sectionsToValidate = questionnaire.progress;
         const validationErrors = [];
         sectionsToValidate.forEach(sectionId => {
             const sectionSchema = questionnaire.sections[sectionId];
             const answers = questionnaire.answers[sectionId];
             const validate = ajv.compile(sectionSchema);
-            const valid = validate(answers);
+            const valid = validate(answers || {});
             if (!valid) {
                 validationErrors.push(validate.errors);
             }
@@ -267,10 +332,10 @@ function createQuestionnaireService(spec) {
 
         if (validationErrors.length) {
             logger.error({err: validationErrors}, 'SCHEMA VALIDATION FAILED');
-
             const validationError = new VError({
                 name: 'JSONSchemaValidationErrors',
                 info: {
+                    submissions: await getSubmissionResponseData(questionnaireId),
                     schemaErrors: validationErrors
                 }
             });

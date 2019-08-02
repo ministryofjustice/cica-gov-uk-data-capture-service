@@ -160,7 +160,10 @@ router
             // check all answers are correct.
             await questionnaireService.validateAllAnswers(questionnaireId);
 
-            const response = await questionnaireService.getSubmissionResponseData(questionnaireId);
+            const response = await questionnaireService.getSubmissionResponseData(
+                questionnaireId,
+                true
+            );
 
             if (submissionStatus === 'NOT_STARTED') {
                 res.status(201).json(response);
