@@ -300,6 +300,22 @@ function createQuestionnaireService(spec) {
                     status,
                     caseReferenceNumber
                 }
+            },
+            meta: {
+                onComplete: {
+                    tasks: [
+                        {
+                            emailTemplateId: '1ddf1d87-09b3-4a2b-aa27-d73823f4a886',
+                            emailTemplatePlaceholderMap: {
+                                applicantName:
+                                    '/answers/p-applicant-enter-your-name/q-applicant-name-firstname',
+                                applicantEmail:
+                                    '/answers/p-applicant-enter-your-email-address/q-applicant-email-address',
+                                caseReference: '/answers/system/case-reference'
+                            }
+                        }
+                    ]
+                }
             }
         };
 
