@@ -7,6 +7,7 @@ const createQRouter = require('q-router');
 const uuidv4 = require('uuid/v4');
 const templates = require('./templates');
 const createQuestionaireDAL = require('./questionnaire-dal');
+const createMessageBusCaller = require('../services/message-bus');
 
 function createQuestionnaireService(spec) {
     const {logger} = spec;
@@ -49,6 +50,16 @@ function createQuestionnaireService(spec) {
         return questionnaire;
     }
 
+    async function getQuestionnaireSubmissionStatus(questionnaireId) {
+        const submissionStatus = await db.getQuestionnaireSubmissionStatus(questionnaireId);
+
+        return submissionStatus;
+    }
+
+    async function updateQuestionnaireSubmissionStatus(questionnaireId, submissionStatus) {
+        await db.updateQuestionnaireSubmissionStatus(questionnaireId, submissionStatus);
+    }
+
     function getSection(sectionId, qRouter) {
         // TODO: this validation should be covered by express-openapi-validator
         // if (!validSectionIdFormat(sectionId)) {
@@ -78,6 +89,95 @@ function createQuestionnaireService(spec) {
         }
 
         return section;
+    }
+
+    async function retrieveCaseReferenceNumber(questionnaireId) {
+        const result = await getQuestionnaire(questionnaireId);
+        const {questionnaire} = result.rows && result.rows[0];
+        const caseReference =
+            questionnaire.answers &&
+            questionnaire.answers.system &&
+            questionnaire.answers.system['case-reference'];
+        if (caseReference) {
+            return caseReference;
+        }
+
+        return null;
+    }
+
+    async function startSubmission(questionnaireId) {
+        await updateQuestionnaireSubmissionStatus(questionnaireId, 'IN_PROGRESS');
+        await db.createQuestionnaireSubmission(questionnaireId, 'IN_PROGRESS');
+        const messageBus = createMessageBusCaller({logger});
+        const submissionResponse = await messageBus.post('SubmissionQueue', {
+            applicationId: questionnaireId
+        });
+        if (
+            !submissionResponse ||
+            !submissionResponse.body ||
+            submissionResponse.body !== 'Message sent'
+        ) {
+            await updateQuestionnaireSubmissionStatus(questionnaireId, 'FAILED');
+            await db.createQuestionnaireSubmission(questionnaireId, 'FAILED');
+        }
+    }
+
+    async function submitQuestionnaire(questionnaireId) {
+        try {
+            await db.createQuestionnaireSubmission(questionnaireId, 'COMPLETED');
+        } catch (err) {
+            throw err;
+        }
+    }
+
+    async function getSubmissionResponseData(questionnaireId, isPostRequest = false) {
+        let submissionStatus = await getQuestionnaireSubmissionStatus(questionnaireId);
+
+        let submitted = false;
+        let status = 'NOT_STARTED';
+        let caseReferenceNumber = null;
+
+        // if it is already completed, just get the Case Reference Number then
+        // let it fall through to the return.
+        if (submissionStatus === 'COMPLETED') {
+            caseReferenceNumber = await retrieveCaseReferenceNumber(questionnaireId);
+        }
+
+        // kick things off if it is a POST request and it is not yet started.
+        if (isPostRequest === true && submissionStatus === 'NOT_STARTED') {
+            await startSubmission(questionnaireId);
+            // `startSubmission` updates the submission status within the
+            // database so we need to get it again.
+            submissionStatus = await getQuestionnaireSubmissionStatus(questionnaireId);
+        }
+
+        // still waiting on the Case Reference Number.
+        if (submissionStatus === 'IN_PROGRESS') {
+            caseReferenceNumber = await retrieveCaseReferenceNumber(questionnaireId);
+
+            // if the caseReferenceNumber exists, then the submission is COMPLETE.
+            if (caseReferenceNumber) {
+                await updateQuestionnaireSubmissionStatus(questionnaireId, 'COMPLETED');
+                await submitQuestionnaire(questionnaireId);
+            }
+        }
+
+        submitted = !!caseReferenceNumber;
+        status = await getQuestionnaireSubmissionStatus(questionnaireId);
+
+        const response = {
+            data: {
+                type: 'submissions',
+                attributes: {
+                    questionnaireId,
+                    submitted,
+                    status,
+                    caseReferenceNumber
+                }
+            }
+        };
+
+        return response;
     }
 
     async function createAnswers(questionnaireId, sectionId, answers) {
@@ -155,7 +255,9 @@ function createQuestionnaireService(spec) {
 
     return Object.freeze({
         createQuestionnaire,
-        createAnswers
+        createAnswers,
+        getQuestionnaireSubmissionStatus,
+        getSubmissionResponseData
     });
 }
 

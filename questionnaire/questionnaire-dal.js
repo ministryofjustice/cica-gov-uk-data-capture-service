@@ -62,10 +62,76 @@ function questionnaireDAL(spec) {
         return questionnaire;
     }
 
+    async function getQuestionnaireSubmissionStatus(questionnaireId) {
+        let result;
+        try {
+            result = await db.query('SELECT submission_status FROM questionnaire WHERE id = $1', [
+                questionnaireId
+            ]);
+
+            if (result.rows.length === 0) {
+                // No instance was found
+                throw new VError(
+                    {
+                        name: 'ResourceNotFound'
+                    },
+                    `Questionnaire "${questionnaireId}" not found`
+                );
+            }
+        } catch (err) {
+            throw err;
+        }
+
+        return result.rows[0].submission_status;
+    }
+
+    async function updateQuestionnaireSubmissionStatus(questionnaireId, submissionStatus) {
+        let result;
+
+        try {
+            result = await db.query(
+                'UPDATE questionnaire SET submission_status = $1, modified = current_timestamp WHERE id = $2',
+                [submissionStatus, questionnaireId]
+            );
+            const resultCheck = await getQuestionnaireSubmissionStatus(questionnaireId);
+            if (resultCheck !== submissionStatus) {
+                throw new VError(
+                    {
+                        name: 'UpdateNotSuccessful'
+                    },
+                    `Questionnaire "${questionnaireId}" submission status not successfully updated to "${submissionStatus}"`
+                );
+            }
+        } catch (err) {
+            throw err;
+        }
+
+        return result;
+    }
+
+    async function createQuestionnaireSubmission(questionnaireId, submissionStatus) {
+        try {
+            const result = await getQuestionnaire(questionnaireId);
+            const {questionnaire} = result.rows && result.rows[0];
+            // UPSERT query (refer to end of query for UPSERT syntax).
+            await db.query(
+                `INSERT INTO questionnaire_submissions (id, questionnaire, created, modified, submission_status) VALUES($1, $2, current_timestamp, current_timestamp, $3) ON CONFLICT ON CONSTRAINT questionnaire_submissions_pkey DO UPDATE SET questionnaire = $2, submission_status = $3`,
+                [questionnaire.id, questionnaire, submissionStatus]
+            );
+        } catch (err) {
+            throw err;
+        }
+
+        return true;
+    }
+
     return Object.freeze({
         createQuestionnaire,
         updateQuestionnaire,
-        getQuestionnaire
+        getQuestionnaire,
+        getQuestionnaireSubmissionStatus,
+        updateQuestionnaireSubmissionStatus,
+        createQuestionnaireSubmission
     });
 }
 
