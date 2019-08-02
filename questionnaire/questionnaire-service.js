@@ -307,11 +307,55 @@ function createQuestionnaireService(spec) {
         return answerResource;
     }
 
+    async function validateAllAnswers(questionnaireId) {
+        const result = await getQuestionnaire(questionnaireId);
+        const {questionnaire} = result.rows[0];
+
+        // get the section names from the progress array.
+        // these are the only sections that we need to validate
+        // against because these are the only sections that pertain
+        // to the user's questionnaire. i.e. there may be other answers
+        // in the questionnaire as a result of the user backtracking
+        // and then taking another route of questions. If this is the
+        // case, then just disregard the other answers from the other
+        // route(s).
+        const sectionsToValidate = questionnaire.progress;
+        const validationErrors = [];
+        sectionsToValidate.forEach(sectionId => {
+            const sectionSchema = questionnaire.sections[sectionId];
+            const answers = questionnaire.answers[sectionId];
+            const validate = ajv.compile(sectionSchema);
+            const valid = validate(answers || {});
+            if (!valid) {
+                validationErrors.push(validate.errors);
+            }
+        });
+
+        if (validationErrors.length) {
+            logger.error({err: validationErrors}, 'SCHEMA VALIDATION FAILED');
+            const validationError = new VError({
+                name: 'JSONSchemaValidationErrors',
+                info: {
+                    submissions: await getSubmissionResponseData(questionnaireId),
+                    schemaErrors: validationErrors
+                }
+            });
+
+            throw validationError;
+        }
+
+        // mirror the ajv response for being valid.
+        return {
+            valid: true
+        };
+    }
+
     return Object.freeze({
         createQuestionnaire,
         createAnswers,
         getQuestionnaireSubmissionStatus,
-        getSubmissionResponseData
+        getSubmissionResponseData,
+        validateAllAnswers
     });
 }
 
