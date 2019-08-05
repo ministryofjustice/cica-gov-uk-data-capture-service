@@ -142,6 +142,16 @@ module.exports = async (err, req, res, next) => {
         return res.status(200).json(error);
     }
 
+    if (err.name === 'UpdateNotSuccessful') {
+        error.errors.push({
+            status: 500,
+            title: 'UpdateNotSuccessful',
+            detail: err.message
+        });
+
+        return res.status(404).json(error);
+    }
+
     if (err.statusCode === 400) {
         error.errors.push({
             status: 400,
