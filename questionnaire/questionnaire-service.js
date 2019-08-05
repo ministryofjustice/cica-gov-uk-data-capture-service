@@ -5,13 +5,14 @@ const AjvErrors = require('ajv-errors');
 const VError = require('verror');
 const createQRouter = require('q-router');
 const uuidv4 = require('uuid/v4');
+const pointer = require('json-pointer');
 const templates = require('./templates');
-const createQuestionaireDAL = require('./questionnaire-dal');
+const createQuestionnaireDAL = require('./questionnaire-dal');
 const createMessageBusCaller = require('../services/message-bus');
 
 function createQuestionnaireService(spec) {
     const {logger} = spec;
-    const db = createQuestionaireDAL({logger});
+    const db = createQuestionnaireDAL({logger});
     const ajv = new Ajv({
         allErrors: true,
         jsonPointers: true,
@@ -106,17 +107,22 @@ function createQuestionnaireService(spec) {
     }
 
     async function startSubmission(questionnaireId) {
-        await updateQuestionnaireSubmissionStatus(questionnaireId, 'IN_PROGRESS');
-        await db.createQuestionnaireSubmission(questionnaireId, 'IN_PROGRESS');
-        const messageBus = createMessageBusCaller({logger});
-        const submissionResponse = await messageBus.post('SubmissionQueue', {
-            applicationId: questionnaireId
-        });
-        if (
-            !submissionResponse ||
-            !submissionResponse.body ||
-            submissionResponse.body !== 'Message sent'
-        ) {
+        try {
+            await updateQuestionnaireSubmissionStatus(questionnaireId, 'IN_PROGRESS');
+            await db.createQuestionnaireSubmission(questionnaireId, 'IN_PROGRESS');
+            const messageBus = createMessageBusCaller({logger});
+            const submissionResponse = await messageBus.post('SubmissionQueue', {
+                applicationId: questionnaireId
+            });
+            if (
+                !submissionResponse ||
+                !submissionResponse.body ||
+                submissionResponse.body !== 'Message sent'
+            ) {
+                await updateQuestionnaireSubmissionStatus(questionnaireId, 'FAILED');
+                await db.createQuestionnaireSubmission(questionnaireId, 'FAILED');
+            }
+        } catch (err) {
             await updateQuestionnaireSubmissionStatus(questionnaireId, 'FAILED');
             await db.createQuestionnaireSubmission(questionnaireId, 'FAILED');
         }
@@ -130,6 +136,53 @@ function createQuestionnaireService(spec) {
         }
     }
 
+    async function sendConfirmationNotification(questionnaireId) {
+        const result = await getQuestionnaire(questionnaireId);
+        const {questionnaire} = result.rows[0];
+        const messageBus = createMessageBusCaller({logger});
+        const onCompleteTasks =
+            questionnaire.meta &&
+            questionnaire.meta.onComplete &&
+            questionnaire.meta.onComplete.tasks;
+        onCompleteTasks.forEach(async task => {
+            // email to be sent out.
+            if (task.emailTemplateId) {
+                try {
+                    await messageBus.post('NotificationQueue', {
+                        templateId: '1ddf1d87-09b3-4a2b-aa27-d73823f4a886',
+                        email_address: pointer.get(
+                            questionnaire,
+                            task.emailTemplatePlaceholderMap.applicantEmail
+                        ),
+                        personalisation: {
+                            email_address: pointer.get(
+                                questionnaire,
+                                task.emailTemplatePlaceholderMap.applicantEmail
+                            ),
+                            applicant_name: `${pointer.get(
+                                questionnaire,
+                                task.emailTemplatePlaceholderMap.applicantName.title
+                            )} ${pointer.get(
+                                questionnaire,
+                                task.emailTemplatePlaceholderMap.applicantName.firstName
+                            )} ${pointer.get(
+                                questionnaire,
+                                task.emailTemplatePlaceholderMap.applicantName.lastName
+                            )}`,
+                            case_reference: pointer.get(
+                                questionnaire,
+                                task.emailTemplatePlaceholderMap.caseReference
+                            )
+                        }
+                    });
+                } catch (err) {
+                    await updateQuestionnaireSubmissionStatus(questionnaireId, 'FAILED');
+                    await db.createQuestionnaireSubmission(questionnaireId, 'FAILED');
+                }
+            }
+        });
+    }
+ 
     async function getSubmissionResponseData(questionnaireId, isPostRequest = false) {
         let submissionStatus = await getQuestionnaireSubmissionStatus(questionnaireId);
 
@@ -159,6 +212,7 @@ function createQuestionnaireService(spec) {
             if (caseReferenceNumber) {
                 await updateQuestionnaireSubmissionStatus(questionnaireId, 'COMPLETED');
                 await submitQuestionnaire(questionnaireId);
+                sendConfirmationNotification(questionnaireId);
             }
         }
 
