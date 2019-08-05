@@ -124,7 +124,8 @@ describe('/questionnaires', () => {
                                         sections: {type: 'object'},
                                         routes: {type: 'object'},
                                         answers: {type: 'object'},
-                                        progress: {type: 'array'}
+                                        progress: {type: 'array'},
+                                        meta: {type: 'object'}
                                     }
                                 }
                             }
