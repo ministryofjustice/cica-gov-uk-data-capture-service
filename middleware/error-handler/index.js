@@ -116,6 +116,42 @@ module.exports = async (err, req, res, next) => {
         return res.status(400).json(error);
     }
 
+    // questionnaire submission bulk error response.
+    // https://www.keycdn.com/support/422-unprocessable-entity
+    if (err.name === 'JSONSchemaValidationErrors') {
+        const errorInfo = VError.info(err);
+        const jsonApiErrors = errorInfo.schemaErrors.map(errorObj => ({
+            status: 422,
+            title: '422 Unprocessable Entity',
+            detail: errorObj[0].message,
+            code: errorObj[0].keyword,
+            // The validation is happening on the properties of /data/attributes. This causes the dataPath
+            // to be empty as it's technically the top level. Prefix all pointers with the parent path.
+            source: {pointer: `/data/attributes${errorObj[0].dataPath}`},
+            meta: {
+                // include the raw ajv error
+                raw: errorObj[0]
+            }
+        }));
+
+        error.errors.push(...jsonApiErrors);
+        error.meta = {
+            submissions: errorInfo.submissions
+        };
+
+        return res.status(200).json(error);
+    }
+
+    if (err.name === 'UpdateNotSuccessful') {
+        error.errors.push({
+            status: 500,
+            title: 'UpdateNotSuccessful',
+            detail: err.message
+        });
+
+        return res.status(404).json(error);
+    }
+
     if (err.statusCode === 400) {
         error.errors.push({
             status: 400,
