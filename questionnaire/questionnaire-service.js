@@ -182,7 +182,7 @@ function createQuestionnaireService(spec) {
             }
         });
     }
-
+ 
     async function getSubmissionResponseData(questionnaireId, isPostRequest = false) {
         let submissionStatus = await getQuestionnaireSubmissionStatus(questionnaireId);
 
