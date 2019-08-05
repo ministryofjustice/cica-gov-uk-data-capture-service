@@ -4,7 +4,7 @@ module.exports = {
     'sexual-assault': id => ({
         id,
         type: 'apply-for-compensation',
-        version: '0.1.0',
+        version: '0.2.0',
         sections: {
             'p-applicant-declaration': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
@@ -2327,6 +2327,28 @@ module.exports = {
             }
         },
         answers: {},
-        progress: ['p-applicant-declaration']
+        progress: ['p-applicant-declaration'],
+        meta: {
+            onComplete: {
+                tasks: [
+                    {
+                        emailTemplateId: '1ddf1d87-09b3-4a2b-aa27-d73823f4a886',
+                        emailTemplatePlaceholderMap: {
+                            applicantName: {
+                                title:
+                                    '/answers/p-applicant-enter-your-name/q-applicant-name-title',
+                                firstName:
+                                    '/answers/p-applicant-enter-your-name/q-applicant-name-firstname',
+                                lastName:
+                                    '/answers/p-applicant-enter-your-name/q-applicant-name-lastname'
+                            },
+                            applicantEmail:
+                                '/answers/p-applicant-enter-your-email-address/q-applicant-email-address',
+                            caseReference: '/answers/system/case-reference'
+                        }
+                    }
+                ]
+            }
+        }
     })
 };
