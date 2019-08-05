@@ -298,6 +298,73 @@
                     }
                 }
             }
+        },
+        "/questionnaires/{questionnaireId}/submissions": {
+            "get": {
+                "tags": ["Submissions"],
+                "summary": "Get all answers for a questionnaire",
+                "description": "Gets all submission state for a questionnaire",
+                "operationId": "getSubmissions",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/questionnaireId"
+                    }
+                ],
+                "x-scopes": ["read:questionnaires"],
+                "x-requests": {
+                    "400": {
+                        "parameters": [
+                            {
+                                "name": "questionnaireId",
+                                "example": "NOT-A-UUID"
+                            }
+                        ]
+                    },
+                    "401": {
+                        "auth": false
+                    },
+                    "404": {
+                        "parameters": [
+                            {
+                                "name": "questionnaireId",
+                                "example": "68653be7-877f-4106-b91e-4ba8dac883f4"
+                            }
+                        ]
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/vnd.api+json": {
+                                "schema": {
+                                    "$ref": "./json-schemas/_questionnaires_{questionnaireId}_submissions/get/res/200.json"
+                                },
+                                "example": {
+                                    "data": {
+                                        "type": "submissions",
+                                        "attributes": {
+                                            "questionnaireId": "285cb104-0c15-4a9c-9840-cb1007f098fb",
+                                            "submitted": false,
+                                            "status": "IN_PROGRESS",
+                                            "caseReferenceNumber": "11\\111111"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/UnauthorizedError"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    }
+                }
+            }
         }
     },
     "components": {
