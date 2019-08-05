@@ -43,6 +43,9 @@
                         },
                         "progress": {
                             "type": "array"
+                        },
+                        "meta": {
+                            "type": "object"
                         }
                     }
                 }
