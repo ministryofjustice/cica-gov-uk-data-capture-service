@@ -7,12 +7,12 @@ const createQRouter = require('q-router');
 const uuidv4 = require('uuid/v4');
 const pointer = require('json-pointer');
 const templates = require('./templates');
-const createQuestionaireDAL = require('./questionnaire-dal');
+const createQuestionnaireDAL = require('./questionnaire-dal');
 const createMessageBusCaller = require('../services/message-bus');
 
 function createQuestionnaireService(spec) {
     const {logger} = spec;
-    const db = createQuestionaireDAL({logger});
+    const db = createQuestionnaireDAL({logger});
     const ajv = new Ajv({
         allErrors: true,
         jsonPointers: true,
