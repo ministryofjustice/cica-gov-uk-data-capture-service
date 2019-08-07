@@ -234,6 +234,32 @@ function createQuestionnaireService(spec) {
         return response;
     }
 
+    async function getAnswers(questionnaireId) {
+        const result = await getQuestionnaire(questionnaireId);
+        const {questionnaire} = result.rows[0];
+
+        const resourceCollection = Object.keys(questionnaire.answers).reduce(
+            (acc, sectionAnswersId) => {
+                // // excludes any sections that are not in the progress.
+                if (!questionnaire.progress.includes(sectionAnswersId)) {
+                    return acc;
+                }
+                const sectionAnswers = questionnaire.answers[sectionAnswersId];
+
+                acc.push({
+                    type: 'answers',
+                    id: sectionAnswersId,
+                    attributes: sectionAnswers
+                });
+
+                return acc;
+            },
+            []
+        );
+
+        return resourceCollection;
+    }
+
     async function createAnswers(questionnaireId, sectionId, answers) {
         // TODO: throw if more than one request to create same answers
 
@@ -355,7 +381,8 @@ function createQuestionnaireService(spec) {
         createAnswers,
         getQuestionnaireSubmissionStatus,
         getSubmissionResponseData,
-        validateAllAnswers
+        validateAllAnswers,
+        getAnswers
     });
 }
 
