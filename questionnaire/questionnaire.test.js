@@ -464,7 +464,7 @@ describe('/questionnaires/{questionnaireId}/sections/answers', () => {
                     .get(
                         '/api/v1/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/sections/answers'
                     )
-                    .set('Authorization', `Bearer ${tokens['read:answers']}`);
+                    .set('Authorization', `Bearer ${tokens['read:questionnaires']}`);
 
                 expect(res.statusCode).toBe(200);
                 expect(res.type).toBe('application/vnd.api+json');
@@ -497,7 +497,7 @@ describe('/questionnaires/{questionnaireId}/sections/answers', () => {
             it('should There is an issue with the request', async () => {
                 const res = await request(app)
                     .get('/api/v1/questionnaires/NOT-A-UUID/sections/answers')
-                    .set('Authorization', `Bearer ${tokens['read:answers']}`);
+                    .set('Authorization', `Bearer ${tokens['read:questionnaires']}`);
 
                 expect(res.statusCode).toBe(400);
                 expect(res.type).toBe('application/vnd.api+json');
@@ -557,7 +557,7 @@ describe('/questionnaires/{questionnaireId}/sections/answers', () => {
                     .get(
                         '/api/v1/questionnaires/68653be7-877f-4106-b91e-4ba8dac883f4/sections/answers'
                     )
-                    .set('Authorization', `Bearer ${tokens['read:answers']}`);
+                    .set('Authorization', `Bearer ${tokens['read:questionnaires']}`);
 
                 expect(res.statusCode).toBe(404);
                 expect(res.type).toBe('application/vnd.api+json');

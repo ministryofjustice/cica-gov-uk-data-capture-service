@@ -4,7 +4,6 @@ const express = require('express');
 const validateJWT = require('express-jwt');
 
 const createQuestionnaireService = require('./questionnaire-service');
-const q = require('./questionnaire');
 const permissions = require('../middleware/route-permissions');
 
 const router = express.Router();
@@ -39,33 +38,21 @@ router.route('/').post(permissions('create:questionnaires'), async (req, res, ne
     }
 });
 
-router.route('/:questionnaireId/sections/answers').get(permissions('read:answers'), (req, res) => {
-    // /questionnaires/68653be7-877f-4106-b91e-4ba8dac883f3/sections/answers
-    if (req.params.questionnaireId !== '285cb104-0c15-4a9c-9840-cb1007f098fb') {
-        const err = Error(`Resource ${req.originalUrl} does not exist`);
-        err.name = 'HTTPError';
-        err.statusCode = 404;
-        err.error = '404 Not Found';
-        throw err;
-    }
+router
+    .route('/:questionnaireId/sections/answers')
+    .get(permissions('read:questionnaires'), async (req, res, next) => {
+        try {
+            const {questionnaireId} = req.params;
+            const questionnaireService = createQuestionnaireService({logger: req.log});
+            const resourceCollection = await questionnaireService.getAnswers(questionnaireId);
 
-    // Return resource collection
-    const resourceCollection = Object.keys(q.answers).reduce((acc, sectionAnswersId) => {
-        const sectionAnswers = q.answers[sectionAnswersId];
-
-        acc.push({
-            type: 'answers',
-            id: sectionAnswersId,
-            attributes: sectionAnswers
-        });
-
-        return acc;
-    }, []);
-
-    res.json({
-        data: resourceCollection
+            res.status(200).json({
+                data: resourceCollection
+            });
+        } catch (err) {
+            next(err);
+        }
     });
-});
 
 router
     .route('/:questionnaireId/sections/system/answers')

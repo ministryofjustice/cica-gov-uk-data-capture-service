@@ -236,7 +236,7 @@
                         "$ref": "#/components/parameters/questionnaireId"
                     }
                 ],
-                "x-scopes": ["read:answers"],
+                "x-scopes": ["read:questionnaires"],
                 "x-requests": {
                     "400": {
                         "parameters": [
