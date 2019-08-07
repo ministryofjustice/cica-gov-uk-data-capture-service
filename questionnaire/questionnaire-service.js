@@ -238,24 +238,11 @@ function createQuestionnaireService(spec) {
         const result = await getQuestionnaire(questionnaireId);
         const {questionnaire} = result.rows[0];
 
-        const resourceCollection = Object.keys(questionnaire.answers).reduce(
-            (acc, sectionAnswersId) => {
-                // // excludes any sections that are not in the progress.
-                if (!questionnaire.progress.includes(sectionAnswersId)) {
-                    return acc;
-                }
-                const sectionAnswers = questionnaire.answers[sectionAnswersId];
-
-                acc.push({
-                    type: 'answers',
-                    id: sectionAnswersId,
-                    attributes: sectionAnswers
-                });
-
-                return acc;
-            },
-            []
-        );
+        const resourceCollection = questionnaire.progress.map(sectionAnswersId => ({
+            type: 'answers',
+            id: sectionAnswersId,
+            attributes: questionnaire.answers[sectionAnswersId]
+        }));
 
         return resourceCollection;
     }
