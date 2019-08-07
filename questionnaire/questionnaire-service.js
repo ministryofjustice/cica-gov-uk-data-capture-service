@@ -234,6 +234,19 @@ function createQuestionnaireService(spec) {
         return response;
     }
 
+    async function getAnswers(questionnaireId) {
+        const result = await getQuestionnaire(questionnaireId);
+        const {questionnaire} = result.rows[0];
+
+        const resourceCollection = questionnaire.progress.map(sectionAnswersId => ({
+            type: 'answers',
+            id: sectionAnswersId,
+            attributes: questionnaire.answers[sectionAnswersId]
+        }));
+
+        return resourceCollection;
+    }
+
     async function createAnswers(questionnaireId, sectionId, answers) {
         // TODO: throw if more than one request to create same answers
 
@@ -355,7 +368,8 @@ function createQuestionnaireService(spec) {
         createAnswers,
         getQuestionnaireSubmissionStatus,
         getSubmissionResponseData,
-        validateAllAnswers
+        validateAllAnswers,
+        getAnswers
     });
 }
 
