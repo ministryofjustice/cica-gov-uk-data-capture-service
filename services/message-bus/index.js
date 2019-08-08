@@ -12,7 +12,7 @@ function createMessageBusCaller(opts) {
         const options = {
             url: `${process.env.MESSAGE_BUS_SERVICE}/api/message/?destination=queue://${queueName}`, // SubmissionQueue
             headers: {
-                Authorization: `Basic ${Buffer.from(process.env.MB_AUTH).toString('base64')}`,
+                Authorization: `Basic ${Buffer.from(process.env.MB_AUTH)}`,
                 accept: 'text/html', // the response at the moment is the string 'Message sent'.
                 'Content-Type': 'application/json'
             },
