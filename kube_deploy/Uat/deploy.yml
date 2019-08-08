@@ -36,5 +36,5 @@ spec:
         - name: MB_AUTH
           valueFrom:
             secretKeyRef:
-              name: message-bus-url
-              key: url
+              name: message-bus-auth
+              key: secret
