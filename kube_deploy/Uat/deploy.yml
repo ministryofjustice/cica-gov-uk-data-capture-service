@@ -28,3 +28,13 @@ spec:
               key: url
         - name: DCS_LOG_LEVEL
           value: "info"
+        - name: MESSAGE_BUS_SERVICE
+          valueFrom:
+            secretKeyRef:
+              name: message-bus-url
+              key: url
+        - name: MB_AUTH
+          valueFrom:
+            secretKeyRef:
+              name: message-bus-url
+              key: url
