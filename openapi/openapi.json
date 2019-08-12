@@ -1445,7 +1445,7 @@
                 }
             }
         },
-        "/questionnaire/{questionnaireId}/progress-entries": {
+        "/questionnaires/{questionnaireId}/progress-entries": {
             "get": {
                 "tags": ["ProgressEntries"],
                 "summary": "Get progress entries for a questionnaire.",
