@@ -385,12 +385,12 @@
                         "description": "The id of the specific questionnaire section.",
                         "schema": {
                             "type": "string",
-                            "pattern": "^[a-z0-9]{1,30}(-[a-z0-9]{1,30})*$"
+                            "pattern": "^(p--?([a-z0-9-]+)|system)$"
                         },
                         "example": "system"
                     }
                 ],
-                "x-scopes": ["create:system-answers"],
+                "x-scopes": ["create:system-answers", "update:questionnaires"],
                 "x-requests": {
                     "400": {
                         "requestBody": {
@@ -689,7 +689,7 @@
                         "example": "285cb104-0c15-4a9c-9840-cb1007f098fb"
                     }
                 ],
-                "x-scopes": ["read:answers"],
+                "x-scopes": ["read:questionnaires"],
                 "x-requests": {
                     "400": {
                         "parameters": [
@@ -1475,7 +1475,7 @@
                 "description": "The id of the specific questionnaire section.",
                 "schema": {
                     "type": "string",
-                    "pattern": "^[a-z0-9]{1,30}(-[a-z0-9]{1,30})*$"
+                    "pattern": "^(p--?([a-z0-9-]+)|system)$"
                 },
                 "example": "system"
             }

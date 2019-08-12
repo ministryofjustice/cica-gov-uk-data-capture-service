@@ -138,7 +138,7 @@
                         "$ref": "#/components/parameters/sectionId"
                     }
                 ],
-                "x-scopes": ["create:system-answers"],
+                "x-scopes": ["create:system-answers", "update:questionnaires"],
                 "x-requests": {
                     "400": {
                         "requestBody": {
