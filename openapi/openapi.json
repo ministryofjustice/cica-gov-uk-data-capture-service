@@ -373,7 +373,6 @@
                         "description": "The id of the specific questionnaire instance. Format UUIDv4.",
                         "schema": {
                             "type": "string",
-                            "format": "UUIDv4",
                             "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
                         },
                         "example": "285cb104-0c15-4a9c-9840-cb1007f098fb"
@@ -683,7 +682,6 @@
                         "description": "The id of the specific questionnaire instance. Format UUIDv4.",
                         "schema": {
                             "type": "string",
-                            "format": "UUIDv4",
                             "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
                         },
                         "example": "285cb104-0c15-4a9c-9840-cb1007f098fb"
@@ -898,7 +896,6 @@
                         "description": "The id of the specific questionnaire instance. Format UUIDv4.",
                         "schema": {
                             "type": "string",
-                            "format": "UUIDv4",
                             "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
                         },
                         "example": "285cb104-0c15-4a9c-9840-cb1007f098fb"
@@ -1131,7 +1128,6 @@
                         "description": "The id of the specific questionnaire instance. Format UUIDv4.",
                         "schema": {
                             "type": "string",
-                            "format": "UUIDv4",
                             "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
                         },
                         "example": "285cb104-0c15-4a9c-9840-cb1007f098fb"
@@ -1463,7 +1459,6 @@
                 "description": "The id of the specific questionnaire instance. Format UUIDv4.",
                 "schema": {
                     "type": "string",
-                    "format": "UUIDv4",
                     "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
                 },
                 "example": "285cb104-0c15-4a9c-9840-cb1007f098fb"
