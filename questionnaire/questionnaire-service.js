@@ -363,13 +363,112 @@ function createQuestionnaireService(spec) {
         };
     }
 
+    function buildSectionResource(sectionId, questionnaire) {
+        // TODO: replace any piping tokens
+
+        const sectionResource = {
+            type: 'sections',
+            id: sectionId,
+            attributes: questionnaire.sections[sectionId]
+        };
+        // Add any answer relationships
+        const {answers} = questionnaire;
+        const sectionAnswers = answers ? answers[sectionId] : undefined;
+
+        if (sectionAnswers) {
+            sectionResource.relationships = {
+                answer: {
+                    data: {
+                        type: 'answers',
+                        id: sectionId
+                    }
+                }
+            };
+        }
+
+        return sectionResource;
+    }
+
+    function buildProgressEntryResource(sectionId) {
+        const progressEntryResource = {
+            type: 'progress-entries',
+            id: sectionId,
+            attributes: {
+                sectionId
+            },
+            relationships: {
+                section: {
+                    data: {
+                        type: 'sections',
+                        id: sectionId
+                    }
+                }
+            }
+        };
+
+        return progressEntryResource;
+    }
+
+    async function getProgressEntries(questionnaireId, filter) {
+        // 1 - load the questionnaire
+        const result = await getQuestionnaire(questionnaireId);
+
+        // 2 - get questionnaire instance
+        const {questionnaire} = result.rows[0];
+
+        // 3 - get all progress
+        const {progress} = questionnaire;
+
+        // 4 - filter progress entries if required
+        if (filter) {
+            const compoundDocument = {};
+
+            if ('position' in filter) {
+                if (filter.position === 'current') {
+                    const currentIndex = progress.length - 1;
+                    const lastProgressEntrySectionId = progress[currentIndex];
+                    const previousProgressEntryLink =
+                        currentIndex === 0
+                            ? questionnaire.routes.referrer
+                            : `${process.env.DCS_URL}/api/v1/questionnaires/${
+                                  questionnaire.id
+                              }/progress-entries?filter[sectionId]=${progress[currentIndex - 1]}`;
+
+                    compoundDocument.data = [
+                        buildProgressEntryResource(lastProgressEntrySectionId)
+                    ];
+                    // Include related resources
+                    // Currently this is a one-to-one relationship with a section resource
+                    compoundDocument.included = [
+                        buildSectionResource(lastProgressEntrySectionId, questionnaire)
+                    ];
+                    // Add pagination links
+                    compoundDocument.links = {
+                        prev: previousProgressEntryLink
+                    };
+
+                    return compoundDocument;
+                }
+            }
+        }
+
+        const progressEntriesCollection = progress.map(sectionId =>
+            buildProgressEntryResource(sectionId, questionnaire)
+        );
+
+        return {
+            data: progressEntriesCollection
+        };
+    }
+
     return Object.freeze({
         createQuestionnaire,
         createAnswers,
         getQuestionnaireSubmissionStatus,
         getSubmissionResponseData,
         validateAllAnswers,
-        getAnswers
+        getAnswers,
+        getProgressEntries
     });
 }
 

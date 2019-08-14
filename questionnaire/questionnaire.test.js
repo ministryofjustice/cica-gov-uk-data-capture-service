@@ -16,7 +16,9 @@ const tokens = {
     'create:system-answers':
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJkYXRhLWNhcHR1cmUtc2VydmljZSIsImlzcyI6IiQuYXVkIiwianRpIjoiMDhhNTAyMWEtM2JmNC00OTBlLTkyMjAtYjJhN2Y3MGNmMTIzIiwic3ViIjoiYXBwbGljYXRpb24tc2VydmljZSIsInNjb3BlIjoiY3JlYXRlOnN5c3RlbS1hbnN3ZXJzIiwiaWF0IjoxNTY0MDU4MjUxfQ.fThAa30m5CvQRZKBb4Zm5c4wwCEK7k0bBq9MX7Fbfgs',
     'create:dummy-resource':
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJkYXRhLWNhcHR1cmUtc2VydmljZSIsImlzcyI6IiQuYXVkIiwianRpIjoiYzFhMzJiOTUtNGQxMi00YzVlLWI4MGQtNWUyZTk2ZDU1MmNmIiwic3ViIjoiJC5hdWQiLCJzY29wZSI6ImNyZWF0ZTpkdW1teS1yZXNvdXJjZSIsImlhdCI6MTU2NDA1ODI1MX0.J-WxYzHK2rGJlmtmvhwQBrYFvmIpVeIQWAntDo6HJ-4'
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJkYXRhLWNhcHR1cmUtc2VydmljZSIsImlzcyI6IiQuYXVkIiwianRpIjoiYzFhMzJiOTUtNGQxMi00YzVlLWI4MGQtNWUyZTk2ZDU1MmNmIiwic3ViIjoiJC5hdWQiLCJzY29wZSI6ImNyZWF0ZTpkdW1teS1yZXNvdXJjZSIsImlhdCI6MTU2NDA1ODI1MX0.J-WxYzHK2rGJlmtmvhwQBrYFvmIpVeIQWAntDo6HJ-4',
+    'read:progress-entries':
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJkYXRhLWNhcHR1cmUtc2VydmljZSIsImlzcyI6IiQuYXVkIiwianRpIjoiNDUwMzE2ZTYtNDFhNS00MGRjLWI3NTUtMzA2ZGQ2M2FlMDhiIiwic3ViIjoiY2ljYS13ZWIiLCJzY29wZSI6InJlYWQ6cHJvZ3Jlc3MtZW50cmllcyIsImlhdCI6MTU2NTc5NzE1MH0.fF6Ln7GZmq-R36N-Avuo_a_8Jj5-wla17x0552XnMbE'
 };
 
 const createQuestionnaireResponse = require('./test-fixtures/res/post_questionnaire.json');
@@ -285,6 +287,7 @@ describe('/questionnaires/{questionnaireId}/sections/{sectionId}/answers', () =>
                     .set('Authorization', `Bearer ${tokens['create:system-answers']}`)
                     .set('Content-Type', 'application/vnd.api+json')
                     .send({data: {type: 'answers', attributes: {'case-reference': '11\\111111'}}});
+
                 expect(res.statusCode).toBe(201);
                 expect(res.type).toBe('application/vnd.api+json');
                 expect(res.body).toMatchSchema({
@@ -932,6 +935,47 @@ describe('/questionnaires/{questionnaireId}/submissions', () => {
                                     status: {const: 404},
                                     title: {const: '404 Not Found'},
                                     detail: {type: 'string'}
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+        });
+    });
+});
+describe('/questionnaires/{questionnaireId}/progress-entries', () => {
+    describe('get', () => {
+        describe('200', () => {
+            it('should Success', async () => {
+                const res = await request(app)
+                    .get(
+                        '/api/v1/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/progress-entries?filter%5Bposition%5D=current'
+                    )
+                    .set('Authorization', `Bearer ${tokens['read:progress-entries']}`);
+
+                console.log(res.body);
+
+                expect(res.statusCode).toBe(200);
+                expect(res.type).toBe('application/vnd.api+json');
+                expect(res.body).toMatchSchema({
+                    $schema: 'http://json-schema.org/draft-07/schema#',
+                    type: 'object',
+                    required: ['data'],
+                    properties: {
+                        data: {
+                            type: 'array',
+                            items: {
+                                type: 'object',
+                                required: ['type', 'id', 'attributes'],
+                                properties: {
+                                    type: {const: 'answers'},
+                                    id: {
+                                        type: 'string',
+                                        pattern:
+                                            '^[a-z0-9]{1,30}(--[a-z0-9]{1,30})?(-[a-z0-9]{1,30})*$'
+                                    },
+                                    attributes: {type: 'object'}
                                 }
                             }
                         }

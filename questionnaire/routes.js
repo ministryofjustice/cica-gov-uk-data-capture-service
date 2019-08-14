@@ -164,15 +164,15 @@ router
     .route('/:questionnaireId/progress-entries')
     .get(permissions('read:progress-entries'), async (req, res, next) => {
         try {
-            console.log('queryyyyyyyyyyyyyyyy:', req.query);
+            const {questionnaireId} = req.params;
+            const {filter} = req.query;
+            const questionnaireService = createQuestionnaireService({logger: req.log});
+            const progressEntries = await questionnaireService.getProgressEntries(
+                questionnaireId,
+                filter
+            );
 
-            // const {questionnaireId} = req.params;
-            // const questionnaireService = createQuestionnaireService({logger: req.log});
-            // const resourceCollection = await questionnaireService.getAnswers(questionnaireId);
-
-            res.status(200).json({
-                data: {foo: 'bar'}
-            });
+            res.status(200).json(progressEntries);
         } catch (err) {
             next(err);
         }

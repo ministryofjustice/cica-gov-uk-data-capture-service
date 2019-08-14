@@ -478,7 +478,7 @@
                         "$ref": "#/components/parameters/filter"
                     }
                 ],
-                "x-scopes": ["read:progressEntries"],
+                "x-scopes": ["read:progress-entries"],
                 "x-requests": {},
                 "responses": {
                     "200": {
