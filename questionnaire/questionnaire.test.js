@@ -954,31 +954,71 @@ describe('/questionnaires/{questionnaireId}/progress-entries', () => {
                     )
                     .set('Authorization', `Bearer ${tokens['read:progress-entries']}`);
 
-                console.log(res.body);
-
                 expect(res.statusCode).toBe(200);
                 expect(res.type).toBe('application/vnd.api+json');
                 expect(res.body).toMatchSchema({
                     $schema: 'http://json-schema.org/draft-07/schema#',
                     type: 'object',
+                    additionalProperties: false,
                     required: ['data'],
                     properties: {
                         data: {
                             type: 'array',
                             items: {
                                 type: 'object',
-                                required: ['type', 'id', 'attributes'],
+                                additionalProperties: false,
+                                required: ['type', 'id', 'attributes', 'relationships'],
                                 properties: {
-                                    type: {const: 'answers'},
+                                    type: {const: 'progress-entries'},
                                     id: {
                                         type: 'string',
                                         pattern:
                                             '^[a-z0-9]{1,30}(--[a-z0-9]{1,30})?(-[a-z0-9]{1,30})*$'
                                     },
-                                    attributes: {type: 'object'}
+                                    attributes: {
+                                        type: 'object',
+                                        additionalProperties: false,
+                                        required: ['sectionId'],
+                                        properties: {
+                                            sectionId: {
+                                                type: 'string',
+                                                pattern: '^[a-z0-9]{1,30}(-[a-z0-9]{1,30})*$'
+                                            }
+                                        }
+                                    },
+                                    relationships: {
+                                        type: 'object',
+                                        additionalProperties: false,
+                                        required: ['section'],
+                                        properties: {
+                                            section: {
+                                                type: 'object',
+                                                additionalProperties: false,
+                                                required: ['data'],
+                                                properties: {
+                                                    data: {
+                                                        type: 'object',
+                                                        additionalProperties: false,
+                                                        required: ['type', 'id'],
+                                                        properties: {
+                                                            type: {type: 'string'},
+                                                            id: {
+                                                                type: 'string',
+                                                                pattern:
+                                                                    '^[a-z0-9]{1,30}(--[a-z0-9]{1,30})?(-[a-z0-9]{1,30})*$'
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
                                 }
                             }
-                        }
+                        },
+                        included: {type: 'array'},
+                        links: {type: 'object'},
+                        meta: {type: 'object'}
                     }
                 });
             });

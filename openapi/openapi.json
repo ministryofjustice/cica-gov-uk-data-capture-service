@@ -1492,78 +1492,133 @@
                             "application/vnd.api+json": {
                                 "schema": {
                                     "type": "object",
+                                    "additionalProperties": false,
                                     "required": ["data"],
                                     "properties": {
                                         "data": {
                                             "type": "array",
                                             "items": {
                                                 "type": "object",
-                                                "required": ["type", "id", "attributes"],
+                                                "additionalProperties": false,
+                                                "required": [
+                                                    "type",
+                                                    "id",
+                                                    "attributes",
+                                                    "relationships"
+                                                ],
                                                 "properties": {
                                                     "type": {
-                                                        "enum": ["answers"]
+                                                        "enum": ["progress-entries"]
                                                     },
                                                     "id": {
                                                         "type": "string",
                                                         "pattern": "^[a-z0-9]{1,30}(--[a-z0-9]{1,30})?(-[a-z0-9]{1,30})*$"
                                                     },
                                                     "attributes": {
-                                                        "type": "object"
+                                                        "type": "object",
+                                                        "additionalProperties": false,
+                                                        "required": ["sectionId"],
+                                                        "properties": {
+                                                            "sectionId": {
+                                                                "type": "string",
+                                                                "pattern": "^[a-z0-9]{1,30}(-[a-z0-9]{1,30})*$"
+                                                            }
+                                                        }
+                                                    },
+                                                    "relationships": {
+                                                        "type": "object",
+                                                        "additionalProperties": false,
+                                                        "required": ["section"],
+                                                        "properties": {
+                                                            "section": {
+                                                                "type": "object",
+                                                                "additionalProperties": false,
+                                                                "required": ["data"],
+                                                                "properties": {
+                                                                    "data": {
+                                                                        "type": "object",
+                                                                        "additionalProperties": false,
+                                                                        "required": ["type", "id"],
+                                                                        "properties": {
+                                                                            "type": {
+                                                                                "type": "string"
+                                                                            },
+                                                                            "id": {
+                                                                                "type": "string",
+                                                                                "pattern": "^[a-z0-9]{1,30}(--[a-z0-9]{1,30})?(-[a-z0-9]{1,30})*$"
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
                                                     }
                                                 }
                                             }
+                                        },
+                                        "included": {
+                                            "type": "array",
+                                            "items": {}
+                                        },
+                                        "links": {
+                                            "type": "object"
+                                        },
+                                        "meta": {
+                                            "type": "object"
                                         }
                                     }
                                 },
                                 "example": {
-                                    "data": {
-                                        "type": "progress-entries",
-                                        "id": "08dbd0d2-6cee-49e5-a55f-35b31ac4aa9e",
-                                        "attributes": {
-                                            "sectionId": "p-applicant-declaration"
-                                        },
-                                        "relationships": {
-                                            "section": {
-                                                "data": {
-                                                    "type": "sections",
-                                                    "id": "p-applicant-declaration"
+                                    "data": [
+                                        {
+                                            "type": "progress-entries",
+                                            "id": "08dbd0d2-6cee-49e5-a55f-35b31ac4aa9e",
+                                            "attributes": {
+                                                "sectionId": "p-applicant-declaration"
+                                            },
+                                            "relationships": {
+                                                "section": {
+                                                    "data": {
+                                                        "type": "sections",
+                                                        "id": "p-applicant-declaration"
+                                                    }
                                                 }
                                             }
-                                        },
-                                        "links": {
-                                            "prev": "questionnaires/{questionnaireId}/progress-entries?page[before]=p-applicant-declaration"
-                                        },
-                                        "included": [
-                                            {
-                                                "type": "sections",
-                                                "id": "p-applicant-declaration",
-                                                "attributes": {
-                                                    "$schema": "http://json-schema.org/draft-07/schema#",
-                                                    "type": "object",
-                                                    "title": "Declaration",
-                                                    "additionalProperties": false,
-                                                    "properties": {
-                                                        "applicant-declaration": {
-                                                            "description": "\n                <p class=\"g-body\">By continuing you confirm that the information you will give is true as far as you know.</p>\n                {{ govukWarningText({\n                    text: \"If you deliberately give false or misleading information, you may get less compensation or be prosecuted.\",\n                    iconFallbackText: \"Warning\"\n                }) }}"
-                                                        }
-                                                    }
-                                                },
-                                                "relationships": {
-                                                    "answer": {
-                                                        "data": {
-                                                            "type": "answers",
-                                                            "id": "p-applicant-declaration"
-                                                        }
+                                        }
+                                    ],
+                                    "links": {
+                                        "prev": "questionnaires/{questionnaireId}/progress-entries?page[before]=p-applicant-declaration"
+                                    },
+                                    "included": [
+                                        {
+                                            "type": "sections",
+                                            "id": "p-applicant-declaration",
+                                            "attributes": {
+                                                "$schema": "http://json-schema.org/draft-07/schema#",
+                                                "type": "object",
+                                                "title": "Declaration",
+                                                "additionalProperties": false,
+                                                "properties": {
+                                                    "applicant-declaration": {
+                                                        "description": "\n                <p class=\"g-body\">By continuing you confirm that the information you will give is true as far as you know.</p>\n                {{ govukWarningText({\n                    text: \"If you deliberately give false or misleading information, you may get less compensation or be prosecuted.\",\n                    iconFallbackText: \"Warning\"\n                }) }}"
                                                     }
                                                 }
                                             },
-                                            {
-                                                "type": "answers",
-                                                "id": "p-applicant-declaration",
-                                                "attributes": {}
+                                            "relationships": {
+                                                "answer": {
+                                                    "data": {
+                                                        "type": "answers",
+                                                        "id": "p-applicant-declaration"
+                                                    }
+                                                }
                                             }
-                                        ]
-                                    }
+                                        },
+                                        {
+                                            "type": "answers",
+                                            "id": "p-applicant-declaration",
+                                            "attributes": {}
+                                        }
+                                    ]
                                 }
                             }
                         }
