@@ -10,6 +10,8 @@ const templates = require('./templates');
 const createQuestionnaireDAL = require('./questionnaire-dal');
 const createMessageBusCaller = require('../services/message-bus');
 
+const rxPointerPipes = new RegExp(/\|\|([a-z0-9/-]+)\|\|/, 'gmi');
+
 function createQuestionnaireService(spec) {
     const {logger} = spec;
     const db = createQuestionnaireDAL({logger});
@@ -363,13 +365,28 @@ function createQuestionnaireService(spec) {
         };
     }
 
+    function resolvePipesInSection(questionnaire, section) {
+        let sectionString = JSON.stringify(section);
+        const pointerMatches = sectionString.match(rxPointerPipes);
+        pointerMatches.forEach(match => {
+            const trimmedMatch = match.replace(/\|\|/g, '');
+            sectionString = sectionString.replace(match, pointer.get(questionnaire, trimmedMatch));
+        });
+
+        return JSON.parse(sectionString);
+    }
+
     function buildSectionResource(sectionId, questionnaire) {
         // TODO: replace any piping tokens
+        const resolvedSection = resolvePipesInSection(
+            questionnaire,
+            questionnaire.sections[sectionId]
+        );
 
         const sectionResource = {
             type: 'sections',
             id: sectionId,
-            attributes: questionnaire.sections[sectionId]
+            attributes: resolvedSection
         };
         // Add any answer relationships
         const {answers} = questionnaire;
