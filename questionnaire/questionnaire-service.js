@@ -159,16 +159,6 @@ function createQuestionnaireService(spec) {
                                 questionnaire,
                                 task.emailTemplatePlaceholderMap.applicantEmail
                             ),
-                            applicant_name: `${pointer.get(
-                                questionnaire,
-                                task.emailTemplatePlaceholderMap.applicantName.title
-                            )} ${pointer.get(
-                                questionnaire,
-                                task.emailTemplatePlaceholderMap.applicantName.firstName
-                            )} ${pointer.get(
-                                questionnaire,
-                                task.emailTemplatePlaceholderMap.applicantName.lastName
-                            )}`,
                             case_reference: pointer.get(
                                 questionnaire,
                                 task.emailTemplatePlaceholderMap.caseReference
