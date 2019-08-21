@@ -248,10 +248,14 @@ function createQuestionnaireService(spec) {
     async function getAnswers(questionnaireId) {
         const result = await getQuestionnaire(questionnaireId);
         const {questionnaire} = result.rows[0];
+        const resourceCollection = questionnaire.progress.reduce((acc, sectionAnswersId) => {
+            // Does this section have answers
+            if (questionnaire.answers[sectionAnswersId]) {
+                acc.push(buildAnswerResource(sectionAnswersId, questionnaire));
+            }
 
-        const resourceCollection = questionnaire.progress.map(sectionAnswersId =>
-            buildAnswerResource(sectionAnswersId, questionnaire)
-        );
+            return acc;
+        }, []);
 
         return resourceCollection;
     }
