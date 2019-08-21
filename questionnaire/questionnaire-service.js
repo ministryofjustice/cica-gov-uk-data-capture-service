@@ -150,7 +150,7 @@ function createQuestionnaireService(spec) {
             if (task.emailTemplateId) {
                 try {
                     await messageBus.post('NotificationQueue', {
-                        templateId: '1ddf1d87-09b3-4a2b-aa27-d73823f4a886',
+                        templateId: task.emailTemplateId,
                         email_address: pointer.get(
                             questionnaire,
                             task.emailTemplatePlaceholderMap.applicantEmail
@@ -160,16 +160,6 @@ function createQuestionnaireService(spec) {
                                 questionnaire,
                                 task.emailTemplatePlaceholderMap.applicantEmail
                             ),
-                            applicant_name: `${pointer.get(
-                                questionnaire,
-                                task.emailTemplatePlaceholderMap.applicantName.title
-                            )} ${pointer.get(
-                                questionnaire,
-                                task.emailTemplatePlaceholderMap.applicantName.firstName
-                            )} ${pointer.get(
-                                questionnaire,
-                                task.emailTemplatePlaceholderMap.applicantName.lastName
-                            )}`,
                             case_reference: pointer.get(
                                 questionnaire,
                                 task.emailTemplatePlaceholderMap.caseReference
