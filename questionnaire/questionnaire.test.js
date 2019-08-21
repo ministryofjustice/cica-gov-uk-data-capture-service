@@ -16,7 +16,9 @@ const tokens = {
     'create:system-answers':
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJkYXRhLWNhcHR1cmUtc2VydmljZSIsImlzcyI6IiQuYXVkIiwianRpIjoiMDhhNTAyMWEtM2JmNC00OTBlLTkyMjAtYjJhN2Y3MGNmMTIzIiwic3ViIjoiYXBwbGljYXRpb24tc2VydmljZSIsInNjb3BlIjoiY3JlYXRlOnN5c3RlbS1hbnN3ZXJzIiwiaWF0IjoxNTY0MDU4MjUxfQ.fThAa30m5CvQRZKBb4Zm5c4wwCEK7k0bBq9MX7Fbfgs',
     'create:dummy-resource':
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJkYXRhLWNhcHR1cmUtc2VydmljZSIsImlzcyI6IiQuYXVkIiwianRpIjoiYzFhMzJiOTUtNGQxMi00YzVlLWI4MGQtNWUyZTk2ZDU1MmNmIiwic3ViIjoiJC5hdWQiLCJzY29wZSI6ImNyZWF0ZTpkdW1teS1yZXNvdXJjZSIsImlhdCI6MTU2NDA1ODI1MX0.J-WxYzHK2rGJlmtmvhwQBrYFvmIpVeIQWAntDo6HJ-4'
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJkYXRhLWNhcHR1cmUtc2VydmljZSIsImlzcyI6IiQuYXVkIiwianRpIjoiYzFhMzJiOTUtNGQxMi00YzVlLWI4MGQtNWUyZTk2ZDU1MmNmIiwic3ViIjoiJC5hdWQiLCJzY29wZSI6ImNyZWF0ZTpkdW1teS1yZXNvdXJjZSIsImlhdCI6MTU2NDA1ODI1MX0.J-WxYzHK2rGJlmtmvhwQBrYFvmIpVeIQWAntDo6HJ-4',
+    'read:progress-entries':
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJkYXRhLWNhcHR1cmUtc2VydmljZSIsImlzcyI6IiQuYXVkIiwianRpIjoiNDUwMzE2ZTYtNDFhNS00MGRjLWI3NTUtMzA2ZGQ2M2FlMDhiIiwic3ViIjoiY2ljYS13ZWIiLCJzY29wZSI6InJlYWQ6cHJvZ3Jlc3MtZW50cmllcyIsImlhdCI6MTU2NTc5NzE1MH0.fF6Ln7GZmq-R36N-Avuo_a_8Jj5-wla17x0552XnMbE'
 };
 
 const createQuestionnaireResponse = require('./test-fixtures/res/post_questionnaire.json');
@@ -28,7 +30,7 @@ jest.doMock('./questionnaire-dal.js', () =>
     // return a modified factory function, that returns an object with a method, that returns a valid created response
     jest.fn(() => ({
         createQuestionnaire: () => createQuestionnaireResponse,
-        getQuestionnaire(questionnaireId) {
+        getQuestionnaire: questionnaireId => {
             if (questionnaireId === '285cb104-0c15-4a9c-9840-cb1007f098fb') {
                 return getQuestionnaireResponse;
             }
@@ -41,7 +43,7 @@ jest.doMock('./questionnaire-dal.js', () =>
             );
         },
         updateQuestionnaire: () => undefined,
-        getQuestionnaireSubmissionStatus(questionnaireId) {
+        getQuestionnaireSubmissionStatus: questionnaireId => {
             if (questionnaireId === '285cb104-0c15-4a9c-9840-cb1007f098fb') {
                 return 'NOT_STARTED';
             }
@@ -285,6 +287,7 @@ describe('/questionnaires/{questionnaireId}/sections/{sectionId}/answers', () =>
                     .set('Authorization', `Bearer ${tokens['create:system-answers']}`)
                     .set('Content-Type', 'application/vnd.api+json')
                     .send({data: {type: 'answers', attributes: {'case-reference': '11\\111111'}}});
+
                 expect(res.statusCode).toBe(201);
                 expect(res.type).toBe('application/vnd.api+json');
                 expect(res.body).toMatchSchema({
@@ -915,6 +918,211 @@ describe('/questionnaires/{questionnaireId}/submissions', () => {
                             attributes: {questionnaireId: '285cb104-0c15-4a9c-9840-cb1007f098fb'}
                         }
                     });
+
+                expect(res.statusCode).toBe(404);
+                expect(res.type).toBe('application/vnd.api+json');
+                expect(res.body).toMatchSchema({
+                    $schema: 'http://json-schema.org/draft-07/schema#',
+                    type: 'object',
+                    required: ['errors'],
+                    properties: {
+                        errors: {
+                            type: 'array',
+                            items: {
+                                type: 'object',
+                                required: ['status', 'title', 'detail'],
+                                properties: {
+                                    status: {const: 404},
+                                    title: {const: '404 Not Found'},
+                                    detail: {type: 'string'}
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+        });
+    });
+});
+describe('/questionnaires/{questionnaireId}/progress-entries', () => {
+    describe('get', () => {
+        describe('200', () => {
+            it('should Success', async () => {
+                const res = await request(app)
+                    .get(
+                        '/api/v1/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/progress-entries?filter%5Bposition%5D=current&page%5Bbefore%5D=p-applicant-declaration'
+                    )
+                    .set('Authorization', `Bearer ${tokens['read:progress-entries']}`);
+
+                expect(res.statusCode).toBe(200);
+                expect(res.type).toBe('application/vnd.api+json');
+                expect(res.body).toMatchSchema({
+                    $schema: 'http://json-schema.org/draft-07/schema#',
+                    type: 'object',
+                    additionalProperties: false,
+                    required: ['data'],
+                    properties: {
+                        data: {
+                            type: 'array',
+                            items: {
+                                type: 'object',
+                                additionalProperties: false,
+                                required: ['type', 'id', 'attributes', 'relationships'],
+                                properties: {
+                                    type: {const: 'progress-entries'},
+                                    id: {
+                                        type: 'string',
+                                        pattern:
+                                            '^[a-z0-9]{1,30}(--[a-z0-9]{1,30})?(-[a-z0-9]{1,30})*$'
+                                    },
+                                    attributes: {
+                                        type: 'object',
+                                        additionalProperties: false,
+                                        required: ['sectionId', 'url'],
+                                        properties: {
+                                            sectionId: {
+                                                type: ['string', 'null'],
+                                                pattern:
+                                                    '^[a-z0-9]{1,30}(--[a-z0-9]{1,30})?(-[a-z0-9]{1,30})*$'
+                                            },
+                                            url: {type: ['string', 'null']}
+                                        }
+                                    },
+                                    relationships: {
+                                        type: 'object',
+                                        additionalProperties: false,
+                                        required: ['section'],
+                                        properties: {
+                                            section: {
+                                                type: 'object',
+                                                additionalProperties: false,
+                                                required: ['data'],
+                                                properties: {
+                                                    data: {
+                                                        type: 'object',
+                                                        additionalProperties: false,
+                                                        required: ['type', 'id'],
+                                                        properties: {
+                                                            type: {type: 'string'},
+                                                            id: {
+                                                                type: 'string',
+                                                                pattern:
+                                                                    '^[a-z0-9]{1,30}(--[a-z0-9]{1,30})?(-[a-z0-9]{1,30})*$'
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        included: {type: 'array'},
+                        links: {type: 'object'},
+                        meta: {type: 'object'}
+                    }
+                });
+            });
+        });
+        describe('400', () => {
+            it('should There is an issue with the request', async () => {
+                const res = await request(app)
+                    .get(
+                        '/api/v1/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/progress-entries?filter%5BNOT-A-VALID-FILTER%5D=FOO'
+                    )
+                    .set('Authorization', `Bearer ${tokens['read:progress-entries']}`);
+
+                expect(res.statusCode).toBe(400);
+                expect(res.type).toBe('application/vnd.api+json');
+                expect(res.body).toMatchSchema({
+                    $schema: 'http://json-schema.org/draft-07/schema#',
+                    type: 'object',
+                    required: ['errors'],
+                    properties: {
+                        errors: {
+                            type: 'array',
+                            items: {
+                                type: 'object',
+                                required: ['status', 'title', 'detail'],
+                                properties: {
+                                    status: {const: 400},
+                                    title: {const: '400 Bad Request'},
+                                    detail: {type: 'string'}
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+        });
+        describe('401', () => {
+            it('should Access token is missing or invalid', async () => {
+                const res = await request(app).get(
+                    '/api/v1/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/progress-entries?filter%5Bposition%5D=current&page%5Bbefore%5D=p-applicant-declaration'
+                );
+
+                expect(res.statusCode).toBe(401);
+                expect(res.type).toBe('application/vnd.api+json');
+                expect(res.body).toMatchSchema({
+                    $schema: 'http://json-schema.org/draft-07/schema#',
+                    type: 'object',
+                    required: ['errors'],
+                    properties: {
+                        errors: {
+                            type: 'array',
+                            items: {
+                                type: 'object',
+                                required: ['status', 'title', 'detail'],
+                                properties: {
+                                    status: {const: 401},
+                                    title: {const: '401 Unauthorized'},
+                                    detail: {type: 'string'}
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+        });
+        describe('403', () => {
+            it("should The JWT doesn't permit access to this endpoint", async () => {
+                const res = await request(app)
+                    .get(
+                        '/api/v1/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/progress-entries?filter%5Bposition%5D=current&page%5Bbefore%5D=p-applicant-declaration'
+                    )
+                    .set('Authorization', `Bearer ${tokens['create:dummy-resource']}`);
+
+                expect(res.statusCode).toBe(403);
+                expect(res.type).toBe('application/vnd.api+json');
+                expect(res.body).toMatchSchema({
+                    $schema: 'http://json-schema.org/draft-07/schema#',
+                    type: 'object',
+                    required: ['errors'],
+                    properties: {
+                        errors: {
+                            type: 'array',
+                            items: {
+                                type: 'object',
+                                required: ['status', 'title', 'detail'],
+                                properties: {
+                                    status: {const: 403},
+                                    title: {const: '403 Forbidden'},
+                                    detail: {type: 'string'}
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+        });
+        describe('404', () => {
+            it('should The specified resource was not found', async () => {
+                const res = await request(app)
+                    .get(
+                        '/api/v1/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/progress-entries?filter%5BsectionId%5D=not-a-valid-section'
+                    )
+                    .set('Authorization', `Bearer ${tokens['read:progress-entries']}`);
 
                 expect(res.statusCode).toBe(404);
                 expect(res.type).toBe('application/vnd.api+json');
