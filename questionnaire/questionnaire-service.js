@@ -24,6 +24,7 @@ function createQuestionnaireService(spec) {
 
     async function createQuestionnaire(templateName) {
         if (!(templateName in templates)) {
+            // TODO: MAKE VError
             const err = Error(`Template "${templateName}" does not exist`);
             err.name = 'HTTPError';
             err.statusCode = 404;
@@ -234,15 +235,23 @@ function createQuestionnaireService(spec) {
         return response;
     }
 
+    function buildAnswerResource(answersId, questionnaire) {
+        const answerResource = {
+            type: 'answers',
+            id: answersId,
+            attributes: questionnaire.answers[answersId]
+        };
+
+        return answerResource;
+    }
+
     async function getAnswers(questionnaireId) {
         const result = await getQuestionnaire(questionnaireId);
         const {questionnaire} = result.rows[0];
 
-        const resourceCollection = questionnaire.progress.map(sectionAnswersId => ({
-            type: 'answers',
-            id: sectionAnswersId,
-            attributes: questionnaire.answers[sectionAnswersId]
-        }));
+        const resourceCollection = questionnaire.progress.map(sectionAnswersId =>
+            buildAnswerResource(sectionAnswersId, questionnaire)
+        );
 
         return resourceCollection;
     }
@@ -363,13 +372,196 @@ function createQuestionnaireService(spec) {
         };
     }
 
+    function buildSectionResource(sectionId, questionnaire) {
+        // TODO: replace any piping tokens
+
+        const sectionResource = {
+            type: 'sections',
+            id: sectionId,
+            attributes: questionnaire.sections[sectionId]
+        };
+        // Add any answer relationships
+        const {answers} = questionnaire;
+        const sectionAnswers = answers ? answers[sectionId] : undefined;
+
+        if (sectionAnswers) {
+            sectionResource.relationships = {
+                answer: {
+                    data: {
+                        type: 'answers',
+                        id: sectionId
+                    }
+                }
+            };
+        }
+
+        return sectionResource;
+    }
+
+    function buildProgressEntryResource(sectionId) {
+        const progressEntryResource = {
+            type: 'progress-entries',
+            id: sectionId,
+            attributes: {
+                sectionId,
+                url: null
+            },
+            relationships: {
+                section: {
+                    data: {
+                        type: 'sections',
+                        id: sectionId
+                    }
+                }
+            }
+        };
+
+        return progressEntryResource;
+    }
+
+    async function getProgressEntries(questionnaireId, query) {
+        // 1 - load the questionnaire
+        const result = await getQuestionnaire(questionnaireId);
+
+        // 2 - get questionnaire instance
+        const {questionnaire} = result.rows[0];
+
+        // 3 - get all progress
+        const {progress} = questionnaire;
+
+        // 4 - filter or paginate progress entries if required
+        // Currently this only supports queries that return a single progress entry
+        if (query) {
+            const {filter, page} = query;
+            const compoundDocument = {};
+            let progressIndex = -1;
+            let sectionId;
+
+            if (filter) {
+                if ('position' in filter) {
+                    if (filter.position === 'current') {
+                        progressIndex = progress.length - 1;
+                        sectionId = progress[progressIndex];
+                    }
+                }
+
+                if ('sectionId' in filter) {
+                    ({sectionId} = filter);
+                    progressIndex = progress.indexOf(sectionId);
+                }
+            } else if (page) {
+                if ('before' in page) {
+                    // Find the requested sectionId
+                    sectionId = page.before;
+                    progressIndex = progress.indexOf(sectionId);
+
+                    if (progressIndex > -1) {
+                        // If we're on the first progress entry then there is no previous entry.
+                        // We'll return a pseudo progress-entry that references the "referrer"
+                        if (progressIndex === 0) {
+                            // TODO: "referrer" is now a reserved id by the DCS e.g. A questionnaire can't use "referrer" as a section id. Use a naming convention to convey this and to avoid naming collisions
+                            return {
+                                data: [
+                                    {
+                                        type: 'progress-entries',
+                                        id: 'referrer',
+                                        attributes: {
+                                            sectionId: null,
+                                            url: questionnaire.routes.referrer
+                                        }
+                                    }
+                                ]
+                            };
+                        }
+
+                        // Find the previous entry
+                        progressIndex -= 1;
+                        sectionId = progress[progressIndex];
+                    }
+                }
+            }
+
+            // Is the progress entry available
+            if (progressIndex > -1) {
+                // Create the progress entry compound document
+                const previousProgressEntryLink =
+                    progressIndex === 0
+                        ? questionnaire.routes.referrer
+                        : `${process.env.DCS_URL}/api/v1/questionnaires/${
+                              questionnaire.id
+                          }/progress-entries?filter[sectionId]=${progress[progressIndex - 1]}`;
+
+                compoundDocument.data = [buildProgressEntryResource(sectionId)];
+                // Include related resources
+                // Currently this is a one-to-one relationship with a section resource
+                compoundDocument.included = [buildSectionResource(sectionId, questionnaire)];
+                // If the included resource has a relationship, include it too. Only works with "answers" resources at the moment.
+                compoundDocument.included = compoundDocument.included.reduce(
+                    (acc, includedResource) => {
+                        if ('relationships' in includedResource) {
+                            const {relationships} = includedResource;
+
+                            Object.keys(relationships).forEach(relationshipName => {
+                                const relationship = relationships[relationshipName];
+                                const relationshipData = relationship.data;
+
+                                if (relationshipData.type === 'answers') {
+                                    acc.push(
+                                        buildAnswerResource(relationshipData.id, questionnaire)
+                                    );
+                                }
+                            });
+                        }
+
+                        return acc;
+                    },
+                    compoundDocument.included
+                );
+
+                // Add pagination links
+                compoundDocument.links = {
+                    prev: previousProgressEntryLink
+                };
+                // TODO: move this meta on to the appropriate section resource
+                const sectionType = questionnaire.routes.states[sectionId].type;
+                const isFinalType = sectionType && sectionType === 'final';
+
+                compoundDocument.meta = {
+                    summary: questionnaire.routes.summary,
+                    confirmation: questionnaire.routes.confirmation,
+                    final: isFinalType
+                };
+
+                return compoundDocument;
+            }
+
+            // TODO: Make VError
+            // Query found no progress entries
+            const err = Error(`ProgressEntry "${sectionId}" does not exist`);
+            err.name = 'HTTPError';
+            err.statusCode = 404;
+            err.error = '404 Not Found';
+            throw err;
+        }
+
+        // 5 - If no query is supplied, return the progress entries collection
+        const progressEntriesCollection = progress.map(sectionId =>
+            buildProgressEntryResource(sectionId, questionnaire)
+        );
+
+        return {
+            data: progressEntriesCollection
+        };
+    }
+
     return Object.freeze({
         createQuestionnaire,
         createAnswers,
         getQuestionnaireSubmissionStatus,
         getSubmissionResponseData,
         validateAllAnswers,
-        getAnswers
+        getAnswers,
+        getProgressEntries
     });
 }
 

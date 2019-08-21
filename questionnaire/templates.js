@@ -4,7 +4,7 @@ module.exports = {
     'sexual-assault': id => ({
         id,
         type: 'apply-for-compensation',
-        version: '0.2.0',
+        version: '0.2.3',
         sections: {
             'p-applicant-declaration': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
@@ -148,10 +148,10 @@ module.exports = {
             'p--was-the-crime-reported-to-police': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
                 type: 'object',
-                required: ['q-was-the-crime-reported-to-police'],
+                required: ['q--was-the-crime-reported-to-police'],
                 additionalProperties: false,
                 properties: {
-                    'q-was-the-crime-reported-to-police': {
+                    'q--was-the-crime-reported-to-police': {
                         type: 'boolean',
                         title: 'Was the crime reported to the police?'
                     },
@@ -162,7 +162,7 @@ module.exports = {
                 },
                 errorMessage: {
                     required: {
-                        'q-was-the-crime-reported-to-police':
+                        'q--was-the-crime-reported-to-police':
                             'Select yes if the crime was reported to the police'
                     }
                 }
@@ -194,10 +194,10 @@ module.exports = {
             'p--whats-the-crime-reference-number': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
                 type: 'object',
-                required: ['q-whats-the-crime-reference-number'],
+                required: ['q--whats-the-crime-reference-number'],
                 additionalProperties: false,
                 properties: {
-                    'q-whats-the-crime-reference-number': {
+                    'q--whats-the-crime-reference-number': {
                         title: 'What is the crime reference number?',
                         type: 'string',
                         description:
@@ -210,7 +210,7 @@ module.exports = {
                 },
                 errorMessage: {
                     required: {
-                        'q-whats-the-crime-reference-number': 'Enter the crime reference number'
+                        'q--whats-the-crime-reference-number': 'Enter the crime reference number'
                     }
                 }
             },
@@ -327,12 +327,12 @@ module.exports = {
                 $schema: 'http://json-schema.org/draft-07/schema#',
                 type: 'object',
                 required: [
-                    'q-applicant-reason-for-delay-in-application',
+                    'q-applicant-explain-reason-for-delay-application',
                     'q-applicant-select-reasons-for-the-delay-in-making-your-application'
                 ],
                 additionalProperties: false,
                 properties: {
-                    'q-applicant-reason-for-delay-in-application': {
+                    'q-applicant-explain-reason-for-delay-application': {
                         title: 'Select reasons for the delay in making your application',
                         type: 'array',
                         maxItems: 4,
@@ -370,7 +370,7 @@ module.exports = {
                 },
                 errorMessage: {
                     required: {
-                        'q-applicant-reason-for-delay-in-application':
+                        'q-applicant-explain-reason-for-delay-application':
                             'Select if you were under 18, advised to wait, medical reasons or other reasons',
                         'q-applicant-select-reasons-for-the-delay-in-making-your-application':
                             'Explain the reasons for the delay in making your application'
@@ -954,12 +954,12 @@ module.exports = {
                 $schema: 'http://json-schema.org/draft-07/schema#',
                 type: 'object',
                 required: [
-                    'q-applicant-reason-for-delay-in-reporting-crime',
+                    'q-applicant-explain-reason-for-delay-reporting',
                     'q-applicant-select-reasons-for-the-delay-in-reporting-the-crime-to-police'
                 ],
                 additionalProperties: false,
                 properties: {
-                    'q-applicant-reason-for-delay-in-reporting-crime': {
+                    'q-applicant-explain-reason-for-delay-reporting': {
                         title: 'Select reasons for the delay in reporting the crime to the police',
                         type: 'array',
                         maxItems: 3,
@@ -993,7 +993,7 @@ module.exports = {
                 },
                 errorMessage: {
                     required: {
-                        'q-applicant-reason-for-delay-in-reporting-crime':
+                        'q-applicant-explain-reason-for-delay-reporting':
                             'Select if you were under 18, unable to report the crime or other reasons',
                         'q-applicant-select-reasons-for-the-delay-in-reporting-the-crime-to-police':
                             'Explain the reasons for the delay in reporting the crime to the police'
@@ -1022,10 +1022,10 @@ module.exports = {
                 $schema: 'http://json-schema.org/draft-07/schema#',
                 type: 'object',
                 title: 'Enter their name',
-                required: ['q-offenders-name'],
+                required: ['q-offender-enter-offenders-name'],
                 additionalProperties: false,
                 properties: {
-                    'q-offenders-name': {
+                    'q-offender-enter-offenders-name': {
                         type: 'string',
                         title: 'Offenders name',
                         description: 'We will not contact the offender.',
@@ -1037,14 +1037,14 @@ module.exports = {
                 },
                 errorMessage: {
                     required: {
-                        'q-offenders-name': "Enter the offender's name"
+                        'q-offender-enter-offenders-name': "Enter the offender's name"
                     }
                 }
             },
             'p-offender-describe-contact-with-offender': {
                 type: 'object',
                 properties: {
-                    'q-offender-contact-description': {
+                    'q-offender-describe-contact-with-offender': {
                         type: 'string',
                         title: 'If you have contact with the offender, describe it below',
                         description:
@@ -1054,7 +1054,7 @@ module.exports = {
                             maxLength: 'Description must be 500 characters or less'
                         }
                     },
-                    'q-offender-no-contact-with-offender': {
+                    'q-offender-i-have-no-contact-with-offender': {
                         type: 'array',
                         maxItems: 1,
                         uniqueItems: true,
@@ -1078,14 +1078,14 @@ module.exports = {
                     'if-not-checked-then-q-offender-contact-description-is-required': {
                         if: {
                             not: {
-                                required: ['q-offender-no-contact-with-offender']
+                                required: ['q-offender-i-have-no-contact-with-offender']
                             }
                         },
                         then: {
-                            required: ['q-offender-contact-description'],
+                            required: ['q-offender-describe-contact-with-offender'],
                             errorMessage: {
                                 required: {
-                                    'q-offender-no-contact-with-offender':
+                                    'q-offender-describe-contact-with-offender':
                                         'Enter details of any contact you have with the offender'
                                 }
                             }
@@ -1345,14 +1345,10 @@ module.exports = {
                 $schema: 'http://json-schema.org/draft-07/schema#',
                 title: 'Enter your name',
                 type: 'object',
-                required: [
-                    'q-applicant-name-title',
-                    'q-applicant-name-firstname',
-                    'q-applicant-name-lastname'
-                ],
+                required: ['q-applicant-title', 'q-applicant-first-name', 'q-applicant-last-name'],
                 additionalProperties: false,
                 properties: {
-                    'q-applicant-name-title': {
+                    'q-applicant-title': {
                         title: 'Title',
                         type: 'string',
                         maxLength: 6,
@@ -1360,7 +1356,7 @@ module.exports = {
                             maxLength: 'Title must be 6 characters or less'
                         }
                     },
-                    'q-applicant-name-firstname': {
+                    'q-applicant-first-name': {
                         title: 'First name',
                         type: 'string',
                         maxLength: 70,
@@ -1368,7 +1364,7 @@ module.exports = {
                             maxLength: 'First name must be 70 characters or less'
                         }
                     },
-                    'q-applicant-name-lastname': {
+                    'q-applicant-last-name': {
                         title: 'Last name',
                         type: 'string',
                         maxLength: 70,
@@ -1379,9 +1375,9 @@ module.exports = {
                 },
                 errorMessage: {
                     required: {
-                        'q-applicant-name-title': 'Enter your title',
-                        'q-applicant-name-firstname': 'Enter your first name',
-                        'q-applicant-name-lastname': 'Enter your last name'
+                        'q-applicant-title': 'Enter your title',
+                        'q-applicant-first-name': 'Enter your first name',
+                        'q-applicant-last-name': 'Enter your last name'
                     }
                 }
             },
@@ -1447,10 +1443,10 @@ module.exports = {
             'p-applicant-enter-your-email-address': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
                 type: 'object',
-                required: ['q-applicant-email-address'],
+                required: ['q-applicant-enter-your-email-address'],
                 additionalProperties: false,
                 properties: {
-                    'q-applicant-email-address': {
+                    'q-applicant-enter-your-email-address': {
                         type: 'string',
                         title: 'Enter your email address',
                         description:
@@ -1463,7 +1459,7 @@ module.exports = {
                 },
                 errorMessage: {
                     required: {
-                        'q-applicant-email-address': 'Enter your email address'
+                        'q-applicant-enter-your-email-address': 'Enter your email address'
                     }
                 }
             },
@@ -1482,7 +1478,7 @@ module.exports = {
                             maxLength: 'First line of address must be less than 60 characters'
                         }
                     },
-                    'q-applicant-building-and-street2': {
+                    'q-applicant-building-and-street-2': {
                         type: 'string',
                         title: "<span class='govuk-visually-hidden'>Building and street line 2",
                         maxLength: 60,
@@ -1526,10 +1522,10 @@ module.exports = {
             'p-applicant-enter-your-telephone-number': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
                 type: 'object',
-                required: ['q-applicant-telephone-number'],
+                required: ['q-applicant-enter-your-telephone-number'],
                 additionalProperties: false,
                 properties: {
-                    'q-applicant-telephone-number': {
+                    'q-applicant-enter-your-telephone-number': {
                         type: 'string',
                         title: 'Enter your telephone number',
                         description:
@@ -1542,7 +1538,7 @@ module.exports = {
                 },
                 errorMessage: {
                     required: {
-                        'q-applicant-telephone-number':
+                        'q-applicant-enter-your-telephone-number':
                             'Enter a telephone number, like 01632 960 001, 07700 900 982 or +44 0808 157 0192'
                     }
                 }
@@ -1668,7 +1664,7 @@ module.exports = {
                 properties: {
                     confirmation: {
                         description:
-                            '\n                <div class="govuk-grid-column-two-thirds">\n                    {{ govukPanel({\n                        titleText: "Application submitted",\n                        html: "**Reference Number here**"\n                    }) }}\n                    <p></p>\n                    <p class="govuk-body-l">Thank you for submitting your application.</p>\n                    <p class="govuk-body-l">We have sent a confirmation email to <strong>**Email here**</strong></p>\n                    <h2 class="govuk-heading-m">What happens next</h2>\n                    <p>We will:</p>\n                    <ul class="govuk-list govuk-list--bullet">\n                    <li>ask the police for evidence</li>\n                    <li>use the police evidence to make a decision</li>\n                    <li>send our decision to **Email here**</li>\n                    </ul>\n                    <p class="govuk-body">We will usually make a decision within 4 months.</p>\n                    {{ govukWarningText({\n                        text: "You must inform us immediately if any of the information you have given us changes, especially your address, telephone number or email address.",\n                        iconFallbackText: "Warning"\n                    }) }}\n                    <p class="govuk-body">You can contact our Customer Service Centre on 0300 003 3601. Select option 8 when the call is answered.</p>\n                    <p><a href="https://www.surveymonkey.com/r/Privatebetafeedback">What did you think of this service?</a> (takes 30 seconds)</p>\n                    <p><a href="/application/application-submitted-email">Check your inbox</a></p>\n                </div>\n            '
+                            '\n                    {{ govukPanel({\n                        titleText: "Application submitted",\n                        html: \'<p>Your reference number is <strong>||/answers/system/case-reference||</strong></p><p>We have sent a confirmation email to <strong>||/answers/p-applicant-enter-your-email-address/q-applicant-email-address||</strong></p>\'\n                    }) }}\n                    \n                    <p class="govuk-body-l">Thank you for submitting your application.</p>\n                    <h2 class="govuk-heading-m">What happens next</h2>\n                    <p class="govuk-body">We will:</p>\n                    <ul class="govuk-list govuk-list--bullet">\n                    <li>ask the police for evidence</li>\n                    <li>use the police evidence to make a decision</li>\n                    <li>send our decision letter by post</li>\n                    </ul>\n                    <p class="govuk-body">We will usually make a decision within 4 months.</p>\n                    {{ govukWarningText({\n                        text: "You must inform us immediately if any of the information you have given us changes, especially your address, telephone number or email address.",\n                        iconFallbackText: "Warning"\n                    }) }}\n                    <p class="govuk-body">You can contact our Customer Service Centre on 0300 003 3601. Select option 8 when the call is answered.</p>\n                    <h2 class="govuk-heading-m">Help us improve this service</h2>\n                    <p class="govuk-body">You can complete a short survey to help us improve this service.</p>\n                    <p class="govuk-body">It does not ask for any details about your case, and has no effect on your application.</p>\n                    <p class="govuk-body"><a href="https://www.surveymonkey.com/r/Privatebetafeedback">Tell us what you think of our service</a> (takes 30 seconds)</p>\n            '
                     }
                 }
             },
@@ -1717,8 +1713,10 @@ module.exports = {
         },
         routes: {
             initial: 'p-applicant-declaration',
-            referrer: 'start-page',
+            referrer:
+                'https://uat.claim-criminal-injuries-compensation.service.justice.gov.uk/start-page',
             summary: 'p--check-your-answers',
+            confirmation: 'p--confirmation',
             states: {
                 'p-applicant-declaration': {
                     on: {
@@ -1855,7 +1853,7 @@ module.exports = {
                                 target: 'p-applicant-you-cannot-get-compensation',
                                 cond: [
                                     '==',
-                                    '$.answers.p--was-the-crime-reported-to-police.q-was-the-crime-reported-to-police',
+                                    '$.answers.p--was-the-crime-reported-to-police.q--was-the-crime-reported-to-police',
                                     false
                                 ]
                             },
@@ -1863,7 +1861,7 @@ module.exports = {
                                 target: 'p--when-was-the-crime-reported-to-police',
                                 cond: [
                                     '==',
-                                    '$.answers.p--was-the-crime-reported-to-police.q-was-the-crime-reported-to-police',
+                                    '$.answers.p--was-the-crime-reported-to-police.q--was-the-crime-reported-to-police',
                                     true
                                 ]
                             }
@@ -2007,7 +2005,7 @@ module.exports = {
                                 target: 'p-offender-do-you-know-the-name-of-the-offender',
                                 cond: [
                                     '==',
-                                    '$.answers.p--was-the-crime-reported-to-police.q-was-the-crime-reported-to-police',
+                                    '$.answers.p--was-the-crime-reported-to-police.q--was-the-crime-reported-to-police',
                                     false
                                 ]
                             },
@@ -2015,7 +2013,7 @@ module.exports = {
                                 target: 'p--which-english-police-force-is-investigating-the-crime',
                                 cond: [
                                     '==',
-                                    '$.answers.p--was-the-crime-reported-to-police.q-was-the-crime-reported-to-police',
+                                    '$.answers.p--was-the-crime-reported-to-police.q--was-the-crime-reported-to-police',
                                     true
                                 ]
                             }
@@ -2029,7 +2027,7 @@ module.exports = {
                                 target: 'p-offender-do-you-know-the-name-of-the-offender',
                                 cond: [
                                     '==',
-                                    '$.answers.p--was-the-crime-reported-to-police.q-was-the-crime-reported-to-police',
+                                    '$.answers.p--was-the-crime-reported-to-police.q--was-the-crime-reported-to-police',
                                     false
                                 ]
                             },
@@ -2038,7 +2036,7 @@ module.exports = {
                                     'p--which-police-scotland-division-is-investigating-the-crime',
                                 cond: [
                                     '==',
-                                    '$.answers.p--was-the-crime-reported-to-police.q-was-the-crime-reported-to-police',
+                                    '$.answers.p--was-the-crime-reported-to-police.q--was-the-crime-reported-to-police',
                                     true
                                 ]
                             }
@@ -2052,7 +2050,7 @@ module.exports = {
                                 target: 'p-offender-do-you-know-the-name-of-the-offender',
                                 cond: [
                                     '==',
-                                    '$.answers.p--was-the-crime-reported-to-police.q-was-the-crime-reported-to-police',
+                                    '$.answers.p--was-the-crime-reported-to-police.q--was-the-crime-reported-to-police',
                                     false
                                 ]
                             },
@@ -2060,7 +2058,7 @@ module.exports = {
                                 target: 'p--which-welsh-police-force-is-investigating-the-crime',
                                 cond: [
                                     '==',
-                                    '$.answers.p--was-the-crime-reported-to-police.q-was-the-crime-reported-to-police',
+                                    '$.answers.p--was-the-crime-reported-to-police.q--was-the-crime-reported-to-police',
                                     true
                                 ]
                             }
@@ -2332,18 +2330,10 @@ module.exports = {
             onComplete: {
                 tasks: [
                     {
-                        emailTemplateId: '1ddf1d87-09b3-4a2b-aa27-d73823f4a886',
+                        emailTemplateId: 'cb79653c-cf6e-44d4-8c03-087ba21cfd01',
                         emailTemplatePlaceholderMap: {
-                            applicantName: {
-                                title:
-                                    '/answers/p-applicant-enter-your-name/q-applicant-name-title',
-                                firstName:
-                                    '/answers/p-applicant-enter-your-name/q-applicant-name-firstname',
-                                lastName:
-                                    '/answers/p-applicant-enter-your-name/q-applicant-name-lastname'
-                            },
                             applicantEmail:
-                                '/answers/p-applicant-enter-your-email-address/q-applicant-email-address',
+                                '/answers/p-applicant-enter-your-email-address/q-applicant-enter-your-email-address',
                             caseReference: '/answers/system/case-reference'
                         }
                     }
