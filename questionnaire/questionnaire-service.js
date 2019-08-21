@@ -372,10 +372,15 @@ function createQuestionnaireService(spec) {
     function resolvePipesInSection(questionnaire, section) {
         let sectionString = JSON.stringify(section);
         const pointerMatches = sectionString.match(rxPointerPipes);
-        pointerMatches.forEach(match => {
-            const trimmedMatch = match.replace(/\|\|/g, '');
-            sectionString = sectionString.replace(match, pointer.get(questionnaire, trimmedMatch));
-        });
+        if (pointerMatches) {
+            pointerMatches.forEach(match => {
+                const trimmedMatch = match.replace(/\|\|/g, '');
+                sectionString = sectionString.replace(
+                    match,
+                    pointer.get(questionnaire, trimmedMatch)
+                );
+            });
+        }
 
         return JSON.parse(sectionString);
     }
