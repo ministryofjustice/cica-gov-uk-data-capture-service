@@ -381,7 +381,7 @@ function createQuestionnaireService(spec) {
                 );
             });
         }
-
+        console.log({sectionString});
         return JSON.parse(sectionString);
     }
 
@@ -585,7 +585,8 @@ function createQuestionnaireService(spec) {
         getSubmissionResponseData,
         validateAllAnswers,
         getAnswers,
-        getProgressEntries
+        getProgressEntries,
+        resolvePipesInSection
     });
 }
 
