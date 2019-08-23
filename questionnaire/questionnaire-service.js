@@ -376,13 +376,13 @@ function createQuestionnaireService(spec) {
         if (pointerMatches) {
             pointerMatches.forEach(match => {
                 const trimmedMatch = match.replace(/\|\|/g, '');
+                const pointerResolvesInJson = pointer.has(questionnaire, trimmedMatch);
                 sectionString = sectionString.replace(
                     match,
-                    pointer.get(questionnaire, trimmedMatch)
+                    pointerResolvesInJson ? pointer.get(questionnaire, trimmedMatch) : ''
                 );
             });
         }
-        // console.log({sectionString});
         return JSON.parse(sectionString);
     }
 

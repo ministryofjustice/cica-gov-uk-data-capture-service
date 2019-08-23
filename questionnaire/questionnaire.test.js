@@ -80,7 +80,7 @@ expect.extend(
     })
 );
 
-describe('/questionnaires', () => {
+describe.skip('/questionnaires', () => {
     describe('post', () => {
         describe('201', () => {
             it('should Created', async () => {
@@ -276,7 +276,7 @@ describe('/questionnaires', () => {
         });
     });
 });
-describe('/questionnaires/{questionnaireId}/sections/{sectionId}/answers', () => {
+describe.skip('/questionnaires/{questionnaireId}/sections/{sectionId}/answers', () => {
     describe('post', () => {
         describe('201', () => {
             it('should Created', async () => {
@@ -458,7 +458,7 @@ describe('/questionnaires/{questionnaireId}/sections/{sectionId}/answers', () =>
         });
     });
 });
-describe('/questionnaires/{questionnaireId}/sections/answers', () => {
+describe.skip('/questionnaires/{questionnaireId}/sections/answers', () => {
     describe('get', () => {
         describe('200', () => {
             it('should Success', async () => {
@@ -586,7 +586,7 @@ describe('/questionnaires/{questionnaireId}/sections/answers', () => {
         });
     });
 });
-describe('/questionnaires/{questionnaireId}/submissions', () => {
+describe.skip('/questionnaires/{questionnaireId}/submissions', () => {
     describe('get', () => {
         describe('200', () => {
             it('should Success', async () => {
@@ -944,7 +944,7 @@ describe('/questionnaires/{questionnaireId}/submissions', () => {
         });
     });
 });
-describe('/questionnaires/{questionnaireId}/progress-entries', () => {
+describe.skip('/questionnaires/{questionnaireId}/progress-entries', () => {
     describe('get', () => {
         describe('200', () => {
             it('should Success', async () => {
