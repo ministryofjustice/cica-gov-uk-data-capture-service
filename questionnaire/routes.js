@@ -150,6 +150,8 @@ router
                 true
             );
 
+            questionnaireService.createAnswers(questionnaireId, 'p--check-your-answers', {});
+
             if (submissionStatus === 'NOT_STARTED') {
                 res.status(201).json(response);
             } else {
