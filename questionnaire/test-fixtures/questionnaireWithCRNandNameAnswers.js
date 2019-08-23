@@ -2318,7 +2318,7 @@ module.exports = {
     },
     answers: {
         system: {
-            'case-reference': '19\\654321'
+            'case-reference': '19\\\\654321'
         },
         'p-applicant-enter-your-email-address': {
             'q-applicant-email-address': 'mr.test.email@dcs-test.com'

@@ -371,6 +371,7 @@ function createQuestionnaireService(spec) {
 
     function resolvePipesInSection(questionnaire, section) {
         let sectionString = JSON.stringify(section);
+        // console.log({sectionString});
         const pointerMatches = sectionString.match(rxPointerPipes);
         if (pointerMatches) {
             pointerMatches.forEach(match => {
@@ -381,7 +382,7 @@ function createQuestionnaireService(spec) {
                 );
             });
         }
-        console.log({sectionString});
+        // console.log({sectionString});
         return JSON.parse(sectionString);
     }
 
