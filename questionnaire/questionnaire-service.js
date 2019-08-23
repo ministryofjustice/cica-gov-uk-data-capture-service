@@ -371,7 +371,6 @@ function createQuestionnaireService(spec) {
 
     function resolvePipesInSection(questionnaire, section) {
         let sectionString = JSON.stringify(section);
-        // console.log({sectionString});
         const pointerMatches = sectionString.match(rxPointerPipes);
         if (pointerMatches) {
             pointerMatches.forEach(match => {
@@ -379,7 +378,10 @@ function createQuestionnaireService(spec) {
                 const pointerResolvesInJson = pointer.has(questionnaire, trimmedMatch);
                 sectionString = sectionString.replace(
                     match,
-                    pointerResolvesInJson ? pointer.get(questionnaire, trimmedMatch) : ''
+                    // TODO: find a better way of escaping the case reference number.
+                    pointerResolvesInJson
+                        ? pointer.get(questionnaire, trimmedMatch).replace(/\\/g, '\\\\\\\\')
+                        : ''
                 );
             });
         }
