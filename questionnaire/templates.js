@@ -4,7 +4,7 @@ module.exports = {
     'sexual-assault': id => ({
         id,
         type: 'apply-for-compensation',
-        version: '0.2.3',
+        version: '0.2.4',
         sections: {
             'p-applicant-declaration': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
@@ -332,7 +332,7 @@ module.exports = {
                 ],
                 additionalProperties: false,
                 properties: {
-                    'q-applicant-explain-reason-for-delay-application': {
+                    'q-applicant-select-reasons-for-the-delay-in-making-your-application': {
                         title: 'Select reasons for the delay in making your application',
                         type: 'array',
                         maxItems: 4,
@@ -359,7 +359,7 @@ module.exports = {
                             ]
                         }
                     },
-                    'q-applicant-select-reasons-for-the-delay-in-making-your-application': {
+                    'q-applicant-explain-reason-for-delay-application': {
                         title: 'Briefly explain these reasons',
                         type: 'string',
                         maxLength: 500,
@@ -959,7 +959,7 @@ module.exports = {
                 ],
                 additionalProperties: false,
                 properties: {
-                    'q-applicant-explain-reason-for-delay-reporting': {
+                    'q-applicant-select-reasons-for-the-delay-in-reporting-the-crime-to-police': {
                         title: 'Select reasons for the delay in reporting the crime to the police',
                         type: 'array',
                         maxItems: 3,
@@ -982,7 +982,7 @@ module.exports = {
                             ]
                         }
                     },
-                    'q-applicant-select-reasons-for-the-delay-in-reporting-the-crime-to-police': {
+                    'q-applicant-explain-reason-for-delay-reporting': {
                         title: 'Briefly explain these reasons',
                         type: 'string',
                         maxLength: 500,
@@ -1714,7 +1714,7 @@ module.exports = {
         routes: {
             initial: 'p-applicant-declaration',
             referrer:
-                'https://uat.claim-criminal-injuries-compensation.service.justice.gov.uk/start-page',
+                'https://uat.claim-criminal-injuries-compensation.apps.live-1.cloud-platform.service.justice.gov.uk/start-page',
             summary: 'p--check-your-answers',
             confirmation: 'p--confirmation',
             states: {
