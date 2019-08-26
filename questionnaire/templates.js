@@ -1714,7 +1714,7 @@ module.exports = {
         routes: {
             initial: 'p-applicant-declaration',
             referrer:
-                'https://uat.claim-criminal-injuries-compensation.apps.live-1.cloud-platform.service.justice.gov.uk/start-page',
+                'https://uat.claim-criminal-injuries-compensation.service.justice.gov.uk/start-page',
             summary: 'p--check-your-answers',
             confirmation: 'p--confirmation',
             states: {
