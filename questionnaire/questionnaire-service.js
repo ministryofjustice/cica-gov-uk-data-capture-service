@@ -282,6 +282,7 @@ function createQuestionnaireService(spec) {
                     info: {
                         schema: sectionSchema,
                         answers: rawAnswers,
+                        coercedAnswers: answers,
                         schemaErrors: validate.errors
                     }
                 });
