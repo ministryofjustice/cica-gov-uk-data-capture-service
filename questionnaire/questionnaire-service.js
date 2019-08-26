@@ -420,70 +420,73 @@ function createQuestionnaireService(spec) {
         // 2 - get questionnaire instance
         const {questionnaire} = result.rows[0];
 
-        // 3 - get all progress
-        const {progress} = questionnaire;
+        // 3 - get router
+        const qRouter = createQRouter(questionnaire);
 
         // 4 - filter or paginate progress entries if required
         // Currently this only supports queries that return a single progress entry
         if (query) {
             const {filter, page} = query;
             const compoundDocument = {};
-            let progressIndex = -1;
+            let section;
             let sectionId;
+            let isQuestionnaireModified = true;
 
             if (filter) {
                 if ('position' in filter) {
                     if (filter.position === 'current') {
-                        progressIndex = progress.length - 1;
-                        sectionId = progress[progressIndex];
+                        // Calling current() doesn't change any state. No need to persist.
+                        isQuestionnaireModified = false;
+                        section = qRouter.current();
                     }
                 }
 
                 if ('sectionId' in filter) {
                     ({sectionId} = filter);
-                    progressIndex = progress.indexOf(sectionId);
+                    section = qRouter.current(sectionId);
                 }
             } else if (page) {
                 if ('before' in page) {
-                    // Find the requested sectionId
-                    sectionId = page.before;
-                    progressIndex = progress.indexOf(sectionId);
-
-                    if (progressIndex > -1) {
-                        // If we're on the first progress entry then there is no previous entry.
+                    // Find the previous sectionId
+                    try {
+                        sectionId = page.before;
+                        section = qRouter.previous(sectionId);
+                    } catch (err) {
+                        // The sectionId was found but it has no previous section e.g. the first progress entry
                         // We'll return a pseudo progress-entry that references the "referrer"
-                        if (progressIndex === 0) {
-                            // TODO: "referrer" is now a reserved id by the DCS e.g. A questionnaire can't use "referrer" as a section id. Use a naming convention to convey this and to avoid naming collisions
-                            return {
-                                data: [
-                                    {
-                                        type: 'progress-entries',
-                                        id: 'referrer',
-                                        attributes: {
-                                            sectionId: null,
-                                            url: questionnaire.routes.referrer
-                                        }
+                        // TODO: "referrer" is now a reserved id by the DCS e.g. A questionnaire can't use "referrer" as a section id. Use a naming convention to convey this and to avoid naming collisions
+                        return {
+                            data: [
+                                {
+                                    type: 'progress-entries',
+                                    id: 'referrer',
+                                    attributes: {
+                                        sectionId: null,
+                                        url: questionnaire.routes.referrer
                                     }
-                                ]
-                            };
-                        }
-
-                        // Find the previous entry
-                        progressIndex -= 1;
-                        sectionId = progress[progressIndex];
+                                }
+                            ]
+                        };
                     }
                 }
             }
 
             // Is the progress entry available
-            if (progressIndex > -1) {
+            if (section) {
+                if (isQuestionnaireModified) {
+                    // Store the updated questionnaire object
+                    await db.updateQuestionnaire(questionnaireId, section.context);
+                }
+
+                sectionId = section.id;
+
                 // Create the progress entry compound document
                 const previousProgressEntryLink =
-                    progressIndex === 0
+                    section.id === section.context.routes.initial
                         ? questionnaire.routes.referrer
                         : `${process.env.DCS_URL}/api/v1/questionnaires/${
                               questionnaire.id
-                          }/progress-entries?filter[sectionId]=${progress[progressIndex - 1]}`;
+                          }/progress-entries?filter[sectionId]=${qRouter.previous(sectionId).id}`;
 
                 compoundDocument.data = [buildProgressEntryResource(sectionId)];
                 // Include related resources
@@ -539,7 +542,7 @@ function createQuestionnaireService(spec) {
         }
 
         // 5 - If no query is supplied, return the progress entries collection
-        const progressEntriesCollection = progress.map(sectionId =>
+        const progressEntriesCollection = questionnaire.progress.map(sectionId =>
             buildProgressEntryResource(sectionId, questionnaire)
         );
 
