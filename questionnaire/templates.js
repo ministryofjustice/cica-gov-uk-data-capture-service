@@ -4,7 +4,7 @@ module.exports = {
     'sexual-assault': id => ({
         id,
         type: 'apply-for-compensation',
-        version: '0.2.4',
+        version: '0.2.5',
         sections: {
             'p-applicant-declaration': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
@@ -180,7 +180,7 @@ module.exports = {
                         description: 'For example, 31 3 2018. You can enter an approximate date.',
                         errorMessage: {
                             format:
-                                'The date the crime was reported to the police must be in the past'
+                                'Enter the date the crime was reported to police and include a day, month and year'
                         }
                     }
                 },
@@ -198,7 +198,7 @@ module.exports = {
                 additionalProperties: false,
                 properties: {
                     'q--whats-the-crime-reference-number': {
-                        title: 'What is the crime reference number?',
+                        title: "What's the crime reference number?",
                         type: 'string',
                         description:
                             'This is the reference number the police gave the crime when it was reported.',
@@ -254,7 +254,8 @@ module.exports = {
                         title: 'When did the crime happen?',
                         description: 'For example, 31 3 2018. You can enter an approximate date.',
                         errorMessage: {
-                            format: 'The date the crime happened must be in the past'
+                            format:
+                                'Enter the date the crime happened and include a day, month and year'
                         }
                     },
                     'when-did-the-crime-happen': {
@@ -306,7 +307,7 @@ module.exports = {
                         type: 'string',
                         format: 'date-time',
                         title: 'When did it stop?',
-                        description: 'For example, 31 3 2018. You can enter an approximate date.',
+                        description: 'For example, 03 2018. You can enter an approximate date.',
                         errorMessage: {
                             format: 'Enter the date the crime stopped and include a month and year'
                         }
@@ -1027,7 +1028,7 @@ module.exports = {
                 properties: {
                     'q-offender-enter-offenders-name': {
                         type: 'string',
-                        title: 'Offenders name',
+                        title: "Offender's name",
                         description: 'We will not contact the offender.',
                         maxLength: 120,
                         errorMessage: {
@@ -1431,12 +1432,19 @@ module.exports = {
                         type: 'string',
                         format: 'date-time',
                         title: 'Enter your date of birth',
-                        description: 'For example, 31 3 2018.'
+                        description: 'For example, 31 3 2018.',
+                        errorMessage: {
+                            format: {
+                                'q-applicant-enter-your-date-of-birth':
+                                    'Enter your date of birth and include a day, month and year'
+                            }
+                        }
                     }
                 },
                 errorMessage: {
                     required: {
-                        'q-applicant-enter-your-date-of-birth': 'Enter your date of birth'
+                        'q-applicant-enter-your-date-of-birth':
+                            'Enter your date of birth and include a day, month and year'
                     }
                 }
             },
@@ -1452,14 +1460,17 @@ module.exports = {
                         description:
                             "We'll use this to contact you about your application for example, to request more information.",
                         maxLength: 50,
+                        format: 'email',
                         errorMessage: {
-                            maxLength: 'Email address must be 50 characters or less'
+                            maxLength: 'Email address must be 50 characters or less',
+                            format: 'Enter your email address, for example john.smith@email.com'
                         }
                     }
                 },
                 errorMessage: {
                     required: {
-                        'q-applicant-enter-your-email-address': 'Enter your email address'
+                        'q-applicant-enter-your-email-address':
+                            'Enter your email address, for example john.smith@email.com'
                     }
                 }
             },
@@ -1531,8 +1542,11 @@ module.exports = {
                         description:
                             'We may use this to contact you if we need to clarify something on your application form.',
                         maxLength: 20,
+                        pattern: '^(\\+|\\d)([\\d\\s\\(\\)\\+\\-\\#]){1,19}$',
                         errorMessage: {
-                            maxLength: 'Telephone number must be 20 characters or less'
+                            maxLength: 'Telephone number must be 20 characters or less',
+                            pattern:
+                                'Enter a telephone number, like 01632 960 001, 07700 900 982 or +44 0808 157 0192'
                         }
                     }
                 },
@@ -1664,7 +1678,7 @@ module.exports = {
                 properties: {
                     confirmation: {
                         description:
-                            '\n                    {{ govukPanel({\n                        titleText: "Application submitted",\n                        html: \'<p>Your reference number is <strong>||/answers/system/case-reference||</strong></p><p>We have sent a confirmation email to <strong>||/answers/p-applicant-enter-your-email-address/q-applicant-email-address||</strong></p>\'\n                    }) }}\n                    \n                    <p class="govuk-body-l">Thank you for submitting your application.</p>\n                    <h2 class="govuk-heading-m">What happens next</h2>\n                    <p class="govuk-body">We will:</p>\n                    <ul class="govuk-list govuk-list--bullet">\n                    <li>ask the police for evidence</li>\n                    <li>use the police evidence to make a decision</li>\n                    <li>send our decision letter by post</li>\n                    </ul>\n                    <p class="govuk-body">We will usually make a decision within 4 months.</p>\n                    {{ govukWarningText({\n                        text: "You must inform us immediately if any of the information you have given us changes, especially your address, telephone number or email address.",\n                        iconFallbackText: "Warning"\n                    }) }}\n                    <p class="govuk-body">You can contact our Customer Service Centre on 0300 003 3601. Select option 8 when the call is answered.</p>\n                    <h2 class="govuk-heading-m">Help us improve this service</h2>\n                    <p class="govuk-body">You can complete a short survey to help us improve this service.</p>\n                    <p class="govuk-body">It does not ask for any details about your case, and has no effect on your application.</p>\n                    <p class="govuk-body"><a href="https://www.surveymonkey.com/r/Privatebetafeedback">Tell us what you think of our service</a> (takes 30 seconds)</p>\n            '
+                            '\n                    {{ govukPanel({\n                        titleText: "Application submitted",\n                        html: \'<p>Your reference number is <strong>||/answers/system/case-reference||</strong></p><p>We have sent a confirmation email to <strong>||/answers/p-applicant-enter-your-email-address/q-applicant-enter-your-email-address||</strong></p>\'\n                    }) }}\n                    \n                    <p class="govuk-body-l">Thank you for submitting your application.</p>\n                    <h2 class="govuk-heading-m">What happens next</h2>\n                    <p class="govuk-body">We will:</p>\n                    <ul class="govuk-list govuk-list--bullet">\n                    <li>ask the police for evidence</li>\n                    <li>use the police evidence to make a decision</li>\n                    <li>send our decision letter by post</li>\n                    </ul>\n                    <p class="govuk-body">We will usually make a decision within 4 months.</p>\n                    {{ govukWarningText({\n                        text: "You must inform us immediately if any of the information you have given us changes, especially your address, telephone number or email address.",\n                        iconFallbackText: "Warning"\n                    }) }}\n                    <p class="govuk-body">You can contact our Customer Service Centre on 0300 003 3601. Select option 8 when the call is answered.</p>\n                    <h2 class="govuk-heading-m">Help us improve this service</h2>\n                    <p class="govuk-body">You can complete a short survey to help us improve this service.</p>\n                    <p class="govuk-body">It does not ask for any details about your case, and has no effect on your application.</p>\n                    <p class="govuk-body"><a href="https://www.surveymonkey.com/r/Privatebetafeedback">Tell us what you think of our service</a> (takes 30 seconds)</p>\n            '
                     }
                 }
             },
@@ -1688,7 +1702,7 @@ module.exports = {
                 properties: {
                     'you-cannot-get-compensation': {
                         description:
-                            '\n                <p class="govuk-body">If the crime has not been reported to the police we can not pay compensation.</p>\n                <p class="govuk-body">You may continue your application, but any future application for the same injuries will be refused.</p>\n            '
+                            '\n                <p class="govuk-body">If the crime has not been reported to the police we cannot pay compensation.</p>\n                <p class="govuk-body">You may continue your application, but any future application for the same injuries will be refused.</p>\n            '
                     }
                 }
             },
