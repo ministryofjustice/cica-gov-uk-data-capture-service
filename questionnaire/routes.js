@@ -142,6 +142,17 @@ router
                 throw err;
             }
 
+            // resource already created.
+            if (submissionStatus !== 'NOT_STARTED') {
+                const err = Error(
+                    `Submission resource with ID "${questionnaireId}" already exists`
+                );
+                err.name = 'HTTPError';
+                err.statusCode = 409;
+                err.error = '409 Conflict';
+                throw err;
+            }
+
             // check all answers are correct.
             await questionnaireService.validateAllAnswers(questionnaireId);
 
@@ -152,11 +163,7 @@ router
 
             questionnaireService.createAnswers(questionnaireId, 'p--check-your-answers', {});
 
-            if (submissionStatus === 'NOT_STARTED') {
-                res.status(201).json(response);
-            } else {
-                res.status(200).json(response);
-            }
+            res.status(200).json(response);
         } catch (err) {
             next(err);
         }
