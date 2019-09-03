@@ -93,8 +93,8 @@ function questionnaireDAL(spec) {
                 'UPDATE questionnaire SET submission_status = $1, modified = current_timestamp WHERE id = $2',
                 [submissionStatus, questionnaireId]
             );
-            const resultCheck = await getQuestionnaireSubmissionStatus(questionnaireId);
-            if (resultCheck !== submissionStatus) {
+
+            if (result.rows.length === 0) {
                 throw new VError(
                     {
                         name: 'UpdateNotSuccessful'
