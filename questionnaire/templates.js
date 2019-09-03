@@ -134,7 +134,7 @@ module.exports = {
                                 title:
                                     'Option 2: Sexual assault or abuse and other injuries or losses',
                                 const:
-                                    'option-2:-sexual-assault-or-abuse-and-other-injuries-ro-losses'
+                                    'option-2:-sexual-assault-or-abuse-and-other-injuries-or-losses'
                             }
                         ]
                     }
@@ -371,9 +371,9 @@ module.exports = {
                 },
                 errorMessage: {
                     required: {
-                        'q-applicant-explain-reason-for-delay-application':
-                            'Select if you were under 18, advised to wait, medical reasons or other reasons',
                         'q-applicant-select-reasons-for-the-delay-in-making-your-application':
+                            'Select if you were under 18, advised to wait, medical reasons or other reasons',
+                        'q-applicant-explain-reason-for-delay-application':
                             'Explain the reasons for the delay in making your application'
                     }
                 }
@@ -994,9 +994,9 @@ module.exports = {
                 },
                 errorMessage: {
                     required: {
-                        'q-applicant-explain-reason-for-delay-reporting':
-                            'Select if you were under 18, unable to report the crime or other reasons',
                         'q-applicant-select-reasons-for-the-delay-in-reporting-the-crime-to-police':
+                            'Select if you were under 18, unable to report the crime or other reasons',
+                        'q-applicant-explain-reason-for-delay-reporting':
                             'Explain the reasons for the delay in reporting the crime to the police'
                     }
                 }
