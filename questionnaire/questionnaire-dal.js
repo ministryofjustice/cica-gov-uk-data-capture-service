@@ -93,8 +93,8 @@ function questionnaireDAL(spec) {
                 'UPDATE questionnaire SET submission_status = $1, modified = current_timestamp WHERE id = $2',
                 [submissionStatus, questionnaireId]
             );
-
-            if (result.rows.length === 0) {
+            // TODO: should this be an explicit 0 check?
+            if (result.rowCount !== 1) {
                 throw new VError(
                     {
                         name: 'UpdateNotSuccessful'

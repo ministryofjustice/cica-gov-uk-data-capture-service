@@ -620,7 +620,8 @@
                 "version": "0.1.0",
                 "progress": [
                     "p-applicant-declaration",
-                    "p-applicant-british-citizen-or-eu-national"
+                    "p-applicant-british-citizen-or-eu-national",
+                    "p--check-your-answers"
                 ],
                 "sections": {
                     "system": {

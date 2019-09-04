@@ -551,6 +551,7 @@ function createQuestionnaireService(spec) {
     return Object.freeze({
         createQuestionnaire,
         createAnswers,
+        getQuestionnaire,
         getQuestionnaireSubmissionStatus,
         getSubmissionResponseData,
         validateAllAnswers,
