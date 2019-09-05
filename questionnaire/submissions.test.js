@@ -5,6 +5,7 @@ const request = require('supertest');
 
 const questionnaireCompleteWithoutCRN = require('./test-fixtures/res/questionnaireCompleteWithoutCRN');
 const questionnaireCompleteWithCRN = require('./test-fixtures/res/questionnaireCompleteWithCRN');
+const questionnaireIncompleteWithoutCRN = require('./test-fixtures/res/questionnaireIncompleteWithoutCRN');
 
 const tokens = {
     'create:questionnaires':
@@ -41,6 +42,11 @@ jest.doMock('./questionnaire-dal.js', () =>
                 return questionnaireCompleteWithCRN;
             }
 
+            // nonSubmittable.
+            if (questionnaireId === '4fa7503f-1f73-42e7-b875-b342dee69941') {
+                return questionnaireIncompleteWithoutCRN;
+            }
+
             throw new VError(
                 {
                     name: 'ResourceNotFound'
@@ -61,6 +67,9 @@ jest.doMock('./questionnaire-dal.js', () =>
             }
             if (questionnaireId === 'f197d3e9-d8ba-4500-96ed-9ea1d08f1427') {
                 return 'COMPLETED';
+            }
+            if (questionnaireId === '4fa7503f-1f73-42e7-b875-b342dee69941') {
+                return 'NOT_STARTED';
             }
 
             throw new VError(
@@ -293,6 +302,132 @@ describe('Questionnaire submissions', () => {
                     .get('/api/v1/questionnaires/67d8e5d2-44a5-4ab7-91c0-3fd27d009235/submissions')
                     .set('Authorization', `Bearer ${tokens['create:questionnaires']}`);
                 expect(res.body.data.attributes.caseReferenceNumber).toEqual(null);
+            });
+        });
+
+        describe('multiple POSTS', () => {
+            it('should return a 409 status code when submitted more than once', async () => {
+                await request(app)
+                    .post('/api/v1/questionnaires/3fa7bde5-bfad-453a-851d-5e3c8d206d5b/submissions')
+                    .set('Authorization', `Bearer ${tokens['create:questionnaires']}`)
+                    .set('Content-Type', 'application/vnd.api+json')
+                    .send({
+                        data: {
+                            type: 'submissions',
+                            attributes: {
+                                questionnaireId: '3fa7bde5-bfad-453a-851d-5e3c8d206d5b'
+                            }
+                        }
+                    });
+                const res = await request(app)
+                    .post('/api/v1/questionnaires/3fa7bde5-bfad-453a-851d-5e3c8d206d5b/submissions')
+                    .set('Authorization', `Bearer ${tokens['create:questionnaires']}`)
+                    .set('Content-Type', 'application/vnd.api+json')
+                    .send({
+                        data: {
+                            type: 'submissions',
+                            attributes: {
+                                questionnaireId: '3fa7bde5-bfad-453a-851d-5e3c8d206d5b'
+                            }
+                        }
+                    });
+                expect(res.statusCode).toBe(409);
+            });
+
+            it('should return a specific error message when submitted more than once', async () => {
+                await request(app)
+                    .post('/api/v1/questionnaires/3fa7bde5-bfad-453a-851d-5e3c8d206d5b/submissions')
+                    .set('Authorization', `Bearer ${tokens['create:questionnaires']}`)
+                    .set('Content-Type', 'application/vnd.api+json')
+                    .send({
+                        data: {
+                            type: 'submissions',
+                            attributes: {
+                                questionnaireId: '3fa7bde5-bfad-453a-851d-5e3c8d206d5b'
+                            }
+                        }
+                    });
+                const res = await request(app)
+                    .post('/api/v1/questionnaires/3fa7bde5-bfad-453a-851d-5e3c8d206d5b/submissions')
+                    .set('Authorization', `Bearer ${tokens['create:questionnaires']}`)
+                    .set('Content-Type', 'application/vnd.api+json')
+                    .send({
+                        data: {
+                            type: 'submissions',
+                            attributes: {
+                                questionnaireId: '3fa7bde5-bfad-453a-851d-5e3c8d206d5b'
+                            }
+                        }
+                    });
+                expect(res.body.errors[0].detail).toEqual(
+                    expect.stringMatching(
+                        // eslint-disable-next-line no-useless-escape
+                        /Submission resource with ID "[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}" already exists/
+                    )
+                );
+            });
+        });
+
+        describe('non-submittable POSTS', () => {
+            it('should return a 409 status code when non-submittable questionnaire is submitted', async () => {
+                await request(app)
+                    .post('/api/v1/questionnaires/4fa7503f-1f73-42e7-b875-b342dee69941/submissions')
+                    .set('Authorization', `Bearer ${tokens['create:questionnaires']}`)
+                    .set('Content-Type', 'application/vnd.api+json')
+                    .send({
+                        data: {
+                            type: 'submissions',
+                            attributes: {
+                                questionnaireId: '4fa7503f-1f73-42e7-b875-b342dee69941'
+                            }
+                        }
+                    });
+                const res = await request(app)
+                    .post('/api/v1/questionnaires/4fa7503f-1f73-42e7-b875-b342dee69941/submissions')
+                    .set('Authorization', `Bearer ${tokens['create:questionnaires']}`)
+                    .set('Content-Type', 'application/vnd.api+json')
+                    .send({
+                        data: {
+                            type: 'submissions',
+                            attributes: {
+                                questionnaireId: '4fa7503f-1f73-42e7-b875-b342dee69941'
+                            }
+                        }
+                    });
+                expect(res.statusCode).toBe(409);
+            });
+
+            it('should return a specific error message when non-submittable questionnaire is submitted', async () => {
+                await request(app)
+                    .post('/api/v1/questionnaires/4fa7503f-1f73-42e7-b875-b342dee69941/submissions')
+                    .set('Authorization', `Bearer ${tokens['create:questionnaires']}`)
+                    .set('Content-Type', 'application/vnd.api+json')
+                    .send({
+                        data: {
+                            type: 'submissions',
+                            attributes: {
+                                questionnaireId: '4fa7503f-1f73-42e7-b875-b342dee69941'
+                            }
+                        }
+                    });
+                const res = await request(app)
+                    .post('/api/v1/questionnaires/4fa7503f-1f73-42e7-b875-b342dee69941/submissions')
+                    .set('Authorization', `Bearer ${tokens['create:questionnaires']}`)
+                    .set('Content-Type', 'application/vnd.api+json')
+                    .send({
+                        data: {
+                            type: 'submissions',
+                            attributes: {
+                                questionnaireId: '4fa7503f-1f73-42e7-b875-b342dee69941'
+                            }
+                        }
+                    });
+                expect(res.body.errors[0].detail).toEqual(
+                    expect.stringMatching(
+                        // eslint-disable-next-line no-useless-escape
+                        /Questionnaire with ID "[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}" is not in a submittable state/
+                    )
+                );
             });
         });
     });

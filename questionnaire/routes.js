@@ -146,14 +146,22 @@ router
                 questionnaireId
             );
             // 3) are we currently, or have we been on this questionnaire's summary page?
-            const isSubmittable = questionnaire.progress.includes(questionnaire.routes.summary);
+            // we infer a questionnaire is complete if the user has visited the summary page.
+            const isQuestionnaireComplete = questionnaire.progress.includes(
+                questionnaire.routes.summary
+            );
 
             // if the submission status is anything other than 'NOT_STARTED' then it
             // means that the submission resource has been previously created.
-            if (submissionStatus !== 'NOT_STARTED') {
-                const err = Error(
-                    `Submission resource with ID "${questionnaireId}" already exists`
-                );
+            if (!isQuestionnaireComplete || submissionStatus !== 'NOT_STARTED') {
+                const errorReasons = {
+                    notSubmittable: `Questionnaire with ID "${questionnaireId}" is not in a submittable state`,
+                    duplicate: `Submission resource with ID "${questionnaireId}" already exists`
+                };
+                const errorReason = !isQuestionnaireComplete
+                    ? errorReasons.notSubmittable
+                    : errorReasons.duplicate;
+                const err = Error(errorReason);
                 err.name = 'HTTPError';
                 err.statusCode = 409;
                 err.error = '409 Conflict';
@@ -162,7 +170,7 @@ router
 
             // if the summary section ID is in the progress array, then that means
             // the questionnaire is submittable.
-            if (isSubmittable) {
+            if (isQuestionnaireComplete) {
                 // check all answers are correct.
                 await questionnaireService.validateAllAnswers(questionnaireId);
 
