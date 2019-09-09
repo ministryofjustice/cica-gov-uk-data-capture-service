@@ -126,13 +126,12 @@ router
         try {
             const {questionnaireId} = req.params;
             const questionnaireService = createQuestionnaireService({logger: req.log});
-            const submissionStatus = await questionnaireService.getQuestionnaireSubmissionStatus(
-                questionnaireId
-            );
 
-            // the default value for this column is "NOT_STARTED", so if it doesn't
-            // exist, then it must not be a valid questionnaire ID.
-            if (!submissionStatus) {
+            // 1) get questionnaire instance.
+            const result = await questionnaireService.getQuestionnaire(questionnaireId);
+            const {questionnaire} = result.rows[0];
+
+            if (!questionnaire) {
                 const err = Error(
                     `Questionnaire with questionnaireId "${questionnaireId}" does not exist`
                 );
@@ -142,18 +141,52 @@ router
                 throw err;
             }
 
-            // check all answers are correct.
-            await questionnaireService.validateAllAnswers(questionnaireId);
-
-            const response = await questionnaireService.getSubmissionResponseData(
-                questionnaireId,
-                true
+            // 2) get questionnaire instance's submission status.
+            const submissionStatus = await questionnaireService.getQuestionnaireSubmissionStatus(
+                questionnaireId
+            );
+            // 3) are we currently, or have we been on this questionnaire's summary page?
+            // we infer a questionnaire is complete if the user has visited the summary page.
+            const isQuestionnaireComplete = questionnaire.progress.includes(
+                questionnaire.routes.summary
             );
 
-            if (submissionStatus === 'NOT_STARTED') {
+            // if the submission status is anything other than 'NOT_STARTED' then it
+            // means that the submission resource has been previously created.
+            if (!isQuestionnaireComplete || submissionStatus !== 'NOT_STARTED') {
+                const errorReasons = {
+                    notSubmittable: `Questionnaire with ID "${questionnaireId}" is not in a submittable state`,
+                    duplicate: `Submission resource with ID "${questionnaireId}" already exists`
+                };
+                const errorReason = !isQuestionnaireComplete
+                    ? errorReasons.notSubmittable
+                    : errorReasons.duplicate;
+                const err = Error(errorReason);
+                err.name = 'HTTPError';
+                err.statusCode = 409;
+                err.error = '409 Conflict';
+                throw err;
+            }
+
+            // if the summary section ID is in the progress array, then that means
+            // the questionnaire is submittable.
+            if (isQuestionnaireComplete) {
+                // check all answers are correct.
+                await questionnaireService.validateAllAnswers(questionnaireId);
+
+                // TODO: refactor `getSubmissionResponseData` to be more intuitive.
+                const response = await questionnaireService.getSubmissionResponseData(
+                    questionnaireId,
+                    true
+                );
+
+                questionnaireService.createAnswers(
+                    questionnaireId,
+                    questionnaire.routes.summary,
+                    {}
+                );
+
                 res.status(201).json(response);
-            } else {
-                res.status(200).json(response);
             }
         } catch (err) {
             next(err);
