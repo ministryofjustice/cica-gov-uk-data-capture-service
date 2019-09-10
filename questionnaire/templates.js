@@ -1843,7 +1843,7 @@ module.exports = {
                                 cond: [
                                     '==',
                                     '$.answers.p-applicant-select-the-option-that-applies-to-you.q-applicant-option',
-                                    'option-2:-sexual-assault-or-abuse-and-other-injuries-ro-losses'
+                                    'option-2:-sexual-assault-or-abuse-and-other-injuries-or-losses'
                                 ]
                             },
                             {
