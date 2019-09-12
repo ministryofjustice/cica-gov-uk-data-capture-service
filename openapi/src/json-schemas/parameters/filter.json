@@ -4,7 +4,7 @@
     "additionalProperties": false,
     "properties": {
         "position": {
-            "const": "current"
+            "enum": ["current", "first"]
         },
         "sectionId": {
             "type": "string",
