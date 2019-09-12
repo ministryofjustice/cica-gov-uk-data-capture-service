@@ -36,15 +36,11 @@
     "paths": {
         "/questionnaires": {
             "post": {
-                "tags": [
-                    "Questionnaires"
-                ],
+                "tags": ["Questionnaires"],
                 "summary": "Create a new questionnaire from a specified template",
                 "description": "Create a questionnaire",
                 "operationId": "createQuestionnaires",
-                "x-scopes": [
-                    "create:questionnaires"
-                ],
+                "x-scopes": ["create:questionnaires"],
                 "x-requests": {
                     "400": {
                         "requestBody": {
@@ -65,9 +61,7 @@
                         "auth": false
                     },
                     "403": {
-                        "x-scopes": [
-                            "create:dummy-resource"
-                        ]
+                        "x-scopes": ["create:dummy-resource"]
                     },
                     "404": {
                         "requestBody": {
@@ -93,22 +87,15 @@
                             "schema": {
                                 "type": "object",
                                 "additionalProperties": false,
-                                "required": [
-                                    "data"
-                                ],
+                                "required": ["data"],
                                 "properties": {
                                     "data": {
                                         "type": "object",
                                         "additionalProperties": false,
-                                        "required": [
-                                            "type",
-                                            "attributes"
-                                        ],
+                                        "required": ["type", "attributes"],
                                         "properties": {
                                             "type": {
-                                                "enum": [
-                                                    "questionnaires"
-                                                ]
+                                                "enum": ["questionnaires"]
                                             },
                                             "attributes": {
                                                 "type": "object",
@@ -143,23 +130,15 @@
                                 "schema": {
                                     "type": "object",
                                     "additionalProperties": false,
-                                    "required": [
-                                        "data"
-                                    ],
+                                    "required": ["data"],
                                     "properties": {
                                         "data": {
                                             "type": "object",
                                             "additionalProperties": false,
-                                            "required": [
-                                                "type",
-                                                "id",
-                                                "attributes"
-                                            ],
+                                            "required": ["type", "id", "attributes"],
                                             "properties": {
                                                 "type": {
-                                                    "enum": [
-                                                        "questionnaires"
-                                                    ]
+                                                    "enum": ["questionnaires"]
                                                 },
                                                 "id": {
                                                     "type": "string",
@@ -227,29 +206,19 @@
                             "application/vnd.api+json": {
                                 "schema": {
                                     "type": "object",
-                                    "required": [
-                                        "errors"
-                                    ],
+                                    "required": ["errors"],
                                     "properties": {
                                         "errors": {
                                             "type": "array",
                                             "items": {
                                                 "type": "object",
-                                                "required": [
-                                                    "status",
-                                                    "title",
-                                                    "detail"
-                                                ],
+                                                "required": ["status", "title", "detail"],
                                                 "properties": {
                                                     "status": {
-                                                        "enum": [
-                                                            400
-                                                        ]
+                                                        "enum": [400]
                                                     },
                                                     "title": {
-                                                        "enum": [
-                                                            "400 Bad Request"
-                                                        ]
+                                                        "enum": ["400 Bad Request"]
                                                     },
                                                     "detail": {
                                                         "type": "string"
@@ -277,29 +246,19 @@
                             "application/vnd.api+json": {
                                 "schema": {
                                     "type": "object",
-                                    "required": [
-                                        "errors"
-                                    ],
+                                    "required": ["errors"],
                                     "properties": {
                                         "errors": {
                                             "type": "array",
                                             "items": {
                                                 "type": "object",
-                                                "required": [
-                                                    "status",
-                                                    "title",
-                                                    "detail"
-                                                ],
+                                                "required": ["status", "title", "detail"],
                                                 "properties": {
                                                     "status": {
-                                                        "enum": [
-                                                            401
-                                                        ]
+                                                        "enum": [401]
                                                     },
                                                     "title": {
-                                                        "enum": [
-                                                            "401 Unauthorized"
-                                                        ]
+                                                        "enum": ["401 Unauthorized"]
                                                     },
                                                     "detail": {
                                                         "type": "string"
@@ -326,29 +285,19 @@
                             "application/vnd.api+json": {
                                 "schema": {
                                     "type": "object",
-                                    "required": [
-                                        "errors"
-                                    ],
+                                    "required": ["errors"],
                                     "properties": {
                                         "errors": {
                                             "type": "array",
                                             "items": {
                                                 "type": "object",
-                                                "required": [
-                                                    "status",
-                                                    "title",
-                                                    "detail"
-                                                ],
+                                                "required": ["status", "title", "detail"],
                                                 "properties": {
                                                     "status": {
-                                                        "enum": [
-                                                            403
-                                                        ]
+                                                        "enum": [403]
                                                     },
                                                     "title": {
-                                                        "enum": [
-                                                            "403 Forbidden"
-                                                        ]
+                                                        "enum": ["403 Forbidden"]
                                                     },
                                                     "detail": {
                                                         "type": "string"
@@ -376,29 +325,19 @@
                             "application/vnd.api+json": {
                                 "schema": {
                                     "type": "object",
-                                    "required": [
-                                        "errors"
-                                    ],
+                                    "required": ["errors"],
                                     "properties": {
                                         "errors": {
                                             "type": "array",
                                             "items": {
                                                 "type": "object",
-                                                "required": [
-                                                    "status",
-                                                    "title",
-                                                    "detail"
-                                                ],
+                                                "required": ["status", "title", "detail"],
                                                 "properties": {
                                                     "status": {
-                                                        "enum": [
-                                                            404
-                                                        ]
+                                                        "enum": [404]
                                                     },
                                                     "title": {
-                                                        "enum": [
-                                                            "404 Not Found"
-                                                        ]
+                                                        "enum": ["404 Not Found"]
                                                     },
                                                     "detail": {
                                                         "type": "string"
@@ -425,9 +364,7 @@
         },
         "/questionnaires/{questionnaireId}/sections/{sectionId}/answers": {
             "post": {
-                "tags": [
-                    "Answers"
-                ],
+                "tags": ["Answers"],
                 "summary": "Create answer(s) for a specified section",
                 "description": "Adds the supplied answer(s) to a section",
                 "operationId": "createAnswers",
@@ -455,10 +392,7 @@
                         "example": "system"
                     }
                 ],
-                "x-scopes": [
-                    "create:system-answers",
-                    "update:questionnaires"
-                ],
+                "x-scopes": ["create:system-answers", "update:questionnaires"],
                 "x-requests": {
                     "400": {
                         "requestBody": {
@@ -480,9 +414,7 @@
                         "auth": false
                     },
                     "403": {
-                        "x-scopes": [
-                            "create:dummy-resource"
-                        ]
+                        "x-scopes": ["create:dummy-resource"]
                     },
                     "404": {
                         "parameters": [
@@ -501,22 +433,15 @@
                             "schema": {
                                 "type": "object",
                                 "additionalProperties": false,
-                                "required": [
-                                    "data"
-                                ],
+                                "required": ["data"],
                                 "properties": {
                                     "data": {
                                         "type": "object",
                                         "additionalProperties": false,
-                                        "required": [
-                                            "type",
-                                            "attributes"
-                                        ],
+                                        "required": ["type", "attributes"],
                                         "properties": {
                                             "type": {
-                                                "enum": [
-                                                    "answers"
-                                                ]
+                                                "enum": ["answers"]
                                             },
                                             "attributes": {
                                                 "type": "object"
@@ -544,23 +469,15 @@
                                 "schema": {
                                     "type": "object",
                                     "additionalProperties": false,
-                                    "required": [
-                                        "data"
-                                    ],
+                                    "required": ["data"],
                                     "properties": {
                                         "data": {
                                             "type": "object",
                                             "additionalProperties": false,
-                                            "required": [
-                                                "type",
-                                                "id",
-                                                "attributes"
-                                            ],
+                                            "required": ["type", "id", "attributes"],
                                             "properties": {
                                                 "type": {
-                                                    "enum": [
-                                                        "answers"
-                                                    ]
+                                                    "enum": ["answers"]
                                                 },
                                                 "id": {
                                                     "type": "string",
@@ -598,29 +515,19 @@
                             "application/vnd.api+json": {
                                 "schema": {
                                     "type": "object",
-                                    "required": [
-                                        "errors"
-                                    ],
+                                    "required": ["errors"],
                                     "properties": {
                                         "errors": {
                                             "type": "array",
                                             "items": {
                                                 "type": "object",
-                                                "required": [
-                                                    "status",
-                                                    "title",
-                                                    "detail"
-                                                ],
+                                                "required": ["status", "title", "detail"],
                                                 "properties": {
                                                     "status": {
-                                                        "enum": [
-                                                            400
-                                                        ]
+                                                        "enum": [400]
                                                     },
                                                     "title": {
-                                                        "enum": [
-                                                            "400 Bad Request"
-                                                        ]
+                                                        "enum": ["400 Bad Request"]
                                                     },
                                                     "detail": {
                                                         "type": "string"
@@ -648,29 +555,19 @@
                             "application/vnd.api+json": {
                                 "schema": {
                                     "type": "object",
-                                    "required": [
-                                        "errors"
-                                    ],
+                                    "required": ["errors"],
                                     "properties": {
                                         "errors": {
                                             "type": "array",
                                             "items": {
                                                 "type": "object",
-                                                "required": [
-                                                    "status",
-                                                    "title",
-                                                    "detail"
-                                                ],
+                                                "required": ["status", "title", "detail"],
                                                 "properties": {
                                                     "status": {
-                                                        "enum": [
-                                                            401
-                                                        ]
+                                                        "enum": [401]
                                                     },
                                                     "title": {
-                                                        "enum": [
-                                                            "401 Unauthorized"
-                                                        ]
+                                                        "enum": ["401 Unauthorized"]
                                                     },
                                                     "detail": {
                                                         "type": "string"
@@ -697,29 +594,19 @@
                             "application/vnd.api+json": {
                                 "schema": {
                                     "type": "object",
-                                    "required": [
-                                        "errors"
-                                    ],
+                                    "required": ["errors"],
                                     "properties": {
                                         "errors": {
                                             "type": "array",
                                             "items": {
                                                 "type": "object",
-                                                "required": [
-                                                    "status",
-                                                    "title",
-                                                    "detail"
-                                                ],
+                                                "required": ["status", "title", "detail"],
                                                 "properties": {
                                                     "status": {
-                                                        "enum": [
-                                                            403
-                                                        ]
+                                                        "enum": [403]
                                                     },
                                                     "title": {
-                                                        "enum": [
-                                                            "403 Forbidden"
-                                                        ]
+                                                        "enum": ["403 Forbidden"]
                                                     },
                                                     "detail": {
                                                         "type": "string"
@@ -747,29 +634,19 @@
                             "application/vnd.api+json": {
                                 "schema": {
                                     "type": "object",
-                                    "required": [
-                                        "errors"
-                                    ],
+                                    "required": ["errors"],
                                     "properties": {
                                         "errors": {
                                             "type": "array",
                                             "items": {
                                                 "type": "object",
-                                                "required": [
-                                                    "status",
-                                                    "title",
-                                                    "detail"
-                                                ],
+                                                "required": ["status", "title", "detail"],
                                                 "properties": {
                                                     "status": {
-                                                        "enum": [
-                                                            404
-                                                        ]
+                                                        "enum": [404]
                                                     },
                                                     "title": {
-                                                        "enum": [
-                                                            "404 Not Found"
-                                                        ]
+                                                        "enum": ["404 Not Found"]
                                                     },
                                                     "detail": {
                                                         "type": "string"
@@ -796,9 +673,7 @@
         },
         "/questionnaires/{questionnaireId}/sections/answers": {
             "get": {
-                "tags": [
-                    "Answers"
-                ],
+                "tags": ["Answers"],
                 "summary": "Get all answers for a questionnaire",
                 "description": "Gets all answers for all sections",
                 "operationId": "getAnswers",
@@ -815,9 +690,7 @@
                         "example": "285cb104-0c15-4a9c-9840-cb1007f098fb"
                     }
                 ],
-                "x-scopes": [
-                    "read:questionnaires"
-                ],
+                "x-scopes": ["read:questionnaires"],
                 "x-requests": {
                     "400": {
                         "parameters": [
@@ -846,24 +719,16 @@
                             "application/vnd.api+json": {
                                 "schema": {
                                     "type": "object",
-                                    "required": [
-                                        "data"
-                                    ],
+                                    "required": ["data"],
                                     "properties": {
                                         "data": {
                                             "type": "array",
                                             "items": {
                                                 "type": "object",
-                                                "required": [
-                                                    "type",
-                                                    "id",
-                                                    "attributes"
-                                                ],
+                                                "required": ["type", "id", "attributes"],
                                                 "properties": {
                                                     "type": {
-                                                        "enum": [
-                                                            "answers"
-                                                        ]
+                                                        "enum": ["answers"]
                                                     },
                                                     "id": {
                                                         "type": "string",
@@ -904,29 +769,19 @@
                             "application/vnd.api+json": {
                                 "schema": {
                                     "type": "object",
-                                    "required": [
-                                        "errors"
-                                    ],
+                                    "required": ["errors"],
                                     "properties": {
                                         "errors": {
                                             "type": "array",
                                             "items": {
                                                 "type": "object",
-                                                "required": [
-                                                    "status",
-                                                    "title",
-                                                    "detail"
-                                                ],
+                                                "required": ["status", "title", "detail"],
                                                 "properties": {
                                                     "status": {
-                                                        "enum": [
-                                                            400
-                                                        ]
+                                                        "enum": [400]
                                                     },
                                                     "title": {
-                                                        "enum": [
-                                                            "400 Bad Request"
-                                                        ]
+                                                        "enum": ["400 Bad Request"]
                                                     },
                                                     "detail": {
                                                         "type": "string"
@@ -954,29 +809,19 @@
                             "application/vnd.api+json": {
                                 "schema": {
                                     "type": "object",
-                                    "required": [
-                                        "errors"
-                                    ],
+                                    "required": ["errors"],
                                     "properties": {
                                         "errors": {
                                             "type": "array",
                                             "items": {
                                                 "type": "object",
-                                                "required": [
-                                                    "status",
-                                                    "title",
-                                                    "detail"
-                                                ],
+                                                "required": ["status", "title", "detail"],
                                                 "properties": {
                                                     "status": {
-                                                        "enum": [
-                                                            401
-                                                        ]
+                                                        "enum": [401]
                                                     },
                                                     "title": {
-                                                        "enum": [
-                                                            "401 Unauthorized"
-                                                        ]
+                                                        "enum": ["401 Unauthorized"]
                                                     },
                                                     "detail": {
                                                         "type": "string"
@@ -1003,29 +848,19 @@
                             "application/vnd.api+json": {
                                 "schema": {
                                     "type": "object",
-                                    "required": [
-                                        "errors"
-                                    ],
+                                    "required": ["errors"],
                                     "properties": {
                                         "errors": {
                                             "type": "array",
                                             "items": {
                                                 "type": "object",
-                                                "required": [
-                                                    "status",
-                                                    "title",
-                                                    "detail"
-                                                ],
+                                                "required": ["status", "title", "detail"],
                                                 "properties": {
                                                     "status": {
-                                                        "enum": [
-                                                            404
-                                                        ]
+                                                        "enum": [404]
                                                     },
                                                     "title": {
-                                                        "enum": [
-                                                            "404 Not Found"
-                                                        ]
+                                                        "enum": ["404 Not Found"]
                                                     },
                                                     "detail": {
                                                         "type": "string"
@@ -1052,9 +887,7 @@
         },
         "/questionnaires/{questionnaireId}/submissions": {
             "get": {
-                "tags": [
-                    "Submissions"
-                ],
+                "tags": ["Submissions"],
                 "summary": "Get all answers for a questionnaire",
                 "description": "Gets all submission state for a questionnaire",
                 "operationId": "getSubmissions",
@@ -1071,9 +904,7 @@
                         "example": "285cb104-0c15-4a9c-9840-cb1007f098fb"
                     }
                 ],
-                "x-scopes": [
-                    "read:questionnaires"
-                ],
+                "x-scopes": ["read:questionnaires"],
                 "x-requests": {
                     "400": {
                         "parameters": [
@@ -1103,22 +934,15 @@
                                 "schema": {
                                     "type": "object",
                                     "additionalProperties": false,
-                                    "required": [
-                                        "data"
-                                    ],
+                                    "required": ["data"],
                                     "properties": {
                                         "data": {
                                             "type": "object",
                                             "additionalProperties": false,
-                                            "required": [
-                                                "type",
-                                                "attributes"
-                                            ],
+                                            "required": ["type", "attributes"],
                                             "properties": {
                                                 "type": {
-                                                    "enum": [
-                                                        "submissions"
-                                                    ]
+                                                    "enum": ["submissions"]
                                                 },
                                                 "attributes": {
                                                     "type": "object",
@@ -1179,29 +1003,19 @@
                             "application/vnd.api+json": {
                                 "schema": {
                                     "type": "object",
-                                    "required": [
-                                        "errors"
-                                    ],
+                                    "required": ["errors"],
                                     "properties": {
                                         "errors": {
                                             "type": "array",
                                             "items": {
                                                 "type": "object",
-                                                "required": [
-                                                    "status",
-                                                    "title",
-                                                    "detail"
-                                                ],
+                                                "required": ["status", "title", "detail"],
                                                 "properties": {
                                                     "status": {
-                                                        "enum": [
-                                                            400
-                                                        ]
+                                                        "enum": [400]
                                                     },
                                                     "title": {
-                                                        "enum": [
-                                                            "400 Bad Request"
-                                                        ]
+                                                        "enum": ["400 Bad Request"]
                                                     },
                                                     "detail": {
                                                         "type": "string"
@@ -1229,29 +1043,19 @@
                             "application/vnd.api+json": {
                                 "schema": {
                                     "type": "object",
-                                    "required": [
-                                        "errors"
-                                    ],
+                                    "required": ["errors"],
                                     "properties": {
                                         "errors": {
                                             "type": "array",
                                             "items": {
                                                 "type": "object",
-                                                "required": [
-                                                    "status",
-                                                    "title",
-                                                    "detail"
-                                                ],
+                                                "required": ["status", "title", "detail"],
                                                 "properties": {
                                                     "status": {
-                                                        "enum": [
-                                                            401
-                                                        ]
+                                                        "enum": [401]
                                                     },
                                                     "title": {
-                                                        "enum": [
-                                                            "401 Unauthorized"
-                                                        ]
+                                                        "enum": ["401 Unauthorized"]
                                                     },
                                                     "detail": {
                                                         "type": "string"
@@ -1278,29 +1082,19 @@
                             "application/vnd.api+json": {
                                 "schema": {
                                     "type": "object",
-                                    "required": [
-                                        "errors"
-                                    ],
+                                    "required": ["errors"],
                                     "properties": {
                                         "errors": {
                                             "type": "array",
                                             "items": {
                                                 "type": "object",
-                                                "required": [
-                                                    "status",
-                                                    "title",
-                                                    "detail"
-                                                ],
+                                                "required": ["status", "title", "detail"],
                                                 "properties": {
                                                     "status": {
-                                                        "enum": [
-                                                            404
-                                                        ]
+                                                        "enum": [404]
                                                     },
                                                     "title": {
-                                                        "enum": [
-                                                            "404 Not Found"
-                                                        ]
+                                                        "enum": ["404 Not Found"]
                                                     },
                                                     "detail": {
                                                         "type": "string"
@@ -1325,9 +1119,7 @@
                 }
             },
             "post": {
-                "tags": [
-                    "Submissions"
-                ],
+                "tags": ["Submissions"],
                 "summary": "Submit a questionnaire",
                 "description": "Start the submission of a questionnaire",
                 "operationId": "SubmitQuestionnaire",
@@ -1344,9 +1136,7 @@
                         "example": "285cb104-0c15-4a9c-9840-cb1007f098fb"
                     }
                 ],
-                "x-scopes": [
-                    "update:questionnaires"
-                ],
+                "x-scopes": ["update:questionnaires"],
                 "x-requests": {
                     "400": {
                         "requestBody": {
@@ -1368,9 +1158,7 @@
                         "auth": false
                     },
                     "403": {
-                        "x-scopes": [
-                            "create:dummy-resource"
-                        ]
+                        "x-scopes": ["create:dummy-resource"]
                     },
                     "404": {
                         "parameters": [
@@ -1389,22 +1177,15 @@
                             "schema": {
                                 "type": "object",
                                 "additionalProperties": false,
-                                "required": [
-                                    "data"
-                                ],
+                                "required": ["data"],
                                 "properties": {
                                     "data": {
                                         "type": "object",
                                         "additionalProperties": false,
-                                        "required": [
-                                            "type",
-                                            "attributes"
-                                        ],
+                                        "required": ["type", "attributes"],
                                         "properties": {
                                             "type": {
-                                                "enum": [
-                                                    "submissions"
-                                                ]
+                                                "enum": ["submissions"]
                                             },
                                             "attributes": {
                                                 "type": "object",
@@ -1439,22 +1220,15 @@
                                 "schema": {
                                     "type": "object",
                                     "additionalProperties": false,
-                                    "required": [
-                                        "data"
-                                    ],
+                                    "required": ["data"],
                                     "properties": {
                                         "data": {
                                             "type": "object",
                                             "additionalProperties": false,
-                                            "required": [
-                                                "type",
-                                                "attributes"
-                                            ],
+                                            "required": ["type", "attributes"],
                                             "properties": {
                                                 "type": {
-                                                    "enum": [
-                                                        "submissions"
-                                                    ]
+                                                    "enum": ["submissions"]
                                                 },
                                                 "attributes": {
                                                     "type": "object",
@@ -1515,29 +1289,19 @@
                             "application/vnd.api+json": {
                                 "schema": {
                                     "type": "object",
-                                    "required": [
-                                        "errors"
-                                    ],
+                                    "required": ["errors"],
                                     "properties": {
                                         "errors": {
                                             "type": "array",
                                             "items": {
                                                 "type": "object",
-                                                "required": [
-                                                    "status",
-                                                    "title",
-                                                    "detail"
-                                                ],
+                                                "required": ["status", "title", "detail"],
                                                 "properties": {
                                                     "status": {
-                                                        "enum": [
-                                                            400
-                                                        ]
+                                                        "enum": [400]
                                                     },
                                                     "title": {
-                                                        "enum": [
-                                                            "400 Bad Request"
-                                                        ]
+                                                        "enum": ["400 Bad Request"]
                                                     },
                                                     "detail": {
                                                         "type": "string"
@@ -1565,29 +1329,19 @@
                             "application/vnd.api+json": {
                                 "schema": {
                                     "type": "object",
-                                    "required": [
-                                        "errors"
-                                    ],
+                                    "required": ["errors"],
                                     "properties": {
                                         "errors": {
                                             "type": "array",
                                             "items": {
                                                 "type": "object",
-                                                "required": [
-                                                    "status",
-                                                    "title",
-                                                    "detail"
-                                                ],
+                                                "required": ["status", "title", "detail"],
                                                 "properties": {
                                                     "status": {
-                                                        "enum": [
-                                                            401
-                                                        ]
+                                                        "enum": [401]
                                                     },
                                                     "title": {
-                                                        "enum": [
-                                                            "401 Unauthorized"
-                                                        ]
+                                                        "enum": ["401 Unauthorized"]
                                                     },
                                                     "detail": {
                                                         "type": "string"
@@ -1614,29 +1368,19 @@
                             "application/vnd.api+json": {
                                 "schema": {
                                     "type": "object",
-                                    "required": [
-                                        "errors"
-                                    ],
+                                    "required": ["errors"],
                                     "properties": {
                                         "errors": {
                                             "type": "array",
                                             "items": {
                                                 "type": "object",
-                                                "required": [
-                                                    "status",
-                                                    "title",
-                                                    "detail"
-                                                ],
+                                                "required": ["status", "title", "detail"],
                                                 "properties": {
                                                     "status": {
-                                                        "enum": [
-                                                            403
-                                                        ]
+                                                        "enum": [403]
                                                     },
                                                     "title": {
-                                                        "enum": [
-                                                            "403 Forbidden"
-                                                        ]
+                                                        "enum": ["403 Forbidden"]
                                                     },
                                                     "detail": {
                                                         "type": "string"
@@ -1664,29 +1408,19 @@
                             "application/vnd.api+json": {
                                 "schema": {
                                     "type": "object",
-                                    "required": [
-                                        "errors"
-                                    ],
+                                    "required": ["errors"],
                                     "properties": {
                                         "errors": {
                                             "type": "array",
                                             "items": {
                                                 "type": "object",
-                                                "required": [
-                                                    "status",
-                                                    "title",
-                                                    "detail"
-                                                ],
+                                                "required": ["status", "title", "detail"],
                                                 "properties": {
                                                     "status": {
-                                                        "enum": [
-                                                            404
-                                                        ]
+                                                        "enum": [404]
                                                     },
                                                     "title": {
-                                                        "enum": [
-                                                            "404 Not Found"
-                                                        ]
+                                                        "enum": ["404 Not Found"]
                                                     },
                                                     "detail": {
                                                         "type": "string"
@@ -1713,9 +1447,7 @@
         },
         "/questionnaires/{questionnaireId}/progress-entries": {
             "get": {
-                "tags": [
-                    "ProgressEntries"
-                ],
+                "tags": ["ProgressEntries"],
                 "summary": "Get progress entries for a questionnaire.",
                 "description": "Gets all progress entries for a questionnaire. The results can be filtered.",
                 "operationId": "getProgressEntries",
@@ -1740,9 +1472,7 @@
                             "additionalProperties": false,
                             "properties": {
                                 "position": {
-                                    "enum": [
-                                        "current"
-                                    ]
+                                    "enum": ["current", "first"]
                                 },
                                 "sectionId": {
                                     "type": "string",
@@ -1777,9 +1507,7 @@
                         }
                     }
                 ],
-                "x-scopes": [
-                    "read:progress-entries"
-                ],
+                "x-scopes": ["read:progress-entries"],
                 "x-requests": {
                     "400": {
                         "parameters": [
@@ -1796,9 +1524,7 @@
                         "auth": false
                     },
                     "403": {
-                        "x-scopes": [
-                            "create:dummy-resource"
-                        ]
+                        "x-scopes": ["create:dummy-resource"]
                     },
                     "404": {
                         "parameters": [
@@ -1820,9 +1546,7 @@
                                 "schema": {
                                     "type": "object",
                                     "additionalProperties": false,
-                                    "required": [
-                                        "data"
-                                    ],
+                                    "required": ["data"],
                                     "properties": {
                                         "data": {
                                             "type": "array",
@@ -1837,9 +1561,7 @@
                                                 ],
                                                 "properties": {
                                                     "type": {
-                                                        "enum": [
-                                                            "progress-entries"
-                                                        ]
+                                                        "enum": ["progress-entries"]
                                                     },
                                                     "id": {
                                                         "type": "string",
@@ -1848,10 +1570,7 @@
                                                     "attributes": {
                                                         "type": "object",
                                                         "additionalProperties": false,
-                                                        "required": [
-                                                            "sectionId",
-                                                            "url"
-                                                        ],
+                                                        "required": ["sectionId", "url"],
                                                         "properties": {
                                                             "sectionId": {
                                                                 "type": "string",
@@ -1867,24 +1586,17 @@
                                                     "relationships": {
                                                         "type": "object",
                                                         "additionalProperties": false,
-                                                        "required": [
-                                                            "section"
-                                                        ],
+                                                        "required": ["section"],
                                                         "properties": {
                                                             "section": {
                                                                 "type": "object",
                                                                 "additionalProperties": false,
-                                                                "required": [
-                                                                    "data"
-                                                                ],
+                                                                "required": ["data"],
                                                                 "properties": {
                                                                     "data": {
                                                                         "type": "object",
                                                                         "additionalProperties": false,
-                                                                        "required": [
-                                                                            "type",
-                                                                            "id"
-                                                                        ],
+                                                                        "required": ["type", "id"],
                                                                         "properties": {
                                                                             "type": {
                                                                                 "type": "string"
@@ -1975,29 +1687,19 @@
                             "application/vnd.api+json": {
                                 "schema": {
                                     "type": "object",
-                                    "required": [
-                                        "errors"
-                                    ],
+                                    "required": ["errors"],
                                     "properties": {
                                         "errors": {
                                             "type": "array",
                                             "items": {
                                                 "type": "object",
-                                                "required": [
-                                                    "status",
-                                                    "title",
-                                                    "detail"
-                                                ],
+                                                "required": ["status", "title", "detail"],
                                                 "properties": {
                                                     "status": {
-                                                        "enum": [
-                                                            400
-                                                        ]
+                                                        "enum": [400]
                                                     },
                                                     "title": {
-                                                        "enum": [
-                                                            "400 Bad Request"
-                                                        ]
+                                                        "enum": ["400 Bad Request"]
                                                     },
                                                     "detail": {
                                                         "type": "string"
@@ -2025,29 +1727,19 @@
                             "application/vnd.api+json": {
                                 "schema": {
                                     "type": "object",
-                                    "required": [
-                                        "errors"
-                                    ],
+                                    "required": ["errors"],
                                     "properties": {
                                         "errors": {
                                             "type": "array",
                                             "items": {
                                                 "type": "object",
-                                                "required": [
-                                                    "status",
-                                                    "title",
-                                                    "detail"
-                                                ],
+                                                "required": ["status", "title", "detail"],
                                                 "properties": {
                                                     "status": {
-                                                        "enum": [
-                                                            401
-                                                        ]
+                                                        "enum": [401]
                                                     },
                                                     "title": {
-                                                        "enum": [
-                                                            "401 Unauthorized"
-                                                        ]
+                                                        "enum": ["401 Unauthorized"]
                                                     },
                                                     "detail": {
                                                         "type": "string"
@@ -2074,29 +1766,19 @@
                             "application/vnd.api+json": {
                                 "schema": {
                                     "type": "object",
-                                    "required": [
-                                        "errors"
-                                    ],
+                                    "required": ["errors"],
                                     "properties": {
                                         "errors": {
                                             "type": "array",
                                             "items": {
                                                 "type": "object",
-                                                "required": [
-                                                    "status",
-                                                    "title",
-                                                    "detail"
-                                                ],
+                                                "required": ["status", "title", "detail"],
                                                 "properties": {
                                                     "status": {
-                                                        "enum": [
-                                                            403
-                                                        ]
+                                                        "enum": [403]
                                                     },
                                                     "title": {
-                                                        "enum": [
-                                                            "403 Forbidden"
-                                                        ]
+                                                        "enum": ["403 Forbidden"]
                                                     },
                                                     "detail": {
                                                         "type": "string"
@@ -2124,29 +1806,19 @@
                             "application/vnd.api+json": {
                                 "schema": {
                                     "type": "object",
-                                    "required": [
-                                        "errors"
-                                    ],
+                                    "required": ["errors"],
                                     "properties": {
                                         "errors": {
                                             "type": "array",
                                             "items": {
                                                 "type": "object",
-                                                "required": [
-                                                    "status",
-                                                    "title",
-                                                    "detail"
-                                                ],
+                                                "required": ["status", "title", "detail"],
                                                 "properties": {
                                                     "status": {
-                                                        "enum": [
-                                                            404
-                                                        ]
+                                                        "enum": [404]
                                                     },
                                                     "title": {
-                                                        "enum": [
-                                                            "404 Not Found"
-                                                        ]
+                                                        "enum": ["404 Not Found"]
                                                     },
                                                     "detail": {
                                                         "type": "string"
@@ -2212,9 +1884,7 @@
                     "additionalProperties": false,
                     "properties": {
                         "position": {
-                            "enum": [
-                                "current"
-                            ]
+                            "enum": ["current", "first"]
                         },
                         "sectionId": {
                             "type": "string",
@@ -2256,29 +1926,19 @@
                     "application/vnd.api+json": {
                         "schema": {
                             "type": "object",
-                            "required": [
-                                "errors"
-                            ],
+                            "required": ["errors"],
                             "properties": {
                                 "errors": {
                                     "type": "array",
                                     "items": {
                                         "type": "object",
-                                        "required": [
-                                            "status",
-                                            "title",
-                                            "detail"
-                                        ],
+                                        "required": ["status", "title", "detail"],
                                         "properties": {
                                             "status": {
-                                                "enum": [
-                                                    400
-                                                ]
+                                                "enum": [400]
                                             },
                                             "title": {
-                                                "enum": [
-                                                    "400 Bad Request"
-                                                ]
+                                                "enum": ["400 Bad Request"]
                                             },
                                             "detail": {
                                                 "type": "string"
@@ -2306,29 +1966,19 @@
                     "application/vnd.api+json": {
                         "schema": {
                             "type": "object",
-                            "required": [
-                                "errors"
-                            ],
+                            "required": ["errors"],
                             "properties": {
                                 "errors": {
                                     "type": "array",
                                     "items": {
                                         "type": "object",
-                                        "required": [
-                                            "status",
-                                            "title",
-                                            "detail"
-                                        ],
+                                        "required": ["status", "title", "detail"],
                                         "properties": {
                                             "status": {
-                                                "enum": [
-                                                    401
-                                                ]
+                                                "enum": [401]
                                             },
                                             "title": {
-                                                "enum": [
-                                                    "401 Unauthorized"
-                                                ]
+                                                "enum": ["401 Unauthorized"]
                                             },
                                             "detail": {
                                                 "type": "string"
@@ -2355,29 +2005,19 @@
                     "application/vnd.api+json": {
                         "schema": {
                             "type": "object",
-                            "required": [
-                                "errors"
-                            ],
+                            "required": ["errors"],
                             "properties": {
                                 "errors": {
                                     "type": "array",
                                     "items": {
                                         "type": "object",
-                                        "required": [
-                                            "status",
-                                            "title",
-                                            "detail"
-                                        ],
+                                        "required": ["status", "title", "detail"],
                                         "properties": {
                                             "status": {
-                                                "enum": [
-                                                    403
-                                                ]
+                                                "enum": [403]
                                             },
                                             "title": {
-                                                "enum": [
-                                                    "403 Forbidden"
-                                                ]
+                                                "enum": ["403 Forbidden"]
                                             },
                                             "detail": {
                                                 "type": "string"
@@ -2405,29 +2045,19 @@
                     "application/vnd.api+json": {
                         "schema": {
                             "type": "object",
-                            "required": [
-                                "errors"
-                            ],
+                            "required": ["errors"],
                             "properties": {
                                 "errors": {
                                     "type": "array",
                                     "items": {
                                         "type": "object",
-                                        "required": [
-                                            "status",
-                                            "title",
-                                            "detail"
-                                        ],
+                                        "required": ["status", "title", "detail"],
                                         "properties": {
                                             "status": {
-                                                "enum": [
-                                                    404
-                                                ]
+                                                "enum": [404]
                                             },
                                             "title": {
-                                                "enum": [
-                                                    "404 Not Found"
-                                                ]
+                                                "enum": ["404 Not Found"]
                                             },
                                             "detail": {
                                                 "type": "string"
@@ -2455,29 +2085,19 @@
                     "application/vnd.api+json": {
                         "schema": {
                             "type": "object",
-                            "required": [
-                                "errors"
-                            ],
+                            "required": ["errors"],
                             "properties": {
                                 "errors": {
                                     "type": "array",
                                     "items": {
                                         "type": "object",
-                                        "required": [
-                                            "status",
-                                            "title",
-                                            "detail"
-                                        ],
+                                        "required": ["status", "title", "detail"],
                                         "properties": {
                                             "status": {
-                                                "enum": [
-                                                    409
-                                                ]
+                                                "enum": [409]
                                             },
                                             "title": {
-                                                "enum": [
-                                                    "409 Conflict"
-                                                ]
+                                                "enum": ["409 Conflict"]
                                             },
                                             "detail": {
                                                 "type": "string"

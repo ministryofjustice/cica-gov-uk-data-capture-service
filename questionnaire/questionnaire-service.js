@@ -439,6 +439,10 @@ function createQuestionnaireService(spec) {
                         // Calling current() doesn't change any state. No need to persist.
                         isQuestionnaireModified = false;
                         section = qRouter.current();
+                    } else if (filter.position === 'first') {
+                        // Calling first() doesn't change any state. No need to persist.
+                        isQuestionnaireModified = false;
+                        section = qRouter.first();
                     }
                 }
 
