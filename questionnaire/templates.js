@@ -1087,7 +1087,7 @@ module.exports = {
                             errorMessage: {
                                 required: {
                                     'q-offender-describe-contact-with-offender':
-                                        'Enter details of any contact you have with the offender'
+                                        'Enter details of contact with the assailant or select if you have no contact'
                                 }
                             }
                         }
@@ -2092,6 +2092,15 @@ module.exports = {
                                 ]
                             },
                             {
+                                target:
+                                    'p-applicant-select-reasons-for-the-delay-in-reporting-the-crime-to-police',
+                                cond: [
+                                    'dateDifferenceGreaterThanTwoDays',
+                                    '$.answers.p--when-was-the-crime-reported-to-police.q--when-was-the-crime-reported-to-police',
+                                    '$.answers.p-applicant-when-did-the-crime-stop.q-applicant-when-did-the-crime-stop'
+                                ]
+                            },
+                            {
                                 target: 'p-offender-do-you-know-the-name-of-the-offender'
                             }
                         ]
@@ -2110,6 +2119,15 @@ module.exports = {
                                 ]
                             },
                             {
+                                target:
+                                    'p-applicant-select-reasons-for-the-delay-in-reporting-the-crime-to-police',
+                                cond: [
+                                    'dateDifferenceGreaterThanTwoDays',
+                                    '$.answers.p--when-was-the-crime-reported-to-police.q--when-was-the-crime-reported-to-police',
+                                    '$.answers.p-applicant-when-did-the-crime-stop.q-applicant-when-did-the-crime-stop'
+                                ]
+                            },
+                            {
                                 target: 'p-offender-do-you-know-the-name-of-the-offender'
                             }
                         ]
@@ -2125,6 +2143,15 @@ module.exports = {
                                     'dateDifferenceGreaterThanTwoDays',
                                     '$.answers.p--when-was-the-crime-reported-to-police.q--when-was-the-crime-reported-to-police',
                                     '$.answers.p-applicant-when-did-the-crime-happen.q-applicant-when-did-the-crime-happen'
+                                ]
+                            },
+                            {
+                                target:
+                                    'p-applicant-select-reasons-for-the-delay-in-reporting-the-crime-to-police',
+                                cond: [
+                                    'dateDifferenceGreaterThanTwoDays',
+                                    '$.answers.p--when-was-the-crime-reported-to-police.q--when-was-the-crime-reported-to-police',
+                                    '$.answers.p-applicant-when-did-the-crime-stop.q-applicant-when-did-the-crime-stop'
                                 ]
                             },
                             {
