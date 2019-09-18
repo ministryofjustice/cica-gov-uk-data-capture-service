@@ -37,6 +37,15 @@ const logger = pino({
 
 // security
 app.use(helmet());
+// explicity set the Content Security Policy.
+// not set in Helmet by default.
+app.use(
+    helmet.contentSecurityPolicy({
+        directives: {
+            defaultSrc: ["'self'"]
+        }
+    })
+);
 // logging
 app.use(logger);
 // https://expressjs.com/en/api.html#express.json
