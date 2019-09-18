@@ -3,6 +3,7 @@
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const helmet = require('helmet');
+const path = require('path');
 const {OpenApiValidator} = require('express-openapi-validator');
 const pino = require('pino-http');
 const errorHandler = require('./middleware/error-handler');
@@ -43,6 +44,8 @@ app.use(express.json({type: 'application/vnd.api+json'}));
 // https://expressjs.com/en/api.html#express.urlencoded
 app.use(express.urlencoded({extended: true}));
 app.use(cookieParser());
+
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/docs', docsRouter);
 
