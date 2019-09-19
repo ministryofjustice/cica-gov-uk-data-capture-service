@@ -9,6 +9,7 @@ const pointer = require('json-pointer');
 const templates = require('./templates');
 const createQuestionnaireDAL = require('./questionnaire-dal');
 const createMessageBusCaller = require('../services/message-bus');
+const replaceJsonPointers = require('../services/replace-json-pointer');
 
 function createQuestionnaireService(spec) {
     const {logger} = spec;
@@ -368,13 +369,14 @@ function createQuestionnaireService(spec) {
     }
 
     function buildSectionResource(sectionId, questionnaire) {
-        // TODO: replace any piping tokens
-
+        const sectionAsJson = JSON.stringify(questionnaire.sections[sectionId]);
+        const sectionAsJsonWithReplacements = replaceJsonPointers(sectionAsJson, questionnaire);
         const sectionResource = {
             type: 'sections',
             id: sectionId,
-            attributes: questionnaire.sections[sectionId]
+            attributes: JSON.parse(sectionAsJsonWithReplacements)
         };
+
         // Add any answer relationships
         const {answers} = questionnaire;
         const sectionAnswers = answers ? answers[sectionId] : undefined;

@@ -184,7 +184,7 @@
                         "required": ["q-applicant-enter-your-email-address"],
                         "errorMessage": {
                             "required": {
-                                "q-applicant-enter-your-email-address": "Enter your email address"
+                                "q-applicant-enter-your-email-address": "Enter your email address, for example john.smith@email.com"
                             }
                         },
                         "additionalProperties": false,
@@ -192,13 +192,15 @@
                         "type": "object",
                         "properties": {
                             "q-applicant-enter-your-email-address": {
+                                "description": "We'll use this to contact you about your application for example, to request more information.",
+                                "format": "email",
                                 "errorMessage": {
-                                    "maxLength": "Email address must be 50 characters or less"
+                                    "maxLength": "Email address must be 50 characters or less",
+                                    "format": "Enter your email address, for example john.smith@email.com"
                                 },
                                 "maxLength": 50,
-                                "type": "string",
-                                "description": "We'll use this to contact you about your application for example, to request more information.",
-                                "title": "Enter your email address"
+                                "title": "Enter your email address",
+                                "type": "string"
                             }
                         }
                     },
@@ -328,13 +330,15 @@
                         "type": "object",
                         "properties": {
                             "q-applicant-enter-your-telephone-number": {
+                                "description": "We may use this to contact you if we need to clarify something on your application form.",
+                                "title": "Enter your telephone number",
+                                "pattern": "^[\\+\\d][\\d \\(\\)\\+\\-\\#]{7,19}$",
                                 "errorMessage": {
+                                    "pattern": "Enter a telephone number, like 01632 960 001, 07700 900 982 or +44 0808 157 0192",
                                     "maxLength": "Telephone number must be 20 characters or less"
                                 },
                                 "maxLength": 20,
-                                "type": "string",
-                                "description": "We may use this to contact you if we need to clarify something on your application form.",
-                                "title": "Enter your telephone number"
+                                "type": "string"
                             }
                         }
                     },
@@ -345,8 +349,8 @@
                         ],
                         "errorMessage": {
                             "required": {
-                                "q-applicant-select-reasons-for-the-delay-in-reporting-the-crime-to-police": "Explain the reasons for the delay in reporting the crime to the police",
-                                "q-applicant-explain-reason-for-delay-reporting": "Select if you were under 18, unable to report the crime or other reasons"
+                                "q-applicant-select-reasons-for-the-delay-in-reporting-the-crime-to-police": "Select if you were under 18, unable to report the crime or other reasons",
+                                "q-applicant-explain-reason-for-delay-reporting": "Explain the reasons for the delay in reporting the crime to the police"
                             }
                         },
                         "additionalProperties": false,
@@ -354,14 +358,6 @@
                         "type": "object",
                         "properties": {
                             "q-applicant-select-reasons-for-the-delay-in-reporting-the-crime-to-police": {
-                                "errorMessage": {
-                                    "maxLength": "Explanation must be 500 characters or less"
-                                },
-                                "maxLength": 500,
-                                "type": "string",
-                                "title": "Briefly explain these reasons"
-                            },
-                            "q-applicant-explain-reason-for-delay-reporting": {
                                 "description": "Select all options that apply to you.",
                                 "title": "Select reasons for the delay in reporting the crime to the police",
                                 "items": {
@@ -383,6 +379,14 @@
                                 "maxItems": 3,
                                 "uniqueItems": true,
                                 "type": "array"
+                            },
+                            "q-applicant-explain-reason-for-delay-reporting": {
+                                "errorMessage": {
+                                    "maxLength": "Explanation must be 500 characters or less"
+                                },
+                                "maxLength": 500,
+                                "type": "string",
+                                "title": "Briefly explain these reasons"
                             }
                         }
                     },
@@ -416,7 +420,7 @@
                                         "title": "Option 1: Sexual assault or abuse"
                                     },
                                     {
-                                        "const": "option-2:-sexual-assault-or-abuse-and-other-injuries-ro-losses",
+                                        "const": "option-2:-sexual-assault-or-abuse-and-other-injuries-or-losses",
                                         "title": "Option 2: Sexual assault or abuse and other injuries or losses"
                                     }
                                 ],
@@ -448,7 +452,7 @@
                                 },
                                 "format": "date-time",
                                 "type": "string",
-                                "description": "For example, 31 3 2018. You can enter an approximate date.",
+                                "description": "For example, 03 2018. You can enter an approximate date.",
                                 "title": "When did it stop?"
                             }
                         }
@@ -459,7 +463,7 @@
                         "type": "object",
                         "properties": {
                             "confirmation": {
-                                "description": "\n                    {{ govukPanel({\n                        titleText: \"Application submitted\",\n                        html: '<p>Your reference number is <strong>||/answers/system/case-reference||</strong></p><p>We have sent a confirmation email to <strong>||/answers/p-applicant-enter-your-email-address/q-applicant-email-address||</strong></p>'\n                    }) }}\n                    \n                    <p class=\"govuk-body-l\">Thank you for submitting your application.</p>\n                    <h2 class=\"govuk-heading-m\">What happens next</h2>\n                    <p class=\"govuk-body\">We will:</p>\n                    <ul class=\"govuk-list govuk-list--bullet\">\n                    <li>ask the police for evidence</li>\n                    <li>use the police evidence to make a decision</li>\n                    <li>send our decision letter by post</li>\n                    </ul>\n                    <p class=\"govuk-body\">We will usually make a decision within 4 months.</p>\n                    {{ govukWarningText({\n                        text: \"You must inform us immediately if any of the information you have given us changes, especially your address, telephone number or email address.\",\n                        iconFallbackText: \"Warning\"\n                    }) }}\n                    <p class=\"govuk-body\">You can contact our Customer Service Centre on 0300 003 3601. Select option 8 when the call is answered.</p>\n                    <h2 class=\"govuk-heading-m\">Help us improve this service</h2>\n                    <p class=\"govuk-body\">You can complete a short survey to help us improve this service.</p>\n                    <p class=\"govuk-body\">It does not ask for any details about your case, and has no effect on your application.</p>\n                    <p class=\"govuk-body\"><a href=\"https://www.surveymonkey.com/r/Privatebetafeedback\">Tell us what you think of our service</a> (takes 30 seconds)</p>\n            "
+                                "description": "\n                    {{ govukPanel({\n                        titleText: \"Application submitted\",\n                        html: '<p>Your reference number is <strong>||/answers/system/case-reference||</strong></p><p>We have sent a confirmation email to <strong>||/answers/p-applicant-enter-your-email-address/q-applicant-enter-your-email-address||</strong></p>'\n                    }) }}\n                    \n                    <p class=\"govuk-body-l\">Thank you for submitting your application.</p>\n                    <h2 class=\"govuk-heading-m\">What happens next</h2>\n                    <p class=\"govuk-body\">We will:</p>\n                    <ul class=\"govuk-list govuk-list--bullet\">\n                    <li>ask the police for evidence</li>\n                    <li>use the police evidence to make a decision</li>\n                    <li>send our decision letter by post</li>\n                    </ul>\n                    <p class=\"govuk-body\">We will usually make a decision within 4 months.</p>\n                    {{ govukWarningText({\n                        text: \"You must inform us immediately if any of the information you have given us changes, especially your address, telephone number or email address.\",\n                        iconFallbackText: \"Warning\"\n                    }) }}\n                    <p class=\"govuk-body\">You can contact our Customer Service Centre on 0300 003 3601. Select option 8 when the call is answered.</p>\n                    <h2 class=\"govuk-heading-m\">Help us improve this service</h2>\n                    <p class=\"govuk-body\">You can complete a short survey to help us improve this service.</p>\n                    <p class=\"govuk-body\">It does not ask for any details about your case, and has no effect on your application.</p>\n                    <p class=\"govuk-body\"><a href=\"https://www.surveymonkey.com/r/Privatebetafeedback\">Tell us what you think of our service</a> (takes 30 seconds)</p>\n            "
                             }
                         }
                     },
@@ -639,7 +643,7 @@
                             },
                             "q-applicant-when-did-the-crime-happen": {
                                 "errorMessage": {
-                                    "format": "The date the crime happened must be in the past"
+                                    "format": "Enter the date the crime happened and include a day, month and year"
                                 },
                                 "format": "date-time",
                                 "type": "string",
@@ -1007,7 +1011,7 @@
                                 "maxLength": 120,
                                 "type": "string",
                                 "description": "We will not contact the offender.",
-                                "title": "Offenders name"
+                                "title": "Offender's name"
                             }
                         }
                     },
@@ -1307,7 +1311,7 @@
                         "properties": {
                             "q--when-was-the-crime-reported-to-police": {
                                 "errorMessage": {
-                                    "format": "The date the crime was reported to the police must be in the past"
+                                    "format": "Enter the date the crime was reported to police and include a day, month and year"
                                 },
                                 "format": "date-time",
                                 "type": "string",
@@ -1364,7 +1368,7 @@
                         "required": ["q-applicant-enter-your-date-of-birth"],
                         "errorMessage": {
                             "required": {
-                                "q-applicant-enter-your-date-of-birth": "Enter your date of birth"
+                                "q-applicant-enter-your-date-of-birth": "Enter your date of birth and include a day, month and year"
                             }
                         },
                         "additionalProperties": false,
@@ -1372,6 +1376,9 @@
                         "type": "object",
                         "properties": {
                             "q-applicant-enter-your-date-of-birth": {
+                                "errorMessage": {
+                                    "format": "Enter your date of birth and include a day, month and year"
+                                },
                                 "format": "date-time",
                                 "type": "string",
                                 "description": "For example, 31 3 2018.",
@@ -1396,7 +1403,7 @@
                         "type": "object",
                         "properties": {
                             "you-cannot-get-compensation": {
-                                "description": "\n                <p class=\"govuk-body\">If the crime has not been reported to the police we can not pay compensation.</p>\n                <p class=\"govuk-body\">You may continue your application, but any future application for the same injuries will be refused.</p>\n            "
+                                "description": "\n                <p class=\"govuk-body\">If the crime has not been reported to the police we cannot pay compensation.</p>\n                <p class=\"govuk-body\">You may continue your application, but any future application for the same injuries will be refused.</p>\n            "
                             }
                         },
                         "title": "You cannot get compensation"
@@ -1454,8 +1461,8 @@
                         ],
                         "errorMessage": {
                             "required": {
-                                "q-applicant-explain-reason-for-delay-application": "Select if you were under 18, advised to wait, medical reasons or other reasons",
-                                "q-applicant-select-reasons-for-the-delay-in-making-your-application": "Explain the reasons for the delay in making your application"
+                                "q-applicant-explain-reason-for-delay-application": "Explain the reasons for the delay in making your application",
+                                "q-applicant-select-reasons-for-the-delay-in-making-your-application": "Select if you were under 18, advised to wait, medical reasons or other reasons"
                             }
                         },
                         "additionalProperties": false,
@@ -1463,6 +1470,14 @@
                         "type": "object",
                         "properties": {
                             "q-applicant-explain-reason-for-delay-application": {
+                                "errorMessage": {
+                                    "maxLength": "Explanation must be 500 characters or less"
+                                },
+                                "maxLength": 500,
+                                "type": "string",
+                                "title": "Briefly explain these reasons"
+                            },
+                            "q-applicant-select-reasons-for-the-delay-in-making-your-application": {
                                 "description": "Select all options that apply to you.",
                                 "title": "Select reasons for the delay in making your application",
                                 "items": {
@@ -1488,14 +1503,6 @@
                                 "maxItems": 4,
                                 "uniqueItems": true,
                                 "type": "array"
-                            },
-                            "q-applicant-select-reasons-for-the-delay-in-making-your-application": {
-                                "errorMessage": {
-                                    "maxLength": "Explanation must be 500 characters or less"
-                                },
-                                "maxLength": 500,
-                                "type": "string",
-                                "title": "Briefly explain these reasons"
                             }
                         }
                     },
@@ -1627,7 +1634,7 @@
                                 "maxLength": 30,
                                 "type": "string",
                                 "description": "This is the reference number the police gave the crime when it was reported.",
-                                "title": "What is the crime reference number?"
+                                "title": "What's the crime reference number?"
                             }
                         }
                     },
@@ -1670,51 +1677,61 @@
                 "answers": {
                     "p-applicant-declaration": {},
                     "p-applicant-enter-your-email-address": {
-                        "q-applicant-enter-your-email-address": "test.email@domain.com"
+                        "q-applicant-enter-your-email-address": "test@test.com"
                     },
+                    "p--check-your-answers": {},
                     "p-applicant-enter-your-telephone-number": {
-                        "q-applicant-enter-your-telephone-number": "0141 9999999"
+                        "q-applicant-enter-your-telephone-number": "12345678"
+                    },
+                    "p-applicant-select-reasons-for-the-delay-in-reporting-the-crime-to-police": {
+                        "q-applicant-select-reasons-for-the-delay-in-reporting-the-crime-to-police": [
+                            "unable-to-report-crime"
+                        ],
+                        "q-applicant-explain-reason-for-delay-reporting": "Unable to report the crime in time."
                     },
                     "p--before-you-continue": {},
                     "p-applicant-select-the-option-that-applies-to-you": {
                         "q-applicant-option": "option-1:-sexual-assault-or-abuse"
                     },
                     "p-applicant-when-did-the-crime-happen": {
-                        "q-applicant-when-did-the-crime-happen": "2019-09-02T00:00:00.000Z"
+                        "q-applicant-when-did-the-crime-happen": "2019-04-15T00:00:00.000Z"
                     },
                     "p-offender-do-you-know-the-name-of-the-offender": {
                         "q-offender-do-you-know-the-name-of-the-offender": false
                     },
                     "p-applicant-enter-your-name": {
                         "q-applicant-title": "Mr",
-                        "q-applicant-first-name": "Test",
-                        "q-applicant-last-name": "Test"
+                        "q-applicant-first-name": "Barry",
+                        "q-applicant-last-name": "Foo"
                     },
-                    "p-applicant-you-cannot-get-compensation": {},
-                    "p--check-your-answers": {},
+                    "system": {
+                        "case-reference": "19\\751194"
+                    },
                     "p-applicant-are-you-18-or-over": {
                         "q-applicant-are-you-18-or-over": true
                     },
                     "p-applicant-were-you-a-victim-of-sexual-assault-or-abuse": {
                         "q-applicant-were-you-a-victim-of-sexual-assault-or-abuse": true
                     },
+                    "p--which-english-police-force-is-investigating-the-crime": {
+                        "q--which-english-police-force-is-investigating-the-crime": 10000140
+                    },
                     "p--was-the-crime-reported-to-police": {
-                        "q--was-the-crime-reported-to-police": false
+                        "q--was-the-crime-reported-to-police": true
                     },
                     "p-applicant-have-you-applied-for-or-received-any-other-compensation": {
-                        "q-applicant-applied-for-other-compensation-briefly-explain-why-not": "explination of why not",
+                        "q-applicant-applied-for-other-compensation-briefly-explain-why-not": "test",
                         "q-applicant-have-you-applied-for-or-received-any-other-compensation": false
                     },
                     "p-applicant-where-in-england-did-it-happen": {
-                        "q-applicant-english-town-or-city": "Glasgow",
-                        "q-applicant-english-location": "Glasgow"
+                        "q-applicant-english-town-or-city": "City",
+                        "q-applicant-english-location": "Test"
                     },
                     "p-applicant-enter-your-address": {
-                        "q-applicant-postcode": "G1 1GG",
-                        "q-applicant-county": "Lanarkshire",
-                        "q-applicant-building-and-street": "Building Name",
-                        "q-applicant-building-and-street-2": "1 High Street",
-                        "q-applicant-town-or-city": "Glasgow"
+                        "q-applicant-postcode": "G1",
+                        "q-applicant-building-and-street": "1 test lane",
+                        "q-applicant-building-and-street-2": "test-town",
+                        "q-applicant-town-or-city": "test-city"
                     },
                     "p-applicant-british-citizen-or-eu-national": {
                         "q-applicant-british-citizen-or-eu-national": true
@@ -1729,22 +1746,22 @@
                         "q-applicant-did-the-crime-happen-once-or-over-time": "once"
                     },
                     "p-applicant-enter-your-date-of-birth": {
-                        "q-applicant-enter-your-date-of-birth": "1987-05-02T00:00:00.000Z"
+                        "q-applicant-enter-your-date-of-birth": "1962-06-14T00:00:00.000Z"
                     },
                     "p-applicant-where-did-the-crime-happen": {
                         "q-applicant-where-did-the-crime-happen": "england"
                     },
-                    "p-applicant-what-other-names-have-you-used": {
-                        "q-applicant-what-other-names-have-you-used": ""
+                    "p--when-was-the-crime-reported-to-police": {
+                        "q--when-was-the-crime-reported-to-police": "2019-04-19T00:00:00.000Z"
                     },
                     "p-applicant-have-you-been-known-by-any-other-names": {
-                        "q-applicant-have-you-been-known-by-any-other-names": true
+                        "q-applicant-have-you-been-known-by-any-other-names": false
                     },
-                    "system": {
-                        "case-reference": "11\\987654"
+                    "p--whats-the-crime-reference-number": {
+                        "q--whats-the-crime-reference-number": "res53"
                     }
                 },
-                "version": "0.2.3",
+                "version": "0.2.5",
                 "meta": {
                     "onComplete": {
                         "tasks": [
@@ -1839,7 +1856,7 @@
                                         "cond": [
                                             "==",
                                             "$.answers.p-applicant-select-the-option-that-applies-to-you.q-applicant-option",
-                                            "option-2:-sexual-assault-or-abuse-and-other-injuries-ro-losses"
+                                            "option-2:-sexual-assault-or-abuse-and-other-injuries-or-losses"
                                         ],
                                         "target": "p-applicant-redirect-to-our-other-application"
                                     },
@@ -2372,22 +2389,25 @@
                     "p--before-you-continue",
                     "p-applicant-select-the-option-that-applies-to-you",
                     "p--was-the-crime-reported-to-police",
-                    "p-applicant-you-cannot-get-compensation",
+                    "p--when-was-the-crime-reported-to-police",
+                    "p--whats-the-crime-reference-number",
                     "p-applicant-did-the-crime-happen-once-or-over-time",
                     "p-applicant-when-did-the-crime-happen",
                     "p-applicant-where-did-the-crime-happen",
                     "p-applicant-where-in-england-did-it-happen",
+                    "p--which-english-police-force-is-investigating-the-crime",
+                    "p-applicant-select-reasons-for-the-delay-in-reporting-the-crime-to-police",
                     "p-offender-do-you-know-the-name-of-the-offender",
                     "p-applicant-have-you-applied-to-us-before",
                     "p-applicant-have-you-applied-for-or-received-any-other-compensation",
                     "p-applicant-enter-your-name",
                     "p-applicant-have-you-been-known-by-any-other-names",
-                    "p-applicant-what-other-names-have-you-used",
                     "p-applicant-enter-your-date-of-birth",
                     "p-applicant-enter-your-email-address",
                     "p-applicant-enter-your-address",
                     "p-applicant-enter-your-telephone-number",
-                    "p--check-your-answers"
+                    "p--check-your-answers",
+                    "p--confirmation"
                 ],
                 "currentSectionId": "p--confirmation",
                 "type": "apply-for-compensation",

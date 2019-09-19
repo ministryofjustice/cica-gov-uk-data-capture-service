@@ -242,7 +242,7 @@ describe('Questionnaire submissions', () => {
                 const res = await request(app)
                     .get('/api/v1/questionnaires/f197d3e9-d8ba-4500-96ed-9ea1d08f1427/submissions')
                     .set('Authorization', `Bearer ${tokens['create:questionnaires']}`);
-                expect(res.body.data.attributes.caseReferenceNumber).toEqual('11\\987654');
+                expect(res.body.data.attributes.caseReferenceNumber).toEqual('19\\751194');
             });
         });
 
