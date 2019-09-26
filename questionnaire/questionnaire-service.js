@@ -25,12 +25,12 @@ function createQuestionnaireService(spec) {
 
     async function createQuestionnaire(templateName) {
         if (!(templateName in templates)) {
-            // TODO: MAKE VError
-            const err = Error(`Template "${templateName}" does not exist`);
-            err.name = 'HTTPError';
-            err.statusCode = 404;
-            err.error = '404 Not Found';
-            throw err;
+            throw new VError(
+                {
+                    name: 'ResourceNotFound'
+                },
+                `Template "${templateName}" does not exist`
+            );
         }
 
         const uuidV4 = uuidv4();
@@ -524,13 +524,13 @@ function createQuestionnaireService(spec) {
                 return compoundDocument;
             }
 
-            // TODO: Make VError
             // Query found no progress entries
-            const err = Error(`ProgressEntry "${sectionId}" does not exist`);
-            err.name = 'HTTPError';
-            err.statusCode = 404;
-            err.error = '404 Not Found';
-            throw err;
+            throw new VError(
+                {
+                    name: 'ResourceNotFound'
+                },
+                `ProgressEntry "${sectionId}" does not exist`
+            );
         }
 
         // 5 - If no query is supplied, return the progress entries collection
