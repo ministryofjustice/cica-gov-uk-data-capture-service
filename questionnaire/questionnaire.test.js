@@ -605,8 +605,13 @@ describe('/questionnaires/{questionnaireId}/submissions', () => {
                         data: {
                             type: 'object',
                             additionalProperties: false,
-                            required: ['type', 'attributes'],
+                            required: ['id', 'type', 'attributes'],
                             properties: {
+                                id: {
+                                    type: 'string',
+                                    pattern:
+                                        '^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$'
+                                },
                                 type: {const: 'submissions'},
                                 attributes: {
                                     type: 'object',
@@ -758,8 +763,13 @@ describe('/questionnaires/{questionnaireId}/submissions', () => {
                         data: {
                             type: 'object',
                             additionalProperties: false,
-                            required: ['type', 'attributes'],
+                            required: ['id', 'type', 'attributes'],
                             properties: {
+                                id: {
+                                    type: 'string',
+                                    pattern:
+                                        '^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$'
+                                },
                                 type: {const: 'submissions'},
                                 attributes: {
                                     type: 'object',

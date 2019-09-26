@@ -939,8 +939,12 @@
                                         "data": {
                                             "type": "object",
                                             "additionalProperties": false,
-                                            "required": ["type", "attributes"],
+                                            "required": ["id", "type", "attributes"],
                                             "properties": {
+                                                "id": {
+                                                    "type": "string",
+                                                    "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+                                                },
                                                 "type": {
                                                     "enum": ["submissions"]
                                                 },
@@ -985,6 +989,7 @@
                                 },
                                 "example": {
                                     "data": {
+                                        "id": "285cb104-0c15-4a9c-9840-cb1007f098fb",
                                         "type": "submissions",
                                         "attributes": {
                                             "questionnaireId": "285cb104-0c15-4a9c-9840-cb1007f098fb",
@@ -1225,8 +1230,12 @@
                                         "data": {
                                             "type": "object",
                                             "additionalProperties": false,
-                                            "required": ["type", "attributes"],
+                                            "required": ["id", "type", "attributes"],
                                             "properties": {
+                                                "id": {
+                                                    "type": "string",
+                                                    "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+                                                },
                                                 "type": {
                                                     "enum": ["submissions"]
                                                 },
@@ -1271,6 +1280,7 @@
                                 },
                                 "example": {
                                     "data": {
+                                        "id": "285cb104-0c15-4a9c-9840-cb1007f098fb",
                                         "type": "submissions",
                                         "attributes": {
                                             "questionnaireId": "285cb104-0c15-4a9c-9840-cb1007f098fb",

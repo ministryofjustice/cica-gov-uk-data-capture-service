@@ -196,6 +196,7 @@ function createQuestionnaireService(spec) {
 
         const response = {
             data: {
+                id: questionnaireId,
                 type: 'submissions',
                 attributes: {
                     questionnaireId,
