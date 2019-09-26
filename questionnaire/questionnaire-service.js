@@ -146,26 +146,24 @@ function createQuestionnaireService(spec) {
             questionnaire.meta &&
             questionnaire.meta.onComplete &&
             questionnaire.meta.onComplete.tasks;
+
         onCompleteTasks.forEach(async task => {
             // email to be sent out.
             if (task.emailTemplateId) {
                 try {
                     await messageBus.post('NotificationQueue', {
                         templateId: task.emailTemplateId,
-                        email_address: pointer.get(
+                        emailAddress: pointer.get(
                             questionnaire,
                             task.emailTemplatePlaceholderMap.applicantEmail
                         ),
                         personalisation: {
-                            email_address: pointer.get(
-                                questionnaire,
-                                task.emailTemplatePlaceholderMap.applicantEmail
-                            ),
                             case_reference: pointer.get(
                                 questionnaire,
                                 task.emailTemplatePlaceholderMap.caseReference
                             )
-                        }
+                        },
+                        reference: null
                     });
                 } catch (err) {
                     await updateQuestionnaireSubmissionStatus(questionnaireId, 'FAILED');
