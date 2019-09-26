@@ -35,20 +35,22 @@ const logger = pino({
     }
 });
 
-// security
-app.use(helmet());
-// explicity set the Content Security Policy.
-// not set in Helmet by default.
 app.use(
-    helmet.contentSecurityPolicy({
-        directives: {
-            defaultSrc: ["'self'"],
-            scriptSrc: ["'self'", "'unsafe-inline'"],
-            styleSrc: ["'self'", "'unsafe-inline'"],
-            imgSrc: ["'*'", 'data:']
+    helmet({
+        contentSecurityPolicy: {
+            directives: {
+                defaultSrc: ["'self'"],
+                scriptSrc: ["'self'"],
+                styleSrc: ["'self'", "'unsafe-inline'"],
+                imgSrc: ["'self'", 'data:']
+            }
+        },
+        hsts: {
+            maxAge: 60 * 60 * 24 * 365 // the units is seconds.
         }
     })
 );
+
 // logging
 app.use(logger);
 // https://expressjs.com/en/api.html#express.json
