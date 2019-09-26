@@ -19,7 +19,6 @@ function questionnaireDAL(spec) {
     }
 
     async function updateQuestionnaire(questionnaireId, questionnaire) {
-        // TODO: throw in no rows returned e.g. questionnaireId does not exist
         let result;
 
         try {
@@ -30,6 +29,14 @@ function questionnaireDAL(spec) {
                 // 'UPDATE questionnaire SET questionnaire = jsonb_set(questionnaire, $1, $2, TRUE), modified = current_timestamp WHERE id = $3',
                 // [`{answers,${sectionId}}`, answers, questionnaireId]
             );
+            if (result.rowCount === 0) {
+                throw new VError(
+                    {
+                        name: 'UpdateNotSuccessful'
+                    },
+                    `Questionnaire "${questionnaireId}" was not updated successfully`
+                );
+            }
         } catch (err) {
             throw err;
         }
@@ -46,7 +53,7 @@ function questionnaireDAL(spec) {
                 [questionnaireId]
             );
 
-            if (questionnaire.rows.length === 0) {
+            if (questionnaire.rowCount === 0) {
                 // No instance was found
                 throw new VError(
                     {
@@ -69,7 +76,7 @@ function questionnaireDAL(spec) {
                 questionnaireId
             ]);
 
-            if (result.rows.length === 0) {
+            if (result.rowCount === 0) {
                 // No instance was found
                 throw new VError(
                     {
@@ -93,8 +100,8 @@ function questionnaireDAL(spec) {
                 'UPDATE questionnaire SET submission_status = $1, modified = current_timestamp WHERE id = $2',
                 [submissionStatus, questionnaireId]
             );
-            // TODO: should this be an explicit 0 check?
-            if (result.rowCount !== 1) {
+
+            if (result.rowCount === 0) {
                 throw new VError(
                     {
                         name: 'UpdateNotSuccessful'
