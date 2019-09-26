@@ -111,7 +111,6 @@ function createQuestionnaireService(spec) {
     async function startSubmission(questionnaireId) {
         try {
             await updateQuestionnaireSubmissionStatus(questionnaireId, 'IN_PROGRESS');
-            await db.createQuestionnaireSubmission(questionnaireId, 'IN_PROGRESS');
             const messageBus = createMessageBusCaller({logger});
             const submissionResponse = await messageBus.post('SubmissionQueue', {
                 applicationId: questionnaireId
@@ -122,19 +121,9 @@ function createQuestionnaireService(spec) {
                 submissionResponse.body !== 'Message sent'
             ) {
                 await updateQuestionnaireSubmissionStatus(questionnaireId, 'FAILED');
-                await db.createQuestionnaireSubmission(questionnaireId, 'FAILED');
             }
         } catch (err) {
             await updateQuestionnaireSubmissionStatus(questionnaireId, 'FAILED');
-            await db.createQuestionnaireSubmission(questionnaireId, 'FAILED');
-        }
-    }
-
-    async function submitQuestionnaire(questionnaireId) {
-        try {
-            await db.createQuestionnaireSubmission(questionnaireId, 'COMPLETED');
-        } catch (err) {
-            throw err;
         }
     }
 
@@ -167,7 +156,6 @@ function createQuestionnaireService(spec) {
                     });
                 } catch (err) {
                     await updateQuestionnaireSubmissionStatus(questionnaireId, 'FAILED');
-                    await db.createQuestionnaireSubmission(questionnaireId, 'FAILED');
                 }
             }
         });
@@ -201,7 +189,6 @@ function createQuestionnaireService(spec) {
             // if the caseReferenceNumber exists, then the submission is COMPLETE.
             if (caseReferenceNumber) {
                 await updateQuestionnaireSubmissionStatus(questionnaireId, 'COMPLETED');
-                await submitQuestionnaire(questionnaireId);
                 sendConfirmationNotification(questionnaireId);
             }
         }

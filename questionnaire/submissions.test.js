@@ -80,7 +80,6 @@ jest.doMock('./questionnaire-dal.js', () =>
             );
         },
         updateQuestionnaireSubmissionStatus: () => undefined,
-        createQuestionnaireSubmission: () => true,
         retrieveCaseReferenceNumber: () => undefined
     }))
 );
