@@ -59,7 +59,7 @@ function questionnaireDAL(spec) {
             throw err;
         }
 
-        return questionnaire;
+        return questionnaire.rows[0].questionnaire;
     }
 
     async function getQuestionnaireSubmissionStatus(questionnaireId) {

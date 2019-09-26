@@ -128,8 +128,7 @@ router
             const questionnaireService = createQuestionnaireService({logger: req.log});
 
             // 1) get questionnaire instance.
-            const result = await questionnaireService.getQuestionnaire(questionnaireId);
-            const {questionnaire} = result.rows[0];
+            const questionnaire = await questionnaireService.getQuestionnaire(questionnaireId);
 
             if (!questionnaire) {
                 const err = Error(

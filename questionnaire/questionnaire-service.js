@@ -95,8 +95,7 @@ function createQuestionnaireService(spec) {
     }
 
     async function retrieveCaseReferenceNumber(questionnaireId) {
-        const result = await getQuestionnaire(questionnaireId);
-        const {questionnaire} = result.rows && result.rows[0];
+        const questionnaire = await getQuestionnaire(questionnaireId);
         const caseReference =
             questionnaire.answers &&
             questionnaire.answers.system &&
@@ -128,8 +127,7 @@ function createQuestionnaireService(spec) {
     }
 
     async function sendConfirmationNotification(questionnaireId) {
-        const result = await getQuestionnaire(questionnaireId);
-        const {questionnaire} = result.rows[0];
+        const questionnaire = await getQuestionnaire(questionnaireId);
         const messageBus = createMessageBusCaller({logger});
         const onCompleteTasks =
             questionnaire.meta &&
@@ -222,8 +220,7 @@ function createQuestionnaireService(spec) {
     }
 
     async function getAnswers(questionnaireId) {
-        const result = await getQuestionnaire(questionnaireId);
-        const {questionnaire} = result.rows[0];
+        const questionnaire = await getQuestionnaire(questionnaireId);
         const resourceCollection = questionnaire.progress.reduce((acc, sectionAnswersId) => {
             // Does this section have answers
             if (questionnaire.answers[sectionAnswersId]) {
@@ -244,17 +241,14 @@ function createQuestionnaireService(spec) {
         let answerResource;
 
         try {
-            // 1 - load the questionnaire
-            const result = await getQuestionnaire(questionnaireId);
+            // 1 - get questionnaire instance
+            const questionnaire = await getQuestionnaire(questionnaireId);
 
-            // 2 - get questionnaire instance
-            const {questionnaire} = result.rows[0];
-
-            // 3 - is the section allowed to be posted to e.g. is it in their progress
+            // 2 - is the section allowed to be posted to e.g. is it in their progress
             const qRouter = createQRouter(questionnaire);
             const section = getSection(sectionId, qRouter);
 
-            // 4 - Section is available. Validate the answers against it
+            // 3 - Section is available. Validate the answers against it
             const sectionSchema = questionnaire.sections[section.id];
             const validate = ajv.compile(sectionSchema);
             const valid = validate(answers);
@@ -276,7 +270,7 @@ function createQuestionnaireService(spec) {
                 throw validationError;
             }
 
-            // 5 - If we're here all is good
+            // 4 - If we're here all is good
             // Pass the answers to the router which will update the context (questionnaire) with these answers.
             let answeredQuestionnaire;
 
@@ -311,8 +305,7 @@ function createQuestionnaireService(spec) {
     }
 
     async function validateAllAnswers(questionnaireId) {
-        const result = await getQuestionnaire(questionnaireId);
-        const {questionnaire} = result.rows[0];
+        const questionnaire = await getQuestionnaire(questionnaireId);
 
         // get the section names from the progress array.
         // these are the only sections that we need to validate
@@ -402,16 +395,12 @@ function createQuestionnaireService(spec) {
     }
 
     async function getProgressEntries(questionnaireId, query) {
-        // 1 - load the questionnaire
-        const result = await getQuestionnaire(questionnaireId);
-
-        // 2 - get questionnaire instance
-        const {questionnaire} = result.rows[0];
-
-        // 3 - get router
+        // 1 - get questionnaire instance
+        const questionnaire = await getQuestionnaire(questionnaireId);
+        // 2 - get router
         const qRouter = createQRouter(questionnaire);
 
-        // 4 - filter or paginate progress entries if required
+        // 3 - filter or paginate progress entries if required
         // Currently this only supports queries that return a single progress entry
         if (query) {
             const {filter, page} = query;
