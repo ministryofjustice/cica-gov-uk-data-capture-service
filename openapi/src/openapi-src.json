@@ -302,8 +302,8 @@
         "/questionnaires/{questionnaireId}/submissions": {
             "get": {
                 "tags": ["Submissions"],
-                "summary": "Get all answers for a questionnaire",
-                "description": "Gets all submission state for a questionnaire",
+                "summary": "Get submission resource for a questionnaire",
+                "description": "Gets submission state for a questionnaire",
                 "operationId": "getSubmissions",
                 "parameters": [
                     {
