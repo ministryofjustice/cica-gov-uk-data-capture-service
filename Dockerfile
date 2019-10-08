@@ -25,6 +25,9 @@ RUN npm install
 # Bundle app source
 COPY . .
 
+# Download RDS certificates bundle for SSL verification
+ADD --chown=dc_user https://s3.amazonaws.com/rds-downloads/rds-combined-ca-bundle.pem ./ca/rds-combined-ca-bundle.pem
+
 # Expose port 3100 inside the container to the outside world
 # so that http://localhost:3100 routes the network traffic to
 # the container

@@ -1,9 +1,12 @@
 'use strict';
 
+const fs = require('fs');
 const {Pool} = require('pg');
 
+const cert = fs.readFileSync(`${process.cwd()}/ca/rds-combined-ca-bundle.pem`).toString();
 const pool = new Pool({
-    connectionString: process.env.DATABASE_URL
+    connectionString: process.env.DATABASE_URL,
+    ssl: process.env.NODE_ENV === 'production' ? {ca: cert} : false
 });
 
 function createDBQuery(spec) {
