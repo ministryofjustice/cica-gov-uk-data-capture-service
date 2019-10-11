@@ -35,7 +35,7 @@ describe('/questionnaires/{questionnaireId}/progress-entries?filter[position]=cu
                     res.body.included[0].attributes.properties.confirmation.description;
 
                 expect(confirmation).toMatch(/19\\751194/);
-                expect(confirmation).toMatch(/Barry\.Foo@cica\.gov\.uk/);
+                expect(confirmation).toMatch(/Barry\.foo@foo\.com/);
                 expect(res.statusCode).toBe(200);
                 expect(res.type).toBe('application/vnd.api+json');
             });
