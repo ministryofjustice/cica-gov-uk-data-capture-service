@@ -10,7 +10,7 @@ const router = express.Router();
 const rxTemplateName = /^[a-zA-Z0-9-]{1,30}$/;
 
 // Ensure JWT is valid
-router.use(validateJWT({secret: process.env.SECRET}));
+router.use(validateJWT({secret: process.env.DCS_JWT_SECRET}));
 
 router.route('/').post(permissions('create:questionnaires'), async (req, res, next) => {
     try {
