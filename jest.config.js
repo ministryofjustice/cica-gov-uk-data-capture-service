@@ -6,7 +6,7 @@ const config = {
 };
 /*! m0-end */
 
-process.env.SECRET = '123';
+process.env.DCS_JWT_SECRET = '123';
 process.env.DCS_LOG_LEVEL = 'silent';
 
 /*! m0-start */

@@ -5,7 +5,7 @@ const {Pool} = require('pg');
 
 const cert = fs.readFileSync(`${process.cwd()}/ca/rds-combined-ca-bundle.pem`).toString();
 const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
+    connectionString: process.env.DATABASE_URL_WITH_CREDENTIALS,
     ssl: process.env.NODE_ENV === 'production' ? {ca: cert} : false
 });
 
