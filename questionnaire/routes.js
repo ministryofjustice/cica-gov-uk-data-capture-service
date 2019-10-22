@@ -40,7 +40,7 @@ router.route('/').post(permissions('create:questionnaires'), async (req, res, ne
 
 router
     .route('/:questionnaireId/sections/answers')
-    .get(permissions('read:questionnaires'), async (req, res, next) => {
+    .get(permissions('read:questionnaires', 'read:answers'), async (req, res, next) => {
         try {
             const {questionnaireId} = req.params;
             const questionnaireService = createQuestionnaireService({logger: req.log});
