@@ -17,7 +17,7 @@ router.route('/').post(permissions('create:questionnaires'), async (req, res, ne
         if (
             req.body.data &&
             req.body.data.attributes &&
-            req.body.data.attributes.templateId &&
+            req.body.data.attributes.templateName &&
             !rxTemplateName.test(req.body.data.attributes.templateName)
         ) {
             const err = Error(`Bad request`);

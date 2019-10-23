@@ -403,7 +403,7 @@ function createQuestionnaireService(spec) {
 
         // 3 - filter or paginate progress entries if required
         // Currently this only supports queries that return a single progress entry
-        if (query) {
+        if (Object.keys(query).length !== 0 && query.constructor === Object) {
             const {filter, page} = query;
             const compoundDocument = {};
             let section;
@@ -527,7 +527,6 @@ function createQuestionnaireService(spec) {
         const progressEntriesCollection = questionnaire.progress.map(sectionId =>
             buildProgressEntryResource(sectionId, questionnaire)
         );
-
         return {
             data: progressEntriesCollection
         };
