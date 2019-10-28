@@ -161,6 +161,21 @@ describe('/:questionnaireId/sections/:sectionId/answers', () => {
                     });
                 expect(res.status).toEqual(201);
             });
+            it('should error on bad answers attributes', async () => {
+                const res = await request(app)
+                    .post(
+                        '/api/v1/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/sections/p-applicant-enter-your-email-address/answers'
+                    )
+                    .set('Content-Type', 'application/vnd.api+json')
+                    .set('Authorization', `Bearer ${tokens['update:questionnaires']}`)
+                    .send({
+                        data: {
+                            type: 'answers',
+                            attributes: ['this', 'ISNT', 1, {valid: true}, 'answer']
+                        }
+                    });
+                expect(res.status).toEqual(400);
+            });
         });
     });
 });
@@ -195,21 +210,21 @@ describe('/', () => {
                     });
                 expect(res.body.data.attributes.type).toEqual('apply-for-compensation');
             });
-            // it('should return a bad request response', async () => {
-            //     const res = await request(app)
-            //         .post('/api/v1/questionnaires')
-            //         .set('Content-Type', 'application/vnd.api+json')
-            //         .set('Authorization', `Bearer ${tokens['create:questionnaires']}`)
-            //         .send({
-            //             data: {
-            //                 type: 'questionnaires',
-            //                 attributes: {
-            //                     templateName: 'BAD_TEMPLATE_NAME_%£)(^$£(&$^£'
-            //                 }
-            //             }
-            //         });
-            //     expect(res.status).toEqual(400);
-            // });
+            it('should return a bad request response', async () => {
+                const res = await request(app)
+                    .post('/api/v1/questionnaires')
+                    .set('Content-Type', 'application/vnd.api+json')
+                    .set('Authorization', `Bearer ${tokens['create:questionnaires']}`)
+                    .send({
+                        data: {
+                            type: 'questionnaires',
+                            attributes: {
+                                templateName: 'BAD_TEMPLATE_NAME_%£)(^$£(&$^£'
+                            }
+                        }
+                    });
+                expect(res.status).toEqual(400);
+            });
         });
     });
 });

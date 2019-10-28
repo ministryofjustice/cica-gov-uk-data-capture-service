@@ -337,7 +337,6 @@ function createQuestionnaireService(spec) {
                     schemaErrors: validationErrors
                 }
             });
-
             throw validationError;
         }
 

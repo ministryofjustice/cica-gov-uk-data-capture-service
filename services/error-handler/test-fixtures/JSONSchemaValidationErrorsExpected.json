@@ -1,0 +1,98 @@
+{
+    "errors": [
+        {
+            "status": 422,
+            "title": "422 Unprocessable Entity",
+            "detail": "Enter the date the crime was reported to police and include a day, month and year",
+            "code": "errorMessage",
+            "source": {
+                "pointer": "/data/attributes/q--when-was-the-crime-reported-to-police"
+            },
+            "meta": {
+                "raw": {
+                    "keyword": "errorMessage",
+                    "dataPath": "/q--when-was-the-crime-reported-to-police",
+                    "schemaPath": "#/properties/q--when-was-the-crime-reported-to-police/errorMessage",
+                    "params": {
+                        "errors": [
+                            {
+                                "keyword": "format",
+                                "dataPath": "/q--when-was-the-crime-reported-to-police",
+                                "schemaPath": "#/properties/q--when-was-the-crime-reported-to-police/format",
+                                "params": {
+                                    "format": "date-time"
+                                },
+                                "message": "should match format \"date-time\""
+                            }
+                        ]
+                    },
+                    "message": "Enter the date the crime was reported to police and include a day, month and year"
+                }
+            }
+        },
+        {
+            "status": 422,
+            "title": "422 Unprocessable Entity",
+            "detail": "should be equal to constant",
+            "code": "const",
+            "source": {
+                "pointer": "/data/attributes/q--which-english-police-force-is-investigating-the-crime"
+            },
+            "meta": {
+                "raw": {
+                    "keyword": "const",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf/0/const",
+                    "params": {
+                        "allowedValue": 10000033
+                    },
+                    "message": "should be equal to constant"
+                }
+            }
+        },
+        {
+            "status": 422,
+            "title": "422 Unprocessable Entity",
+            "detail": "Enter your date of birth and include a day, month and year",
+            "code": "errorMessage",
+            "source": {
+                "pointer": "/data/attributes/q-applicant-enter-your-date-of-birth"
+            },
+            "meta": {
+                "raw": {
+                    "keyword": "errorMessage",
+                    "dataPath": "/q-applicant-enter-your-date-of-birth",
+                    "schemaPath": "#/properties/q-applicant-enter-your-date-of-birth/errorMessage",
+                    "params": {
+                        "errors": [
+                            {
+                                "keyword": "format",
+                                "dataPath": "/q-applicant-enter-your-date-of-birth",
+                                "schemaPath": "#/properties/q-applicant-enter-your-date-of-birth/format",
+                                "params": {
+                                    "format": "date-time"
+                                },
+                                "message": "should match format \"date-time\""
+                            }
+                        ]
+                    },
+                    "message": "Enter your date of birth and include a day, month and year"
+                }
+            }
+        }
+    ],
+    "meta": {
+        "submissions": {
+            "data": {
+                "id": "someQuestionnaireId",
+                "type": "submissions",
+                "attributes": {
+                    "questionnaireId": "someQuestionnaireId",
+                    "submitted": false,
+                    "status": "NOT_STARTED",
+                    "caseReferenceNumber": null
+                }
+            }
+        }
+    }
+}

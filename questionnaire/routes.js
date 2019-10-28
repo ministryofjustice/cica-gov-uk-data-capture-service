@@ -7,26 +7,12 @@ const createQuestionnaireService = require('./questionnaire-service');
 const permissions = require('../middleware/route-permissions');
 
 const router = express.Router();
-const rxTemplateName = /^[a-zA-Z0-9-]{1,30}$/;
 
 // Ensure JWT is valid
 router.use(validateJWT({secret: process.env.SECRET}));
 
 router.route('/').post(permissions('create:questionnaires'), async (req, res, next) => {
     try {
-        if (
-            req.body.data &&
-            req.body.data.attributes &&
-            req.body.data.attributes.templateName &&
-            !rxTemplateName.test(req.body.data.attributes.templateName)
-        ) {
-            const err = Error(`Bad request`);
-            err.name = 'HTTPError';
-            err.statusCode = 400;
-            err.error = '400 Bad Request';
-            throw err;
-        }
-
         const {templateName} = req.body.data.attributes;
 
         const questionnaireService = createQuestionnaireService({logger: req.log});

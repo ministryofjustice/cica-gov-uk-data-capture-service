@@ -1,0 +1,711 @@
+{
+    "name": "JSONSchemaValidationErrors",
+    "info": {
+        "submissions": {
+            "data": {
+                "id": "someQuestionnaireId",
+                "type": "submissions",
+                "attributes": {
+                    "questionnaireId": "someQuestionnaireId",
+                    "submitted": false,
+                    "status": "NOT_STARTED",
+                    "caseReferenceNumber": null
+                }
+            }
+        },
+        "schemaErrors": [
+            [
+                {
+                    "keyword": "errorMessage",
+                    "dataPath": "/q--when-was-the-crime-reported-to-police",
+                    "schemaPath": "#/properties/q--when-was-the-crime-reported-to-police/errorMessage",
+                    "params": {
+                        "errors": [
+                            {
+                                "keyword": "format",
+                                "dataPath": "/q--when-was-the-crime-reported-to-police",
+                                "schemaPath": "#/properties/q--when-was-the-crime-reported-to-police/format",
+                                "params": {
+                                    "format": "date-time"
+                                },
+                                "message": "should match format \"date-time\""
+                            }
+                        ]
+                    },
+                    "message": "Enter the date the crime was reported to police and include a day, month and year"
+                }
+            ],
+            [
+                {
+                    "keyword": "const",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf/0/const",
+                    "params": {
+                        "allowedValue": 10000033
+                    },
+                    "message": "should be equal to constant"
+                },
+                {
+                    "keyword": "const",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf/1/const",
+                    "params": {
+                        "allowedValue": 10000035
+                    },
+                    "message": "should be equal to constant"
+                },
+                {
+                    "keyword": "const",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf/2/const",
+                    "params": {
+                        "allowedValue": 10000001
+                    },
+                    "message": "should be equal to constant"
+                },
+                {
+                    "keyword": "const",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf/3/const",
+                    "params": {
+                        "allowedValue": 10000039
+                    },
+                    "message": "should be equal to constant"
+                },
+                {
+                    "keyword": "const",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf/4/const",
+                    "params": {
+                        "allowedValue": 10000049
+                    },
+                    "message": "should be equal to constant"
+                },
+                {
+                    "keyword": "const",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf/5/const",
+                    "params": {
+                        "allowedValue": 10000059
+                    },
+                    "message": "should be equal to constant"
+                },
+                {
+                    "keyword": "const",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf/6/const",
+                    "params": {
+                        "allowedValue": 10000066
+                    },
+                    "message": "should be equal to constant"
+                },
+                {
+                    "keyword": "const",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf/7/const",
+                    "params": {
+                        "allowedValue": 10000082
+                    },
+                    "message": "should be equal to constant"
+                },
+                {
+                    "keyword": "const",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf/8/const",
+                    "params": {
+                        "allowedValue": 10000084
+                    },
+                    "message": "should be equal to constant"
+                },
+                {
+                    "keyword": "const",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf/9/const",
+                    "params": {
+                        "allowedValue": 10000090
+                    },
+                    "message": "should be equal to constant"
+                },
+                {
+                    "keyword": "const",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf/10/const",
+                    "params": {
+                        "allowedValue": 10000093
+                    },
+                    "message": "should be equal to constant"
+                },
+                {
+                    "keyword": "const",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf/11/const",
+                    "params": {
+                        "allowedValue": 10000102
+                    },
+                    "message": "should be equal to constant"
+                },
+                {
+                    "keyword": "const",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf/12/const",
+                    "params": {
+                        "allowedValue": 10000114
+                    },
+                    "message": "should be equal to constant"
+                },
+                {
+                    "keyword": "const",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf/13/const",
+                    "params": {
+                        "allowedValue": 10000128
+                    },
+                    "message": "should be equal to constant"
+                },
+                {
+                    "keyword": "const",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf/14/const",
+                    "params": {
+                        "allowedValue": 10000140
+                    },
+                    "message": "should be equal to constant"
+                },
+                {
+                    "keyword": "const",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf/15/const",
+                    "params": {
+                        "allowedValue": 10000150
+                    },
+                    "message": "should be equal to constant"
+                },
+                {
+                    "keyword": "const",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf/16/const",
+                    "params": {
+                        "allowedValue": 10000153
+                    },
+                    "message": "should be equal to constant"
+                },
+                {
+                    "keyword": "const",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf/17/const",
+                    "params": {
+                        "allowedValue": 10000169
+                    },
+                    "message": "should be equal to constant"
+                },
+                {
+                    "keyword": "const",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf/18/const",
+                    "params": {
+                        "allowedValue": 10000172
+                    },
+                    "message": "should be equal to constant"
+                },
+                {
+                    "keyword": "const",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf/19/const",
+                    "params": {
+                        "allowedValue": 10000175
+                    },
+                    "message": "should be equal to constant"
+                },
+                {
+                    "keyword": "const",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf/20/const",
+                    "params": {
+                        "allowedValue": 10000176
+                    },
+                    "message": "should be equal to constant"
+                },
+                {
+                    "keyword": "const",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf/21/const",
+                    "params": {
+                        "allowedValue": 10000179
+                    },
+                    "message": "should be equal to constant"
+                },
+                {
+                    "keyword": "const",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf/22/const",
+                    "params": {
+                        "allowedValue": 10000181
+                    },
+                    "message": "should be equal to constant"
+                },
+                {
+                    "keyword": "const",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf/23/const",
+                    "params": {
+                        "allowedValue": 11809785
+                    },
+                    "message": "should be equal to constant"
+                },
+                {
+                    "keyword": "const",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf/24/const",
+                    "params": {
+                        "allowedValue": 11809719
+                    },
+                    "message": "should be equal to constant"
+                },
+                {
+                    "keyword": "const",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf/25/const",
+                    "params": {
+                        "allowedValue": 11809788
+                    },
+                    "message": "should be equal to constant"
+                },
+                {
+                    "keyword": "const",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf/26/const",
+                    "params": {
+                        "allowedValue": 11809722
+                    },
+                    "message": "should be equal to constant"
+                },
+                {
+                    "keyword": "const",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf/27/const",
+                    "params": {
+                        "allowedValue": 11809760
+                    },
+                    "message": "should be equal to constant"
+                },
+                {
+                    "keyword": "const",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf/28/const",
+                    "params": {
+                        "allowedValue": 11809694
+                    },
+                    "message": "should be equal to constant"
+                },
+                {
+                    "keyword": "const",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf/29/const",
+                    "params": {
+                        "allowedValue": 11809713
+                    },
+                    "message": "should be equal to constant"
+                },
+                {
+                    "keyword": "const",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf/30/const",
+                    "params": {
+                        "allowedValue": 11809743
+                    },
+                    "message": "should be equal to constant"
+                },
+                {
+                    "keyword": "const",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf/31/const",
+                    "params": {
+                        "allowedValue": 11809783
+                    },
+                    "message": "should be equal to constant"
+                },
+                {
+                    "keyword": "const",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf/32/const",
+                    "params": {
+                        "allowedValue": 11809709
+                    },
+                    "message": "should be equal to constant"
+                },
+                {
+                    "keyword": "const",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf/33/const",
+                    "params": {
+                        "allowedValue": 11809763
+                    },
+                    "message": "should be equal to constant"
+                },
+                {
+                    "keyword": "const",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf/34/const",
+                    "params": {
+                        "allowedValue": 11809795
+                    },
+                    "message": "should be equal to constant"
+                },
+                {
+                    "keyword": "const",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf/35/const",
+                    "params": {
+                        "allowedValue": 11809738
+                    },
+                    "message": "should be equal to constant"
+                },
+                {
+                    "keyword": "const",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf/36/const",
+                    "params": {
+                        "allowedValue": 11809803
+                    },
+                    "message": "should be equal to constant"
+                },
+                {
+                    "keyword": "const",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf/37/const",
+                    "params": {
+                        "allowedValue": 11809800
+                    },
+                    "message": "should be equal to constant"
+                },
+                {
+                    "keyword": "const",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf/38/const",
+                    "params": {
+                        "allowedValue": 11809775
+                    },
+                    "message": "should be equal to constant"
+                },
+                {
+                    "keyword": "const",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf/39/const",
+                    "params": {
+                        "allowedValue": 11809780
+                    },
+                    "message": "should be equal to constant"
+                },
+                {
+                    "keyword": "const",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf/40/const",
+                    "params": {
+                        "allowedValue": 11809765
+                    },
+                    "message": "should be equal to constant"
+                },
+                {
+                    "keyword": "const",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf/41/const",
+                    "params": {
+                        "allowedValue": 11809801
+                    },
+                    "message": "should be equal to constant"
+                },
+                {
+                    "keyword": "const",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf/42/const",
+                    "params": {
+                        "allowedValue": 11809865
+                    },
+                    "message": "should be equal to constant"
+                },
+                {
+                    "keyword": "const",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf/43/const",
+                    "params": {
+                        "allowedValue": 11809693
+                    },
+                    "message": "should be equal to constant"
+                },
+                {
+                    "keyword": "const",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf/44/const",
+                    "params": {
+                        "allowedValue": 11809698
+                    },
+                    "message": "should be equal to constant"
+                },
+                {
+                    "keyword": "const",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf/45/const",
+                    "params": {
+                        "allowedValue": 11809861
+                    },
+                    "message": "should be equal to constant"
+                },
+                {
+                    "keyword": "const",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf/46/const",
+                    "params": {
+                        "allowedValue": 11809701
+                    },
+                    "message": "should be equal to constant"
+                },
+                {
+                    "keyword": "const",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf/47/const",
+                    "params": {
+                        "allowedValue": 11809782
+                    },
+                    "message": "should be equal to constant"
+                },
+                {
+                    "keyword": "const",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf/48/const",
+                    "params": {
+                        "allowedValue": 11809862
+                    },
+                    "message": "should be equal to constant"
+                },
+                {
+                    "keyword": "const",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf/49/const",
+                    "params": {
+                        "allowedValue": 11809691
+                    },
+                    "message": "should be equal to constant"
+                },
+                {
+                    "keyword": "const",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf/50/const",
+                    "params": {
+                        "allowedValue": 11809805
+                    },
+                    "message": "should be equal to constant"
+                },
+                {
+                    "keyword": "const",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf/51/const",
+                    "params": {
+                        "allowedValue": 11809767
+                    },
+                    "message": "should be equal to constant"
+                },
+                {
+                    "keyword": "const",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf/52/const",
+                    "params": {
+                        "allowedValue": 11809726
+                    },
+                    "message": "should be equal to constant"
+                },
+                {
+                    "keyword": "const",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf/53/const",
+                    "params": {
+                        "allowedValue": 11809771
+                    },
+                    "message": "should be equal to constant"
+                },
+                {
+                    "keyword": "const",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf/54/const",
+                    "params": {
+                        "allowedValue": 11809683
+                    },
+                    "message": "should be equal to constant"
+                },
+                {
+                    "keyword": "const",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf/55/const",
+                    "params": {
+                        "allowedValue": 10000185
+                    },
+                    "message": "should be equal to constant"
+                },
+                {
+                    "keyword": "const",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf/56/const",
+                    "params": {
+                        "allowedValue": 10000189
+                    },
+                    "message": "should be equal to constant"
+                },
+                {
+                    "keyword": "const",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf/57/const",
+                    "params": {
+                        "allowedValue": 10000191
+                    },
+                    "message": "should be equal to constant"
+                },
+                {
+                    "keyword": "const",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf/58/const",
+                    "params": {
+                        "allowedValue": 10000195
+                    },
+                    "message": "should be equal to constant"
+                },
+                {
+                    "keyword": "const",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf/59/const",
+                    "params": {
+                        "allowedValue": 10000199
+                    },
+                    "message": "should be equal to constant"
+                },
+                {
+                    "keyword": "const",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf/60/const",
+                    "params": {
+                        "allowedValue": 10000218
+                    },
+                    "message": "should be equal to constant"
+                },
+                {
+                    "keyword": "const",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf/61/const",
+                    "params": {
+                        "allowedValue": 10000223
+                    },
+                    "message": "should be equal to constant"
+                },
+                {
+                    "keyword": "const",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf/62/const",
+                    "params": {
+                        "allowedValue": 10000233
+                    },
+                    "message": "should be equal to constant"
+                },
+                {
+                    "keyword": "const",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf/63/const",
+                    "params": {
+                        "allowedValue": 10000237
+                    },
+                    "message": "should be equal to constant"
+                },
+                {
+                    "keyword": "const",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf/64/const",
+                    "params": {
+                        "allowedValue": 10000240
+                    },
+                    "message": "should be equal to constant"
+                },
+                {
+                    "keyword": "const",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf/65/const",
+                    "params": {
+                        "allowedValue": 10000247
+                    },
+                    "message": "should be equal to constant"
+                },
+                {
+                    "keyword": "const",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf/66/const",
+                    "params": {
+                        "allowedValue": 10000274
+                    },
+                    "message": "should be equal to constant"
+                },
+                {
+                    "keyword": "const",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf/67/const",
+                    "params": {
+                        "allowedValue": 10000279
+                    },
+                    "message": "should be equal to constant"
+                },
+                {
+                    "keyword": "const",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf/68/const",
+                    "params": {
+                        "allowedValue": 10000285
+                    },
+                    "message": "should be equal to constant"
+                },
+                {
+                    "keyword": "const",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf/69/const",
+                    "params": {
+                        "allowedValue": 10000291
+                    },
+                    "message": "should be equal to constant"
+                },
+                {
+                    "keyword": "const",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf/70/const",
+                    "params": {
+                        "allowedValue": 10000295
+                    },
+                    "message": "should be equal to constant"
+                },
+                {
+                    "keyword": "oneOf",
+                    "dataPath": "/q--which-english-police-force-is-investigating-the-crime",
+                    "schemaPath": "#/properties/q--which-english-police-force-is-investigating-the-crime/oneOf",
+                    "params": {
+                        "passingSchemas": null
+                    },
+                    "message": "should match exactly one schema in oneOf"
+                }
+            ],
+            [
+                {
+                    "keyword": "errorMessage",
+                    "dataPath": "/q-applicant-enter-your-date-of-birth",
+                    "schemaPath": "#/properties/q-applicant-enter-your-date-of-birth/errorMessage",
+                    "params": {
+                        "errors": [
+                            {
+                                "keyword": "format",
+                                "dataPath": "/q-applicant-enter-your-date-of-birth",
+                                "schemaPath": "#/properties/q-applicant-enter-your-date-of-birth/format",
+                                "params": {
+                                    "format": "date-time"
+                                },
+                                "message": "should match format \"date-time\""
+                            }
+                        ]
+                    },
+                    "message": "Enter your date of birth and include a day, month and year"
+                }
+            ]
+        ]
+    }
+}

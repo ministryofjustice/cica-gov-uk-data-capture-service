@@ -6,9 +6,9 @@ const helmet = require('helmet');
 const path = require('path');
 const {OpenApiValidator} = require('express-openapi-validator');
 const pino = require('pino-http');
-const errorHandler = require('./middleware/error-handler');
 const docsRouter = require('./docs/routes');
 const questionnaireRouter = require('./questionnaire/routes');
+const createErrorHandler = require('./services/error-handler');
 
 const app = express();
 const logger = pino({
@@ -99,6 +99,15 @@ app.use((err, req, res, next) => {
 // Central error handler
 // https://www.joyent.com/node-js/production/design/errors
 // https://github.com/i0natan/nodebestpractices/blob/master/sections/errorhandling/centralizedhandling.md
-app.use(errorHandler);
+app.use((err, req, res, next) => {
+    const errorHandler = createErrorHandler();
+    const {status, json} = errorHandler.processError(err);
+
+    if (!status || !json) {
+        return next(err);
+    }
+
+    return res.status(status).json(json);
+});
 
 module.exports = app;
