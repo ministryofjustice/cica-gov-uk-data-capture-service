@@ -13,6 +13,15 @@ const questionnaireRouter = require('./questionnaire/routes');
 const app = express();
 const logger = pino({
     level: process.env.DCS_LOG_LEVEL,
+    redact: {
+        paths: ['req.headers.authorization'],
+        censor: unredactedValue => {
+            const authorizationHeaderParts = unredactedValue.split('.');
+            return authorizationHeaderParts.length > 1
+                ? `Bearer REDACTED.${authorizationHeaderParts[1]}.REDACTED`
+                : 'REDACTED';
+        }
+    },
     prettyPrint:
         process.env.NODE_ENV === 'production'
             ? false
