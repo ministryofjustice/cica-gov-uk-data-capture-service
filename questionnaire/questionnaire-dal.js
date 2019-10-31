@@ -100,7 +100,6 @@ function questionnaireDAL(spec) {
                 'UPDATE questionnaire SET submission_status = $1, modified = current_timestamp WHERE id = $2',
                 [submissionStatus, questionnaireId]
             );
-
             if (result.rowCount === 0) {
                 throw new VError(
                     {

@@ -17,7 +17,7 @@ const messageBusService = createMessageBusService({logger: {info: () => {}}});
 
 describe('Message Bus Service', () => {
     describe('post', () => {
-        process.env.MB_AUTH = 'authstring';
+        process.env.MESSAGE_BUS_CREDENTIALS = 'authstring';
         it('should send post request to message bus', async () => {
             const response = await messageBusService.post('NotificationQueue', {
                 templateId: 'some-template-id',

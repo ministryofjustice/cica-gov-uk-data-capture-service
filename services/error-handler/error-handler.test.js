@@ -296,4 +296,29 @@ describe('Error Handler Service', () => {
             expect(result).toStrictEqual(expected);
         });
     });
+
+    describe('Default (500) error', () => {
+        it('should return status, and JSON', async () => {
+            const err = new VError(
+                {
+                    name: 'ThisErrorDoesNotExist'
+                },
+                `Description of error that does not exist`
+            );
+            const result = errorHandler.processError(err);
+            const expected = {
+                status: 500,
+                json: {
+                    errors: [
+                        {
+                            status: 500,
+                            title: '500 Internal Server Error',
+                            detail: 'Internal Server Error'
+                        }
+                    ]
+                }
+            };
+            expect(result).toStrictEqual(expected);
+        });
+    });
 });

@@ -8,7 +8,7 @@ const swaggerDocument = require('../openapi/openapi.json');
 const router = express.Router();
 
 // Ensure JWT is valid
-// router.use(validateJWT({secret: process.env.SECRET}));
+// router.use(validateJWT({secret: process.env.DCS_JWT_SECRET}));
 router.use('/', swaggerUi.serve);
 router.get('/', swaggerUi.setup(swaggerDocument));
 

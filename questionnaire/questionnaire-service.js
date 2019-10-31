@@ -255,9 +255,6 @@ function createQuestionnaireService(spec) {
             const valid = validate(answers);
 
             if (!valid) {
-                // TODO: Refactor errorhandler to accept a logger and move this in to it
-                logger.error({err: validate.errors}, 'SCHEMA VALIDATION FAILED');
-
                 const validationError = new VError({
                     name: 'JSONSchemaValidationError',
                     info: {
@@ -329,7 +326,6 @@ function createQuestionnaireService(spec) {
         });
 
         if (validationErrors.length) {
-            logger.error({err: validationErrors}, 'SCHEMA VALIDATION FAILED');
             const validationError = new VError({
                 name: 'JSONSchemaValidationErrors',
                 info: {
@@ -465,7 +461,7 @@ function createQuestionnaireService(spec) {
                 const previousProgressEntryLink =
                     section.id === section.context.routes.initial
                         ? questionnaire.routes.referrer
-                        : `${process.env.DCS_URL}/api/v1/questionnaires/${
+                        : `${process.env.CW_DCS_URL}/api/v1/questionnaires/${
                               questionnaire.id
                           }/progress-entries?filter[sectionId]=${qRouter.previous(sectionId).id}`;
 

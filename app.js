@@ -102,12 +102,8 @@ app.use((err, req, res, next) => {
 app.use((err, req, res, next) => {
     const errorHandler = createErrorHandler();
     const {status, json} = errorHandler.processError(err);
-
-    if (!status || !json) {
-        return next(err);
-    }
-
-    return res.status(status).json(json);
+    res.status(status).json(json);
+    next();
 });
 
 module.exports = app;

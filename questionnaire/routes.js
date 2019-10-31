@@ -9,7 +9,7 @@ const permissions = require('../middleware/route-permissions');
 const router = express.Router();
 
 // Ensure JWT is valid
-router.use(validateJWT({secret: process.env.SECRET}));
+router.use(validateJWT({secret: process.env.DCS_JWT_SECRET}));
 
 router.route('/').post(permissions('create:questionnaires'), async (req, res, next) => {
     try {
@@ -152,7 +152,6 @@ router
                 err.error = '409 Conflict';
                 throw err;
             }
-
             // if the summary section ID is in the progress array, then that means
             // the questionnaire is submittable.
             if (isQuestionnaireComplete) {

@@ -79,18 +79,18 @@ describe('/questionnaires/{questionnaireId}/submissions', () => {
         });
     });
     describe('post', () => {
-        beforeAll(() => {
-            jest.resetModules();
-            jest.doMock('./questionnaire-dal.js', () =>
-                jest.fn(() => ({
-                    getQuestionnaire: () => undefined,
-                    getQuestionnaireSubmissionStatus: () => 'NOT_STARTED'
-                }))
-            );
-            // eslint-disable-next-line global-require
-            app = require('../app');
-        });
         describe('404', () => {
+            beforeAll(() => {
+                jest.resetModules();
+                jest.doMock('./questionnaire-dal.js', () =>
+                    jest.fn(() => ({
+                        getQuestionnaire: () => undefined,
+                        getQuestionnaireSubmissionStatus: () => 'NOT_STARTED'
+                    }))
+                );
+                // eslint-disable-next-line global-require
+                app = require('../app');
+            });
             it('should error if submission status is not found', async () => {
                 const res = await request(app)
                     .post('/api/v1/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/submissions')
@@ -103,6 +103,34 @@ describe('/questionnaires/{questionnaireId}/submissions', () => {
                         }
                     });
                 expect(res.status).toEqual(404);
+            });
+        });
+        describe('201', () => {
+            beforeAll(() => {
+                jest.resetModules();
+                jest.doMock('./questionnaire-dal.js', () =>
+                    jest.fn(() => ({
+                        getQuestionnaire: () => getQuestionnaireResponse,
+                        getQuestionnaireSubmissionStatus: () => 'NOT_STARTED',
+                        updateQuestionnaireSubmissionStatus: () => undefined,
+                        updateQuestionnaire: () => undefined
+                    }))
+                );
+                // eslint-disable-next-line global-require
+                app = require('../app');
+            });
+            it('should create submission resource if the questionnaire is COMPLETE', async () => {
+                const res = await request(app)
+                    .post('/api/v1/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/submissions')
+                    .set('Content-Type', 'application/vnd.api+json')
+                    .set('Authorization', `Bearer ${tokens['update:questionnaires']}`)
+                    .send({
+                        data: {
+                            type: 'submissions',
+                            attributes: {questionnaireId: '285cb104-0c15-4a9c-9840-cb1007f098fb'}
+                        }
+                    });
+                expect(res.status).toEqual(201);
             });
         });
     });
@@ -171,7 +199,9 @@ describe('/:questionnaireId/sections/:sectionId/answers', () => {
                     .send({
                         data: {
                             type: 'answers',
-                            attributes: ['this', 'ISNT', 1, {valid: true}, 'answer']
+                            attributes: {
+                                things: ['this', 'ISNT', 1, {valid: true}, 'answer']
+                            }
                         }
                     });
                 expect(res.status).toEqual(400);

@@ -10,9 +10,11 @@ function createMessageBusCaller(opts) {
         const hrstart = process.hrtime();
 
         const options = {
-            url: `${process.env.MESSAGE_BUS_SERVICE}/api/message/?destination=queue://${queueName}`, // SubmissionQueue
+            url: `${process.env.MESSAGE_BUS_URL}/api/message/?destination=queue://${queueName}`, // SubmissionQueue
             headers: {
-                Authorization: `Basic ${Buffer.from(process.env.MB_AUTH).toString('base64')}`,
+                Authorization: `Basic ${Buffer.from(process.env.MESSAGE_BUS_CREDENTIALS).toString(
+                    'base64'
+                )}`,
                 accept: 'text/html', // the response at the moment is the string 'Message sent'.
                 'Content-Type': 'application/json'
             },

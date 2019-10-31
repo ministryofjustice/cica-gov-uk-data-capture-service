@@ -146,7 +146,6 @@ function createErrorHandlerService() {
             json = error;
         }
 
-        // done
         if (err.name === 'UpdateNotSuccessful') {
             error.errors.push({
                 status: 500,
@@ -158,7 +157,6 @@ function createErrorHandlerService() {
             json = error;
         }
 
-        // done
         if (err.statusCode === 400) {
             error.errors.push({
                 status: 400,
@@ -170,7 +168,6 @@ function createErrorHandlerService() {
             json = error;
         }
 
-        // done
         if (err.statusCode === 403) {
             error.errors.push({
                 status: 403,
@@ -182,7 +179,6 @@ function createErrorHandlerService() {
             json = error;
         }
 
-        // done
         if (err.statusCode === 404) {
             error.errors.push({
                 status: 404,
@@ -201,13 +197,10 @@ function createErrorHandlerService() {
                 detail: err.message
             });
 
-            return {
-                status: 404,
-                json: error
-            };
+            status = 404;
+            json = error;
         }
 
-        // done
         if (err.statusCode === 409) {
             error.errors.push({
                 status: 409,
@@ -227,6 +220,17 @@ function createErrorHandlerService() {
             });
 
             status = 401;
+            json = error;
+        }
+
+        if (!status && !json) {
+            error.errors.push({
+                status: 500,
+                title: '500 Internal Server Error',
+                detail: 'Internal Server Error'
+            });
+
+            status = 500;
             json = error;
         }
 
