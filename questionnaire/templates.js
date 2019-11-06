@@ -4,7 +4,7 @@ module.exports = {
     'sexual-assault': id => ({
         id,
         type: 'apply-for-compensation',
-        version: '0.2.8',
+        version: '0.2.9',
         sections: {
             'p-applicant-declaration': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
@@ -1671,6 +1671,7 @@ module.exports = {
             'p--confirmation': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
                 type: 'object',
+                title: 'Confirmation',
                 additionalProperties: false,
                 properties: {
                     confirmation: {
