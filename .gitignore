@@ -69,3 +69,9 @@ typings/
 .vscode
 
 .config
+
+# ignore ca files
+
+ca
+/ca
+*.pem
