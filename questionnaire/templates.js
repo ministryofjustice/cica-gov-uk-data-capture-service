@@ -1029,7 +1029,7 @@ module.exports = {
                     'q-offender-enter-offenders-name': {
                         type: 'string',
                         title: "Offender's name",
-                        description: 'We will not contact the offender.',
+                        description: 'We will never contact the offender.',
                         maxLength: 120,
                         errorMessage: {
                             maxLength: "Offender's name must be 120 characters or less"
@@ -1455,7 +1455,7 @@ module.exports = {
                         type: 'string',
                         title: 'Enter your email address',
                         description:
-                            "We'll use this to contact you about your application, for example, to request more information.",
+                            'We may use this to contact you about your application, for example, to request more information.',
                         maxLength: 50,
                         format: 'email',
                         errorMessage: {
