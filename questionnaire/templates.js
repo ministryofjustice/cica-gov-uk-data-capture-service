@@ -4,7 +4,7 @@ module.exports = {
     'sexual-assault': id => ({
         id,
         type: 'apply-for-compensation',
-        version: '0.2.11',
+        version: '0.2.12',
         sections: {
             'p-applicant-declaration': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
@@ -531,14 +531,14 @@ module.exports = {
                     }
                 }
             },
-            'p--which-english-police-force-is-investigating-the-crime': {
+            'p--which-police-force-is-investigating-the-crime': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
-                title: 'Which English police force is investigating the crime?',
+                title: 'Which police force is investigating the crime?',
                 type: 'object',
-                required: ['q--which-english-police-force-is-investigating-the-crime'],
+                required: ['q-police-force-id'],
                 additionalProperties: false,
                 properties: {
-                    'q--which-english-police-force-is-investigating-the-crime': {
+                    'q-police-force-id': {
                         type: 'integer',
                         oneOf: [
                             {
@@ -824,106 +824,58 @@ module.exports = {
                             {
                                 title: 'Wiltshire Police',
                                 const: 10000295
-                            }
-                        ]
-                    }
-                },
-                errorMessage: {
-                    required: {
-                        'q--which-english-police-force-is-investigating-the-crime':
-                            'Select a police force from the list'
-                    }
-                }
-            },
-            'p--which-police-scotland-division-is-investigating-the-crime': {
-                $schema: 'http://json-schema.org/draft-07/schema#',
-                title: 'Which Police Scotland division is investigating the crime?',
-                type: 'object',
-                required: ['q--which-police-scotland-division-is-investigating-the-crime'],
-                additionalProperties: false,
-                properties: {
-                    'q--which-police-scotland-division-is-investigating-the-crime': {
-                        type: 'integer',
-                        oneOf: [
+                            },
                             {
-                                title: 'Argyll and West Dunbartonshire',
+                                title: 'Police Scotland Argyll and West Dunbartonshire',
                                 const: 12607027
                             },
                             {
-                                title: 'Ayrshire',
+                                title: 'Police Scotland Ayrshire',
                                 const: 12157147
                             },
                             {
-                                title: 'British Transport Police',
-                                const: 10000001
-                            },
-                            {
-                                title: 'Dumfries and Galloway',
+                                title: 'Police Scotland Dumfries and Galloway',
                                 const: 10000098
                             },
                             {
-                                title: 'Edinburgh',
+                                title: 'Police Scotland Edinburgh',
                                 const: 13400412
                             },
                             {
-                                title: 'Fife',
+                                title: 'Police Scotland Fife',
                                 const: 10002424
                             },
                             {
-                                title: 'Forth Valley',
+                                title: 'Police Scotland Forth Valley',
                                 const: 10000045
                             },
                             {
-                                title: 'Greater Glasgow',
+                                title: 'Police Scotland Greater Glasgow',
                                 const: 12607023
                             },
                             {
-                                title: 'Highland and Islands',
+                                title: 'Police Scotland Highland and Islands',
                                 const: 10000193
                             },
                             {
-                                title: 'Lanarkshire',
+                                title: 'Police Scotland Lanarkshire',
                                 const: 12607028
                             },
                             {
-                                title: 'North East',
+                                title: 'Police Scotland North East',
                                 const: 10000133
                             },
                             {
-                                title: 'Renfrewshire and Inverclyde',
+                                title: 'Police Scotland Renfrewshire and Inverclyde',
                                 const: 12607026
                             },
                             {
-                                title: 'Tayside',
+                                title: 'Police Scotland Tayside',
                                 const: 10000243
                             },
                             {
-                                title: 'The Lothians and Scottish Borders',
+                                title: 'Police Scotland The Lothians and Scottish Borders',
                                 const: 13400413
-                            }
-                        ]
-                    }
-                },
-                errorMessage: {
-                    required: {
-                        'q--which-police-scotland-division-is-investigating-the-crime':
-                            'Select a Police Scotland division '
-                    }
-                }
-            },
-            'p--which-welsh-police-force-is-investigating-the-crime': {
-                $schema: 'http://json-schema.org/draft-07/schema#',
-                title: 'Which Welsh police force is investigating the crime?',
-                type: 'object',
-                required: ['q--which-welsh-police-force-is-investigating-the-crime'],
-                additionalProperties: false,
-                properties: {
-                    'q--which-welsh-police-force-is-investigating-the-crime': {
-                        type: 'integer',
-                        oneOf: [
-                            {
-                                title: 'British Transport Police',
-                                const: 10000001
                             },
                             {
                                 title: 'Dyfed-Powys',
@@ -942,12 +894,15 @@ module.exports = {
                                 const: 10000215
                             }
                         ]
+                    },
+                    'list-of-police-forces': {
+                        description:
+                            '\n                {% from "components/details/macro.njk" import govukDetails %}\n                {{ govukDetails({\n                    summaryText: "Help with police forces",\n                    html: \'<p>See a list of all <a href="/police-forces" target="_blank">police forces in England, Scotland and Wales</a> (opens in a new tab)</p>\'\n                }) }}\n            '
                     }
                 },
                 errorMessage: {
                     required: {
-                        'q--which-welsh-police-force-is-investigating-the-crime':
-                            'Select a police force'
+                        'q-police-force-id': 'Select a police force from the list'
                     }
                 }
             },
@@ -1924,7 +1879,7 @@ module.exports = {
                                 ]
                             },
                             {
-                                target: 'p--which-english-police-force-is-investigating-the-crime',
+                                target: 'p--which-police-force-is-investigating-the-crime',
                                 cond: [
                                     '==',
                                     '$.answers.p--was-the-crime-reported-to-police.q--was-the-crime-reported-to-police',
@@ -1946,8 +1901,7 @@ module.exports = {
                                 ]
                             },
                             {
-                                target:
-                                    'p--which-police-scotland-division-is-investigating-the-crime',
+                                target: 'p--which-police-force-is-investigating-the-crime',
                                 cond: [
                                     '==',
                                     '$.answers.p--was-the-crime-reported-to-police.q--was-the-crime-reported-to-police',
@@ -1969,7 +1923,7 @@ module.exports = {
                                 ]
                             },
                             {
-                                target: 'p--which-welsh-police-force-is-investigating-the-crime',
+                                target: 'p--which-police-force-is-investigating-the-crime',
                                 cond: [
                                     '==',
                                     '$.answers.p--was-the-crime-reported-to-police.q--was-the-crime-reported-to-police',
@@ -1982,61 +1936,7 @@ module.exports = {
                 'p--you-need-to-contact-us': {
                     type: 'final'
                 },
-                'p--which-english-police-force-is-investigating-the-crime': {
-                    on: {
-                        ANSWER: [
-                            {
-                                target:
-                                    'p-applicant-select-reasons-for-the-delay-in-reporting-the-crime-to-police',
-                                cond: [
-                                    'dateDifferenceGreaterThanTwoDays',
-                                    '$.answers.p--when-was-the-crime-reported-to-police.q--when-was-the-crime-reported-to-police',
-                                    '$.answers.p-applicant-when-did-the-crime-happen.q-applicant-when-did-the-crime-happen'
-                                ]
-                            },
-                            {
-                                target:
-                                    'p-applicant-select-reasons-for-the-delay-in-reporting-the-crime-to-police',
-                                cond: [
-                                    'dateDifferenceGreaterThanTwoDays',
-                                    '$.answers.p--when-was-the-crime-reported-to-police.q--when-was-the-crime-reported-to-police',
-                                    '$.answers.p-applicant-when-did-the-crime-stop.q-applicant-when-did-the-crime-stop'
-                                ]
-                            },
-                            {
-                                target: 'p-offender-do-you-know-the-name-of-the-offender'
-                            }
-                        ]
-                    }
-                },
-                'p--which-police-scotland-division-is-investigating-the-crime': {
-                    on: {
-                        ANSWER: [
-                            {
-                                target:
-                                    'p-applicant-select-reasons-for-the-delay-in-reporting-the-crime-to-police',
-                                cond: [
-                                    'dateDifferenceGreaterThanTwoDays',
-                                    '$.answers.p--when-was-the-crime-reported-to-police.q--when-was-the-crime-reported-to-police',
-                                    '$.answers.p-applicant-when-did-the-crime-happen.q-applicant-when-did-the-crime-happen'
-                                ]
-                            },
-                            {
-                                target:
-                                    'p-applicant-select-reasons-for-the-delay-in-reporting-the-crime-to-police',
-                                cond: [
-                                    'dateDifferenceGreaterThanTwoDays',
-                                    '$.answers.p--when-was-the-crime-reported-to-police.q--when-was-the-crime-reported-to-police',
-                                    '$.answers.p-applicant-when-did-the-crime-stop.q-applicant-when-did-the-crime-stop'
-                                ]
-                            },
-                            {
-                                target: 'p-offender-do-you-know-the-name-of-the-offender'
-                            }
-                        ]
-                    }
-                },
-                'p--which-welsh-police-force-is-investigating-the-crime': {
+                'p--which-police-force-is-investigating-the-crime': {
                     on: {
                         ANSWER: [
                             {
