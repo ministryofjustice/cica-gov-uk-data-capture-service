@@ -4,7 +4,7 @@ module.exports = {
     'sexual-assault': id => ({
         id,
         type: 'apply-for-compensation',
-        version: '0.2.10',
+        version: '0.2.11',
         sections: {
             'p-applicant-declaration': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
@@ -826,69 +826,56 @@ module.exports = {
                                 const: 10000295
                             },
                             {
-                                title: 'Argyll and West Dunbartonshire',
-                                const: 12607027,
-                                alias: 'Police Scotland'
+                                title: 'Police Scotland Argyll and West Dunbartonshire',
+                                const: 12607027
                             },
                             {
-                                title: 'Ayrshire',
-                                const: 12157147,
-                                alias: 'Police Scotland'
+                                title: 'Police Scotland Ayrshire',
+                                const: 12157147
                             },
                             {
-                                title: 'Dumfries and Galloway',
-                                const: 10000098,
-                                alias: 'Police Scotland'
+                                title: 'Police Scotland Dumfries and Galloway',
+                                const: 10000098
                             },
                             {
-                                title: 'Edinburgh',
-                                const: 13400412,
-                                alias: 'Police Scotland'
+                                title: 'Police Scotland Edinburgh',
+                                const: 13400412
                             },
                             {
-                                title: 'Fife',
-                                const: 10002424,
-                                alias: 'Police Scotland'
+                                title: 'Police Scotland Fife',
+                                const: 10002424
                             },
                             {
-                                title: 'Forth Valley',
-                                const: 10000045,
-                                alias: 'Police Scotland'
+                                title: 'Police Scotland Forth Valley',
+                                const: 10000045
                             },
                             {
-                                title: 'Greater Glasgow',
-                                const: 12607023,
-                                alias: 'Police Scotland'
+                                title: 'Police Scotland Greater Glasgow',
+                                const: 12607023
                             },
                             {
-                                title: 'Highland and Islands',
-                                const: 10000193,
-                                alias: 'Police Scotland'
+                                title: 'Police Scotland Highland and Islands',
+                                const: 10000193
                             },
                             {
-                                title: 'Lanarkshire',
-                                const: 12607028,
-                                alias: 'Police Scotland'
+                                title: 'Police Scotland Lanarkshire',
+                                const: 12607028
                             },
                             {
-                                title: 'North East',
-                                const: 10000133,
-                                alias: 'Police Scotland'
+                                title: 'Police Scotland North East',
+                                const: 10000133
                             },
                             {
-                                title: 'Renfrewshire and Inverclyde',
-                                const: 12607026,
-                                alias: 'Police Scotland'
+                                title: 'Police Scotland Renfrewshire and Inverclyde',
+                                const: 12607026
                             },
                             {
-                                title: 'Tayside',
-                                const: 10000243,
-                                alias: 'Police Scotland'
+                                title: 'Police Scotland Tayside',
+                                const: 10000243
                             },
                             {
-                                title: 'The Lothians and Scottish Borders',
-                                const: 13400413,
-                                alias: 'Police Scotland'
+                                title: 'Police Scotland The Lothians and Scottish Borders',
+                                const: 13400413
                             },
                             {
                                 title: 'Dyfed-Powys',
@@ -1597,7 +1584,7 @@ module.exports = {
         routes: {
             initial: 'p-applicant-declaration',
             referrer:
-                'https://uat.claim-criminal-injuries-compensation.service.justice.gov.uk/start-page',
+                'https://claim-criminal-injuries-compensation.service.justice.gov.uk/start-page',
             summary: 'p--check-your-answers',
             confirmation: 'p--confirmation',
             states: {
