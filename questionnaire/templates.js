@@ -4,7 +4,7 @@ module.exports = {
     'sexual-assault': id => ({
         id,
         type: 'apply-for-compensation',
-        version: '0.2.10',
+        version: '0.2.11',
         sections: {
             'p-applicant-declaration': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
@@ -1597,7 +1597,7 @@ module.exports = {
         routes: {
             initial: 'p-applicant-declaration',
             referrer:
-                'https://uat.claim-criminal-injuries-compensation.service.justice.gov.uk/start-page',
+                'https://claim-criminal-injuries-compensation.service.justice.gov.uk/start-page',
             summary: 'p--check-your-answers',
             confirmation: 'p--confirmation',
             states: {
