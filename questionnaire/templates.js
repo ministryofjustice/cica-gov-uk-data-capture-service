@@ -3,8 +3,8 @@
 module.exports = {
     'sexual-assault': id => ({
         id,
-        type: 'apply-for-compensation',
-        version: '0.2.11',
+        type: 'minors-apply-for-compensation',
+        version: '0.0.1',
         sections: {
             'p-applicant-declaration': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
@@ -89,7 +89,7 @@ module.exports = {
                 properties: {
                     'q-applicant-were-you-a-victim-of-sexual-assault-or-abuse': {
                         type: 'boolean',
-                        title: 'Were you a victim of sexual assault or abuse?'
+                        title: 'Is your claim about sexual assault or abuse?'
                     }
                 },
                 errorMessage: {
@@ -111,7 +111,7 @@ module.exports = {
                     }
                 }
             },
-            'p-applicant-select-the-option-that-applies-to-you': {
+            'p-applicant-select-option': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
                 type: 'object',
                 title: 'Select the option that applies to you',
@@ -531,14 +531,14 @@ module.exports = {
                     }
                 }
             },
-            'p--which-police-force-is-investigating-the-crime': {
+            'p--which-english-police-force-is-investigating-the-crime': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
-                title: 'Which police force is investigating the crime?',
+                title: 'Which English police force is investigating the crime?',
                 type: 'object',
-                required: ['q--which-police-force-is-investigating-the-crime'],
+                required: ['q--which-english-police-force-is-investigating-the-crime'],
                 additionalProperties: false,
                 properties: {
-                    'q--which-police-force-is-investigating-the-crime': {
+                    'q--which-english-police-force-is-investigating-the-crime': {
                         type: 'integer',
                         oneOf: [
                             {
@@ -824,58 +824,106 @@ module.exports = {
                             {
                                 title: 'Wiltshire Police',
                                 const: 10000295
-                            },
+                            }
+                        ]
+                    }
+                },
+                errorMessage: {
+                    required: {
+                        'q--which-english-police-force-is-investigating-the-crime':
+                            'Select a police force from the list'
+                    }
+                }
+            },
+            'p--which-police-scotland-division-is-investigating-the-crime': {
+                $schema: 'http://json-schema.org/draft-07/schema#',
+                title: 'Which Police Scotland division is investigating the crime?',
+                type: 'object',
+                required: ['q--which-police-scotland-division-is-investigating-the-crime'],
+                additionalProperties: false,
+                properties: {
+                    'q--which-police-scotland-division-is-investigating-the-crime': {
+                        type: 'integer',
+                        oneOf: [
                             {
-                                title: 'Police Scotland Argyll and West Dunbartonshire',
+                                title: 'Argyll and West Dunbartonshire',
                                 const: 12607027
                             },
                             {
-                                title: 'Police Scotland Ayrshire',
+                                title: 'Ayrshire',
                                 const: 12157147
                             },
                             {
-                                title: 'Police Scotland Dumfries and Galloway',
+                                title: 'British Transport Police',
+                                const: 10000001
+                            },
+                            {
+                                title: 'Dumfries and Galloway',
                                 const: 10000098
                             },
                             {
-                                title: 'Police Scotland Edinburgh',
+                                title: 'Edinburgh',
                                 const: 13400412
                             },
                             {
-                                title: 'Police Scotland Fife',
+                                title: 'Fife',
                                 const: 10002424
                             },
                             {
-                                title: 'Police Scotland Forth Valley',
+                                title: 'Forth Valley',
                                 const: 10000045
                             },
                             {
-                                title: 'Police Scotland Greater Glasgow',
+                                title: 'Greater Glasgow',
                                 const: 12607023
                             },
                             {
-                                title: 'Police Scotland Highland and Islands',
+                                title: 'Highland and Islands',
                                 const: 10000193
                             },
                             {
-                                title: 'Police Scotland Lanarkshire',
+                                title: 'Lanarkshire',
                                 const: 12607028
                             },
                             {
-                                title: 'Police Scotland North East',
+                                title: 'North East',
                                 const: 10000133
                             },
                             {
-                                title: 'Police Scotland Renfrewshire and Inverclyde',
+                                title: 'Renfrewshire and Inverclyde',
                                 const: 12607026
                             },
                             {
-                                title: 'Police Scotland Tayside',
+                                title: 'Tayside',
                                 const: 10000243
                             },
                             {
-                                title: 'Police Scotland The Lothians and Scottish Borders',
+                                title: 'The Lothians and Scottish Borders',
                                 const: 13400413
+                            }
+                        ]
+                    }
+                },
+                errorMessage: {
+                    required: {
+                        'q--which-police-scotland-division-is-investigating-the-crime':
+                            'Select a Police Scotland division '
+                    }
+                }
+            },
+            'p--which-welsh-police-force-is-investigating-the-crime': {
+                $schema: 'http://json-schema.org/draft-07/schema#',
+                title: 'Which Welsh police force is investigating the crime?',
+                type: 'object',
+                required: ['q--which-welsh-police-force-is-investigating-the-crime'],
+                additionalProperties: false,
+                properties: {
+                    'q--which-welsh-police-force-is-investigating-the-crime': {
+                        type: 'integer',
+                        oneOf: [
+                            {
+                                title: 'British Transport Police',
+                                const: 10000001
                             },
                             {
                                 title: 'Dyfed-Powys',
@@ -894,16 +942,12 @@ module.exports = {
                                 const: 10000215
                             }
                         ]
-                    },
-                    'list-of-police-forces': {
-                        description:
-                            '\n                {% from "components/details/macro.njk" import govukDetails %}\n                {{ govukDetails({\n                    summaryText: "Help with police forces",\n                    html: \'<p>See a list of all <a href="/police" target="_blank">police forces in England, Scotland and Wales</a> (opens in a new tab)</p>\'\n                }) }}\n            '
                     }
                 },
                 errorMessage: {
                     required: {
-                        'q--which-police-force-is-investigating-the-crime':
-                            'Select a police force from the list'
+                        'q--which-welsh-police-force-is-investigating-the-crime':
+                            'Select a police force'
                     }
                 }
             },
@@ -1378,7 +1422,7 @@ module.exports = {
                     }
                 }
             },
-            'p-applicant-enter-your-date-of-birth': {
+            'p-applicant-date-of-birth': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
                 type: 'object',
                 required: ['q-applicant-enter-your-date-of-birth'],
@@ -1562,6 +1606,124 @@ module.exports = {
                     }
                 }
             },
+            'p-main-applying-for-child': {
+                $schema: 'http://json-schema.org/draft-07/schema#',
+                type: 'object',
+                required: ['q-main-applying-for-child'],
+                additionalProperties: false,
+                properties: {
+                    'q-main-applying-for-child': {
+                        type: 'boolean',
+                        title: 'Are you a parent applying for your child?'
+                    }
+                },
+                errorMessage: {
+                    required: {
+                        'q-main-applying-for-child':
+                            'Select Yes if you are a parent applying for a child'
+                    }
+                }
+            },
+            'p-applicant-british-citizen-or-eu-national-main': {
+                $schema: 'http://json-schema.org/draft-07/schema#',
+                type: 'object',
+                required: ['q-applicant-british-citizen-or-eu-national'],
+                additionalProperties: false,
+                properties: {
+                    'q-applicant-british-citizen-or-eu-national': {
+                        type: 'boolean',
+                        title: 'Is your child a British or EU National?'
+                    }
+                },
+                errorMessage: {
+                    required: {
+                        'q-applicant-british-citizen-or-eu-national':
+                            'Select Yes if your child is a British or EU national'
+                    }
+                }
+            },
+            'p-applicant-date-of-birth-main': {
+                $schema: 'http://json-schema.org/draft-07/schema#',
+                type: 'object',
+                required: ['q-applicant-enter-your-date-of-birth'],
+                additionalProperties: false,
+                properties: {
+                    'q-applicant-enter-your-date-of-birth': {
+                        type: 'string',
+                        format: 'date-time',
+                        title: "What is your child's date of birth?",
+                        description: 'For example, 31 3 1980.',
+                        errorMessage: {
+                            format:
+                                "Enter your child's date of birth and include a day, month and year"
+                        }
+                    }
+                },
+                errorMessage: {
+                    required: {
+                        'q-applicant-enter-your-date-of-birth':
+                            "Enter your child's date of birth and include a day, month and year"
+                    }
+                }
+            },
+            'p--before-you-continue-main': {
+                $schema: 'http://json-schema.org/draft-07/schema#',
+                title: 'Before you continue',
+                type: 'object',
+                additionalProperties: false,
+                properties: {
+                    'applicant-impact-on-your-child': {
+                        description:
+                            '\n                <p class="govuk-body">On the next page we will ask you to select an option based on how the crime affected your child.</p>\n                <p class="govuk-body">We appreciate that this may be difficult for you.</p>\n                <h2 class="govuk-heading-m">If you need help or support</h2>\n                <p class="govuk-body">You can contact us for help with your application on 0300 003 3601. Select option 8.</p>\n                <p class="govuk-body">Our phone lines are open Monday to Friday 8:30am to 5pm except Wednesday when they open at 10am.</p>\n                <p class="govuk-body">You can get practical or emotional support depending on where you live:</p>\n                <ul class="govuk-list govuk-list--bullet">\n                   <li>in England and Wales <a href="https://www.victimandwitnessinformation.org.uk/">visit the Victim and Witness Information website</a></li>\n                   <li>in Scotland <a href="https://www.mygov.scot/victim-witness-support/">visit the mygov.scot website</a></li>\n                </ul>\n            '
+                    }
+                }
+            },
+            'p-applicant-select-option-main': {
+                $schema: 'http://json-schema.org/draft-07/schema#',
+                type: 'object',
+                title: 'Select the option that applies to your child',
+                required: ['q-applicant-option'],
+                additionalProperties: false,
+                properties: {
+                    'main-your-choices': {
+                        description:
+                            '\n                <p class="govuk-body-l">We decide what enquiries to make depending on how the crime affected your child.</p>\n                <h2 class="govuk-heading-m">Option 1: Sexual assault or abuse</h2>\n                <p class="govuk-body">Any compensation we pay acknowledges the emotional distress the crime caused your child.</p>\n                <p class="govuk-body">We normally make a decision based on your application and the information we get from the police.</p>\n                <p class="govuk-body">We will usually make a decision within 4 months. This is because we do not normally need to see your child\'s medical records.</p>\n                <h2 class="govuk-heading-m">Option 2: Sexual assault or abuse and other injuries or losses</h2>\n                <p class="govuk-body">We can also pay compensation for:\n                <ul class="govuk-list govuk-list--bullet">\n                <li>physical injuries</li>\n                <li>pregnancy, sexually transmitted disease, or loss of foetus</li>\n                <li><a href="https://www.gov.uk/guidance/criminal-injuries-compensation-a-guide#special-expenses">some extra costs</a> you\'ve had due to your child\'s injuries</li>\n                <li>disabling mental injuries that are additional to the emotional distress your child has already suffered</li>\n                </ul>\n                </p>\n                {{ govukDetails({\n                    summaryText: "What is a disabling mental injury?",\n                    text: "A disabling mental injury has a substantial adverse effect on your child\'s ability to carry out normal day-to-day activities. For example, reduced performance at school, or effects on their social relationships."\n                }) }}\n                <p class="govuk-body">We may ask a psychiatrist or clinical psychologist to confirm that your child has a disabling mental injury if they do not already have a diagnosis.</p>\n                <p class="govuk-body">We will usually make a decision within 12 months. This is because we may need to examine your child\'s medical records, get medical reports and assess any losses.</p>\n                {{ govukDetails({\n                summaryText: "If you need help or support",\n                html: \'\n                    <p class="govuk-body">You can contact us for help with your application on 0300 003 3601. Select option 8.</p>\n                    <p class="govuk-body">Our phone lines are open Monday to Friday 8:30am to 5pm except Wednesday when they open at 10am.</p>\n                    <p class="govuk-body">You can get practical or emotional support depending on where you live:</p>\n                    <ul class="govuk-list govuk-list--bullet">\n                       <li>in England and Wales <a href="https://www.victimandwitnessinformation.org.uk/">visit the Victim and Witness Information website</a></li>\n                       <li>in Scotland <a href="https://www.mygov.scot/victim-witness-support/">visit the mygov.scot website</a></li>\n                    </ul>\n                \'\n                }) }}\n            '
+                    },
+                    'q-applicant-option': {
+                        title: 'Select the option that applies to your child',
+                        type: 'string',
+                        oneOf: [
+                            {
+                                title: 'Option 1: Sexual assault or abuse',
+                                const: 'option-1:-sexual-assault-or-abuse'
+                            },
+                            {
+                                title:
+                                    'Option 2: Sexual assault or abuse and other injuries or losses',
+                                const:
+                                    'option-2:-sexual-assault-or-abuse-and-other-injuries-or-losses'
+                            }
+                        ]
+                    }
+                },
+                errorMessage: {
+                    required: {
+                        'q-applicant-option': 'Select either Option 1 or Option 2'
+                    }
+                }
+            },
+            'p-main-cannot-apply-for-over-18s': {
+                $schema: 'http://json-schema.org/draft-07/schema#',
+                title: 'You cannot apply for someone over 18 with this service',
+                type: 'object',
+                additionalProperties: false,
+                properties: {
+                    'main-you-cannot-apply-for-over-18s': {
+                        description:
+                            '\n                <p class="govuk-body">They can <a href="/concepts/minors/consent">apply as an adult</a>.</p>\n                <p class="govuk-body">You must <a href="https://www.cica.gov.uk/OAS/Account/create">use another service</a> to apply on behalf of an adult.</p>\n                <h2 class="govuk-heading-m">If you need help or support</h2>\n                <p class="govuk-body">You can contact us for help with your application on 0300 003 3601. Select option 8.</p>\n                <p class="govuk-body">Our phone lines are open Monday to Friday 8:30am to 5pm except Wednesday when they open at 10am.</p>\n                <p class="govuk-body">You can get practical or emotional support depending on where you live:</p>\n                <ul class="govuk-list govuk-list--bullet">\n                   <li>in England and Wales <a href="https://www.victimandwitnessinformation.org.uk/">visit the Victim and Witness Information website</a></li>\n                   <li>in Scotland <a href="https://www.mygov.scot/victim-witness-support/">visit the mygov.scot website</a></li>\n                </ul>\n            '
+                    }
+                }
+            },
             system: {
                 $schema: 'http://json-schema.org/draft-07/schema#',
                 type: 'object',
@@ -1592,7 +1754,7 @@ module.exports = {
                     on: {
                         ANSWER: [
                             {
-                                target: 'p-applicant-british-citizen-or-eu-national'
+                                target: 'p-applicant-were-you-a-victim-of-sexual-assault-or-abuse'
                             }
                         ]
                     }
@@ -1631,7 +1793,7 @@ module.exports = {
                                 ]
                             },
                             {
-                                target: 'p-applicant-who-are-you-applying-for',
+                                target: 'p--before-you-continue',
                                 cond: [
                                     '==',
                                     '$.answers.p-applicant-are-you-18-or-over.q-applicant-are-you-18-or-over',
@@ -1645,7 +1807,7 @@ module.exports = {
                     on: {
                         ANSWER: [
                             {
-                                target: 'p-applicant-redirect-to-our-other-application',
+                                target: 'p-main-applying-for-child',
                                 cond: [
                                     '==',
                                     '$.answers.p-applicant-who-are-you-applying-for.q-applicant-who-are-you-applying-for',
@@ -1653,7 +1815,7 @@ module.exports = {
                                 ]
                             },
                             {
-                                target: 'p-applicant-were-you-a-victim-of-sexual-assault-or-abuse',
+                                target: 'p-applicant-british-citizen-or-eu-national',
                                 cond: [
                                     '==',
                                     '$.answers.p-applicant-who-are-you-applying-for.q-applicant-who-are-you-applying-for',
@@ -1675,7 +1837,7 @@ module.exports = {
                                 ]
                             },
                             {
-                                target: 'p--before-you-continue',
+                                target: 'p--was-the-crime-reported-to-police',
                                 cond: [
                                     '==',
                                     '$.answers.p-applicant-were-you-a-victim-of-sexual-assault-or-abuse.q-applicant-were-you-a-victim-of-sexual-assault-or-abuse',
@@ -1689,27 +1851,27 @@ module.exports = {
                     on: {
                         ANSWER: [
                             {
-                                target: 'p-applicant-select-the-option-that-applies-to-you'
+                                target: 'p-applicant-select-option'
                             }
                         ]
                     }
                 },
-                'p-applicant-select-the-option-that-applies-to-you': {
+                'p-applicant-select-option': {
                     on: {
                         ANSWER: [
                             {
                                 target: 'p-applicant-redirect-to-our-other-application',
                                 cond: [
                                     '==',
-                                    '$.answers.p-applicant-select-the-option-that-applies-to-you.q-applicant-option',
+                                    '$.answers.p-applicant-select-option.q-applicant-option',
                                     'option-2:-sexual-assault-or-abuse-and-other-injuries-or-losses'
                                 ]
                             },
                             {
-                                target: 'p--was-the-crime-reported-to-police',
+                                target: 'p--when-was-the-crime-reported-to-police',
                                 cond: [
                                     '==',
-                                    '$.answers.p-applicant-select-the-option-that-applies-to-you.q-applicant-option',
+                                    '$.answers.p-applicant-select-option.q-applicant-option',
                                     'option-1:-sexual-assault-or-abuse'
                                 ]
                             }
@@ -1728,7 +1890,7 @@ module.exports = {
                                 ]
                             },
                             {
-                                target: 'p--when-was-the-crime-reported-to-police',
+                                target: 'p-applicant-who-are-you-applying-for',
                                 cond: [
                                     '==',
                                     '$.answers.p--was-the-crime-reported-to-police.q--was-the-crime-reported-to-police',
@@ -1880,7 +2042,7 @@ module.exports = {
                                 ]
                             },
                             {
-                                target: 'p--which-police-force-is-investigating-the-crime',
+                                target: 'p--which-english-police-force-is-investigating-the-crime',
                                 cond: [
                                     '==',
                                     '$.answers.p--was-the-crime-reported-to-police.q--was-the-crime-reported-to-police',
@@ -1902,7 +2064,8 @@ module.exports = {
                                 ]
                             },
                             {
-                                target: 'p--which-police-force-is-investigating-the-crime',
+                                target:
+                                    'p--which-police-scotland-division-is-investigating-the-crime',
                                 cond: [
                                     '==',
                                     '$.answers.p--was-the-crime-reported-to-police.q--was-the-crime-reported-to-police',
@@ -1924,7 +2087,7 @@ module.exports = {
                                 ]
                             },
                             {
-                                target: 'p--which-police-force-is-investigating-the-crime',
+                                target: 'p--which-welsh-police-force-is-investigating-the-crime',
                                 cond: [
                                     '==',
                                     '$.answers.p--was-the-crime-reported-to-police.q--was-the-crime-reported-to-police',
@@ -1937,7 +2100,61 @@ module.exports = {
                 'p--you-need-to-contact-us': {
                     type: 'final'
                 },
-                'p--which-police-force-is-investigating-the-crime': {
+                'p--which-english-police-force-is-investigating-the-crime': {
+                    on: {
+                        ANSWER: [
+                            {
+                                target:
+                                    'p-applicant-select-reasons-for-the-delay-in-reporting-the-crime-to-police',
+                                cond: [
+                                    'dateDifferenceGreaterThanTwoDays',
+                                    '$.answers.p--when-was-the-crime-reported-to-police.q--when-was-the-crime-reported-to-police',
+                                    '$.answers.p-applicant-when-did-the-crime-happen.q-applicant-when-did-the-crime-happen'
+                                ]
+                            },
+                            {
+                                target:
+                                    'p-applicant-select-reasons-for-the-delay-in-reporting-the-crime-to-police',
+                                cond: [
+                                    'dateDifferenceGreaterThanTwoDays',
+                                    '$.answers.p--when-was-the-crime-reported-to-police.q--when-was-the-crime-reported-to-police',
+                                    '$.answers.p-applicant-when-did-the-crime-stop.q-applicant-when-did-the-crime-stop'
+                                ]
+                            },
+                            {
+                                target: 'p-offender-do-you-know-the-name-of-the-offender'
+                            }
+                        ]
+                    }
+                },
+                'p--which-police-scotland-division-is-investigating-the-crime': {
+                    on: {
+                        ANSWER: [
+                            {
+                                target:
+                                    'p-applicant-select-reasons-for-the-delay-in-reporting-the-crime-to-police',
+                                cond: [
+                                    'dateDifferenceGreaterThanTwoDays',
+                                    '$.answers.p--when-was-the-crime-reported-to-police.q--when-was-the-crime-reported-to-police',
+                                    '$.answers.p-applicant-when-did-the-crime-happen.q-applicant-when-did-the-crime-happen'
+                                ]
+                            },
+                            {
+                                target:
+                                    'p-applicant-select-reasons-for-the-delay-in-reporting-the-crime-to-police',
+                                cond: [
+                                    'dateDifferenceGreaterThanTwoDays',
+                                    '$.answers.p--when-was-the-crime-reported-to-police.q--when-was-the-crime-reported-to-police',
+                                    '$.answers.p-applicant-when-did-the-crime-stop.q-applicant-when-did-the-crime-stop'
+                                ]
+                            },
+                            {
+                                target: 'p-offender-do-you-know-the-name-of-the-offender'
+                            }
+                        ]
+                    }
+                },
+                'p--which-welsh-police-force-is-investigating-the-crime': {
                     on: {
                         ANSWER: [
                             {
@@ -2067,7 +2284,7 @@ module.exports = {
                     on: {
                         ANSWER: [
                             {
-                                target: 'p-applicant-enter-your-date-of-birth',
+                                target: 'p-applicant-date-of-birth',
                                 cond: [
                                     '==',
                                     '$.answers.p-applicant-have-you-been-known-by-any-other-names.q-applicant-have-you-been-known-by-any-other-names',
@@ -2089,19 +2306,19 @@ module.exports = {
                     on: {
                         ANSWER: [
                             {
-                                target: 'p-applicant-enter-your-date-of-birth'
+                                target: 'p-applicant-date-of-birth'
                             }
                         ]
                     }
                 },
-                'p-applicant-enter-your-date-of-birth': {
+                'p-applicant-date-of-birth': {
                     on: {
                         ANSWER: [
                             {
                                 target: 'p-applicant-redirect-to-our-other-application',
                                 cond: [
                                     'dateLessThanEighteenYearsAgo',
-                                    '$.answers.p-applicant-enter-your-date-of-birth.q-applicant-enter-your-date-of-birth'
+                                    '$.answers.p-applicant-date-of-birth.q-applicant-enter-your-date-of-birth'
                                 ]
                             },
                             {
@@ -2160,6 +2377,100 @@ module.exports = {
                             }
                         ]
                     }
+                },
+                'p-main-applying-for-child': {
+                    on: {
+                        ANSWER: [
+                            {
+                                target: 'p-applicant-british-citizen-or-eu-national-main',
+                                cond: [
+                                    '==',
+                                    '$.answers.p-main-applying-for-child.q-main-applying-for-child',
+                                    true
+                                ]
+                            },
+                            {
+                                target: 'p-applicant-redirect-to-our-other-application',
+                                cond: [
+                                    '==',
+                                    '$.answers.p-main-applying-for-child.q-main-applying-for-child',
+                                    false
+                                ]
+                            }
+                        ]
+                    }
+                },
+                'p-applicant-british-citizen-or-eu-national-main': {
+                    on: {
+                        ANSWER: [
+                            {
+                                target: 'p-applicant-date-of-birth-main',
+                                cond: [
+                                    '==',
+                                    '$.answers.p-applicant-british-citizen-or-eu-national-main.q-applicant-british-citizen-or-eu-national',
+                                    true
+                                ]
+                            },
+                            {
+                                target: 'p-applicant-redirect-to-our-other-application',
+                                cond: [
+                                    '==',
+                                    '$.answers.p-applicant-british-citizen-or-eu-national-main.q-applicant-british-citizen-or-eu-national',
+                                    false
+                                ]
+                            }
+                        ]
+                    }
+                },
+                'p-applicant-date-of-birth-main': {
+                    on: {
+                        ANSWER: [
+                            {
+                                target: 'p--before-you-continue-main',
+                                cond: [
+                                    'dateLessThanEighteenYearsAgo',
+                                    '$.answers.p-applicant-date-of-birth-main.q-applicant-enter-your-date-of-birth'
+                                ]
+                            },
+                            {
+                                target: 'p-main-cannot-apply-for-over-18s'
+                            }
+                        ]
+                    }
+                },
+                'p--before-you-continue-main': {
+                    on: {
+                        ANSWER: [
+                            {
+                                target: 'p-applicant-select-option-main'
+                            }
+                        ]
+                    }
+                },
+                'p-applicant-select-option-main': {
+                    on: {
+                        ANSWER: [
+                            {
+                                target: 'p-applicant-redirect-to-our-other-application',
+                                cond: [
+                                    '==',
+                                    '$.answers.p-applicant-select-option-main.q-applicant-option',
+                                    'option-2:-sexual-assault-or-abuse-and-other-injuries-or-losses'
+                                ]
+                            },
+                            {
+                                target: 'p--when-was-the-crime-reported-to-police',
+                                cond: [
+                                    '==',
+                                    '$.answers.p-applicant-select-option-main.q-applicant-option',
+                                    'option-1:-sexual-assault-or-abuse'
+                                ]
+                            }
+                        ]
+                    }
+                },
+                'p-main-cannot-apply-for-over-18s': {
+                    type: 'final'
                 },
                 system: {
                     type: 'final'
