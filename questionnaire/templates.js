@@ -674,7 +674,7 @@ module.exports = {
                     }
                 }
             },
-            'p-applicant-have-you-applied-to-us-before': {
+            'p-applicant-previous-application': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
                 type: 'object',
                 propertyNames: {
@@ -685,7 +685,7 @@ module.exports = {
                 },
                 properties: {
                     'q-applicant-have-you-applied-to-us-before': {
-                        title: 'Have you applied to us before?',
+                        title: 'Is this the first claim for this incident?',
                         type: 'boolean'
                     },
                     'q-enter-your-previous-reference-number': {
@@ -701,15 +701,15 @@ module.exports = {
                 allOf: [
                     {
                         $ref:
-                            '#/definitions/if-true-then-q-enter-your-previous-reference-number-is-required'
+                            '#/definitions/if-false-then-q-enter-your-previous-reference-number-is-required'
                     }
                 ],
                 definitions: {
-                    'if-true-then-q-enter-your-previous-reference-number-is-required': {
+                    'if-false-then-q-enter-your-previous-reference-number-is-required': {
                         if: {
                             properties: {
                                 'q-applicant-have-you-applied-to-us-before': {
-                                    const: true
+                                    const: false
                                 }
                             }
                         },
@@ -726,11 +726,11 @@ module.exports = {
                 errorMessage: {
                     required: {
                         'q-applicant-have-you-applied-to-us-before':
-                            'Select yes if you have applied to us before'
+                            'Select no if you have applied to us before'
                     }
                 }
             },
-            'p-applicant-have-you-applied-for-or-received-any-other-compensation': {
+            'p-applicant-other-compensation': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
                 type: 'object',
                 propertyNames: {
@@ -1813,6 +1813,198 @@ module.exports = {
                     }
                 }
             },
+            'p-applicant-other-compensation-main': {
+                $schema: 'http://json-schema.org/draft-07/schema#',
+                type: 'object',
+                propertyNames: {
+                    enum: [
+                        'q-applicant-have-you-applied-for-or-received-any-other-compensation',
+                        'q-applicant-applied-for-other-compensation-briefly-explain-why-not'
+                    ]
+                },
+                properties: {
+                    'q-applicant-have-you-applied-for-or-received-any-other-compensation': {
+                        title: 'Has your child applied for or got any other form of compensation?',
+                        description:
+                            'For example, if they sought civil damages or a court decided they should get compensation.',
+                        type: 'boolean'
+                    },
+                    'q-applicant-applied-for-other-compensation-briefly-explain-why-not': {
+                        type: 'string',
+                        title: 'Briefly explain why not.',
+                        maxLength: 499
+                    }
+                },
+                required: ['q-applicant-have-you-applied-for-or-received-any-other-compensation'],
+                allOf: [
+                    {
+                        $ref:
+                            '#/definitions/if-false-then-q-applicant-applied-for-other-compensation-briefly-explain-why-not-is-required'
+                    }
+                ],
+                definitions: {
+                    'if-false-then-q-applicant-applied-for-other-compensation-briefly-explain-why-not-is-required': {
+                        if: {
+                            properties: {
+                                'q-applicant-have-you-applied-for-or-received-any-other-compensation': {
+                                    const: false
+                                }
+                            },
+                            required: [
+                                'q-applicant-have-you-applied-for-or-received-any-other-compensation'
+                            ]
+                        },
+                        then: {
+                            required: [
+                                'q-applicant-applied-for-other-compensation-briefly-explain-why-not'
+                            ],
+                            propertyNames: {
+                                enum: [
+                                    'q-applicant-have-you-applied-for-or-received-any-other-compensation',
+                                    'q-applicant-applied-for-other-compensation-briefly-explain-why-not'
+                                ]
+                            },
+                            properties: {
+                                'q-applicant-applied-for-other-compensation-briefly-explain-why-not': {
+                                    errorMessage: {
+                                        maxLength: 'Explanation must be 500 characters or less'
+                                    }
+                                }
+                            },
+                            errorMessage: {
+                                required: {
+                                    'q-applicant-applied-for-other-compensation-briefly-explain-why-not':
+                                        'Explain why your child did not apply for or receive any other form of compensation'
+                                }
+                            }
+                        }
+                    }
+                },
+                errorMessage: {
+                    required: {
+                        'q-applicant-have-you-applied-for-or-received-any-other-compensation':
+                            'Select yes if your child has applied for or received another form of compensation'
+                    }
+                }
+            },
+            'p-applicant-other-compensation-details-main': {
+                $schema: 'http://json-schema.org/draft-07/schema#',
+                type: 'object',
+                title: 'Other compensation',
+                propertyNames: {
+                    enum: [
+                        'q-applicant-who-did-you-apply-to',
+                        'q-applicant-has-a-decision-been-made',
+                        'q-how-much-was-award',
+                        'q-when-will-you-find-out'
+                    ]
+                },
+                properties: {
+                    'q-applicant-who-did-you-apply-to': {
+                        type: 'string',
+                        title: 'Who has your child applied to or received compensation from?',
+                        maxLength: 50,
+                        errorMessage: {
+                            maxLength:
+                                'Who your child applied to or received compensation from must be 50 characters or less'
+                        }
+                    },
+                    'q-applicant-has-a-decision-been-made': {
+                        title: 'Have they made a decision?',
+                        type: 'boolean'
+                    },
+                    'q-how-much-was-award': {
+                        type: 'string',
+                        title: 'How much was the award?',
+                        maxLength: 50,
+                        errorMessage: {
+                            maxLength: 'Award amount must be 50 characters or less'
+                        }
+                    },
+                    'q-when-will-you-find-out': {
+                        type: 'string',
+                        title: 'When will you find out?',
+                        description:
+                            'Enter an approximate date, for example, December 2019. If you do not know you can say so.',
+                        maxLength: 50,
+                        errorMessage: {
+                            maxLength: 'When will you find out must be 50 characters or less'
+                        }
+                    }
+                },
+                required: [
+                    'q-applicant-who-did-you-apply-to',
+                    'q-applicant-has-a-decision-been-made'
+                ],
+                allOf: [
+                    {
+                        $ref: '#/definitions/if-false-then-q-when-will-you-find-out-is-required'
+                    },
+                    {
+                        $ref: '#/definitions/if-true-then-q-how-much-was-award-is-required'
+                    }
+                ],
+                definitions: {
+                    'if-false-then-q-when-will-you-find-out-is-required': {
+                        if: {
+                            properties: {
+                                'q-applicant-has-a-decision-been-made': {
+                                    const: false
+                                }
+                            },
+                            required: ['q-applicant-has-a-decision-been-made']
+                        },
+                        then: {
+                            required: ['q-when-will-you-find-out'],
+                            propertyNames: {
+                                enum: [
+                                    'q-applicant-who-did-you-apply-to',
+                                    'q-applicant-has-a-decision-been-made',
+                                    'q-when-will-you-find-out'
+                                ]
+                            },
+                            errorMessage: {
+                                required: {
+                                    'q-when-will-you-find-out': 'Enter an approximate date'
+                                }
+                            }
+                        }
+                    },
+                    'if-true-then-q-how-much-was-award-is-required': {
+                        if: {
+                            properties: {
+                                'q-applicant-has-a-decision-been-made': {
+                                    const: true
+                                }
+                            },
+                            required: ['q-applicant-has-a-decision-been-made']
+                        },
+                        then: {
+                            required: ['q-how-much-was-award'],
+                            propertyNames: {
+                                enum: [
+                                    'q-applicant-who-did-you-apply-to',
+                                    'q-applicant-has-a-decision-been-made',
+                                    'q-how-much-was-award'
+                                ]
+                            },
+                            errorMessage: {
+                                required: {
+                                    'q-how-much-was-award': 'Enter an amount'
+                                }
+                            }
+                        }
+                    }
+                },
+                errorMessage: {
+                    required: {
+                        'q-applicant-who-did-you-apply-to':
+                            'Enter who you applied to or received compensation from',
+                        'q-applicant-has-a-decision-been-made':
+                            'Select yes if you have received a decision about the other compensation claim'
+                    }
+                }
+            },
             system: {
                 $schema: 'http://json-schema.org/draft-07/schema#',
                 type: 'object',
@@ -2201,7 +2393,7 @@ module.exports = {
                     on: {
                         ANSWER: [
                             {
-                                target: 'p-applicant-have-you-applied-to-us-before',
+                                target: 'p-applicant-previous-application',
                                 cond: [
                                     '==',
                                     '$.answers.p-offender-do-you-know-the-name-of-the-offender.q-offender-do-you-know-the-name-of-the-offender',
@@ -2245,29 +2437,36 @@ module.exports = {
                     on: {
                         ANSWER: [
                             {
-                                target: 'p-applicant-have-you-applied-to-us-before'
+                                target: 'p-applicant-previous-application'
                             }
                         ]
                     }
                 },
-                'p-applicant-have-you-applied-to-us-before': {
+                'p-applicant-previous-application': {
                     on: {
                         ANSWER: [
                             {
-                                target:
-                                    'p-applicant-have-you-applied-for-or-received-any-other-compensation'
+                                target: 'p-applicant-other-compensation-main',
+                                cond: [
+                                    '==',
+                                    '$.answers.p-main-applying-for-child.q-main-applying-for-child',
+                                    true
+                                ]
+                            },
+                            {
+                                target: 'p-applicant-other-compensation'
                             }
                         ]
                     }
                 },
-                'p-applicant-have-you-applied-for-or-received-any-other-compensation': {
+                'p-applicant-other-compensation': {
                     on: {
                         ANSWER: [
                             {
                                 target: 'p-applicant-other-compensation-details',
                                 cond: [
                                     '==',
-                                    '$.answers.p-applicant-have-you-applied-for-or-received-any-other-compensation.q-applicant-have-you-applied-for-or-received-any-other-compensation',
+                                    '$.answers.p-applicant-other-compensation.q-applicant-have-you-applied-for-or-received-any-other-compensation',
                                     true
                                 ]
                             },
@@ -2275,7 +2474,7 @@ module.exports = {
                                 target: 'p-applicant-name',
                                 cond: [
                                     '==',
-                                    '$.answers.p-applicant-have-you-applied-for-or-received-any-other-compensation.q-applicant-have-you-applied-for-or-received-any-other-compensation',
+                                    '$.answers.p-applicant-other-compensation.q-applicant-have-you-applied-for-or-received-any-other-compensation',
                                     false
                                 ]
                             }
@@ -2599,7 +2798,7 @@ module.exports = {
                     on: {
                         ANSWER: [
                             {
-                                target: 'p-applicant-have-you-applied-to-us-before'
+                                target: 'p-applicant-previous-application'
                             }
                         ]
                     }
@@ -2627,6 +2826,45 @@ module.exports = {
                             },
                             {
                                 target: 'p-offender-do-you-know-the-name-of-the-offender'
+                            }
+                        ]
+                    }
+                },
+                'p-applicant-other-compensation-main': {
+                    on: {
+                        ANSWER: [
+                            {
+                                target: 'p-applicant-other-compensation-details',
+                                cond: [
+                                    '==',
+                                    '$.answers.p-applicant-other-compensation-main.q-applicant-have-you-applied-for-or-received-any-other-compensation',
+                                    true
+                                ]
+                            },
+                            {
+                                target: 'p-applicant-name',
+                                cond: [
+                                    '==',
+                                    '$.answers.p-applicant-other-compensation-main.q-applicant-have-you-applied-for-or-received-any-other-compensation',
+                                    false
+                                ]
+                            }
+                        ]
+                    }
+                },
+                'p-applicant-other-compensation-details-main': {
+                    on: {
+                        ANSWER: [
+                            {
+                                target: 'p-applicant-enter-your-address',
+                                cond: [
+                                    '==',
+                                    '$.answers.p-main-applying-for-child.q-main-applying-for-child',
+                                    true
+                                ]
+                            },
+                            {
+                                target: 'p-applicant-name'
                             }
                         ]
                     }
