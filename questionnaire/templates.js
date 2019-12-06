@@ -3,8 +3,8 @@
 module.exports = {
     'sexual-assault': id => ({
         id,
-        type: 'apply-for-compensation',
-        version: '0.2.11',
+        type: 'minors-apply-for-compensation',
+        version: '0.1.0',
         sections: {
             'p-applicant-declaration': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
@@ -89,7 +89,7 @@ module.exports = {
                 properties: {
                     'q-applicant-were-you-a-victim-of-sexual-assault-or-abuse': {
                         type: 'boolean',
-                        title: 'Were you a victim of sexual assault or abuse?'
+                        title: 'Is your claim about sexual assault or abuse?'
                     }
                 },
                 errorMessage: {
@@ -111,7 +111,7 @@ module.exports = {
                     }
                 }
             },
-            'p-applicant-select-the-option-that-applies-to-you': {
+            'p-applicant-select-option': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
                 type: 'object',
                 title: 'Select the option that applies to you',
@@ -531,395 +531,6 @@ module.exports = {
                     }
                 }
             },
-            'p--which-police-force-is-investigating-the-crime': {
-                $schema: 'http://json-schema.org/draft-07/schema#',
-                title: 'Which police force is investigating the crime?',
-                type: 'object',
-                required: ['q--which-police-force-is-investigating-the-crime'],
-                additionalProperties: false,
-                properties: {
-                    'q--which-police-force-is-investigating-the-crime': {
-                        type: 'integer',
-                        oneOf: [
-                            {
-                                title: 'Avon And Somerset Constabulary',
-                                const: 10000033
-                            },
-                            {
-                                title: 'Bedfordshire Police',
-                                const: 10000035
-                            },
-                            {
-                                title: 'British Transport Police',
-                                const: 10000001
-                            },
-                            {
-                                title: 'Cambridgeshire Constabulary',
-                                const: 10000039
-                            },
-                            {
-                                title: 'Cheshire Constabulary',
-                                const: 10000049
-                            },
-                            {
-                                title: 'City Of London Police',
-                                const: 10000059
-                            },
-                            {
-                                title: 'Cleveland Police',
-                                const: 10000066
-                            },
-                            {
-                                title: 'Cumbria Constabulary',
-                                const: 10000082
-                            },
-                            {
-                                title: 'Derbyshire Constabulary',
-                                const: 10000084
-                            },
-                            {
-                                title: 'Devon and Cornwall Police',
-                                const: 10000090
-                            },
-                            {
-                                title: 'Dorset Police',
-                                const: 10000093
-                            },
-                            {
-                                title: 'Durham Constabulary',
-                                const: 10000102
-                            },
-                            {
-                                title: 'Essex Police',
-                                const: 10000114
-                            },
-                            {
-                                title: 'Gloucestershire Constabulary',
-                                const: 10000128
-                            },
-                            {
-                                title: 'Greater Manchester Police',
-                                const: 10000140
-                            },
-                            {
-                                title: 'Hampshire Constabulary',
-                                const: 10000150
-                            },
-                            {
-                                title: 'Hertfordshire Constabulary',
-                                const: 10000153
-                            },
-                            {
-                                title: 'Humberside Police',
-                                const: 10000169
-                            },
-                            {
-                                title: 'Kent Police',
-                                const: 10000172
-                            },
-                            {
-                                title: 'Lancashire Constabulary',
-                                const: 10000175
-                            },
-                            {
-                                title: 'Leicestershire Police',
-                                const: 10000176
-                            },
-                            {
-                                title: 'Lincolnshire Police',
-                                const: 10000179
-                            },
-                            {
-                                title: 'Merseyside Police',
-                                const: 10000181
-                            },
-                            {
-                                title: 'Metropolitan Barking',
-                                const: 11809785
-                            },
-                            {
-                                title: 'Metropolitan Barnet',
-                                const: 11809719
-                            },
-                            {
-                                title: 'Metropolitan Bexley',
-                                const: 11809788
-                            },
-                            {
-                                title: 'Metropolitan Brent',
-                                const: 11809722
-                            },
-                            {
-                                title: 'Metropolitan Bromley',
-                                const: 11809760
-                            },
-                            {
-                                title: 'Metropolitan Camden',
-                                const: 11809694
-                            },
-                            {
-                                title: 'Metropolitan Croydon',
-                                const: 11809713
-                            },
-                            {
-                                title: 'Metropolitan Ealing',
-                                const: 11809743
-                            },
-                            {
-                                title: 'Metropolitan Enfield',
-                                const: 11809783
-                            },
-                            {
-                                title: 'Metropolitan Greenwich',
-                                const: 11809709
-                            },
-                            {
-                                title: 'Metropolitan Hackney',
-                                const: 11809763
-                            },
-                            {
-                                title: 'Metropolitan Hammersmith',
-                                const: 11809795
-                            },
-                            {
-                                title: 'Metropolitan Haringey',
-                                const: 11809738
-                            },
-                            {
-                                title: 'Metropolitan Harrow',
-                                const: 11809803
-                            },
-                            {
-                                title: 'Metropolitan Havering',
-                                const: 11809800
-                            },
-                            {
-                                title: 'Metropolitan Hillingdon',
-                                const: 11809775
-                            },
-                            {
-                                title: 'Metropolitan Hounslow',
-                                const: 11809780
-                            },
-                            {
-                                title: 'Metropolitan Islington',
-                                const: 11809765
-                            },
-                            {
-                                title: 'Metropolitan Kensington',
-                                const: 11809801
-                            },
-                            {
-                                title: 'Metropolitan Kingston',
-                                const: 11809865
-                            },
-                            {
-                                title: 'Metropolitan Lambeth',
-                                const: 11809693
-                            },
-                            {
-                                title: 'Metropolitan Lewisham',
-                                const: 11809698
-                            },
-                            {
-                                title: 'Metropolitan Merton',
-                                const: 11809861
-                            },
-                            {
-                                title: 'Metropolitan Newham',
-                                const: 11809701
-                            },
-                            {
-                                title: 'Metropolitan Redbridge',
-                                const: 11809782
-                            },
-                            {
-                                title: 'Metropolitan Richmond',
-                                const: 11809862
-                            },
-                            {
-                                title: 'Metropolitan Southwark',
-                                const: 11809691
-                            },
-                            {
-                                title: 'Metropolitan Sutton',
-                                const: 11809805
-                            },
-                            {
-                                title: 'Metropolitan Tower Hamlets',
-                                const: 11809767
-                            },
-                            {
-                                title: 'Metropolitan Waltham Forest',
-                                const: 11809726
-                            },
-                            {
-                                title: 'Metropolitan Wandsworth',
-                                const: 11809771
-                            },
-                            {
-                                title: 'Metropolitan Westminster',
-                                const: 11809683
-                            },
-                            {
-                                title: 'Norfolk Constabulary',
-                                const: 10000185
-                            },
-                            {
-                                title: 'North Yorkshire Police',
-                                const: 10000189
-                            },
-                            {
-                                title: 'Northamptonshire Police',
-                                const: 10000191
-                            },
-                            {
-                                title: 'Northumbria Police',
-                                const: 10000195
-                            },
-                            {
-                                title: 'Nottinghamshire Police',
-                                const: 10000199
-                            },
-                            {
-                                title: 'South Yorkshire Police',
-                                const: 10000218
-                            },
-                            {
-                                title: 'Staffordshire Police',
-                                const: 10000223
-                            },
-                            {
-                                title: 'Suffolk Constabulary',
-                                const: 10000233
-                            },
-                            {
-                                title: 'Surrey Police',
-                                const: 10000237
-                            },
-                            {
-                                title: 'Sussex Police',
-                                const: 10000240
-                            },
-                            {
-                                title: 'Thames Valley Police',
-                                const: 10000247
-                            },
-                            {
-                                title: 'Warwickshire Police',
-                                const: 10000274
-                            },
-                            {
-                                title: 'West Mercia Police',
-                                const: 10000279
-                            },
-                            {
-                                title: 'West Midlands Police',
-                                const: 10000285
-                            },
-                            {
-                                title: 'West Yorkshire Police',
-                                const: 10000291
-                            },
-                            {
-                                title: 'Wiltshire Police',
-                                const: 10000295
-                            },
-                            {
-                                title: 'Argyll and West Dunbartonshire',
-                                const: 12607027,
-                                alias: 'Police Scotland'
-                            },
-                            {
-                                title: 'Ayrshire',
-                                const: 12157147,
-                                alias: 'Police Scotland'
-                            },
-                            {
-                                title: 'Dumfries and Galloway',
-                                const: 10000098,
-                                alias: 'Police Scotland'
-                            },
-                            {
-                                title: 'Edinburgh',
-                                const: 13400412,
-                                alias: 'Police Scotland'
-                            },
-                            {
-                                title: 'Fife',
-                                const: 10002424,
-                                alias: 'Police Scotland'
-                            },
-                            {
-                                title: 'Forth Valley',
-                                const: 10000045,
-                                alias: 'Police Scotland'
-                            },
-                            {
-                                title: 'Greater Glasgow',
-                                const: 12607023,
-                                alias: 'Police Scotland'
-                            },
-                            {
-                                title: 'Highland and Islands',
-                                const: 10000193,
-                                alias: 'Police Scotland'
-                            },
-                            {
-                                title: 'Lanarkshire',
-                                const: 12607028,
-                                alias: 'Police Scotland'
-                            },
-                            {
-                                title: 'North East',
-                                const: 10000133,
-                                alias: 'Police Scotland'
-                            },
-                            {
-                                title: 'Renfrewshire and Inverclyde',
-                                const: 12607026,
-                                alias: 'Police Scotland'
-                            },
-                            {
-                                title: 'Tayside',
-                                const: 10000243,
-                                alias: 'Police Scotland'
-                            },
-                            {
-                                title: 'The Lothians and Scottish Borders',
-                                const: 13400413,
-                                alias: 'Police Scotland'
-                            },
-                            {
-                                title: 'Dyfed-Powys',
-                                const: 10000109
-                            },
-                            {
-                                title: 'Gwent',
-                                const: 10000147
-                            },
-                            {
-                                title: 'North Wales',
-                                const: 10000187
-                            },
-                            {
-                                title: 'South Wales',
-                                const: 10000215
-                            }
-                        ]
-                    },
-                    'list-of-police-forces': {
-                        description:
-                            '\n                {% from "components/details/macro.njk" import govukDetails %}\n                {{ govukDetails({\n                    summaryText: "Help with police forces",\n                    html: \'<p>See a list of all <a href="/police" target="_blank">police forces in England, Scotland and Wales</a> (opens in a new tab)</p>\'\n                }) }}\n            '
-                    }
-                },
-                errorMessage: {
-                    required: {
-                        'q--which-police-force-is-investigating-the-crime':
-                            'Select a police force from the list'
-                    }
-                }
-            },
             'p-applicant-select-reasons-for-the-delay-in-reporting-the-crime-to-police': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
                 type: 'object',
@@ -1011,7 +622,7 @@ module.exports = {
                     }
                 }
             },
-            'p-offender-describe-contact-with-offender': {
+            'p-offender-contact': {
                 type: 'object',
                 properties: {
                     'q-offender-describe-contact-with-offender': {
@@ -1311,7 +922,7 @@ module.exports = {
                     }
                 }
             },
-            'p-applicant-enter-your-name': {
+            'p-applicant-name': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
                 title: 'Enter your name',
                 type: 'object',
@@ -1369,7 +980,7 @@ module.exports = {
                     }
                 }
             },
-            'p-applicant-what-other-names-have-you-used': {
+            'p-applicant-other-names': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
                 type: 'object',
                 required: ['q-applicant-what-other-names-have-you-used'],
@@ -1391,7 +1002,7 @@ module.exports = {
                     }
                 }
             },
-            'p-applicant-enter-your-date-of-birth': {
+            'p-applicant-date-of-birth': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
                 type: 'object',
                 required: ['q-applicant-enter-your-date-of-birth'],
@@ -1575,6 +1186,633 @@ module.exports = {
                     }
                 }
             },
+            'p-main-applying-for-child': {
+                $schema: 'http://json-schema.org/draft-07/schema#',
+                type: 'object',
+                required: ['q-main-applying-for-child'],
+                additionalProperties: false,
+                properties: {
+                    'q-main-applying-for-child': {
+                        type: 'boolean',
+                        title: 'Are you a parent applying for your child?',
+                        description: 'They must be under 18.'
+                    }
+                },
+                errorMessage: {
+                    required: {
+                        'q-main-applying-for-child':
+                            'Select Yes if you are a parent applying for a child'
+                    }
+                }
+            },
+            'p-applicant-british-citizen-or-eu-national-main': {
+                $schema: 'http://json-schema.org/draft-07/schema#',
+                type: 'object',
+                required: ['q-applicant-british-citizen-or-eu-national'],
+                additionalProperties: false,
+                properties: {
+                    'q-applicant-british-citizen-or-eu-national': {
+                        type: 'boolean',
+                        title: 'Is your child a British or EU National?'
+                    }
+                },
+                errorMessage: {
+                    required: {
+                        'q-applicant-british-citizen-or-eu-national':
+                            'Select Yes if your child is a British or EU national'
+                    }
+                }
+            },
+            'p-applicant-date-of-birth-main': {
+                $schema: 'http://json-schema.org/draft-07/schema#',
+                type: 'object',
+                required: ['q-applicant-enter-your-date-of-birth'],
+                additionalProperties: false,
+                properties: {
+                    'q-applicant-enter-your-date-of-birth': {
+                        type: 'string',
+                        format: 'date-time',
+                        title: "What is your child's date of birth?",
+                        description: 'For example, 31 3 1980.',
+                        errorMessage: {
+                            format:
+                                "Enter your child's date of birth and include a day, month and year"
+                        }
+                    }
+                },
+                errorMessage: {
+                    required: {
+                        'q-applicant-enter-your-date-of-birth':
+                            "Enter your child's date of birth and include a day, month and year"
+                    }
+                }
+            },
+            'p--before-you-continue-main': {
+                $schema: 'http://json-schema.org/draft-07/schema#',
+                title: 'Before you continue',
+                type: 'object',
+                additionalProperties: false,
+                properties: {
+                    'applicant-impact-on-your-child': {
+                        description:
+                            '\n                <p class="govuk-body">On the next page we will ask you to select an option based on how the crime affected your child.</p>\n                <p class="govuk-body">We appreciate that this may be difficult for you.</p>\n                <h2 class="govuk-heading-m">If you need help or support</h2>\n                <p class="govuk-body">You can contact us for help with your application on 0300 003 3601. Select option 8.</p>\n                <p class="govuk-body">Our phone lines are open Monday to Friday 8:30am to 5pm except Wednesday when they open at 10am.</p>\n                <p class="govuk-body">You can get practical or emotional support depending on where you live:</p>\n                <ul class="govuk-list govuk-list--bullet">\n                   <li>in England and Wales <a href="https://www.victimandwitnessinformation.org.uk/">visit the Victim and Witness Information website</a></li>\n                   <li>in Scotland <a href="https://www.mygov.scot/victim-witness-support/">visit the mygov.scot website</a></li>\n                </ul>\n            '
+                    }
+                }
+            },
+            'p-applicant-select-option-main': {
+                $schema: 'http://json-schema.org/draft-07/schema#',
+                type: 'object',
+                title: 'Select the option that applies to your child',
+                required: ['q-applicant-option'],
+                additionalProperties: false,
+                properties: {
+                    'main-your-choices': {
+                        description:
+                            '\n                <p class="govuk-body-l">We decide what enquiries to make depending on how the crime affected your child.</p>\n                <h2 class="govuk-heading-m">Option 1: Sexual assault or abuse</h2>\n                <p class="govuk-body">Any compensation we pay acknowledges the emotional distress the crime caused your child.</p>\n                <p class="govuk-body">We normally make a decision based on your application and the information we get from the police.</p>\n                <p class="govuk-body">We will usually make a decision within 4 months. This is because we do not normally need to see your child\'s medical records.</p>\n                <h2 class="govuk-heading-m">Option 2: Sexual assault or abuse and other injuries or losses</h2>\n                <p class="govuk-body">We can also pay compensation for:\n                <ul class="govuk-list govuk-list--bullet">\n                <li>physical injuries</li>\n                <li>pregnancy, sexually transmitted disease, or loss of foetus</li>\n                <li><a href="https://www.gov.uk/guidance/criminal-injuries-compensation-a-guide#special-expenses">some extra costs</a> you\'ve had due to your child\'s injuries</li>\n                <li>disabling mental injuries that are additional to the emotional distress your child has already suffered</li>\n                </ul>\n                </p>\n                {{ govukDetails({\n                    summaryText: "What is a disabling mental injury?",\n                    text: "A disabling mental injury has a substantial adverse effect on your child\'s ability to carry out normal day-to-day activities. For example, reduced performance at school, or effects on their social relationships."\n                }) }}\n                <p class="govuk-body">We may ask a psychiatrist or clinical psychologist to confirm that your child has a disabling mental injury if they do not already have a diagnosis.</p>\n                <p class="govuk-body">We will usually make a decision within 12 months. This is because we may need to examine your child\'s medical records, get medical reports and assess any losses.</p>\n                {{ govukDetails({\n                summaryText: "If you need help or support",\n                html: \'\n                    <p class="govuk-body">You can contact us for help with your application on 0300 003 3601. Select option 8.</p>\n                    <p class="govuk-body">Our phone lines are open Monday to Friday 8:30am to 5pm except Wednesday when they open at 10am.</p>\n                    <p class="govuk-body">You can get practical or emotional support depending on where you live:</p>\n                    <ul class="govuk-list govuk-list--bullet">\n                       <li>in England and Wales <a href="https://www.victimandwitnessinformation.org.uk/">visit the Victim and Witness Information website</a></li>\n                       <li>in Scotland <a href="https://www.mygov.scot/victim-witness-support/">visit the mygov.scot website</a></li>\n                    </ul>\n                \'\n                }) }}\n            '
+                    },
+                    'q-applicant-option': {
+                        title: 'Select the option that applies to your child',
+                        type: 'string',
+                        oneOf: [
+                            {
+                                title: 'Option 1: Sexual assault or abuse',
+                                const: 'option-1:-sexual-assault-or-abuse'
+                            },
+                            {
+                                title:
+                                    'Option 2: Sexual assault or abuse and other injuries or losses',
+                                const:
+                                    'option-2:-sexual-assault-or-abuse-and-other-injuries-or-losses'
+                            }
+                        ]
+                    }
+                },
+                errorMessage: {
+                    required: {
+                        'q-applicant-option': 'Select either Option 1 or Option 2'
+                    }
+                }
+            },
+            'p-main-cannot-apply-for-over-18s': {
+                $schema: 'http://json-schema.org/draft-07/schema#',
+                title: 'You cannot apply for someone over 18 with this service',
+                type: 'object',
+                additionalProperties: false,
+                properties: {
+                    'main-you-cannot-apply-for-over-18s': {
+                        description:
+                            '\n                <p class="govuk-body">They can <a href="/concepts/minors/consent">apply as an adult</a>.</p>\n                <p class="govuk-body">You must <a href="https://www.cica.gov.uk/OAS/Account/create">use another service</a> to apply on behalf of an adult.</p>\n                <h2 class="govuk-heading-m">If you need help or support</h2>\n                <p class="govuk-body">You can contact us for help with your application on 0300 003 3601. Select option 8.</p>\n                <p class="govuk-body">Our phone lines are open Monday to Friday 8:30am to 5pm except Wednesday when they open at 10am.</p>\n                <p class="govuk-body">You can get practical or emotional support depending on where you live:</p>\n                <ul class="govuk-list govuk-list--bullet">\n                   <li>in England and Wales <a href="https://www.victimandwitnessinformation.org.uk/">visit the Victim and Witness Information website</a></li>\n                   <li>in Scotland <a href="https://www.mygov.scot/victim-witness-support/">visit the mygov.scot website</a></li>\n                </ul>\n            '
+                    }
+                }
+            },
+            'p-applicant-name-main': {
+                $schema: 'http://json-schema.org/draft-07/schema#',
+                title: "Enter your child's name",
+                type: 'object',
+                required: ['q-applicant-title', 'q-applicant-first-name', 'q-applicant-last-name'],
+                additionalProperties: false,
+                properties: {
+                    'q-applicant-title': {
+                        title: 'Title',
+                        type: 'string',
+                        maxLength: 6,
+                        errorMessage: {
+                            maxLength: 'Title must be 6 characters or less'
+                        }
+                    },
+                    'q-applicant-first-name': {
+                        title: 'First name',
+                        type: 'string',
+                        maxLength: 70,
+                        errorMessage: {
+                            maxLength: 'First name must be 70 characters or less'
+                        }
+                    },
+                    'q-applicant-last-name': {
+                        title: 'Last name',
+                        type: 'string',
+                        maxLength: 70,
+                        errorMessage: {
+                            maxLength: 'Last name must be 70 characters or less'
+                        }
+                    }
+                },
+                errorMessage: {
+                    required: {
+                        'q-applicant-title': "Enter your child's title",
+                        'q-applicant-first-name': "Enter your child's first name",
+                        'q-applicant-last-name': "Enter your child's last name"
+                    }
+                }
+            },
+            'p-applicant-have-you-been-known-by-any-other-names-main': {
+                $schema: 'http://json-schema.org/draft-07/schema#',
+                type: 'object',
+                required: ['q-applicant-have-you-been-known-by-any-other-names'],
+                additionalProperties: false,
+                properties: {
+                    'q-applicant-have-you-been-known-by-any-other-names': {
+                        type: 'boolean',
+                        title: 'Has your child ever been known by any other names?'
+                    }
+                },
+                errorMessage: {
+                    required: {
+                        'q-applicant-have-you-been-known-by-any-other-names':
+                            'Select yes if your child has been known by any other names'
+                    }
+                }
+            },
+            'p-applicant-other-names-main': {
+                $schema: 'http://json-schema.org/draft-07/schema#',
+                type: 'object',
+                required: ['q-applicant-what-other-names-have-you-used'],
+                additionalProperties: false,
+                properties: {
+                    'q-applicant-what-other-names-have-you-used': {
+                        type: 'string',
+                        title: 'What other names has your child had?',
+                        maxLength: 50,
+                        errorMessage: {
+                            maxLength:
+                                'Other names your child has used must be 50 characters or less'
+                        }
+                    }
+                },
+                errorMessage: {
+                    required: {
+                        'q-applicant-what-other-names-have-you-used':
+                            'Enter the other names your child has used'
+                    }
+                }
+            },
+            'p-offender-contact-main': {
+                type: 'object',
+                properties: {
+                    'q-offender-describe-contact-with-offender': {
+                        type: 'string',
+                        title: 'If your child has contact with the offender, describe it below',
+                        description:
+                            'We will not pay compensation if the offender may benefit from it.',
+                        maxLength: 500,
+                        errorMessage: {
+                            maxLength: 'Description must be 500 characters or less'
+                        }
+                    },
+                    'q-offender-i-have-no-contact-with-offender': {
+                        type: 'array',
+                        maxItems: 1,
+                        uniqueItems: true,
+                        items: {
+                            anyOf: [
+                                {
+                                    title: 'My child has no contact with the offender',
+                                    const: 'i-have-no-contact-with-the-offender'
+                                }
+                            ]
+                        }
+                    }
+                },
+                allOf: [
+                    {
+                        $ref:
+                            '#/definitions/if-not-checked-then-q-offender-contact-description-is-required'
+                    }
+                ],
+                definitions: {
+                    'if-not-checked-then-q-offender-contact-description-is-required': {
+                        if: {
+                            not: {
+                                required: ['q-offender-i-have-no-contact-with-offender']
+                            }
+                        },
+                        then: {
+                            required: ['q-offender-describe-contact-with-offender'],
+                            errorMessage: {
+                                required: {
+                                    'q-offender-describe-contact-with-offender':
+                                        'Enter details of contact with the assailant or select if your child has no contact'
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            'p-police-force': {
+                $schema: 'http://json-schema.org/draft-07/schema#',
+                title: 'Which police force is investigating the crime?',
+                type: 'object',
+                required: ['q-police-force-id'],
+                additionalProperties: false,
+                properties: {
+                    'q-police-force-id': {
+                        type: 'integer',
+                        oneOf: [
+                            {
+                                title: 'Avon And Somerset Constabulary',
+                                const: 10000033
+                            },
+                            {
+                                title: 'Bedfordshire Police',
+                                const: 10000035
+                            },
+                            {
+                                title: 'British Transport Police',
+                                const: 10000001
+                            },
+                            {
+                                title: 'Cambridgeshire Constabulary',
+                                const: 10000039
+                            },
+                            {
+                                title: 'Cheshire Constabulary',
+                                const: 10000049
+                            },
+                            {
+                                title: 'City Of London Police',
+                                const: 10000059
+                            },
+                            {
+                                title: 'Cleveland Police',
+                                const: 10000066
+                            },
+                            {
+                                title: 'Cumbria Constabulary',
+                                const: 10000082
+                            },
+                            {
+                                title: 'Derbyshire Constabulary',
+                                const: 10000084
+                            },
+                            {
+                                title: 'Devon and Cornwall Police',
+                                const: 10000090
+                            },
+                            {
+                                title: 'Dorset Police',
+                                const: 10000093
+                            },
+                            {
+                                title: 'Durham Constabulary',
+                                const: 10000102
+                            },
+                            {
+                                title: 'Essex Police',
+                                const: 10000114
+                            },
+                            {
+                                title: 'Gloucestershire Constabulary',
+                                const: 10000128
+                            },
+                            {
+                                title: 'Greater Manchester Police',
+                                const: 10000140
+                            },
+                            {
+                                title: 'Hampshire Constabulary',
+                                const: 10000150
+                            },
+                            {
+                                title: 'Hertfordshire Constabulary',
+                                const: 10000153
+                            },
+                            {
+                                title: 'Humberside Police',
+                                const: 10000169
+                            },
+                            {
+                                title: 'Kent Police',
+                                const: 10000172
+                            },
+                            {
+                                title: 'Lancashire Constabulary',
+                                const: 10000175
+                            },
+                            {
+                                title: 'Leicestershire Police',
+                                const: 10000176
+                            },
+                            {
+                                title: 'Lincolnshire Police',
+                                const: 10000179
+                            },
+                            {
+                                title: 'Merseyside Police',
+                                const: 10000181
+                            },
+                            {
+                                title: 'Metropolitan Barking',
+                                const: 11809785
+                            },
+                            {
+                                title: 'Metropolitan Barnet',
+                                const: 11809719
+                            },
+                            {
+                                title: 'Metropolitan Bexley',
+                                const: 11809788
+                            },
+                            {
+                                title: 'Metropolitan Brent',
+                                const: 11809722
+                            },
+                            {
+                                title: 'Metropolitan Bromley',
+                                const: 11809760
+                            },
+                            {
+                                title: 'Metropolitan Camden',
+                                const: 11809694
+                            },
+                            {
+                                title: 'Metropolitan Croydon',
+                                const: 11809713
+                            },
+                            {
+                                title: 'Metropolitan Ealing',
+                                const: 11809743
+                            },
+                            {
+                                title: 'Metropolitan Enfield',
+                                const: 11809783
+                            },
+                            {
+                                title: 'Metropolitan Greenwich',
+                                const: 11809709
+                            },
+                            {
+                                title: 'Metropolitan Hackney',
+                                const: 11809763
+                            },
+                            {
+                                title: 'Metropolitan Hammersmith',
+                                const: 11809795
+                            },
+                            {
+                                title: 'Metropolitan Haringey',
+                                const: 11809738
+                            },
+                            {
+                                title: 'Metropolitan Harrow',
+                                const: 11809803
+                            },
+                            {
+                                title: 'Metropolitan Havering',
+                                const: 11809800
+                            },
+                            {
+                                title: 'Metropolitan Hillingdon',
+                                const: 11809775
+                            },
+                            {
+                                title: 'Metropolitan Hounslow',
+                                const: 11809780
+                            },
+                            {
+                                title: 'Metropolitan Islington',
+                                const: 11809765
+                            },
+                            {
+                                title: 'Metropolitan Kensington',
+                                const: 11809801
+                            },
+                            {
+                                title: 'Metropolitan Kingston',
+                                const: 11809865
+                            },
+                            {
+                                title: 'Metropolitan Lambeth',
+                                const: 11809693
+                            },
+                            {
+                                title: 'Metropolitan Lewisham',
+                                const: 11809698
+                            },
+                            {
+                                title: 'Metropolitan Merton',
+                                const: 11809861
+                            },
+                            {
+                                title: 'Metropolitan Newham',
+                                const: 11809701
+                            },
+                            {
+                                title: 'Metropolitan Redbridge',
+                                const: 11809782
+                            },
+                            {
+                                title: 'Metropolitan Richmond',
+                                const: 11809862
+                            },
+                            {
+                                title: 'Metropolitan Southwark',
+                                const: 11809691
+                            },
+                            {
+                                title: 'Metropolitan Sutton',
+                                const: 11809805
+                            },
+                            {
+                                title: 'Metropolitan Tower Hamlets',
+                                const: 11809767
+                            },
+                            {
+                                title: 'Metropolitan Waltham Forest',
+                                const: 11809726
+                            },
+                            {
+                                title: 'Metropolitan Wandsworth',
+                                const: 11809771
+                            },
+                            {
+                                title: 'Metropolitan Westminster',
+                                const: 11809683
+                            },
+                            {
+                                title: 'Norfolk Constabulary',
+                                const: 10000185
+                            },
+                            {
+                                title: 'North Yorkshire Police',
+                                const: 10000189
+                            },
+                            {
+                                title: 'Northamptonshire Police',
+                                const: 10000191
+                            },
+                            {
+                                title: 'Northumbria Police',
+                                const: 10000195
+                            },
+                            {
+                                title: 'Nottinghamshire Police',
+                                const: 10000199
+                            },
+                            {
+                                title: 'South Yorkshire Police',
+                                const: 10000218
+                            },
+                            {
+                                title: 'Staffordshire Police',
+                                const: 10000223
+                            },
+                            {
+                                title: 'Suffolk Constabulary',
+                                const: 10000233
+                            },
+                            {
+                                title: 'Surrey Police',
+                                const: 10000237
+                            },
+                            {
+                                title: 'Sussex Police',
+                                const: 10000240
+                            },
+                            {
+                                title: 'Thames Valley Police',
+                                const: 10000247
+                            },
+                            {
+                                title: 'Warwickshire Police',
+                                const: 10000274
+                            },
+                            {
+                                title: 'West Mercia Police',
+                                const: 10000279
+                            },
+                            {
+                                title: 'West Midlands Police',
+                                const: 10000285
+                            },
+                            {
+                                title: 'West Yorkshire Police',
+                                const: 10000291
+                            },
+                            {
+                                title: 'Wiltshire Police',
+                                const: 10000295
+                            },
+                            {
+                                title: 'Police Scotland Argyll and West Dunbartonshire',
+                                const: 12607027
+                            },
+                            {
+                                title: 'Police Scotland Ayrshire',
+                                const: 12157147
+                            },
+                            {
+                                title: 'Police Scotland Dumfries and Galloway',
+                                const: 10000098
+                            },
+                            {
+                                title: 'Police Scotland Edinburgh',
+                                const: 13400412
+                            },
+                            {
+                                title: 'Police Scotland Fife',
+                                const: 10002424
+                            },
+                            {
+                                title: 'Police Scotland Forth Valley',
+                                const: 10000045
+                            },
+                            {
+                                title: 'Police Scotland Greater Glasgow',
+                                const: 12607023
+                            },
+                            {
+                                title: 'Police Scotland Highland and Islands',
+                                const: 10000193
+                            },
+                            {
+                                title: 'Police Scotland Lanarkshire',
+                                const: 12607028
+                            },
+                            {
+                                title: 'Police Scotland North East',
+                                const: 10000133
+                            },
+                            {
+                                title: 'Police Scotland Renfrewshire and Inverclyde',
+                                const: 12607026
+                            },
+                            {
+                                title: 'Police Scotland Tayside',
+                                const: 10000243
+                            },
+                            {
+                                title: 'Police Scotland The Lothians and Scottish Borders',
+                                const: 13400413
+                            },
+                            {
+                                title: 'Dyfed-Powys',
+                                const: 10000109
+                            },
+                            {
+                                title: 'Gwent',
+                                const: 10000147
+                            },
+                            {
+                                title: 'North Wales',
+                                const: 10000187
+                            },
+                            {
+                                title: 'South Wales',
+                                const: 10000215
+                            }
+                        ]
+                    },
+                    'list-of-police-forces': {
+                        description:
+                            '\n                {% from "components/details/macro.njk" import govukDetails %}\n                {{ govukDetails({\n                    summaryText: "Help with police forces",\n                    html: \'<p>See a list of all <a href="/police" target="_blank">police forces in England, Scotland and Wales</a> (opens in a new tab)</p>\'\n                }) }}\n            '
+                    }
+                },
+                errorMessage: {
+                    required: {
+                        'q-police-force-id': 'Select a police force from the list'
+                    }
+                }
+            },
             system: {
                 $schema: 'http://json-schema.org/draft-07/schema#',
                 type: 'object',
@@ -1605,7 +1843,7 @@ module.exports = {
                     on: {
                         ANSWER: [
                             {
-                                target: 'p-applicant-british-citizen-or-eu-national'
+                                target: 'p-applicant-were-you-a-victim-of-sexual-assault-or-abuse'
                             }
                         ]
                     }
@@ -1644,7 +1882,7 @@ module.exports = {
                                 ]
                             },
                             {
-                                target: 'p-applicant-who-are-you-applying-for',
+                                target: 'p--before-you-continue',
                                 cond: [
                                     '==',
                                     '$.answers.p-applicant-are-you-18-or-over.q-applicant-are-you-18-or-over',
@@ -1658,7 +1896,7 @@ module.exports = {
                     on: {
                         ANSWER: [
                             {
-                                target: 'p-applicant-redirect-to-our-other-application',
+                                target: 'p-main-applying-for-child',
                                 cond: [
                                     '==',
                                     '$.answers.p-applicant-who-are-you-applying-for.q-applicant-who-are-you-applying-for',
@@ -1666,7 +1904,7 @@ module.exports = {
                                 ]
                             },
                             {
-                                target: 'p-applicant-were-you-a-victim-of-sexual-assault-or-abuse',
+                                target: 'p-applicant-british-citizen-or-eu-national',
                                 cond: [
                                     '==',
                                     '$.answers.p-applicant-who-are-you-applying-for.q-applicant-who-are-you-applying-for',
@@ -1688,7 +1926,7 @@ module.exports = {
                                 ]
                             },
                             {
-                                target: 'p--before-you-continue',
+                                target: 'p--was-the-crime-reported-to-police',
                                 cond: [
                                     '==',
                                     '$.answers.p-applicant-were-you-a-victim-of-sexual-assault-or-abuse.q-applicant-were-you-a-victim-of-sexual-assault-or-abuse',
@@ -1702,27 +1940,27 @@ module.exports = {
                     on: {
                         ANSWER: [
                             {
-                                target: 'p-applicant-select-the-option-that-applies-to-you'
+                                target: 'p-applicant-select-option'
                             }
                         ]
                     }
                 },
-                'p-applicant-select-the-option-that-applies-to-you': {
+                'p-applicant-select-option': {
                     on: {
                         ANSWER: [
                             {
                                 target: 'p-applicant-redirect-to-our-other-application',
                                 cond: [
                                     '==',
-                                    '$.answers.p-applicant-select-the-option-that-applies-to-you.q-applicant-option',
+                                    '$.answers.p-applicant-select-option.q-applicant-option',
                                     'option-2:-sexual-assault-or-abuse-and-other-injuries-or-losses'
                                 ]
                             },
                             {
-                                target: 'p--was-the-crime-reported-to-police',
+                                target: 'p--when-was-the-crime-reported-to-police',
                                 cond: [
                                     '==',
-                                    '$.answers.p-applicant-select-the-option-that-applies-to-you.q-applicant-option',
+                                    '$.answers.p-applicant-select-option.q-applicant-option',
                                     'option-1:-sexual-assault-or-abuse'
                                 ]
                             }
@@ -1741,7 +1979,7 @@ module.exports = {
                                 ]
                             },
                             {
-                                target: 'p--when-was-the-crime-reported-to-police',
+                                target: 'p-applicant-who-are-you-applying-for',
                                 cond: [
                                     '==',
                                     '$.answers.p--was-the-crime-reported-to-police.q--was-the-crime-reported-to-police',
@@ -1885,19 +2123,19 @@ module.exports = {
                     on: {
                         ANSWER: [
                             {
+                                target: 'p-police-force',
+                                cond: [
+                                    '==',
+                                    '$.answers.p--was-the-crime-reported-to-police.q--was-the-crime-reported-to-police',
+                                    true
+                                ]
+                            },
+                            {
                                 target: 'p-offender-do-you-know-the-name-of-the-offender',
                                 cond: [
                                     '==',
                                     '$.answers.p--was-the-crime-reported-to-police.q--was-the-crime-reported-to-police',
                                     false
-                                ]
-                            },
-                            {
-                                target: 'p--which-police-force-is-investigating-the-crime',
-                                cond: [
-                                    '==',
-                                    '$.answers.p--was-the-crime-reported-to-police.q--was-the-crime-reported-to-police',
-                                    true
                                 ]
                             }
                         ]
@@ -1907,19 +2145,19 @@ module.exports = {
                     on: {
                         ANSWER: [
                             {
+                                target: 'p-police-force',
+                                cond: [
+                                    '==',
+                                    '$.answers.p--was-the-crime-reported-to-police.q--was-the-crime-reported-to-police',
+                                    true
+                                ]
+                            },
+                            {
                                 target: 'p-offender-do-you-know-the-name-of-the-offender',
                                 cond: [
                                     '==',
                                     '$.answers.p--was-the-crime-reported-to-police.q--was-the-crime-reported-to-police',
                                     false
-                                ]
-                            },
-                            {
-                                target: 'p--which-police-force-is-investigating-the-crime',
-                                cond: [
-                                    '==',
-                                    '$.answers.p--was-the-crime-reported-to-police.q--was-the-crime-reported-to-police',
-                                    true
                                 ]
                             }
                         ]
@@ -1937,7 +2175,7 @@ module.exports = {
                                 ]
                             },
                             {
-                                target: 'p--which-police-force-is-investigating-the-crime',
+                                target: 'p-police-force',
                                 cond: [
                                     '==',
                                     '$.answers.p--was-the-crime-reported-to-police.q--was-the-crime-reported-to-police',
@@ -1949,33 +2187,6 @@ module.exports = {
                 },
                 'p--you-need-to-contact-us': {
                     type: 'final'
-                },
-                'p--which-police-force-is-investigating-the-crime': {
-                    on: {
-                        ANSWER: [
-                            {
-                                target:
-                                    'p-applicant-select-reasons-for-the-delay-in-reporting-the-crime-to-police',
-                                cond: [
-                                    'dateDifferenceGreaterThanTwoDays',
-                                    '$.answers.p--when-was-the-crime-reported-to-police.q--when-was-the-crime-reported-to-police',
-                                    '$.answers.p-applicant-when-did-the-crime-happen.q-applicant-when-did-the-crime-happen'
-                                ]
-                            },
-                            {
-                                target:
-                                    'p-applicant-select-reasons-for-the-delay-in-reporting-the-crime-to-police',
-                                cond: [
-                                    'dateDifferenceGreaterThanTwoDays',
-                                    '$.answers.p--when-was-the-crime-reported-to-police.q--when-was-the-crime-reported-to-police',
-                                    '$.answers.p-applicant-when-did-the-crime-stop.q-applicant-when-did-the-crime-stop'
-                                ]
-                            },
-                            {
-                                target: 'p-offender-do-you-know-the-name-of-the-offender'
-                            }
-                        ]
-                    }
                 },
                 'p-applicant-select-reasons-for-the-delay-in-reporting-the-crime-to-police': {
                     on: {
@@ -2012,12 +2223,25 @@ module.exports = {
                     on: {
                         ANSWER: [
                             {
-                                target: 'p-offender-describe-contact-with-offender'
+                                target: 'p-offender-contact',
+                                cond: [
+                                    '==',
+                                    '$.answers.p-applicant-who-are-you-applying-for.q-applicant-who-are-you-applying-for',
+                                    'myself'
+                                ]
+                            },
+                            {
+                                target: 'p-offender-contact-main',
+                                cond: [
+                                    '==',
+                                    '$.answers.p-main-applying-for-child.q-main-applying-for-child',
+                                    true
+                                ]
                             }
                         ]
                     }
                 },
-                'p-offender-describe-contact-with-offender': {
+                'p-offender-contact': {
                     on: {
                         ANSWER: [
                             {
@@ -2048,7 +2272,7 @@ module.exports = {
                                 ]
                             },
                             {
-                                target: 'p-applicant-enter-your-name',
+                                target: 'p-applicant-name',
                                 cond: [
                                     '==',
                                     '$.answers.p-applicant-have-you-applied-for-or-received-any-other-compensation.q-applicant-have-you-applied-for-or-received-any-other-compensation',
@@ -2062,12 +2286,25 @@ module.exports = {
                     on: {
                         ANSWER: [
                             {
-                                target: 'p-applicant-enter-your-name'
+                                target: 'p-applicant-name',
+                                cond: [
+                                    '==',
+                                    '$.answers.p-applicant-who-are-you-applying-for.q-applicant-who-are-you-applying-for',
+                                    'myself'
+                                ]
+                            },
+                            {
+                                target: 'p-applicant-enter-your-address',
+                                cond: [
+                                    '==',
+                                    '$.answers.p-main-applying-for-child.q-main-applying-for-child',
+                                    true
+                                ]
                             }
                         ]
                     }
                 },
-                'p-applicant-enter-your-name': {
+                'p-applicant-name': {
                     on: {
                         ANSWER: [
                             {
@@ -2080,41 +2317,49 @@ module.exports = {
                     on: {
                         ANSWER: [
                             {
-                                target: 'p-applicant-enter-your-date-of-birth',
-                                cond: [
-                                    '==',
-                                    '$.answers.p-applicant-have-you-been-known-by-any-other-names.q-applicant-have-you-been-known-by-any-other-names',
-                                    false
-                                ]
-                            },
-                            {
-                                target: 'p-applicant-what-other-names-have-you-used',
+                                target: 'p-applicant-other-names',
                                 cond: [
                                     '==',
                                     '$.answers.p-applicant-have-you-been-known-by-any-other-names.q-applicant-have-you-been-known-by-any-other-names',
                                     true
                                 ]
+                            },
+                            {
+                                target: 'p-applicant-where-did-the-crime-happen',
+                                cond: [
+                                    '==',
+                                    '$.answers.p--was-the-crime-reported-to-police.q--was-the-crime-reported-to-police',
+                                    false
+                                ]
+                            },
+                            {
+                                target: 'p--when-was-the-crime-reported-to-police',
+                                cond: [
+                                    '==',
+                                    '$.answers.p-applicant-have-you-been-known-by-any-other-names-main.q-applicant-have-you-been-known-by-any-other-names',
+                                    false
+                                ]
                             }
                         ]
                     }
                 },
-                'p-applicant-what-other-names-have-you-used': {
+                'p-applicant-other-names': {
                     on: {
                         ANSWER: [
                             {
-                                target: 'p-applicant-enter-your-date-of-birth'
+                                target: 'p-applicant-date-of-birth'
                             }
                         ]
                     }
                 },
-                'p-applicant-enter-your-date-of-birth': {
+                'p-applicant-date-of-birth': {
                     on: {
                         ANSWER: [
                             {
                                 target: 'p-applicant-redirect-to-our-other-application',
                                 cond: [
                                     'dateLessThanEighteenYearsAgo',
-                                    '$.answers.p-applicant-enter-your-date-of-birth.q-applicant-enter-your-date-of-birth'
+                                    '$.answers.p-applicant-date-of-birth.q-applicant-enter-your-date-of-birth'
                                 ]
                             },
                             {
@@ -2127,7 +2372,20 @@ module.exports = {
                     on: {
                         ANSWER: [
                             {
-                                target: 'p-applicant-enter-your-address'
+                                target: 'p-applicant-enter-your-address',
+                                cond: [
+                                    '==',
+                                    '$.answers.p-applicant-who-are-you-applying-for.q-applicant-who-are-you-applying-for',
+                                    'myself'
+                                ]
+                            },
+                            {
+                                target: 'p-applicant-enter-your-telephone-number',
+                                cond: [
+                                    '==',
+                                    '$.answers.p-main-applying-for-child.q-main-applying-for-child',
+                                    true
+                                ]
                             }
                         ]
                     }
@@ -2136,7 +2394,20 @@ module.exports = {
                     on: {
                         ANSWER: [
                             {
-                                target: 'p-applicant-enter-your-telephone-number'
+                                target: 'p-applicant-enter-your-telephone-number',
+                                cond: [
+                                    '==',
+                                    '$.answers.p-applicant-who-are-you-applying-for.q-applicant-who-are-you-applying-for',
+                                    'myself'
+                                ]
+                            },
+                            {
+                                target: 'p-applicant-enter-your-email-address',
+                                cond: [
+                                    '==',
+                                    '$.answers.p-main-applying-for-child.q-main-applying-for-child',
+                                    true
+                                ]
                             }
                         ]
                     }
@@ -2169,7 +2440,193 @@ module.exports = {
                     on: {
                         ANSWER: [
                             {
-                                target: 'p-applicant-did-the-crime-happen-once-or-over-time'
+                                target: 'p-applicant-who-are-you-applying-for'
+                            }
+                        ]
+                    }
+                },
+                'p-main-applying-for-child': {
+                    on: {
+                        ANSWER: [
+                            {
+                                target: 'p-applicant-british-citizen-or-eu-national-main',
+                                cond: [
+                                    '==',
+                                    '$.answers.p-main-applying-for-child.q-main-applying-for-child',
+                                    true
+                                ]
+                            },
+                            {
+                                target: 'p-applicant-redirect-to-our-other-application',
+                                cond: [
+                                    '==',
+                                    '$.answers.p-main-applying-for-child.q-main-applying-for-child',
+                                    false
+                                ]
+                            }
+                        ]
+                    }
+                },
+                'p-applicant-british-citizen-or-eu-national-main': {
+                    on: {
+                        ANSWER: [
+                            {
+                                target: 'p-applicant-date-of-birth-main',
+                                cond: [
+                                    '==',
+                                    '$.answers.p-applicant-british-citizen-or-eu-national-main.q-applicant-british-citizen-or-eu-national',
+                                    true
+                                ]
+                            },
+                            {
+                                target: 'p-applicant-redirect-to-our-other-application',
+                                cond: [
+                                    '==',
+                                    '$.answers.p-applicant-british-citizen-or-eu-national-main.q-applicant-british-citizen-or-eu-national',
+                                    false
+                                ]
+                            }
+                        ]
+                    }
+                },
+                'p-applicant-date-of-birth-main': {
+                    on: {
+                        ANSWER: [
+                            {
+                                target: 'p--before-you-continue-main',
+                                cond: [
+                                    'dateLessThanEighteenYearsAgo',
+                                    '$.answers.p-applicant-date-of-birth-main.q-applicant-enter-your-date-of-birth'
+                                ]
+                            },
+                            {
+                                target: 'p-main-cannot-apply-for-over-18s'
+                            }
+                        ]
+                    }
+                },
+                'p--before-you-continue-main': {
+                    on: {
+                        ANSWER: [
+                            {
+                                target: 'p-applicant-select-option-main'
+                            }
+                        ]
+                    }
+                },
+                'p-applicant-select-option-main': {
+                    on: {
+                        ANSWER: [
+                            {
+                                target: 'p-applicant-redirect-to-our-other-application',
+                                cond: [
+                                    '==',
+                                    '$.answers.p-applicant-select-option-main.q-applicant-option',
+                                    'option-2:-sexual-assault-or-abuse-and-other-injuries-or-losses'
+                                ]
+                            },
+                            {
+                                target: 'p-applicant-name-main',
+                                cond: [
+                                    '==',
+                                    '$.answers.p-applicant-select-option-main.q-applicant-option',
+                                    'option-1:-sexual-assault-or-abuse'
+                                ]
+                            }
+                        ]
+                    }
+                },
+                'p-main-cannot-apply-for-over-18s': {
+                    type: 'final'
+                },
+                'p-applicant-name-main': {
+                    on: {
+                        ANSWER: [
+                            {
+                                target: 'p-applicant-have-you-been-known-by-any-other-names-main'
+                            }
+                        ]
+                    }
+                },
+                'p-applicant-have-you-been-known-by-any-other-names-main': {
+                    on: {
+                        ANSWER: [
+                            {
+                                target: 'p-applicant-other-names-main',
+                                cond: [
+                                    '==',
+                                    '$.answers.p-applicant-have-you-been-known-by-any-other-names-main.q-applicant-have-you-been-known-by-any-other-names',
+                                    true
+                                ]
+                            },
+                            {
+                                target: 'p-applicant-where-did-the-crime-happen',
+                                cond: [
+                                    '==',
+                                    '$.answers.p--was-the-crime-reported-to-police.q--was-the-crime-reported-to-police',
+                                    false
+                                ]
+                            },
+                            {
+                                target: 'p--when-was-the-crime-reported-to-police',
+                                cond: [
+                                    '==',
+                                    '$.answers.p-applicant-have-you-been-known-by-any-other-names-main.q-applicant-have-you-been-known-by-any-other-names',
+                                    false
+                                ]
+                            }
+                        ]
+                    }
+                },
+                'p-applicant-other-names-main': {
+                    on: {
+                        ANSWER: [
+                            {
+                                target: 'p-applicant-where-did-the-crime-happen',
+                                cond: [
+                                    '==',
+                                    '$.answers.p--was-the-crime-reported-to-police.q--was-the-crime-reported-to-police',
+                                    false
+                                ]
+                            },
+                            {
+                                target: 'p--when-was-the-crime-reported-to-police'
+                            }
+                        ]
+                    }
+                },
+                'p-offender-contact-main': {
+                    on: {
+                        ANSWER: [
+                            {
+                                target: 'p-applicant-have-you-applied-to-us-before'
+                            }
+                        ]
+                    }
+                },
+                'p-police-force': {
+                    on: {
+                        ANSWER: [
+                            {
+                                target:
+                                    'p-applicant-select-reasons-for-the-delay-in-reporting-the-crime-to-police',
+                                cond: [
+                                    'dateDifferenceGreaterThanTwoDays',
+                                    'q--when-was-the-crime-reported-to-police',
+                                    'q-applicant-when-did-the-crime-happen'
+                                ]
+                            },
+                            {
+                                target:
+                                    'p-applicant-select-reasons-for-the-delay-in-reporting-the-crime-to-police',
+                                cond: [
+                                    'dateDifferenceGreaterThanTwoDays',
+                                    'q--when-was-the-crime-reported-to-police',
+                                    'q-applicant-when-did-the-crime-stop'
+                                ]
+                            },
+                            {
+                                target: 'p-offender-do-you-know-the-name-of-the-offender'
                             }
                         ]
                     }
