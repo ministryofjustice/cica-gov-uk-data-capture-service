@@ -2834,7 +2834,7 @@ module.exports = {
                     on: {
                         ANSWER: [
                             {
-                                target: 'p-applicant-other-compensation-details',
+                                target: 'p-applicant-other-compensation-details-main',
                                 cond: [
                                     '==',
                                     '$.answers.p-applicant-other-compensation-main.q-applicant-have-you-applied-for-or-received-any-other-compensation',
@@ -2842,7 +2842,7 @@ module.exports = {
                                 ]
                             },
                             {
-                                target: 'p-applicant-name',
+                                target: 'p-applicant-enter-your-address',
                                 cond: [
                                     '==',
                                     '$.answers.p-applicant-other-compensation-main.q-applicant-have-you-applied-for-or-received-any-other-compensation',
@@ -2856,15 +2856,7 @@ module.exports = {
                     on: {
                         ANSWER: [
                             {
-                                target: 'p-applicant-enter-your-address',
-                                cond: [
-                                    '==',
-                                    '$.answers.p-main-applying-for-child.q-main-applying-for-child',
-                                    true
-                                ]
-                            },
-                            {
-                                target: 'p-applicant-name'
+                                target: 'p-applicant-enter-your-address'
                             }
                         ]
                     }
