@@ -2449,8 +2449,8 @@ module.exports = {
                                 target: 'p-applicant-other-compensation-main',
                                 cond: [
                                     '==',
-                                    '$.answers.p-main-applying-for-child.q-main-applying-for-child',
-                                    true
+                                    '$.answers.p-applicant-who-are-you-applying-for.q-applicant-who-are-you-applying-for',
+                                    'someone-else'
                                 ]
                             },
                             {
