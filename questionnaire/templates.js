@@ -2811,8 +2811,8 @@ module.exports = {
                                     'p-applicant-select-reasons-for-the-delay-in-reporting-the-crime-to-police',
                                 cond: [
                                     'dateDifferenceGreaterThanTwoDays',
-                                    'q--when-was-the-crime-reported-to-police',
-                                    'q-applicant-when-did-the-crime-happen'
+                                    '$.answers.p--when-was-the-crime-reported-to-police.q--when-was-the-crime-reported-to-police',
+                                    '$.answers.p-applicant-when-did-the-crime-happen.q-applicant-when-did-the-crime-happen'
                                 ]
                             },
                             {
@@ -2820,8 +2820,8 @@ module.exports = {
                                     'p-applicant-select-reasons-for-the-delay-in-reporting-the-crime-to-police',
                                 cond: [
                                     'dateDifferenceGreaterThanTwoDays',
-                                    'q--when-was-the-crime-reported-to-police',
-                                    'q-applicant-when-did-the-crime-stop'
+                                    '$.answers.p--when-was-the-crime-reported-to-police.q--when-was-the-crime-reported-to-police',
+                                    '$.answers.p-applicant-when-did-the-crime-stop.q-applicant-when-did-the-crime-stop'
                                 ]
                             },
                             {
