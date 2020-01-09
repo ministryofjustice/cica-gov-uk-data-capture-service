@@ -535,10 +535,10 @@ module.exports = {
                 $schema: 'http://json-schema.org/draft-07/schema#',
                 title: 'Which police force is investigating the crime?',
                 type: 'object',
-                required: ['q--which-police-force-is-investigating-the-crime'],
+                required: ['q-police-force-id'],
                 additionalProperties: false,
                 properties: {
-                    'q--which-police-force-is-investigating-the-crime': {
+                    'q-police-force-id': {
                         type: 'integer',
                         oneOf: [
                             {
@@ -902,8 +902,7 @@ module.exports = {
                 },
                 errorMessage: {
                     required: {
-                        'q--which-police-force-is-investigating-the-crime':
-                            'Select a police force from the list'
+                        'q-police-force-id': 'Select a police force from the list'
                     }
                 }
             },
