@@ -1601,11 +1601,19 @@ module.exports = {
                         ANSWER: [
                             {
                                 target: 'p-applicant-redirect-to-our-other-application',
-                                cond: ['==', 'q-applicant-british-citizen-or-eu-national', false]
+                                cond: [
+                                    '==',
+                                    '$.answers.p-applicant-british-citizen-or-eu-national.q-applicant-british-citizen-or-eu-national',
+                                    false
+                                ]
                             },
                             {
                                 target: 'p-applicant-are-you-18-or-over',
-                                cond: ['==', 'q-applicant-british-citizen-or-eu-national', true]
+                                cond: [
+                                    '==',
+                                    '$.answers.p-applicant-british-citizen-or-eu-national.q-applicant-british-citizen-or-eu-national',
+                                    true
+                                ]
                             }
                         ]
                     }
@@ -1615,11 +1623,19 @@ module.exports = {
                         ANSWER: [
                             {
                                 target: 'p-applicant-redirect-to-our-other-application',
-                                cond: ['==', 'q-applicant-are-you-18-or-over', false]
+                                cond: [
+                                    '==',
+                                    '$.answers.p-applicant-are-you-18-or-over.q-applicant-are-you-18-or-over',
+                                    false
+                                ]
                             },
                             {
                                 target: 'p-applicant-who-are-you-applying-for',
-                                cond: ['==', 'q-applicant-are-you-18-or-over', true]
+                                cond: [
+                                    '==',
+                                    '$.answers.p-applicant-are-you-18-or-over.q-applicant-are-you-18-or-over',
+                                    true
+                                ]
                             }
                         ]
                     }
@@ -1629,11 +1645,19 @@ module.exports = {
                         ANSWER: [
                             {
                                 target: 'p-applicant-redirect-to-our-other-application',
-                                cond: ['==', 'q-applicant-who-are-you-applying-for', 'someone-else']
+                                cond: [
+                                    '==',
+                                    '$.answers.p-applicant-who-are-you-applying-for.q-applicant-who-are-you-applying-for',
+                                    'someone-else'
+                                ]
                             },
                             {
                                 target: 'p-applicant-were-you-a-victim-of-sexual-assault-or-abuse',
-                                cond: ['==', 'q-applicant-who-are-you-applying-for', 'myself']
+                                cond: [
+                                    '==',
+                                    '$.answers.p-applicant-who-are-you-applying-for.q-applicant-who-are-you-applying-for',
+                                    'myself'
+                                ]
                             }
                         ]
                     }
@@ -1645,7 +1669,7 @@ module.exports = {
                                 target: 'p-applicant-redirect-to-our-other-application',
                                 cond: [
                                     '==',
-                                    'q-applicant-were-you-a-victim-of-sexual-assault-or-abuse',
+                                    '$.answers.p-applicant-were-you-a-victim-of-sexual-assault-or-abuse.q-applicant-were-you-a-victim-of-sexual-assault-or-abuse',
                                     false
                                 ]
                             },
@@ -1653,7 +1677,7 @@ module.exports = {
                                 target: 'p--before-you-continue',
                                 cond: [
                                     '==',
-                                    'q-applicant-were-you-a-victim-of-sexual-assault-or-abuse',
+                                    '$.answers.p-applicant-were-you-a-victim-of-sexual-assault-or-abuse.q-applicant-were-you-a-victim-of-sexual-assault-or-abuse',
                                     true
                                 ]
                             }
@@ -1676,7 +1700,7 @@ module.exports = {
                                 target: 'p-applicant-redirect-to-our-other-application',
                                 cond: [
                                     '==',
-                                    'q-applicant-option',
+                                    '$.answers.p-applicant-select-the-option-that-applies-to-you.q-applicant-option',
                                     'option-2:-sexual-assault-or-abuse-and-other-injuries-or-losses'
                                 ]
                             },
@@ -1684,7 +1708,7 @@ module.exports = {
                                 target: 'p--was-the-crime-reported-to-police',
                                 cond: [
                                     '==',
-                                    'q-applicant-option',
+                                    '$.answers.p-applicant-select-the-option-that-applies-to-you.q-applicant-option',
                                     'option-1:-sexual-assault-or-abuse'
                                 ]
                             }
@@ -1696,11 +1720,19 @@ module.exports = {
                         ANSWER: [
                             {
                                 target: 'p-applicant-you-cannot-get-compensation',
-                                cond: ['==', 'q--was-the-crime-reported-to-police', false]
+                                cond: [
+                                    '==',
+                                    '$.answers.p--was-the-crime-reported-to-police.q--was-the-crime-reported-to-police',
+                                    false
+                                ]
                             },
                             {
                                 target: 'p--when-was-the-crime-reported-to-police',
-                                cond: ['==', 'q--was-the-crime-reported-to-police', true]
+                                cond: [
+                                    '==',
+                                    '$.answers.p--was-the-crime-reported-to-police.q--was-the-crime-reported-to-police',
+                                    true
+                                ]
                             }
                         ]
                     }
@@ -1730,7 +1762,7 @@ module.exports = {
                                 target: 'p-applicant-when-did-the-crime-happen',
                                 cond: [
                                     '==',
-                                    'q-applicant-did-the-crime-happen-once-or-over-time',
+                                    '$.answers.p-applicant-did-the-crime-happen-once-or-over-time.q-applicant-did-the-crime-happen-once-or-over-time',
                                     'once'
                                 ]
                             },
@@ -1738,7 +1770,7 @@ module.exports = {
                                 target: 'p-applicant-when-did-the-crime-start',
                                 cond: [
                                     '==',
-                                    'q-applicant-did-the-crime-happen-once-or-over-time',
+                                    '$.answers.p-applicant-did-the-crime-happen-once-or-over-time.q-applicant-did-the-crime-happen-once-or-over-time',
                                     'over-a-period-of-time'
                                 ]
                             }
@@ -1753,7 +1785,7 @@ module.exports = {
                                     'p-applicant-select-reasons-for-the-delay-in-making-your-application',
                                 cond: [
                                     'dateExceedsTwoYearsFromNow',
-                                    'q-applicant-when-did-the-crime-happen'
+                                    '$.answers.p-applicant-when-did-the-crime-happen.q-applicant-when-did-the-crime-happen'
                                 ]
                             },
                             {
@@ -1779,7 +1811,7 @@ module.exports = {
                                     'p-applicant-select-reasons-for-the-delay-in-making-your-application',
                                 cond: [
                                     'dateExceedsTwoYearsFromNow',
-                                    'q-applicant-when-did-the-crime-stop'
+                                    '$.answers.p-applicant-when-did-the-crime-stop.q-applicant-when-did-the-crime-stop'
                                 ]
                             },
                             {
@@ -1802,21 +1834,33 @@ module.exports = {
                         ANSWER: [
                             {
                                 target: 'p-applicant-where-in-england-did-it-happen',
-                                cond: ['==', 'q-applicant-where-did-the-crime-happen', 'england']
+                                cond: [
+                                    '==',
+                                    '$.answers.p-applicant-where-did-the-crime-happen.q-applicant-where-did-the-crime-happen',
+                                    'england'
+                                ]
                             },
                             {
                                 target: 'p-applicant-where-in-scotland-did-it-happen',
-                                cond: ['==', 'q-applicant-where-did-the-crime-happen', 'scotland']
+                                cond: [
+                                    '==',
+                                    '$.answers.p-applicant-where-did-the-crime-happen.q-applicant-where-did-the-crime-happen',
+                                    'scotland'
+                                ]
                             },
                             {
                                 target: 'p-applicant-where-in-wales-did-it-happen',
-                                cond: ['==', 'q-applicant-where-did-the-crime-happen', 'wales']
+                                cond: [
+                                    '==',
+                                    '$.answers.p-applicant-where-did-the-crime-happen.q-applicant-where-did-the-crime-happen',
+                                    'wales'
+                                ]
                             },
                             {
                                 target: 'p--you-need-to-contact-us',
                                 cond: [
                                     '==',
-                                    'q-applicant-where-did-the-crime-happen',
+                                    '$.answers.p-applicant-where-did-the-crime-happen.q-applicant-where-did-the-crime-happen',
                                     'somewhere-else'
                                 ]
                             }
@@ -1828,11 +1872,19 @@ module.exports = {
                         ANSWER: [
                             {
                                 target: 'p-offender-do-you-know-the-name-of-the-offender',
-                                cond: ['==', 'q--was-the-crime-reported-to-police', false]
+                                cond: [
+                                    '==',
+                                    '$.answers.p--was-the-crime-reported-to-police.q--was-the-crime-reported-to-police',
+                                    false
+                                ]
                             },
                             {
                                 target: 'p--which-police-force-is-investigating-the-crime',
-                                cond: ['==', 'q--was-the-crime-reported-to-police', true]
+                                cond: [
+                                    '==',
+                                    '$.answers.p--was-the-crime-reported-to-police.q--was-the-crime-reported-to-police',
+                                    true
+                                ]
                             }
                         ]
                     }
@@ -1842,11 +1894,19 @@ module.exports = {
                         ANSWER: [
                             {
                                 target: 'p-offender-do-you-know-the-name-of-the-offender',
-                                cond: ['==', 'q--was-the-crime-reported-to-police', false]
+                                cond: [
+                                    '==',
+                                    '$.answers.p--was-the-crime-reported-to-police.q--was-the-crime-reported-to-police',
+                                    false
+                                ]
                             },
                             {
                                 target: 'p--which-police-force-is-investigating-the-crime',
-                                cond: ['==', 'q--was-the-crime-reported-to-police', true]
+                                cond: [
+                                    '==',
+                                    '$.answers.p--was-the-crime-reported-to-police.q--was-the-crime-reported-to-police',
+                                    true
+                                ]
                             }
                         ]
                     }
@@ -1856,11 +1916,19 @@ module.exports = {
                         ANSWER: [
                             {
                                 target: 'p-offender-do-you-know-the-name-of-the-offender',
-                                cond: ['==', 'q--was-the-crime-reported-to-police', false]
+                                cond: [
+                                    '==',
+                                    '$.answers.p--was-the-crime-reported-to-police.q--was-the-crime-reported-to-police',
+                                    false
+                                ]
                             },
                             {
                                 target: 'p--which-police-force-is-investigating-the-crime',
-                                cond: ['==', 'q--was-the-crime-reported-to-police', true]
+                                cond: [
+                                    '==',
+                                    '$.answers.p--was-the-crime-reported-to-police.q--was-the-crime-reported-to-police',
+                                    true
+                                ]
                             }
                         ]
                     }
@@ -1876,8 +1944,8 @@ module.exports = {
                                     'p-applicant-select-reasons-for-the-delay-in-reporting-the-crime-to-police',
                                 cond: [
                                     'dateDifferenceGreaterThanTwoDays',
-                                    'q--when-was-the-crime-reported-to-police',
-                                    'q-applicant-when-did-the-crime-happen'
+                                    '$.answers.p--when-was-the-crime-reported-to-police.q--when-was-the-crime-reported-to-police',
+                                    '$.answers.p-applicant-when-did-the-crime-happen.q-applicant-when-did-the-crime-happen'
                                 ]
                             },
                             {
@@ -1885,8 +1953,8 @@ module.exports = {
                                     'p-applicant-select-reasons-for-the-delay-in-reporting-the-crime-to-police',
                                 cond: [
                                     'dateDifferenceGreaterThanTwoDays',
-                                    'q--when-was-the-crime-reported-to-police',
-                                    'q-applicant-when-did-the-crime-stop'
+                                    '$.answers.p--when-was-the-crime-reported-to-police.q--when-was-the-crime-reported-to-police',
+                                    '$.answers.p-applicant-when-did-the-crime-stop.q-applicant-when-did-the-crime-stop'
                                 ]
                             },
                             {
@@ -1911,7 +1979,7 @@ module.exports = {
                                 target: 'p-applicant-have-you-applied-to-us-before',
                                 cond: [
                                     '==',
-                                    'q-offender-do-you-know-the-name-of-the-offender',
+                                    '$.answers.p-offender-do-you-know-the-name-of-the-offender.q-offender-do-you-know-the-name-of-the-offender',
                                     false
                                 ]
                             },
@@ -1919,7 +1987,7 @@ module.exports = {
                                 target: 'p-offender-enter-offenders-name',
                                 cond: [
                                     '==',
-                                    'q-offender-do-you-know-the-name-of-the-offender',
+                                    '$.answers.p-offender-do-you-know-the-name-of-the-offender.q-offender-do-you-know-the-name-of-the-offender',
                                     true
                                 ]
                             }
@@ -1961,7 +2029,7 @@ module.exports = {
                                 target: 'p-applicant-other-compensation-details',
                                 cond: [
                                     '==',
-                                    'q-applicant-have-you-applied-for-or-received-any-other-compensation',
+                                    '$.answers.p-applicant-have-you-applied-for-or-received-any-other-compensation.q-applicant-have-you-applied-for-or-received-any-other-compensation',
                                     true
                                 ]
                             },
@@ -1969,7 +2037,7 @@ module.exports = {
                                 target: 'p-applicant-enter-your-name',
                                 cond: [
                                     '==',
-                                    'q-applicant-have-you-applied-for-or-received-any-other-compensation',
+                                    '$.answers.p-applicant-have-you-applied-for-or-received-any-other-compensation.q-applicant-have-you-applied-for-or-received-any-other-compensation',
                                     false
                                 ]
                             }
@@ -2001,7 +2069,7 @@ module.exports = {
                                 target: 'p-applicant-enter-your-date-of-birth',
                                 cond: [
                                     '==',
-                                    'q-applicant-have-you-been-known-by-any-other-names',
+                                    '$.answers.p-applicant-have-you-been-known-by-any-other-names.q-applicant-have-you-been-known-by-any-other-names',
                                     false
                                 ]
                             },
@@ -2009,7 +2077,7 @@ module.exports = {
                                 target: 'p-applicant-what-other-names-have-you-used',
                                 cond: [
                                     '==',
-                                    'q-applicant-have-you-been-known-by-any-other-names',
+                                    '$.answers.p-applicant-have-you-been-known-by-any-other-names.q-applicant-have-you-been-known-by-any-other-names',
                                     true
                                 ]
                             }
@@ -2032,7 +2100,7 @@ module.exports = {
                                 target: 'p-applicant-redirect-to-our-other-application',
                                 cond: [
                                     'dateLessThanEighteenYearsAgo',
-                                    'q-applicant-enter-your-date-of-birth'
+                                    '$.answers.p-applicant-enter-your-date-of-birth.q-applicant-enter-your-date-of-birth'
                                 ]
                             },
                             {
