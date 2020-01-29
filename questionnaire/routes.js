@@ -87,7 +87,6 @@ router
                 req.params.sectionId,
                 answers
             );
-
             res.status(201).json(response);
         } catch (err) {
             next(err);

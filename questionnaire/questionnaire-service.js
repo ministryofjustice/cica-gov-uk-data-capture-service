@@ -12,6 +12,10 @@ const templates = require('./templates');
 const createQuestionnaireDAL = require('./questionnaire-dal');
 const createMessageBusCaller = require('../services/message-bus');
 const replaceJsonPointers = require('../services/replace-json-pointer');
+const createNotifyService = require('../services/notify');
+const createMobilePhoneNumberValidatorService = require('../services/mobilePhoneNumberValidator');
+
+const mobilePhoneNumberValidator = createMobilePhoneNumberValidatorService();
 
 function createQuestionnaireService(spec) {
     const {logger} = spec;
@@ -24,6 +28,10 @@ function createQuestionnaireService(spec) {
     });
 
     AjvErrors(ajv);
+
+    ajv.addFormat('x-mobilePhoneNumber', mobilePhoneNumber => {
+        return mobilePhoneNumberValidator.isValidMobilePhoneNumber(mobilePhoneNumber);
+    });
 
     async function createQuestionnaire(templateName) {
         if (!(templateName in templates)) {
@@ -122,33 +130,59 @@ function createQuestionnaireService(spec) {
 
     async function sendConfirmationNotification(questionnaireId) {
         const questionnaire = await getQuestionnaire(questionnaireId);
-        const messageBus = createMessageBusCaller({logger});
+        let confirmationSent = false;
         const onCompleteTasks =
             questionnaire.meta &&
             questionnaire.meta.onComplete &&
             questionnaire.meta.onComplete.tasks;
-
         onCompleteTasks.forEach(async task => {
-            // email to be sent out.
-            if (task.emailTemplateId) {
-                try {
-                    await messageBus.post('NotificationQueue', {
-                        templateId: task.emailTemplateId,
-                        emailAddress: pointer.get(
-                            questionnaire,
-                            task.emailTemplatePlaceholderMap.applicantEmail
-                        ),
-                        personalisation: {
-                            case_reference: pointer.get(
+            if (confirmationSent === true) {
+                return;
+            }
+            try {
+                const notifyService = createNotifyService({logger});
+
+                if (task.type === 'sendEmail') {
+                    if (pointer.has(questionnaire, task.templatePlaceholderMap.emailAddress)) {
+                        const transformedTaskOptions = {
+                            ...task,
+                            emailAddress: pointer.get(
                                 questionnaire,
-                                task.emailTemplatePlaceholderMap.caseReference
-                            )
-                        },
-                        reference: null
-                    });
-                } catch (err) {
-                    await updateQuestionnaireSubmissionStatus(questionnaireId, 'FAILED');
+                                task.templatePlaceholderMap.emailAddress
+                            ),
+                            personalisation: {
+                                caseReference: pointer.get(
+                                    questionnaire,
+                                    task.templatePlaceholderMap.caseReference
+                                )
+                            }
+                        };
+                        await notifyService.sendEmail(transformedTaskOptions);
+                        confirmationSent = true;
+                    }
                 }
+
+                if (task.type === 'sendSms') {
+                    if (pointer.has(questionnaire, task.templatePlaceholderMap.phoneNumber)) {
+                        const transformedTaskOptions = {
+                            ...task,
+                            phoneNumber: pointer.get(
+                                questionnaire,
+                                task.templatePlaceholderMap.phoneNumber
+                            ),
+                            personalisation: {
+                                caseReference: pointer.get(
+                                    questionnaire,
+                                    task.templatePlaceholderMap.caseReference
+                                )
+                            }
+                        };
+                        await notifyService.sendSms(transformedTaskOptions);
+                        confirmationSent = true;
+                    }
+                }
+            } catch (err) {
+                logger.error({err}, 'NOTIFICATION SENDING FAILED');
             }
         });
     }
@@ -390,7 +424,6 @@ function createQuestionnaireService(spec) {
         const questionnaire = await getQuestionnaire(questionnaireId);
         // 2 - get router
         const qRouter = createQRouter(questionnaire);
-
         // 3 - filter or paginate progress entries if required
         // Currently this only supports queries that return a single progress entry
         if (query) {

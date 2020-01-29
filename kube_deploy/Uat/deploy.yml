@@ -38,5 +38,10 @@ spec:
                 secretKeyRef:
                   name: shared-secrets
                   key: message_bus_credentials
+            - name: NOTIFY_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: shared-secrets
+                  key: notify_api_key
             - name: DCS_URL
               value: 'https://data-capture-service.uat.claim-criminal-injuries-compensation.service.justice.gov.uk'
