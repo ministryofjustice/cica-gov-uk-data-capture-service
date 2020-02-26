@@ -4,7 +4,7 @@ module.exports = {
     'sexual-assault': id => ({
         id,
         type: 'apply-for-compensation',
-        version: '0.2.12',
+        version: '0.2.13',
         sections: {
             'p-applicant-declaration': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
@@ -16,7 +16,8 @@ module.exports = {
                         description:
                             '\n                <p class="govuk-body">By continuing you confirm that the information you will give is true as far as you know.</p>\n                {{ govukWarningText({\n                    text: "If you deliberately give false or misleading information, you may get less compensation or be prosecuted.",\n                    iconFallbackText: "Warning"\n                }) }}\n            '
                     }
-                }
+                },
+                examples: [{}]
             },
             'p-applicant-british-citizen-or-eu-national': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
@@ -34,7 +35,15 @@ module.exports = {
                         'q-applicant-british-citizen-or-eu-national':
                             'Select yes if you are a British citizen or EU national'
                     }
-                }
+                },
+                examples: [
+                    {
+                        'q-applicant-british-citizen-or-eu-national': true
+                    },
+                    {
+                        'q-applicant-british-citizen-or-eu-national': false
+                    }
+                ]
             },
             'p-applicant-are-you-18-or-over': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
@@ -51,7 +60,15 @@ module.exports = {
                     required: {
                         'q-applicant-are-you-18-or-over': 'Select yes if you are 18 or over'
                     }
-                }
+                },
+                examples: [
+                    {
+                        'q-applicant-are-you-18-or-over': true
+                    },
+                    {
+                        'q-applicant-are-you-18-or-over': false
+                    }
+                ]
             },
             'p-applicant-who-are-you-applying-for': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
@@ -79,7 +96,12 @@ module.exports = {
                         'q-applicant-who-are-you-applying-for':
                             'Select myself if you are applying for yourself'
                     }
-                }
+                },
+                examples: [
+                    {
+                        'q-applicant-who-are-you-applying-for': 'myself'
+                    }
+                ]
             },
             'p-applicant-were-you-a-victim-of-sexual-assault-or-abuse': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
@@ -97,7 +119,15 @@ module.exports = {
                         'q-applicant-were-you-a-victim-of-sexual-assault-or-abuse':
                             'Select yes if you were a victim of sexual assault or abuse'
                     }
-                }
+                },
+                examples: [
+                    {
+                        'q-applicant-were-you-a-victim-of-sexual-assault-or-abuse': true
+                    },
+                    {
+                        'q-applicant-were-you-a-victim-of-sexual-assault-or-abuse': false
+                    }
+                ]
             },
             'p--before-you-continue': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
@@ -109,7 +139,8 @@ module.exports = {
                         description:
                             '\n                <p class="govuk-body">On the next page we will ask you to select an option based on how the crime affected you.</p>\n                <p class="govuk-body">We appreciate that this may be difficult for you.</p>\n                <h2 class="govuk-heading-m">If you need help or support</h2>\n                <p class="govuk-body">You can contact us for help with your application on 0300 003 3601. Select option 8.</p>\n                <p class="govuk-body">Our phone lines are open Monday to Friday 8:30am to 5pm except Wednesday when they open at 10am.</p>\n                <p class="govuk-body">You can get practical or emotional support depending on where you live:</p>\n                <ul class="govuk-list govuk-list--bullet">\n                   <li>in England and Wales <a href="https://www.victimandwitnessinformation.org.uk/">visit the Victim and Witness Information website</a></li>\n                   <li>in Scotland <a href="https://www.mygov.scot/victim-witness-support/">visit the mygov.scot website</a></li>\n                </ul>\n            '
                     }
-                }
+                },
+                examples: [{}]
             },
             'p-applicant-select-the-option-that-applies-to-you': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
@@ -143,7 +174,12 @@ module.exports = {
                     required: {
                         'q-applicant-option': 'Select either Option 1 or Option 2'
                     }
-                }
+                },
+                examples: [
+                    {
+                        'q-applicant-option': 'option-1:-sexual-assault-or-abuse'
+                    }
+                ]
             },
             'p--was-the-crime-reported-to-police': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
@@ -165,7 +201,15 @@ module.exports = {
                         'q--was-the-crime-reported-to-police':
                             'Select yes if the crime was reported to the police'
                     }
-                }
+                },
+                examples: [
+                    {
+                        'q--was-the-crime-reported-to-police': true
+                    },
+                    {
+                        'q--was-the-crime-reported-to-police': false
+                    }
+                ]
             },
             'p--when-was-the-crime-reported-to-police': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
@@ -189,7 +233,12 @@ module.exports = {
                         'q--when-was-the-crime-reported-to-police':
                             'Enter the date the crime was reported to the police'
                     }
-                }
+                },
+                examples: [
+                    {
+                        'q--when-was-the-crime-reported-to-police': '2020-01-01T00:00:00.000Z'
+                    }
+                ]
             },
             'p--whats-the-crime-reference-number': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
@@ -212,7 +261,12 @@ module.exports = {
                     required: {
                         'q--whats-the-crime-reference-number': 'Enter the crime reference number'
                     }
-                }
+                },
+                examples: [
+                    {
+                        'q--whats-the-crime-reference-number': 'abc123'
+                    }
+                ]
             },
             'p-applicant-did-the-crime-happen-once-or-over-time': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
@@ -240,7 +294,16 @@ module.exports = {
                         'q-applicant-did-the-crime-happen-once-or-over-time':
                             'Select Once or Over a period of time'
                     }
-                }
+                },
+                examples: [
+                    {
+                        'q-applicant-did-the-crime-happen-once-or-over-time': 'once'
+                    },
+                    {
+                        'q-applicant-did-the-crime-happen-once-or-over-time':
+                            'over-a-period-of-time'
+                    }
+                ]
             },
             'p-applicant-when-did-the-crime-happen': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
@@ -268,7 +331,12 @@ module.exports = {
                         'q-applicant-when-did-the-crime-happen':
                             'Enter the date the crime happened and include a day, month and year'
                     }
-                }
+                },
+                examples: [
+                    {
+                        'q-applicant-when-did-the-crime-happen': '2020-01-01T00:00:00.000Z'
+                    }
+                ]
             },
             'p-applicant-when-did-the-crime-start': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
@@ -295,7 +363,12 @@ module.exports = {
                         'q-applicant-when-did-the-crime-start':
                             'Enter the date the crime started and include a month and year'
                     }
-                }
+                },
+                examples: [
+                    {
+                        'q-applicant-when-did-the-crime-start': '2020-01-01T00:00:00.000Z'
+                    }
+                ]
             },
             'p-applicant-when-did-the-crime-stop': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
@@ -322,7 +395,12 @@ module.exports = {
                         'q-applicant-when-did-the-crime-stop':
                             'Enter the date the crime stopped and include a month and year'
                     }
-                }
+                },
+                examples: [
+                    {
+                        'q-applicant-when-did-the-crime-stop': '2020-01-10T00:00:00.000Z'
+                    }
+                ]
             },
             'p-applicant-select-reasons-for-the-delay-in-making-your-application': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
@@ -376,7 +454,16 @@ module.exports = {
                         'q-applicant-explain-reason-for-delay-application':
                             'Explain the reasons for the delay in making your application'
                     }
-                }
+                },
+                examples: [
+                    {
+                        'q-applicant-select-reasons-for-the-delay-in-making-your-application': [
+                            'i-was-underage',
+                            'medical-reasons'
+                        ],
+                        'q-applicant-explain-reason-for-delay-application': 'some reason'
+                    }
+                ]
             },
             'p-applicant-where-did-the-crime-happen': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
@@ -412,7 +499,21 @@ module.exports = {
                         'q-applicant-where-did-the-crime-happen':
                             'Select England, Scotland, Wales or Somewhere else'
                     }
-                }
+                },
+                examples: [
+                    {
+                        'q-applicant-where-did-the-crime-happen': 'england'
+                    },
+                    {
+                        'q-applicant-where-did-the-crime-happen': 'scotland'
+                    },
+                    {
+                        'q-applicant-where-did-the-crime-happen': 'wales'
+                    },
+                    {
+                        'q-applicant-where-did-the-crime-happen': 'somewhere-else'
+                    }
+                ]
             },
             'p-applicant-where-in-england-did-it-happen': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
@@ -447,7 +548,13 @@ module.exports = {
                         'q-applicant-english-town-or-city':
                             'Enter the town or city where the crime happened'
                     }
-                }
+                },
+                examples: [
+                    {
+                        'q-applicant-english-town-or-city': 'Some town',
+                        'q-applicant-english-location': 'Some location'
+                    }
+                ]
             },
             'p-applicant-where-in-scotland-did-it-happen': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
@@ -482,7 +589,13 @@ module.exports = {
                         'q-applicant-scottish-town-or-city':
                             'Enter the town or city where the crime happened'
                     }
-                }
+                },
+                examples: [
+                    {
+                        'q-applicant-scottish-town-or-city': 'Some town',
+                        'q-applicant-scottish-location': 'Some location'
+                    }
+                ]
             },
             'p-applicant-where-in-wales-did-it-happen': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
@@ -517,7 +630,13 @@ module.exports = {
                         'q-applicant-welsh-town-or-city':
                             'Enter the town or city where the crime happened'
                     }
-                }
+                },
+                examples: [
+                    {
+                        'q-applicant-welsh-town-or-city': 'Some town',
+                        'q-applicant-welsh-location': 'Some location'
+                    }
+                ]
             },
             'p--you-need-to-contact-us': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
@@ -529,7 +648,8 @@ module.exports = {
                         description:
                             '\n                <p class="govuk-body">We need to check if you are eligible for compensation.</p>\n                <p class="govuk-body">Call us on 0300 003 3601. Select option 8.</p>\n                <p class="govuk-body">Our phone lines are open Monday to Friday 8:30am to 5pm except Wednesday when they open at 10am.</p>\n            '
                     }
-                }
+                },
+                examples: [{}]
             },
             'p--which-police-force-is-investigating-the-crime': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
@@ -904,7 +1024,12 @@ module.exports = {
                     required: {
                         'q-police-force-id': 'Select a police force from the list'
                     }
-                }
+                },
+                examples: [
+                    {
+                        'q-police-force-id': 10000147
+                    }
+                ]
             },
             'p-applicant-select-reasons-for-the-delay-in-reporting-the-crime-to-police': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
@@ -954,7 +1079,17 @@ module.exports = {
                         'q-applicant-explain-reason-for-delay-reporting':
                             'Explain the reasons for the delay in reporting the crime to the police'
                     }
-                }
+                },
+                examples: [
+                    {
+                        'q-applicant-select-reasons-for-the-delay-in-reporting-the-crime-to-police': [
+                            'i-was-under-18',
+                            'unable-to-report-crime',
+                            'other'
+                        ],
+                        'q-applicant-explain-reason-for-delay-reporting': 'Some reasons'
+                    }
+                ]
             },
             'p-offender-do-you-know-the-name-of-the-offender': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
@@ -972,7 +1107,15 @@ module.exports = {
                         'q-offender-do-you-know-the-name-of-the-offender':
                             "Select yes if you know the offender's name"
                     }
-                }
+                },
+                examples: [
+                    {
+                        'q-offender-do-you-know-the-name-of-the-offender': true
+                    },
+                    {
+                        'q-offender-do-you-know-the-name-of-the-offender': false
+                    }
+                ]
             },
             'p-offender-enter-offenders-name': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
@@ -995,9 +1138,15 @@ module.exports = {
                     required: {
                         'q-offender-enter-offenders-name': "Enter the offender's name"
                     }
-                }
+                },
+                examples: [
+                    {
+                        'q-offender-enter-offenders-name': 'Foo Bar'
+                    }
+                ]
             },
             'p-offender-describe-contact-with-offender': {
+                $schema: 'http://json-schema.org/draft-07/schema#',
                 type: 'object',
                 properties: {
                     'q-offender-describe-contact-with-offender': {
@@ -1047,7 +1196,17 @@ module.exports = {
                             }
                         }
                     }
-                }
+                },
+                examples: [
+                    {
+                        'q-offender-i-have-no-contact-with-offender': [
+                            'i-have-no-contact-with-the-offender'
+                        ]
+                    },
+                    {
+                        'q-offender-describe-contact-with-offender': 'Some contact'
+                    }
+                ]
             },
             'p-applicant-have-you-applied-to-us-before': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
@@ -1103,7 +1262,22 @@ module.exports = {
                         'q-applicant-have-you-applied-to-us-before':
                             'Select yes if you have applied to us before'
                     }
-                }
+                },
+                examples: [
+                    {
+                        'q-applicant-have-you-applied-to-us-before': true,
+                        'q-enter-your-previous-reference-number': '11//123456'
+                    },
+                    {
+                        'q-applicant-have-you-applied-to-us-before': false
+                    }
+                ],
+                invalidExamples: [
+                    {
+                        'q-applicant-have-you-applied-to-us-before': false,
+                        'q-enter-your-previous-reference-number': '11//123456'
+                    }
+                ]
             },
             'p-applicant-have-you-applied-for-or-received-any-other-compensation': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
@@ -1177,7 +1351,24 @@ module.exports = {
                         'q-applicant-have-you-applied-for-or-received-any-other-compensation':
                             'Select yes if you have applied for or received another form of compensation'
                     }
-                }
+                },
+                examples: [
+                    {
+                        'q-applicant-have-you-applied-for-or-received-any-other-compensation': true
+                    },
+                    {
+                        'q-applicant-have-you-applied-for-or-received-any-other-compensation': false,
+                        'q-applicant-applied-for-other-compensation-briefly-explain-why-not':
+                            'Some explanation'
+                    }
+                ],
+                invalidExamples: [
+                    {
+                        'q-applicant-have-you-applied-for-or-received-any-other-compensation': true,
+                        'q-applicant-applied-for-other-compensation-briefly-explain-why-not':
+                            'Some explanation'
+                    }
+                ]
             },
             'p-applicant-other-compensation-details': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
@@ -1295,7 +1486,19 @@ module.exports = {
                         'q-applicant-has-a-decision-been-made':
                             'Select yes if you have received a decision about the other compensation claim'
                     }
-                }
+                },
+                examples: [
+                    {
+                        'q-applicant-who-did-you-apply-to': 'Compensation place',
+                        'q-applicant-has-a-decision-been-made': true,
+                        'q-how-much-was-award': '£1000'
+                    },
+                    {
+                        'q-applicant-who-did-you-apply-to': 'Compensation place',
+                        'q-applicant-has-a-decision-been-made': false,
+                        'q-when-will-you-find-out': 'December 3000'
+                    }
+                ]
             },
             'p-applicant-enter-your-name': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
@@ -1335,7 +1538,14 @@ module.exports = {
                         'q-applicant-first-name': 'Enter your first name',
                         'q-applicant-last-name': 'Enter your last name'
                     }
-                }
+                },
+                examples: [
+                    {
+                        'q-applicant-title': 'Mr',
+                        'q-applicant-first-name': 'Foo',
+                        'q-applicant-last-name': 'Bar'
+                    }
+                ]
             },
             'p-applicant-have-you-been-known-by-any-other-names': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
@@ -1353,7 +1563,15 @@ module.exports = {
                         'q-applicant-have-you-been-known-by-any-other-names':
                             'Select yes if you have been known by any other names'
                     }
-                }
+                },
+                examples: [
+                    {
+                        'q-applicant-have-you-been-known-by-any-other-names': true
+                    },
+                    {
+                        'q-applicant-have-you-been-known-by-any-other-names': false
+                    }
+                ]
             },
             'p-applicant-what-other-names-have-you-used': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
@@ -1375,7 +1593,12 @@ module.exports = {
                         'q-applicant-what-other-names-have-you-used':
                             'Enter the other names you have used'
                     }
-                }
+                },
+                examples: [
+                    {
+                        'q-applicant-what-other-names-have-you-used': 'Mr Biz Baz'
+                    }
+                ]
             },
             'p-applicant-enter-your-date-of-birth': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
@@ -1398,7 +1621,12 @@ module.exports = {
                         'q-applicant-enter-your-date-of-birth':
                             'Enter your date of birth and include a day, month and year'
                     }
-                }
+                },
+                examples: [
+                    {
+                        'q-applicant-enter-your-date-of-birth': '1970-01-01T00:00:00.000Z'
+                    }
+                ]
             },
             'p-applicant-enter-your-email-address': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
@@ -1424,7 +1652,12 @@ module.exports = {
                         'q-applicant-enter-your-email-address':
                             'Enter an email address in the correct format, like name@example.com'
                     }
-                }
+                },
+                examples: [
+                    {
+                        'q-applicant-enter-your-email-address': 'foo@hhjhjk34h5jkh24kj5h2k45.com'
+                    }
+                ]
             },
             'p-applicant-enter-your-address': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
@@ -1480,7 +1713,16 @@ module.exports = {
                             'Enter the building and street where you live',
                         'q-applicant-town-or-city': 'Enter the town or city where you live'
                     }
-                }
+                },
+                examples: [
+                    {
+                        'q-applicant-building-and-street': '1 Foo Lane',
+                        'q-applicant-building-and-street-2': 'Flat 2/3',
+                        'q-applicant-town-or-city': 'FooCity',
+                        'q-applicant-county': 'FooCounty',
+                        'q-applicant-postcode': 'G1 1XX'
+                    }
+                ]
             },
             'p-applicant-enter-your-telephone-number': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
@@ -1507,7 +1749,12 @@ module.exports = {
                         'q-applicant-enter-your-telephone-number':
                             'Enter a telephone number, like 01632 960 001, 07700 900 982 or +44 0808 157 0192'
                     }
-                }
+                },
+                examples: [
+                    {
+                        'q-applicant-enter-your-telephone-number': '01632 960 001'
+                    }
+                ]
             },
             'p--check-your-answers': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
@@ -1523,7 +1770,8 @@ module.exports = {
                             editAnswerText: 'Change'
                         }
                     }
-                }
+                },
+                examples: [{}]
             },
             'p--confirmation': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
@@ -1535,7 +1783,8 @@ module.exports = {
                         description:
                             '\n                    {{ govukPanel({\n                        titleText: "Application submitted",\n                        html: \'<p>Your reference number is <br /><strong>||/answers/system/case-reference||</strong></p><p>We have sent a confirmation email to <strong>||/answers/p-applicant-enter-your-email-address/q-applicant-enter-your-email-address||</strong></p>\'\n                    }) }}\n                    \n                    <p class="govuk-body-l">Thank you for submitting your application.</p>\n                    <h2 class="govuk-heading-m">What happens next</h2>\n                    <p class="govuk-body">We will:</p>\n                    <ul class="govuk-list govuk-list--bullet">\n                    <li>ask the police for evidence</li>\n                    <li>use the police evidence to make a decision</li>\n                    <li>send our decision letter by post</li>\n                    </ul>\n                    <p class="govuk-body">We will usually make a decision within 4 months.</p>\n                    {{ govukWarningText({\n                        text: "You must inform us immediately if any of the information you have given us changes, especially your address, telephone number or email address.",\n                        iconFallbackText: "Warning"\n                    }) }}\n                    <p class="govuk-body">You can contact our Customer Service Centre on 0300 003 3601. Select option 8 when the call is answered.</p>\n                    <h2 class="govuk-heading-m">Help us improve this service</h2>\n                    <p class="govuk-body">You can complete a short survey to help us improve this service.</p>\n                    <p class="govuk-body">It does not ask for any details about your case, and has no effect on your application.</p>\n                    <p class="govuk-body"><a href="https://www.surveymonkey.com/r/Privatebetafeedback">Tell us what you think of our service</a> (takes 30 seconds)</p>\n            '
                     }
-                }
+                },
+                examples: [{}]
             },
             'p-applicant-redirect-to-our-other-application': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
@@ -1547,7 +1796,8 @@ module.exports = {
                         description:
                             '<p class="govuk-body">To complete your application <a href="https://www.gov.uk/claim-compensation-criminal-injury/make-claim">use our current online service</a>.</p>\n                          {{ govukDetails({\n                              summaryText: "If you need help or support",\n                              html: \'\n                                  <p class="govuk-body">You can contact us for help with your application on 0300 003 3601. Select option 8.</p>\n                                  <p class="govuk-body">Our phone lines are open Monday to Friday 8:30am to 5pm except Wednesday when they open at 10am.</p>\n                                  <p class="govuk-body">You can get practical or emotional support depending on where you live:</p>\n                                  <ul class="govuk-list govuk-list--bullet">\n                                     <li>in England and Wales <a href="https://www.victimandwitnessinformation.org.uk/">visit the Victim and Witness Information website</a></li>\n                                     <li>in Scotland <a href="https://www.mygov.scot/victim-witness-support/">visit the mygov.scot website</a></li>\n                                  </ul>\n                              \'\n                          }) }}'
                     }
-                }
+                },
+                examples: [{}]
             },
             'p-applicant-you-cannot-get-compensation': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
@@ -1559,7 +1809,8 @@ module.exports = {
                         description:
                             '\n                <p class="govuk-body">If the crime has not been reported to the police we cannot pay compensation.</p>\n                <p class="govuk-body">You may continue your application, but any future application for the same injuries will be refused.</p>\n            '
                     }
-                }
+                },
+                examples: [{}]
             },
             system: {
                 $schema: 'http://json-schema.org/draft-07/schema#',
@@ -1577,7 +1828,12 @@ module.exports = {
                 },
                 errorMessage: {
                     required: 'Case reference is required'
-                }
+                },
+                examples: [
+                    {
+                        'case-reference': '11\\123456'
+                    }
+                ]
             }
         },
         routes: {
