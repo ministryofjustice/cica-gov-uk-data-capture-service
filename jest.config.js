@@ -8,6 +8,7 @@ const config = {
 
 process.env.DCS_JWT_SECRET = '123';
 process.env.DCS_LOG_LEVEL = 'silent';
+process.env.MESSAGE_BUS_CREDENTIALS = 'somecredentials123';
 
 /*! m0-start */
 module.exports = config;
