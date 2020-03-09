@@ -132,7 +132,7 @@ jobs:
                 -f kube_deploy/Production/cert.yml
 workflows:
   version: 2
-  build-test-push-deploydev-deployuat-deploytoprodapproval-deployprod:
+  build-test-push-deploydev-deploytouatapproval-deployuat-deploytoprodapproval-deployprod:
     jobs:
       - build
       - publish_latest:
@@ -150,11 +150,16 @@ workflows:
           filters:
             branches:
               only: dcs-deploy
-      - deploy_to_uat:
-          #          type: approvalsss
+      - deploy_to_uat_approval:
+          type: approval
           requires:
             - push_image
             - deploy_to_dev
+      - deploy_to_uat:
+          #          type: approval
+          requires:
+            - push_image
+            - deploy_to_uat_approval
           filters:
             branches:
               only: dcs-deploy
