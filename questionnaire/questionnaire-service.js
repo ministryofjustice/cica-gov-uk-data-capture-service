@@ -1,3 +1,5 @@
+/* eslint-disable no-useless-catch */
+
 'use strict';
 
 const Ajv = require('ajv');
@@ -19,7 +21,7 @@ function createQuestionnaireService(spec) {
         jsonPointers: true,
         format: 'full',
         coerceTypes: true
-    }); // options can be passed, e.g. {allErrors: true}
+    });
 
     AjvErrors(ajv);
 
@@ -64,22 +66,14 @@ function createQuestionnaireService(spec) {
     }
 
     function getSection(sectionId, qRouter) {
-        // TODO: this validation should be covered by express-openapi-validator
-        // if (!validSectionIdFormat(sectionId)) {
-        //     return undefined;
-        // }
         let section;
 
-        // TODO: change "system" in q-definitions to "p--system" and remove this check
         if (sectionId === 'system') {
-            // TODO: "system" shouldn't be added to "user progress". We'll need to bodge this for the moment
-            // TODO: the bodge involves bypassing the router!!
             const currentSection = qRouter.current();
 
-            // TODO: bodge... simulate a response from the router
             section = {
                 id: 'system',
-                // steal the context (questionnaire) from the current section
+                // Get the context (questionnaire) from the current section
                 context: currentSection.context
             };
         } else {
@@ -235,8 +229,6 @@ function createQuestionnaireService(spec) {
     }
 
     async function createAnswers(questionnaireId, sectionId, answers) {
-        // TODO: throw if more than one request to create same answers
-
         // Make a copy of the supplied answers. These will be returned if they fail validation
         const rawAnswers = JSON.parse(JSON.stringify(answers));
         let answerResource;
@@ -275,12 +267,10 @@ function createQuestionnaireService(spec) {
             // Pass the answers to the router which will update the context (questionnaire) with these answers.
             let answeredQuestionnaire;
 
-            // TODO: need to bodge this for "system" id (see getSection for more bodging). Bypass the router again.
             if (section.id === 'system') {
                 const currentSection = qRouter.current();
                 currentSection.context.answers.system = answers;
                 answeredQuestionnaire = currentSection.context;
-                // TODO: ^^ this is end of bodge
             } else {
                 const nextSection = qRouter.next(answers, section.id);
                 answeredQuestionnaire = nextSection.context;

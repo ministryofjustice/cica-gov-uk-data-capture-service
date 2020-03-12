@@ -1,3 +1,5 @@
+/* eslint-disable no-useless-catch */
+
 'use strict';
 
 const VError = require('verror');
