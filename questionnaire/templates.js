@@ -120,7 +120,7 @@ module.exports = {
                             },
                             {
                                 title: 'Text message',
-                                const: 'sms'
+                                const: 'text'
                             },
                             {
                                 title: "I don't have an email address or UK mobile phone number",
@@ -191,7 +191,7 @@ module.exports = {
                         if: {
                             properties: {
                                 'q-applicant-confirmation-method': {
-                                    const: 'sms'
+                                    const: 'text'
                                 }
                             },
                             required: ['q-applicant-confirmation-method']
@@ -228,7 +228,7 @@ module.exports = {
                         'q-applicant-enter-your-email-address': 'foo@bar.com'
                     },
                     {
-                        'q-applicant-confirmation-method': 'sms',
+                        'q-applicant-confirmation-method': 'text',
                         'q-applicant-enter-your-telephone-number': '07700900982'
                     }
                 ],
@@ -245,14 +245,14 @@ module.exports = {
                         'q-applicant-confirmation-method': 'email'
                     },
                     {
-                        'q-applicant-confirmation-method': 'sms'
+                        'q-applicant-confirmation-method': 'text'
                     },
                     {
                         'q-applicant-confirmation-method': 'email',
                         'q-applicant-enter-your-telephone-number': '07700900982'
                     },
                     {
-                        'q-applicant-confirmation-method': 'sms',
+                        'q-applicant-confirmation-method': 'text',
                         'q-applicant-enter-your-email-address': 'foo@bar.com'
                     },
                     {
@@ -260,11 +260,11 @@ module.exports = {
                         'q-applicant-enter-your-email-address': 'not an email address'
                     },
                     {
-                        'q-applicant-confirmation-method': 'sms',
+                        'q-applicant-confirmation-method': 'text',
                         'q-applicant-enter-your-telephone-number': 'not a UK mobile phone number'
                     },
                     {
-                        'q-applicant-confirmation-method': 'sms',
+                        'q-applicant-confirmation-method': 'text',
                         'q-applicant-enter-your-telephone-number': '0141 420 5000'
                     }
                 ]
@@ -2319,7 +2319,7 @@ module.exports = {
                                 cond: [
                                     '==',
                                     '$.answers.p-applicant-confirmation-method.q-applicant-confirmation-method',
-                                    'sms'
+                                    'text'
                                 ]
                             }
                         ]
