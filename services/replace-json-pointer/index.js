@@ -6,7 +6,12 @@ const rxJsonPointerToken = /\|\|(.+?)\|\|/gi;
 
 function replaceJsonPointer(content, data) {
     const modifiedContent = content.replace(rxJsonPointerToken, (token, jsonPointer) => {
-        const value = pointer.get(data, jsonPointer);
+        let value;
+        if (pointer.has(data, jsonPointer)) {
+            value = pointer.get(data, jsonPointer);
+        } else {
+            value = '';
+        }
 
         // Only deal with primitive values. JSON only allows arrays, objects, and null, as non-primitive values
         if (value && typeof value === 'object') {

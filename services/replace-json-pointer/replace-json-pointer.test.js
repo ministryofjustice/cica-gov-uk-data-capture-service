@@ -47,16 +47,14 @@ describe('replace-json-pointer', () => {
         expect(result).toEqual('foo, 0, 1, 2, 3, 4, 5, true, false, null');
     });
 
-    it('should throw if the JSON pointer maps to no value', () => {
+    it('should return an empty string if the JSON pointer maps to no value', () => {
         const content = 'foo ||/foo/does-not-exist|| baz';
-
-        expect(() => {
-            replaceJsonPointer(content, {
-                foo: {
-                    bar: 'bar'
-                }
-            });
-        }).toThrow('Invalid reference token: does-not-exist');
+        const result = replaceJsonPointer(content, {
+            foo: {
+                bar: 'bar'
+            }
+        });
+        expect(result).toBe('foo  baz');
     });
 
     it('should throw if the JSON pointer maps to a non-primitive value e.g. Object/Array', () => {
