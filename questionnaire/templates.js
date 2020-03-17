@@ -14,7 +14,7 @@ module.exports = {
                 properties: {
                     'applicant-declaration': {
                         description:
-                            '<p class="govuk-body">By submitting the application you agree that:</p><ul class="govuk-list govuk-list--bullet"><li>the information you’ve given is true as far as you know</li><li>we can share the details in your application with the police</li></ul><p class="govuk-body">Read our privacy notice to see <a class="govuk-link" href="https://www.gov.uk/guidance/cica-privacy-notice">how we use your data</a>.</p>{{ govukWarningText({text: "If you deliberately give false or misleading information, you may get less compensation or be prosecuted.",iconFallbackText: "Warning"}) }}'
+                            '<p class="govuk-body">By submitting the application you:</p><ul class="govuk-list govuk-list--bullet"><li>confirm that the information you have given is true as far as you know</li><li>agree that we can share the details in it with the police</li></ul><p class="govuk-body">Read our privacy notice to see <a class="govuk-link" href="https://www.gov.uk/guidance/cica-privacy-notice">how we use your data</a>.</p>{{ govukWarningText({text: "If you deliberately give false or misleading information, you may get less compensation or be prosecuted.",iconFallbackText: "Warning"}) }}'
                     }
                 },
                 examples: [{}],
@@ -2344,7 +2344,7 @@ module.exports = {
             'p-applicant-how-much-was-award': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
                 type: 'object',
-                title: 'How much compensation were you awarded?',
+                title: 'How much was the award?',
                 required: ['q-how-much-was-award'],
                 properties: {
                     'q-how-much-was-award': {
