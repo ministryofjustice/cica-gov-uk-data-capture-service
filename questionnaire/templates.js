@@ -2450,7 +2450,7 @@ module.exports = {
             initial: 'p-applicant-who-are-you-applying-for',
             referrer:
                 'https://claim-criminal-injuries-compensation.service.justice.gov.uk/start-page',
-            summary: 'p--check-your-answers',
+            summary: 'p-applicant-declaration',
             confirmation: 'p--confirmation',
             states: {
                 'p-applicant-declaration': {
