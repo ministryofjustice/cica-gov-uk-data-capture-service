@@ -120,7 +120,7 @@ module.exports = {
                 },
                 properties: {
                     'q-applicant-confirmation-method': {
-                        title: 'How do you want to get your confirmation message?',
+                        title: "How should we tell you we've got your application?",
                         type: 'string',
                         oneOf: [
                             {
