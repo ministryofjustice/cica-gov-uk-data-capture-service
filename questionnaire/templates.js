@@ -4,7 +4,7 @@ module.exports = {
     'sexual-assault': id => ({
         id,
         type: 'apply-for-compensation',
-        version: '0.3.0',
+        version: '0.3.1',
         sections: {
             'p-applicant-declaration': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
@@ -1646,89 +1646,66 @@ module.exports = {
                     }
                 ]
             },
-            'p-offender-describe-contact-with-offender': {
+            'p-offender-do-you-have-contact-with-offender': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
                 type: 'object',
+                required: ['q-offender-do-you-have-contact-with-offender'],
+                additionalProperties: false,
                 properties: {
-                    'q-offender-describe-contact-with-offender': {
-                        type: 'string',
-                        title: 'If you have contact with the offender, describe it below',
-                        description:
-                            'We will not pay compensation if the offender may benefit from it.',
-                        maxLength: 500,
-                        errorMessage: {
-                            maxLength: 'Description must be 500 characters or less'
-                        }
-                    },
-                    'q-offender-i-have-no-contact-with-offender': {
-                        type: 'array',
-                        maxItems: 1,
-                        uniqueItems: true,
-                        items: {
-                            anyOf: [
-                                {
-                                    title: 'I have no contact with the offender',
-                                    const: 'i-have-no-contact-with-the-offender'
-                                }
-                            ]
-                        }
+                    'q-offender-do-you-have-contact-with-offender': {
+                        type: 'boolean',
+                        title: 'Do you have contact with the offender?'
                     }
                 },
-                allOf: [
-                    {
-                        $ref:
-                            '#/definitions/if-not-checked-then-q-offender-contact-description-is-required'
-                    }
-                ],
-                definitions: {
-                    'if-not-checked-then-q-offender-contact-description-is-required': {
-                        if: {
-                            not: {
-                                required: ['q-offender-i-have-no-contact-with-offender']
-                            }
-                        },
-                        then: {
-                            required: ['q-offender-describe-contact-with-offender'],
-                            errorMessage: {
-                                required: {
-                                    'q-offender-describe-contact-with-offender':
-                                        'Enter details of contact with the assailant or select if you have no contact'
-                                }
-                            }
-                        }
+                errorMessage: {
+                    required: {
+                        'q-offender-do-you-have-contact-with-offender':
+                            'Select yes if you have contact with the offender'
                     }
                 },
                 examples: [
                     {
-                        'q-offender-i-have-no-contact-with-offender': [
-                            'i-have-no-contact-with-the-offender'
-                        ],
-                        'q-offender-describe-contact-with-offender': 'some description'
+                        'q-offender-do-you-have-contact-with-offender': true
                     },
                     {
-                        'q-offender-describe-contact-with-offender': 'some description'
-                    },
-                    {
-                        'q-offender-i-have-no-contact-with-offender': [
-                            'i-have-no-contact-with-the-offender'
-                        ]
+                        'q-offender-do-you-have-contact-with-offender': false
                     }
                 ],
                 invalidExamples: [
                     {
-                        'q-offender-i-have-no-contact-with-offender': ['not-a-valid-id']
-                    },
+                        'q-offender-do-you-have-contact-with-offender': 'foo'
+                    }
+                ]
+            },
+            'p-offender-describe-contact-with-offender': {
+                $schema: 'http://json-schema.org/draft-07/schema#',
+                type: 'object',
+                required: ['q-offender-describe-contact-with-offender'],
+                properties: {
+                    'q-offender-describe-contact-with-offender': {
+                        type: 'string',
+                        title: 'Describe your contact with the offender',
+                        description:
+                            'We cannot pay compensation if the offender may benefit from it.',
+                        maxLength: 500,
+                        errorMessage: {
+                            maxLength: 'Description must be 500 characters or less'
+                        }
+                    }
+                },
+                errorMessage: {
+                    required: {
+                        'q-offender-describe-contact-with-offender':
+                            'Describe your contact with the offender'
+                    }
+                },
+                examples: [
                     {
-                        'q-offender-describe-contact-with-offender': 12345
-                    },
+                        'q-offender-describe-contact-with-offender': 'Some contact'
+                    }
+                ],
+                invalidExamples: [
                     {
-                        'q-offender-i-have-no-contact-with-offender': ['not-a-valid-id'],
-                        'q-offender-describe-contact-with-offender': 'some description'
-                    },
-                    {
-                        'q-offender-i-have-no-contact-with-offender': [
-                            'i-have-no-contact-with-the-offender'
-                        ],
                         'q-offender-describe-contact-with-offender': 12345
                     }
                 ]
@@ -2864,7 +2841,29 @@ module.exports = {
                     on: {
                         ANSWER: [
                             {
-                                target: 'p-offender-describe-contact-with-offender'
+                                target: 'p-offender-do-you-have-contact-with-offender'
+                            }
+                        ]
+                    }
+                },
+                'p-offender-do-you-have-contact-with-offender': {
+                    on: {
+                        ANSWER: [
+                            {
+                                target: 'p--context-compensation',
+                                cond: [
+                                    '==',
+                                    '$.answers.p-offender-do-you-have-contact-with-offender.q-offender-do-you-have-contact-with-offender',
+                                    false
+                                ]
+                            },
+                            {
+                                target: 'p-offender-describe-contact-with-offender',
+                                cond: [
+                                    '==',
+                                    '$.answers.p-offender-do-you-have-contact-with-offender.q-offender-do-you-have-contact-with-offender',
+                                    true
+                                ]
                             }
                         ]
                     }
