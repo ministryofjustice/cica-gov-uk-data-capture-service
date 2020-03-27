@@ -73,9 +73,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/docs', docsRouter);
 
-// Default to JSON:API content type for all subsequent responses
 app.use((req, res, next) => {
+    // Default to JSON:API content type for all subsequent responses
     res.type('application/vnd.api+json');
+    res.set('Application-Version', process.env.npm_package_version);
     next();
 });
 
