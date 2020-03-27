@@ -76,6 +76,8 @@ app.use('/docs', docsRouter);
 app.use((req, res, next) => {
     // Default to JSON:API content type for all subsequent responses
     res.type('application/vnd.api+json');
+    // https://stackoverflow.com/a/22339262/2952356
+    // `process.env.npm_package_version` only works if you use npm start to run the app.
     res.set('Application-Version', process.env.npm_package_version);
     next();
 });
