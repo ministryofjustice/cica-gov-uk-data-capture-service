@@ -17,6 +17,7 @@
         "@netflix/nerror": "^1.1.0",
         "ajv": "^6.10.0",
         "ajv-errors": "^1.0.1",
+        "ajv-formats-mobile-uk": "github:CriminalInjuriesCompensationAuthority/ajv-formats-mobile-uk#v0.0.1",
         "cookie-parser": "~1.4.3",
         "debug": "~2.6.9",
         "express": "~4.16.0",

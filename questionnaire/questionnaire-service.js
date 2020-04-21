@@ -8,14 +8,12 @@ const VError = require('verror');
 const createQRouter = require('q-router');
 const uuidv4 = require('uuid/v4');
 const pointer = require('json-pointer');
+const ajvFormatsMobileUk = require('ajv-formats-mobile-uk');
 const templates = require('./templates');
 const createQuestionnaireDAL = require('./questionnaire-dal');
 const createMessageBusCaller = require('../services/message-bus');
 const replaceJsonPointers = require('../services/replace-json-pointer');
 const createNotifyService = require('../services/notify');
-const createMobilePhoneNumberValidatorService = require('../services/mobilePhoneNumberValidator');
-
-const mobilePhoneNumberValidator = createMobilePhoneNumberValidatorService();
 
 function createQuestionnaireService(spec) {
     const {logger} = spec;
@@ -29,9 +27,7 @@ function createQuestionnaireService(spec) {
 
     AjvErrors(ajv);
 
-    ajv.addFormat('x-mobilePhoneNumber', mobilePhoneNumber => {
-        return mobilePhoneNumberValidator.isValidMobilePhoneNumber(mobilePhoneNumber);
-    });
+    ajv.addFormat('mobile-uk', ajvFormatsMobileUk);
 
     async function createQuestionnaire(templateName) {
         if (!(templateName in templates)) {
