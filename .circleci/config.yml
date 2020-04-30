@@ -88,8 +88,7 @@ jobs:
             | kubectl apply -f -
             kubectl apply \
                 -f kube_deploy/Dev/service.yml \
-                -f kube_deploy/Dev/ingress.yml \
-                -f kube_deploy/Dev/cert.yml
+                -f kube_deploy/Dev/ingress.yml
   deploy_to_uat:
     executor: docker-publisher
     steps:
@@ -108,8 +107,7 @@ jobs:
             | kubectl apply -f -
             kubectl apply \
                 -f kube_deploy/Uat/service.yml \
-                -f kube_deploy/Uat/ingress.yml \
-                -f kube_deploy/Uat/cert.yml
+                -f kube_deploy/Uat/ingress.yml
   deploy_to_prod:
     executor: docker-publisher
     steps:
@@ -128,8 +126,7 @@ jobs:
             | kubectl apply -f -
             kubectl apply \
                 -f kube_deploy/Production/service.yml \
-                -f kube_deploy/Production/ingress.yml \
-                -f kube_deploy/Production/cert.yml
+                -f kube_deploy/Production/ingress.yml
 workflows:
   version: 2
   build-test-push-deploydev-deploytouatapproval-deployuat-deploytoprodapproval-deployprod:
