@@ -2724,7 +2724,7 @@ module.exports = {
                 errorMessage: {
                     required: {
                         'q-gp-building-and-street': "Enter the name of your GP's practice",
-                        'q-gp-building-and-street2': 'Enter the building and street of your GP',
+                        'q-gp-building-and-street-2': 'Enter the building and street of your GP',
                         'q-gp-town-or-city': 'Enter the town or city where you live'
                     }
                 },
@@ -2993,7 +2993,7 @@ module.exports = {
             initial: 'p-applicant-who-are-you-applying-for',
             referrer:
                 'https://claim-criminal-injuries-compensation.service.justice.gov.uk/start-page',
-            summary: 'p--check-your-answers',
+            summary: 'p-applicant-declaration',
             confirmation: 'p--confirmation',
             states: {
                 'p-applicant-declaration': {
