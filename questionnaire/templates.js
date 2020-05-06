@@ -3877,7 +3877,23 @@ module.exports = {
                     on: {
                         ANSWER: [
                             {
-                                target: 'p-gp-enter-your-address'
+                                target: 'p-gp-enter-your-address',
+                                cond: [
+                                    '==',
+                                    '$.answers.p-applicant-are-you-registered-with-gp.q-applicant-are-you-registered-with-gp',
+                                    true
+                                ]
+                            },
+                            {
+                                target: 'p-gp-enter-your-address',
+                                cond: [
+                                    '==',
+                                    '$.answers.p-applicant-have-you-seen-a-gp.q-applicant-have-you-seen-a-gp',
+                                    true
+                                ]
+                            },
+                            {
+                                target: 'p--context-compensation'
                             }
                         ]
                     }
