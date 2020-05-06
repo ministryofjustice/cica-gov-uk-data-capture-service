@@ -2676,7 +2676,7 @@ module.exports = {
                 required: [
                     'q-gp-building-and-street',
                     'q-gp-town-or-city',
-                    'q-gp-building-and-street-2'
+                    'q-gp-building-and-street2'
                 ],
                 additionalProperties: false,
                 properties: {
@@ -2688,7 +2688,7 @@ module.exports = {
                             maxLength: 'Practice name must be less than 60 characters'
                         }
                     },
-                    'q-gp-building-and-street-2': {
+                    'q-gp-building-and-street2': {
                         type: 'string',
                         title: 'Building and street',
                         maxLength: 60,
@@ -2724,14 +2724,14 @@ module.exports = {
                 errorMessage: {
                     required: {
                         'q-gp-building-and-street': "Enter the name of your GP's practice",
-                        'q-gp-building-and-street-2': 'Enter the building and street of your GP',
+                        'q-gp-building-and-street2': 'Enter the building and street of your GP',
                         'q-gp-town-or-city': 'Enter the town or city where you live'
                     }
                 },
                 examples: [
                     {
                         'q-gp-building-and-street': '1 Foo Lane',
-                        'q-gp-building-and-street-2': 'Flat 2/3',
+                        'q-gp-building-and-street2': 'Flat 2/3',
                         'q-gp-town-or-city': 'FooCity',
                         'q-gp-county': 'FooCounty',
                         'q-gp-postcode': 'G1 1XX'
@@ -2740,35 +2740,35 @@ module.exports = {
                 invalidExamples: [
                     {
                         'q-gp-building-and-street': 12345,
-                        'q-gp-building-and-street-2': 'Flat 2/3',
+                        'q-gp-building-and-street2': 'Flat 2/3',
                         'q-gp-town-or-city': 'FooCity',
                         'q-gp-county': 'FooCounty',
                         'q-gp-postcode': 'G1 1XX'
                     },
                     {
                         'q-gp-building-and-street': '1 Foo Lane',
-                        'q-gp-building-and-street-2': 12345,
+                        'q-gp-building-and-street2': 12345,
                         'q-gp-town-or-city': 'FooCity',
                         'q-gp-county': 'FooCounty',
                         'q-gp-postcode': 'G1 1XX'
                     },
                     {
                         'q-gp-building-and-street': '1 Foo Lane',
-                        'q-gp-building-and-street-2': 'Flat 2/3',
+                        'q-gp-building-and-street2': 'Flat 2/3',
                         'q-gp-town-or-city': 12345,
                         'q-gp-county': 'FooCounty',
                         'q-gp-postcode': 'G1 1XX'
                     },
                     {
                         'q-gp-building-and-street': '1 Foo Lane',
-                        'q-gp-building-and-street-2': 'Flat 2/3',
+                        'q-gp-building-and-street2': 'Flat 2/3',
                         'q-gp-town-or-city': 'FooCity',
                         'q-gp-county': 12345,
                         'q-gp-postcode': 'G1 1XX'
                     },
                     {
                         'q-gp-building-and-street': '1 Foo Lane',
-                        'q-gp-building-and-street-2': 'Flat 2/3',
+                        'q-gp-building-and-street2': 'Flat 2/3',
                         'q-gp-town-or-city': 'FooCity',
                         'q-gp-county': 'FooCounty',
                         'q-gp-postcode': 12345
@@ -3877,7 +3877,23 @@ module.exports = {
                     on: {
                         ANSWER: [
                             {
-                                target: 'p-gp-enter-your-address'
+                                target: 'p-gp-enter-your-address',
+                                cond: [
+                                    '==',
+                                    '$.answers.p-applicant-are-you-registered-with-gp.q-applicant-are-you-registered-with-gp',
+                                    true
+                                ]
+                            },
+                            {
+                                target: 'p-gp-enter-your-address',
+                                cond: [
+                                    '==',
+                                    '$.answers.p-applicant-have-you-seen-a-gp.q-applicant-have-you-seen-a-gp',
+                                    true
+                                ]
+                            },
+                            {
+                                target: 'p--context-compensation'
                             }
                         ]
                     }
