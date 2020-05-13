@@ -4,7 +4,7 @@ module.exports = {
     'sexual-assault': id => ({
         id,
         type: 'apply-for-compensation',
-        version: '1.0.0',
+        version: '1.1.0',
         sections: {
             'p-applicant-declaration': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
@@ -15,64 +15,6 @@ module.exports = {
                     'applicant-declaration': {
                         description:
                             '<p class="govuk-body">By submitting the application you agree that:</p><ul class="govuk-list govuk-list--bullet"><li>the information you’ve given is true as far as you know</li><li>we can share the details in your application with the police</li></ul><p class="govuk-body">Read our privacy notice to see <a class="govuk-link" href="https://www.gov.uk/guidance/cica-privacy-notice">how we use your data</a>.</p>{{ govukWarningText({text: "If you deliberately give false or misleading information, you may get less compensation or be prosecuted.",iconFallbackText: "Warning"}) }}'
-                    }
-                },
-                examples: [{}],
-                invalidExamples: [{foo: 'bar'}]
-            },
-            'p--transition-not-british-citizen': {
-                $schema: 'http://json-schema.org/draft-07/schema#',
-                type: 'object',
-                title:
-                    'You must use another service if you’re not a British citizen or EU national',
-                additionalProperties: false,
-                properties: {
-                    transition: {
-                        description:
-                            '<p class="govuk-body">You can still <a class="govuk-link" href="https://www.cica.gov.uk/OAS/Account/create">make a claim online</a>.</p>{{ govukDetails({summaryText: "If you need help or support",html: \'<p class=\\"govuk-body\\">You can contact us for help with your application on 0300 003 3601. Select option 8.</p><p class="govuk-body">Our phone lines are open Monday to Friday 8:30am to 5pm except Wednesday when they open at 10am.</p><p class="govuk-body">You can <a class="govuk-link" href="https://www.victimandwitnessinformation.org.uk/">get practical or emotional support</a> after a crime.</p><p class="govuk-body">There is different practical or emotional support <a class="govuk-link" href="https://www.mygov.scot/victim-witness-support/">if you live in Scotland</a>.</p>\'}) }}'
-                    }
-                },
-                examples: [{}],
-                invalidExamples: [{foo: 'bar'}]
-            },
-            'p--transition-not-sa': {
-                $schema: 'http://json-schema.org/draft-07/schema#',
-                type: 'object',
-                title:
-                    'You must use another service if your claim is not for sexual assault or abuse',
-                additionalProperties: false,
-                properties: {
-                    transition: {
-                        description:
-                            '<p class="govuk-body">You can still <a class="govuk-link" href="https://www.cica.gov.uk/OAS/Account/create">make a claim online</a>.</p>{{ govukDetails({summaryText: "If you need help or support",html: \'<p class=\\"govuk-body\\">You can contact us for help with your application on 0300 003 3601. Select option 8.</p><p class="govuk-body">Our phone lines are open Monday to Friday 8:30am to 5pm except Wednesday when they open at 10am.</p><p class="govuk-body">You can <a class="govuk-link" href="https://www.victimandwitnessinformation.org.uk/">get practical or emotional support</a> after a crime.</p><p class="govuk-body">There is different practical or emotional support <a class="govuk-link" href="https://www.mygov.scot/victim-witness-support/">if you live in Scotland</a>.</p>\'}) }}'
-                    }
-                },
-                examples: [{}],
-                invalidExamples: [{foo: 'bar'}]
-            },
-            'p--transition-someone-else': {
-                $schema: 'http://json-schema.org/draft-07/schema#',
-                type: 'object',
-                title: 'You must use another service if you’re applying for someone else',
-                additionalProperties: false,
-                properties: {
-                    transition: {
-                        description:
-                            '<p class="govuk-body">You can still <a class="govuk-link" href="https://www.cica.gov.uk/OAS/Account/create">make a claim online</a>.</p>{{ govukDetails({summaryText: "If you need help or support",html: \'<p class=\\"govuk-body\\">You can contact us for help with your application on 0300 003 3601. Select option 8.</p><p class="govuk-body">Our phone lines are open Monday to Friday 8:30am to 5pm except Wednesday when they open at 10am.</p><p class="govuk-body">You can <a class="govuk-link" href="https://www.victimandwitnessinformation.org.uk/">get practical or emotional support</a> after a crime.</p><p class="govuk-body">There is different practical or emotional support <a class="govuk-link" href="https://www.mygov.scot/victim-witness-support/">if you live in Scotland</a>.</p>\'}) }}'
-                    }
-                },
-                examples: [{}],
-                invalidExamples: [{foo: 'bar'}]
-            },
-            'p--transition-under-18': {
-                $schema: 'http://json-schema.org/draft-07/schema#',
-                type: 'object',
-                title: 'You must use another service if you’re under 18',
-                additionalProperties: false,
-                properties: {
-                    transition: {
-                        description:
-                            '<p class="govuk-body">You can still <a class="govuk-link" href="https://www.cica.gov.uk/OAS/Account/create">make a claim online</a>.</p>{{ govukDetails({summaryText: "If you need help or support",html: \'<p class=\\"govuk-body\\">You can contact us for help with your application on 0300 003 3601. Select option 8.</p><p class="govuk-body">Our phone lines are open Monday to Friday 8:30am to 5pm except Wednesday when they open at 10am.</p><p class="govuk-body">You can <a class="govuk-link" href="https://www.victimandwitnessinformation.org.uk/">get practical or emotional support</a> after a crime.</p><p class="govuk-body">There is different practical or emotional support <a class="govuk-link" href="https://www.mygov.scot/victim-witness-support/">if you live in Scotland</a>.</p>\'}) }}'
                     }
                 },
                 examples: [{}],
@@ -105,7 +47,7 @@ module.exports = {
                 },
                 properties: {
                     'q-applicant-confirmation-method': {
-                        title: 'How do you want to get your confirmation message?',
+                        title: "How should we tell you we've got your application?",
                         type: 'string',
                         oneOf: [
                             {
@@ -549,6 +491,9 @@ module.exports = {
                         errorMessage: {
                             maxLength: 'Crime reference number must be 30 characters or less'
                         }
+                    },
+                    'i-dont-know-the-crime-reference': {
+                        description: `{% from "components/details/macro.njk" import govukDetails %}{{ govukDetails({summaryText: "Help with your crime reference number",html: "<p>If you don't have your crime reference number, you can call 101 to speak to your local police station.</p>"}) }}`
                     }
                 },
                 errorMessage: {
@@ -2725,7 +2670,7 @@ module.exports = {
                     required: {
                         'q-gp-building-and-street': "Enter the name of your GP's practice",
                         'q-gp-building-and-street2': 'Enter the building and street of your GP',
-                        'q-gp-town-or-city': 'Enter the town or city where you live'
+                        'q-gp-town-or-city': "Enter the town or city where your GP's practice is"
                     }
                 },
                 examples: [
@@ -2904,7 +2849,7 @@ module.exports = {
                     }
                 ]
             },
-            'p--transition-physical-injuries': {
+            'p--transition': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
                 type: 'object',
                 title: 'Continue your claim',
@@ -2912,49 +2857,7 @@ module.exports = {
                 properties: {
                     transition: {
                         description:
-                            '<p class="govuk-body">You\'ll be taken to another website to finish your claim for physical injuries.</p>{{ govukButton({text: "Continue",href: "https://www.cica.gov.uk/OAS/Account/create",isStartButton: true}) }}'
-                    }
-                },
-                examples: [{}],
-                invalidExamples: [{foo: 'bar'}]
-            },
-            'p--transition-payments': {
-                $schema: 'http://json-schema.org/draft-07/schema#',
-                type: 'object',
-                title: 'Continue your claim',
-                additionalProperties: false,
-                properties: {
-                    transition: {
-                        description:
-                            '<p class="govuk-body">You\'ll be taken to another website to finish your claim for an STI, pregnancy, or loss of a pregnancy.</p>{{ govukButton({text: "Continue",href: "https://www.cica.gov.uk/OAS/Account/create",isStartButton: true}) }}'
-                    }
-                },
-                examples: [{}],
-                invalidExamples: [{foo: 'bar'}]
-            },
-            'p--transition-loe': {
-                $schema: 'http://json-schema.org/draft-07/schema#',
-                type: 'object',
-                title: 'Continue your claim',
-                additionalProperties: false,
-                properties: {
-                    transition: {
-                        description:
-                            '<p class="govuk-body">You\'ll be taken to another website to finish your claim for loss of earnings.</p>{{ govukButton({text: "Continue",href: "https://www.cica.gov.uk/OAS/Account/create",isStartButton: true}) }}'
-                    }
-                },
-                examples: [{}],
-                invalidExamples: [{foo: 'bar'}]
-            },
-            'p--transition-expenses': {
-                $schema: 'http://json-schema.org/draft-07/schema#',
-                type: 'object',
-                title: 'Continue your claim',
-                additionalProperties: false,
-                properties: {
-                    transition: {
-                        description:
-                            '<p class="govuk-body">You\'ll be taken to another website to finish your claim for expenses.</p>{{ govukButton({text: "Continue",href: "https://www.cica.gov.uk/OAS/Account/create",isStartButton: true}) }}'
+                            '<p class="govuk-body">You\'ll be taken to another website to continue your claim.</p>{{ govukButton({text: "Continue",href: "https://www.cica.gov.uk/OAS/Account/create",isStartButton: true}) }}'
                     }
                 },
                 examples: [{}],
@@ -2991,8 +2894,7 @@ module.exports = {
         },
         routes: {
             initial: 'p-applicant-who-are-you-applying-for',
-            referrer:
-                'https://claim-criminal-injuries-compensation.service.justice.gov.uk/start-page',
+            referrer: 'https://www.gov.uk/claim-compensation-criminal-injury/make-claim',
             summary: 'p-applicant-declaration',
             confirmation: 'p--confirmation',
             states: {
@@ -3009,7 +2911,7 @@ module.exports = {
                     on: {
                         ANSWER: [
                             {
-                                target: 'p--transition-not-british-citizen',
+                                target: 'p--transition',
                                 cond: [
                                     '==',
                                     '$.answers.p-applicant-british-citizen-or-eu-national.q-applicant-british-citizen-or-eu-national',
@@ -3031,7 +2933,7 @@ module.exports = {
                     on: {
                         ANSWER: [
                             {
-                                target: 'p--transition-under-18',
+                                target: 'p--transition',
                                 cond: [
                                     '==',
                                     '$.answers.p-applicant-are-you-18-or-over.q-applicant-are-you-18-or-over',
@@ -3053,7 +2955,7 @@ module.exports = {
                     on: {
                         ANSWER: [
                             {
-                                target: 'p--transition-someone-else',
+                                target: 'p--transition',
                                 cond: [
                                     '==',
                                     '$.answers.p-applicant-who-are-you-applying-for.q-applicant-who-are-you-applying-for',
@@ -3075,7 +2977,7 @@ module.exports = {
                     on: {
                         ANSWER: [
                             {
-                                target: 'p--transition-not-sa',
+                                target: 'p--transition',
                                 cond: [
                                     '==',
                                     '$.answers.p-applicant-were-you-a-victim-of-sexual-assault-or-abuse.q-applicant-were-you-a-victim-of-sexual-assault-or-abuse',
@@ -3565,7 +3467,7 @@ module.exports = {
                     on: {
                         ANSWER: [
                             {
-                                target: 'p--transition-under-18',
+                                target: 'p--transition',
                                 cond: [
                                     'dateLessThanEighteenYearsAgo',
                                     '$.answers.p-applicant-enter-your-date-of-birth.q-applicant-enter-your-date-of-birth'
@@ -3647,21 +3549,6 @@ module.exports = {
                         ]
                     }
                 },
-                'p--transition-someone-else': {
-                    type: 'final'
-                },
-                'p--transition-under-18': {
-                    type: 'final'
-                },
-                'p--transition-not-sa': {
-                    type: 'final'
-                },
-                'p--transition-not-british-citizen': {
-                    type: 'final'
-                },
-                'p--transition-no-phone-or-email': {
-                    type: 'final'
-                },
                 'p-applicant-confirmation-method': {
                     on: {
                         ANSWER: [
@@ -3688,16 +3575,10 @@ module.exports = {
                         ]
                     }
                 },
-                'p--transition-physical-injuries': {
+                'p--transition': {
                     type: 'final'
                 },
-                'p--transition-payments': {
-                    type: 'final'
-                },
-                'p--transition-loe': {
-                    type: 'final'
-                },
-                'p--transition-expenses': {
+                'p--transition-no-phone-or-email': {
                     type: 'final'
                 },
                 'p-applicant-are-you-claiming-for-physical-injuries': {
@@ -3712,7 +3593,7 @@ module.exports = {
                                 ]
                             },
                             {
-                                target: 'p--transition-physical-injuries',
+                                target: 'p--transition',
                                 cond: [
                                     '==',
                                     '$.answers.p-applicant-are-you-claiming-for-physical-injuries.q-applicant-are-you-claiming-for-physical-injuries',
@@ -3734,7 +3615,7 @@ module.exports = {
                                 ]
                             },
                             {
-                                target: 'p--transition-payments',
+                                target: 'p--transition',
                                 cond: [
                                     '==',
                                     '$.answers.p-applicant-are-you-claiming-for-payments.q-applicant-are-you-claiming-for-payments',
@@ -3756,7 +3637,7 @@ module.exports = {
                                 ]
                             },
                             {
-                                target: 'p--transition-loe',
+                                target: 'p--transition',
                                 cond: [
                                     '==',
                                     '$.answers.p-applicant-are-you-claiming-for-loe.q-applicant-are-you-claiming-for-loe',
@@ -3778,7 +3659,7 @@ module.exports = {
                                 ]
                             },
                             {
-                                target: 'p--transition-expenses',
+                                target: 'p--transition',
                                 cond: [
                                     '==',
                                     '$.answers.p-applicant-are-you-claiming-for-expenses.q-applicant-are-you-claiming-for-expenses',
