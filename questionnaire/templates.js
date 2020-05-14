@@ -28,7 +28,7 @@ module.exports = {
                 additionalProperties: false,
                 properties: {
                     transition: {
-                        description: `<p class="govuk-body">You can apply by calling 0300 003 3601. Select option 8.</p><p class="govuk-body">Our phone lines are open Monday to Friday 8:30am to 5pm, except Wednesday when they open at 10am.</p>{{ govukDetails({summaryText: "If you need help or support",html: '<p class="govuk-body">You can <a class="govuk-link" href="https://www.victimandwitnessinformation.org.uk/">get practical or emotional support</a> after a crime.</p><p class="govuk-body">There is different practical or emotional support <a class="govuk-link" href="https://www.mygov.scot/victim-witness-support/">if you live in Scotland</a>.</p>'}) }}`
+                        description: `<p class="govuk-body">You can apply by calling 0300 003 3601.</p><p class="govuk-body">Our phone lines are open Monday to Friday 8:30am to 5pm, except Wednesday when they open at 10am.</p>{{ govukDetails({summaryText: "If you need help or support",html: '<p class="govuk-body">You can <a class="govuk-link" href="https://www.victimandwitnessinformation.org.uk/">get practical or emotional support</a> after a crime.</p><p class="govuk-body">There is different practical or emotional support <a class="govuk-link" href="https://www.mygov.scot/victim-witness-support/">if you live in Scotland</a>.</p>'}) }}`
                     }
                 },
                 examples: [{}],
