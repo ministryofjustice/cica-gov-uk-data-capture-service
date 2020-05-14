@@ -24,12 +24,11 @@ module.exports = {
                 $schema: 'http://json-schema.org/draft-07/schema#',
                 type: 'object',
                 title:
-                    'You must use another service if you do not have an email address or UK mobile phone',
+                    'You must apply by telephone if you do not have an email address or UK mobile phone',
                 additionalProperties: false,
                 properties: {
                     transition: {
-                        description:
-                            '<p class="govuk-body">You can still <a class="govuk-link" href="https://www.cica.gov.uk/OAS/Account/create">make a claim online</a>.</p>{{ govukDetails({summaryText: "If you need help or support",html: \'<p class=\\"govuk-body\\">You can contact us for help with your application on 0300 003 3601. Select option 8.</p><p class="govuk-body">Our phone lines are open Monday to Friday 8:30am to 5pm except Wednesday when they open at 10am.</p><p class="govuk-body">You can <a class="govuk-link" href="https://www.victimandwitnessinformation.org.uk/">get practical or emotional support</a> after a crime.</p><p class="govuk-body">There is different practical or emotional support <a class="govuk-link" href="https://www.mygov.scot/victim-witness-support/">if you live in Scotland</a>.</p>\'}) }}'
+                        description: `<p class="govuk-body">You can apply by calling 0300 003 3601. Select option 8.</p><p class="govuk-body">Our phone lines are open Monday to Friday 8:30am to 5pm, except Wednesday when they open at 10am.</p>{{ govukDetails({summaryText: "If you need help or support",html: '<p class="govuk-body">You can <a class="govuk-link" href="https://www.victimandwitnessinformation.org.uk/">get practical or emotional support</a> after a crime.</p><p class="govuk-body">There is different practical or emotional support <a class="govuk-link" href="https://www.mygov.scot/victim-witness-support/">if you live in Scotland</a>.</p>'}) }}`
                     }
                 },
                 examples: [{}],
