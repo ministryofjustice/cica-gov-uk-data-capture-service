@@ -104,6 +104,9 @@
                                                     "templateName": {
                                                         "type": "string",
                                                         "pattern": "^[a-zA-Z0-9-]{1,30}$"
+                                                    },
+                                                    "metaData": {
+                                                        "type": "object"
                                                     }
                                                 }
                                             }
@@ -719,7 +722,7 @@
                             "application/vnd.api+json": {
                                 "schema": {
                                     "type": "object",
-                                    "required": ["data"],
+                                    "required": ["data", "meta"],
                                     "properties": {
                                         "data": {
                                             "type": "array",
@@ -737,6 +740,21 @@
                                                     "attributes": {
                                                         "type": "object"
                                                     }
+                                                }
+                                            }
+                                        },
+                                        "meta": {
+                                            "type": "object",
+                                            "properties": {
+                                                "questionnaireDocumentVersion": {
+                                                    "type": "string"
+                                                },
+                                                "onComplete": {
+                                                    "type": "object"
+                                                },
+                                                "origin": {
+                                                    "type": "string",
+                                                    "enum": ["WEB", "TEL"]
                                                 }
                                             }
                                         }

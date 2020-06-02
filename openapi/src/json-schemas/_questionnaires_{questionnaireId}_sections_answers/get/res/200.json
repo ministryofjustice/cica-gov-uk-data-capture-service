@@ -1,7 +1,7 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "type": "object",
-    "required": ["data"],
+    "required": ["data", "meta"],
     "properties": {
         "data": {
             "type": "array",
@@ -19,6 +19,21 @@
                     "attributes": {
                         "type": "object"
                     }
+                }
+            }
+        },
+        "meta": {
+            "type": "object",
+            "properties": {
+                "questionnaireDocumentVersion": {
+                    "type": "string"
+                },
+                "onComplete": {
+                    "type": "object"
+                },
+                "origin": {
+                    "type": "string",
+                    "enum": ["WEB", "TEL"]
                 }
             }
         }

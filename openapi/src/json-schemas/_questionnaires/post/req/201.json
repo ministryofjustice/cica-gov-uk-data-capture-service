@@ -19,6 +19,9 @@
                         "templateName": {
                             "type": "string",
                             "pattern": "^[a-zA-Z0-9-]{1,30}$"
+                        },
+                        "metaData": {
+                            "type": "object"
                         }
                     }
                 }

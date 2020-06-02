@@ -29,7 +29,7 @@ function createQuestionnaireService(spec) {
 
     ajv.addFormat('mobile-uk', ajvFormatsMobileUk);
 
-    async function createQuestionnaire(templateName) {
+    async function createQuestionnaire(templateName, metaData) {
         if (!(templateName in templates)) {
             throw new VError(
                 {
@@ -41,6 +41,8 @@ function createQuestionnaireService(spec) {
 
         const uuidV4 = uuidv4();
         const questionnaire = templates[templateName](uuidV4);
+
+        questionnaire.meta = {...questionnaire.meta, ...metaData};
 
         await db.createQuestionnaire(uuidV4, questionnaire);
 
@@ -552,6 +554,20 @@ function createQuestionnaireService(spec) {
         };
     }
 
+    async function getMeta(questionnaireId) {
+        const questionnaire = await getQuestionnaire(questionnaireId);
+
+        if (questionnaire.meta) {
+            return questionnaire.meta;
+        }
+        throw new VError(
+            {
+                name: 'ResourceNotFound'
+            },
+            `Metadata for "${questionnaireId}" does not exist`
+        );
+    }
+
     return Object.freeze({
         createQuestionnaire,
         createAnswers,
@@ -560,7 +576,8 @@ function createQuestionnaireService(spec) {
         getSubmissionResponseData,
         validateAllAnswers,
         getAnswers,
-        getProgressEntries
+        getProgressEntries,
+        getMeta
     });
 }
 

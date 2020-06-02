@@ -28,9 +28,10 @@ router.route('/').post(permissions('create:questionnaires'), async (req, res, ne
         }
 
         const {templateName} = req.body.data.attributes;
+        const {metaData} = req.body.data.attributes;
 
         const questionnaireService = createQuestionnaireService({logger: req.log});
-        const response = await questionnaireService.createQuestionnaire(templateName);
+        const response = await questionnaireService.createQuestionnaire(templateName, metaData);
 
         res.status(201).json(response);
     } catch (err) {
@@ -45,9 +46,11 @@ router
             const {questionnaireId} = req.params;
             const questionnaireService = createQuestionnaireService({logger: req.log});
             const resourceCollection = await questionnaireService.getAnswers(questionnaireId);
+            const metaCollection = await questionnaireService.getMeta(questionnaireId);
 
             res.status(200).json({
-                data: resourceCollection
+                data: resourceCollection,
+                meta: metaCollection
             });
         } catch (err) {
             next(err);
