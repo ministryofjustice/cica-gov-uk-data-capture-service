@@ -9,6 +9,7 @@ const createQRouter = require('q-router');
 const uuidv4 = require('uuid/v4');
 const pointer = require('json-pointer');
 const ajvFormatsMobileUk = require('ajv-formats-mobile-uk');
+const ajvFormatsDateComparison = require('ajv-formats-date-comparison');
 const templates = require('./templates');
 const createQuestionnaireDAL = require('./questionnaire-dal');
 const createMessageBusCaller = require('../services/message-bus');
@@ -28,6 +29,8 @@ function createQuestionnaireService(spec) {
     AjvErrors(ajv);
 
     ajv.addFormat('mobile-uk', ajvFormatsMobileUk);
+    ajv.addFormat('date-time--in-past', ajvFormatsDateComparison.isInPast);
+    ajv.addFormat('date-time--today-or-in-past', ajvFormatsDateComparison.isTodayOrInPast);
 
     async function createQuestionnaire(templateName) {
         if (!(templateName in templates)) {
