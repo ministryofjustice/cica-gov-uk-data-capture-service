@@ -28,9 +28,6 @@
                 "questionnaireDocumentVersion": {
                     "type": "string"
                 },
-                "onComplete": {
-                    "type": "object"
-                },
                 "origin": {
                     "type": "string",
                     "enum": ["WEB", "TEL"]

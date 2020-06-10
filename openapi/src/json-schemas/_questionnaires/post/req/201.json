@@ -20,8 +20,20 @@
                             "type": "string",
                             "pattern": "^[a-zA-Z0-9-]{1,30}$"
                         },
-                        "metaData": {
-                            "type": "object"
+                        "metadata": {
+                            "type": "object",
+                            "propertyNames": {
+                                "pattern": "(^[a-z]|[A-Z0-9])[a-z]*"
+                            },
+                            "maxProperties": 10,
+                            "properties": {
+                                "origin": {
+                                    "type": "string"
+                                },
+                                "questionnaireDocumentVersion": {
+                                    "type": "string"
+                                }
+                            }
                         }
                     }
                 }

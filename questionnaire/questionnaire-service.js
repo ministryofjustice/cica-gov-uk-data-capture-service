@@ -554,11 +554,14 @@ function createQuestionnaireService(spec) {
         };
     }
 
-    async function getMeta(questionnaireId) {
+    async function getQuestionnaireMetadata(questionnaireId) {
         const questionnaire = await getQuestionnaire(questionnaireId);
+        // Function accepts a key and an object, returns the object with the omission of the key.
+        const omit = (prop, {[prop]: _, ...rest}) => rest;
 
         if (questionnaire.meta) {
-            return questionnaire.meta;
+            // Leave onComplete out of the object.
+            return omit('onComplete', questionnaire.meta);
         }
         throw new VError(
             {
@@ -577,7 +580,7 @@ function createQuestionnaireService(spec) {
         validateAllAnswers,
         getAnswers,
         getProgressEntries,
-        getMeta
+        getQuestionnaireMetadata
     });
 }
 
