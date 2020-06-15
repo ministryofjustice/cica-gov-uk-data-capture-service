@@ -29,7 +29,7 @@ function createQuestionnaireService(spec) {
 
     ajv.addFormat('mobile-uk', ajvFormatsMobileUk);
 
-    async function createQuestionnaire(templateName, metaData) {
+    async function createQuestionnaire(templateName, metadata) {
         if (!(templateName in templates)) {
             throw new VError(
                 {
@@ -42,7 +42,7 @@ function createQuestionnaireService(spec) {
         const uuidV4 = uuidv4();
         const questionnaire = templates[templateName](uuidV4);
 
-        questionnaire.meta = {...questionnaire.meta, ...metaData};
+        questionnaire.meta = {...questionnaire.meta, ...metadata};
 
         await db.createQuestionnaire(uuidV4, questionnaire);
 
