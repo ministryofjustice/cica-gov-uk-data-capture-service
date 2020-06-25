@@ -4,6 +4,7 @@
 
 const Ajv = require('ajv');
 const AjvErrors = require('ajv-errors');
+const AjvKeywords = require('ajv-keywords');
 const VError = require('verror');
 const createQRouter = require('q-router');
 const uuidv4 = require('uuid/v4');
@@ -27,10 +28,10 @@ function createQuestionnaireService(spec) {
     });
 
     AjvErrors(ajv);
+    AjvKeywords(ajv, ['formatMinimum', 'formatMaximum']);
 
     ajv.addFormat('mobile-uk', ajvFormatsMobileUk);
-    ajv.addFormat('date-time--in-past', ajvFormatsDateComparison.isInPast);
-    ajv.addFormat('date-time--today-or-in-past', ajvFormatsDateComparison.isTodayOrInPast);
+    ajv.addFormat('date-time', ajvFormatsDateComparison.compareDates);
 
     async function createQuestionnaire(templateName) {
         if (!(templateName in templates)) {
