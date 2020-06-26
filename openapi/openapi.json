@@ -84,36 +84,7 @@
                     "required": true,
                     "content": {
                         "application/vnd.api+json": {
-                            "schema": {
-                                "type": "object",
-                                "additionalProperties": false,
-                                "required": ["data"],
-                                "properties": {
-                                    "data": {
-                                        "type": "object",
-                                        "additionalProperties": false,
-                                        "required": ["type", "attributes"],
-                                        "properties": {
-                                            "type": {
-                                                "enum": ["questionnaires"]
-                                            },
-                                            "attributes": {
-                                                "type": "object",
-                                                "additionalProperties": false,
-                                                "properties": {
-                                                    "templateName": {
-                                                        "type": "string",
-                                                        "pattern": "^[a-zA-Z0-9-]{1,30}$"
-                                                    },
-                                                    "metaData": {
-                                                        "type": "object"
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            },
+                            "schema": {},
                             "example": {
                                 "data": {
                                     "type": "questionnaires",
@@ -748,9 +719,6 @@
                                             "properties": {
                                                 "questionnaireDocumentVersion": {
                                                     "type": "string"
-                                                },
-                                                "onComplete": {
-                                                    "type": "object"
                                                 },
                                                 "origin": {
                                                     "type": "string",

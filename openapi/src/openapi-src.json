@@ -74,9 +74,7 @@
                     "required": true,
                     "content": {
                         "application/vnd.api+json": {
-                            "schema": {
-                                "$ref": "./json-schemas/_questionnaires/post/req/201.json"
-                            },
+                            "schema": {},
                             "example": {
                                 "data": {
                                     "type": "questionnaires",
@@ -177,7 +175,7 @@
                     "content": {
                         "application/vnd.api+json": {
                             "schema": {
-                                "$ref": "./json-schemas/_questionnaires_{questionnaireId}_sections_{sectionId}_answers/post/req/201.json"
+                                "$ref": "./json-schemas/_questionnaires_-questionnaireId-_sections_-sectionId-_answers/post/req/201.json"
                             },
                             "example": {
                                 "data": {
@@ -196,7 +194,7 @@
                         "content": {
                             "application/vnd.api+json": {
                                 "schema": {
-                                    "$ref": "./json-schemas/_questionnaires_{questionnaireId}_sections_{sectionId}_answers/post/res/201.json"
+                                    "$ref": "./json-schemas/_questionnaires_-questionnaireId-_sections_-sectionId-_answers/post/res/201.json"
                                 },
                                 "example": {
                                     "data": {
@@ -264,7 +262,7 @@
                         "content": {
                             "application/vnd.api+json": {
                                 "schema": {
-                                    "$ref": "json-schemas/_questionnaires_{questionnaireId}_sections_answers/get/res/200.json"
+                                    "$ref": "json-schemas/_questionnaires_-questionnaireId-_sections_answers/get/res/200.json"
                                 },
                                 "example": {
                                     "data": [
@@ -338,7 +336,7 @@
                         "content": {
                             "application/vnd.api+json": {
                                 "schema": {
-                                    "$ref": "./json-schemas/_questionnaires_{questionnaireId}_submissions/get/res/200.json"
+                                    "$ref": "./json-schemas/_questionnaires_-questionnaireId-_submissions/get/res/200.json"
                                 },
                                 "example": {
                                     "data": {
@@ -415,7 +413,7 @@
                     "content": {
                         "application/vnd.api+json": {
                             "schema": {
-                                "$ref": "./json-schemas/_questionnaires_{questionnaireId}_submissions/post/req/201.json"
+                                "$ref": "./json-schemas/_questionnaires_-questionnaireId-_submissions/post/req/201.json"
                             },
                             "example": {
                                 "data": {
@@ -434,7 +432,7 @@
                         "content": {
                             "application/vnd.api+json": {
                                 "schema": {
-                                    "$ref": "./json-schemas/_questionnaires_{questionnaireId}_submissions/post/res/201.json"
+                                    "$ref": "./json-schemas/_questionnaires_-questionnaireId-_submissions/post/res/201.json"
                                 },
                                 "example": {
                                     "data": {
@@ -520,7 +518,7 @@
                         "content": {
                             "application/vnd.api+json": {
                                 "schema": {
-                                    "$ref": "json-schemas/_questionnaires_{questionnaireId}_progress-entries/get/res/200.json"
+                                    "$ref": "json-schemas/_questionnaires_-questionnaireId-_progress-entries/get/res/200.json"
                                 },
                                 "example": {
                                     "data": [
