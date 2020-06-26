@@ -30,7 +30,6 @@ const tokens = {
 const createQuestionnaireResponse = require('./test-fixtures/res/post_questionnaire.json');
 const getQuestionnaireResponse = require('./test-fixtures/res/get_questionnaire.json');
 const postSubmissionQueueResponse = require('./test-fixtures/res/post_submissionQueue.json');
-const getQuestionnaireResponseWithMeta = require('./test-fixtures/res/get_questionnaire_with_meta.json');
 
 // mock the DAL db integration
 jest.doMock('./questionnaire-dal.js', () =>
@@ -40,10 +39,6 @@ jest.doMock('./questionnaire-dal.js', () =>
         getQuestionnaire: questionnaireId => {
             if (questionnaireId === '285cb104-0c15-4a9c-9840-cb1007f098fb') {
                 return getQuestionnaireResponse;
-            }
-
-            if (questionnaireId === '345506cf-4b17-4727-b5ab-36b6e59c4560') {
-                return getQuestionnaireResponseWithMeta;
             }
 
             throw new VError(
@@ -475,7 +470,7 @@ describe('/questionnaires/{questionnaireId}/sections/answers', () => {
             it('should Success', async () => {
                 const res = await request(app)
                     .get(
-                        '/api/v1/questionnaires/345506cf-4b17-4727-b5ab-36b6e59c4560/sections/answers'
+                        '/api/v1/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/sections/answers'
                     )
                     .set('Authorization', `Bearer ${tokens['read:questionnaires']}`);
 
@@ -484,7 +479,7 @@ describe('/questionnaires/{questionnaireId}/sections/answers', () => {
                 expect(res.body).toMatchSchema({
                     $schema: 'http://json-schema.org/draft-07/schema#',
                     type: 'object',
-                    required: ['data'],
+                    required: ['data', 'meta'],
                     properties: {
                         data: {
                             type: 'array',
@@ -503,7 +498,11 @@ describe('/questionnaires/{questionnaireId}/sections/answers', () => {
                             }
                         },
                         meta: {
-                            type: 'object'
+                            type: 'object',
+                            properties: {
+                                questionnaireDocumentVersion: {type: 'string'},
+                                origin: {type: 'string', enum: ['WEB', 'TEL']}
+                            }
                         }
                     }
                 });

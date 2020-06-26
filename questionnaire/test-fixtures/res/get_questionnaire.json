@@ -2265,5 +2265,29 @@
             },
             "additionalProperties": false
         }
+    },
+    "meta": {
+        "questionnaireDocumentVersion": "1.0.0",
+        "onComplete": {
+            "tasks": [
+                {
+                    "type": "sendEmail",
+                    "templateId": "cb79653c-cf6e-44d4-8c03-087ba21cfd01",
+                    "templatePlaceholderMap": {
+                        "emailAddress": "/answers/p-applicant-confirmation-method/q-applicant-enter-your-email-address",
+                        "caseReference": "/answers/system/case-reference"
+                    }
+                },
+                {
+                    "type": "sendSms",
+                    "templateId": "3c847bb8-957a-4bba-9fad-090657bb5c71",
+                    "templatePlaceholderMap": {
+                        "phoneNumber": "/answers/p-applicant-confirmation-method/q-applicant-enter-your-telephone-number",
+                        "caseReference": "/answers/system/case-reference"
+                    }
+                }
+            ]
+        },
+        "origin": "WEB"
     }
 }
