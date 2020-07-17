@@ -2358,7 +2358,7 @@ module.exports = {
                 },
                 properties: {
                     'q-applicant-select-treatments-dmi': {
-                        title: "Select any treatments you've had",
+                        title: 'What mental health treatments have you had?',
                         description: "Include any treatment you're waiting to get.",
                         type: 'array',
                         items: {
@@ -2480,13 +2480,13 @@ module.exports = {
                 properties: {
                     'q-applicant-has-your-treatment-finished-dmi': {
                         type: 'boolean',
-                        title: 'Have you finished your mental health treatment?'
+                        title: 'Have you finished your treatment?'
                     }
                 },
                 errorMessage: {
                     required: {
                         'q-applicant-has-your-treatment-finished-dmi':
-                            'Select yes if you have finished your mental health treatment'
+                            'Select yes if you have finished your treatment'
                     }
                 },
                 examples: [
@@ -2506,7 +2506,6 @@ module.exports = {
             'p-applicant-affect-on-daily-life-dmi': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
                 type: 'object',
-                required: ['q-applicant-affect-on-daily-life-dmi'],
                 properties: {
                     'q-applicant-affect-on-daily-life-dmi': {
                         type: 'string',
@@ -2519,12 +2518,6 @@ module.exports = {
                         }
                     }
                 },
-                errorMessage: {
-                    required: {
-                        'q-applicant-affect-on-daily-life-dmi':
-                            'Describe how the crime has affected your daily life'
-                    }
-                },
                 examples: [
                     {
                         'q-applicant-affect-on-daily-life-dmi': 'Some description'
@@ -2535,20 +2528,6 @@ module.exports = {
                         'q-applicant-affect-on-daily-life-dmi': 12345
                     }
                 ]
-            },
-            'p--context-gp-details': {
-                $schema: 'http://json-schema.org/draft-07/schema#',
-                type: 'object',
-                title: 'Your GP',
-                additionalProperties: false,
-                properties: {
-                    'details-context': {
-                        description:
-                            '<p class="govuk-body">We’re going to ask for some details about your GP.</p><p class="govuk-body">We’ll use these to:</p><ul class="govuk-list govuk-list--bullet"><li>understand if you\'ve told your GP about your injuries</li><li>make sure any letters or forms we send out are addressed properly</li></ul><p class="govuk-body">We will not contact your GP or ask to see your medical records without your consent.</p>\n'
-                    }
-                },
-                examples: [{}],
-                invalidExamples: [{foo: 'bar'}]
             },
             'p-applicant-are-you-registered-with-gp': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
@@ -2616,7 +2595,7 @@ module.exports = {
             'p-gp-enter-your-address': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
                 type: 'object',
-                title: "What is your GP's address?",
+                title: "What is the GP's address?",
                 required: [
                     'q-gp-building-and-street',
                     'q-gp-town-or-city',
@@ -4037,8 +4016,8 @@ module.exports = {
                         items: {
                             anyOf: [
                                 {
-                                    title: 'Broken shoulder',
-                                    const: 'phyinj-xxx'
+                                    title: 'Broken shoulder blade',
+                                    const: 'phyinj-076'
                                 },
                                 {
                                     title: 'Dislocated shoulder',
@@ -4060,7 +4039,7 @@ module.exports = {
                 },
                 examples: [
                     {
-                        'q-applicant-physical-injury-arms-shoulder': ['phyinj-xxx']
+                        'q-applicant-physical-injury-arms-shoulder': ['phyinj-076']
                     },
                     {
                         'q-applicant-physical-injury-arms-shoulder': ['phyinj-100']
@@ -4782,7 +4761,7 @@ module.exports = {
             },
             'p-applicant-physical-injury-legs-toes': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
-                title: 'Select any injuries to your toes',
+                title: 'What parts of the toes were injured?',
                 type: 'object',
                 required: ['q-applicant-physical-injury-legs-toes'],
                 additionalProperties: false,
@@ -5017,6 +4996,189 @@ module.exports = {
                 invalidExamples: [
                     {
                         'q-applicant-pregnancy': 'foo'
+                    }
+                ]
+            },
+            'p--context-treatment': {
+                $schema: 'http://json-schema.org/draft-07/schema#',
+                type: 'object',
+                title: 'Your treatment',
+                additionalProperties: false,
+                properties: {
+                    'details-context': {
+                        description:
+                            '<p class="govuk-body">We are going to ask for some details about your GP</p><p class="govuk-body">We\'ll use these to understand:</p><ul class="govuk-list govuk-list--bullet"><li>if you\'ve told your GP about your injuries</li><li>who has evidence of your injuries</li></ul><p class="govuk-body">We will not contact your GP or ask to see your medical records without your consent.</p>\n'
+                    }
+                },
+                examples: [{}],
+                invalidExamples: [{foo: 'bar'}]
+            },
+            'p-applicant-treatment-for-physical-injuries': {
+                $schema: 'http://json-schema.org/draft-07/schema#',
+                type: 'object',
+                required: ['q-applicant-treatment-for-physical-injuries'],
+                properties: {
+                    'q-applicant-treatment-for-physical-injuries': {
+                        type: 'string',
+                        title: 'What treatment are you receiving for your physical injuries?',
+                        maxLength: 500,
+                        errorMessage: {
+                            maxLength: 'Description must be 500 characters or less'
+                        }
+                    }
+                },
+                errorMessage: {
+                    required: {
+                        'q-applicant-treatment-for-physical-injuries':
+                            'Describe what treatment you have received for your physical injuries'
+                    }
+                },
+                examples: [
+                    {
+                        'q-applicant-treatment-for-physical-injuries': 'Some treatment'
+                    }
+                ],
+                invalidExamples: [
+                    {
+                        'q-applicant-treatment-for-physical-injuries': 12345
+                    }
+                ]
+            },
+            'p-applicant-medical-help': {
+                $schema: 'http://json-schema.org/draft-07/schema#',
+                type: 'object',
+                required: ['q-applicant-medical-help'],
+                additionalProperties: false,
+                properties: {
+                    'q-applicant-medical-help': {
+                        type: 'boolean',
+                        title: 'Did you seek medical help for your injuries?'
+                    }
+                },
+                errorMessage: {
+                    required: {
+                        'q-applicant-medical-help':
+                            'Select yes if you sought medical help for your injuries'
+                    }
+                },
+                examples: [
+                    {
+                        'q-applicant-medical-help': true
+                    },
+                    {
+                        'q-applicant-medical-help': false
+                    }
+                ],
+                invalidExamples: [
+                    {
+                        'q-applicant-medical-help': 'foo'
+                    }
+                ]
+            },
+            'p-applicant-treatment-address': {
+                $schema: 'http://json-schema.org/draft-07/schema#',
+                type: 'object',
+                title: 'Where did you have treatment?',
+                required: [
+                    'q-applicant-treatment-building-and-street',
+                    'q-applicant-treatment-town-or-city',
+                    'q-applicant-treatment-building-and-street2'
+                ],
+                additionalProperties: false,
+                properties: {
+                    'q-applicant-treatment-building-and-street': {
+                        type: 'string',
+                        title: 'Name of place',
+                        maxLength: 60,
+                        errorMessage: {
+                            maxLength: 'Place name must be less than 60 characters'
+                        }
+                    },
+                    'q-applicant-treatment-building-and-street2': {
+                        type: 'string',
+                        title: 'Address line 1',
+                        maxLength: 60,
+                        errorMessage: {
+                            maxLength: 'Building and street must be less than 60 characters'
+                        }
+                    },
+                    'q-applicant-treatment-town-or-city': {
+                        type: 'string',
+                        title: 'Town or city',
+                        maxLength: 32,
+                        errorMessage: {
+                            maxLength: 'Town or city must be 60 characters or less'
+                        }
+                    },
+                    'q-applicant-treatment-county': {
+                        type: 'string',
+                        title: 'County (optional)',
+                        maxLength: 32,
+                        errorMessage: {
+                            maxLength: 'County must be 60 characters or less'
+                        }
+                    },
+                    'q-applicant-treatment-postcode': {
+                        type: 'string',
+                        title: 'Postcode (optional)',
+                        maxLength: 10,
+                        errorMessage: {
+                            maxLength: 'Postcode must be 10 characters or less'
+                        }
+                    }
+                },
+                errorMessage: {
+                    required: {
+                        'q-applicant-treatment-building-and-street': 'Enter the name of the place',
+                        'q-applicant-treatment-building-and-street2':
+                            'Enter the building and street',
+                        'q-applicant-treatment-town-or-city': 'Enter the town or city'
+                    }
+                },
+                examples: [
+                    {
+                        'q-applicant-treatment-building-and-street': '1 Foo Lane',
+                        'q-applicant-treatment-building-and-street2': 'Flat 2/3',
+                        'q-applicant-treatment-town-or-city': 'FooCity',
+                        'q-applicant-treatment-county': 'FooCounty',
+                        'q-applicant-treatment-postcode': 'G1 1XX'
+                    }
+                ],
+                invalidExamples: [
+                    {
+                        'q-applicant-treatment-building-and-street': 12345,
+                        'q-applicant-treatment-building-and-street2': 'Flat 2/3',
+                        'q-applicant-treatment-town-or-city': 'FooCity',
+                        'q-applicant-treatment-county': 'FooCounty',
+                        'q-applicant-treatment-postcode': 'G1 1XX'
+                    },
+                    {
+                        'q-applicant-treatment-building-and-street': '1 Foo Lane',
+                        'q-applicant-treatment-building-and-street2': 12345,
+                        'q-applicant-treatment-town-or-city': 'FooCity',
+                        'q-applicant-treatment-county': 'FooCounty',
+                        'q-applicant-treatment-postcode': 'G1 1XX'
+                    },
+                    {
+                        'q-applicant-treatment-building-and-street': '1 Foo Lane',
+                        'q-applicant-treatment-building-and-street2': 'Flat 2/3',
+                        'q-applicant-treatment-town-or-city': 12345,
+                        'q-applicant-treatment-county': 'FooCounty',
+                        'q-applicant-treatment-postcode': 'G1 1XX'
+                    },
+                    {
+                        'q-applicant-treatment-building-and-street': '1 Foo Lane',
+                        'q-applicant-treatment-building-and-street2': 'Flat 2/3',
+                        'q-applicant-treatment-town-or-city': 'FooCity',
+                        'q-applicant-treatment-county': 12345,
+                        'q-applicant-treatment-postcode': 'G1 1XX'
+                    },
+                    {
+                        'q-applicant-treatment-building-and-street': '1 Foo Lane',
+                        'q-applicant-treatment-building-and-street2': 'Flat 2/3',
+                        'q-applicant-treatment-town-or-city': 'FooCity',
+                        'q-applicant-treatment-county': 'FooCounty',
+                        'q-applicant-treatment-postcode': 12345
                     }
                 ]
             },
@@ -5817,7 +5979,7 @@ module.exports = {
                     on: {
                         ANSWER: [
                             {
-                                target: 'p--context-compensation',
+                                target: 'p-applicant-affect-on-daily-life-dmi',
                                 cond: [
                                     '==',
                                     '$.answers.p-applicant-do-you-have-disabling-mental-injury.q-applicant-do-you-have-disabling-mental-injury',
@@ -5839,7 +6001,7 @@ module.exports = {
                     on: {
                         ANSWER: [
                             {
-                                target: 'p-applicant-select-treatments'
+                                target: 'p-applicant-affect-on-daily-life-dmi'
                             }
                         ]
                     }
@@ -5857,7 +6019,7 @@ module.exports = {
                     on: {
                         ANSWER: [
                             {
-                                target: 'p-applicant-affect-on-daily-life-dmi'
+                                target: 'p-applicant-are-you-registered-with-gp'
                             }
                         ]
                     }
@@ -5866,16 +6028,24 @@ module.exports = {
                     on: {
                         ANSWER: [
                             {
-                                target: 'p--context-gp-details'
+                                target: 'p--context-treatment'
                             }
                         ]
                     }
                 },
-                'p--context-gp-details': {
+                'p--context-treatment': {
                     on: {
                         ANSWER: [
                             {
-                                target: 'p-applicant-are-you-registered-with-gp'
+                                target: 'p-applicant-treatment-for-physical-injuries',
+                                cond: [
+                                    '==',
+                                    '$.answers.p-applicant-are-you-claiming-for-physical-injuries.q-applicant-are-you-claiming-for-physical-injuries',
+                                    true
+                                ]
+                            },
+                            {
+                                target: 'p-applicant-select-treatments'
                             }
                         ]
                     }
@@ -5909,7 +6079,7 @@ module.exports = {
                                 ]
                             },
                             {
-                                target: 'p--context-compensation'
+                                target: 'p-applicant-medical-help'
                             }
                         ]
                     }
@@ -7626,6 +7796,49 @@ module.exports = {
                         ANSWER: [
                             {
                                 target: 'p-applicant-are-you-claiming-for-physical-injuries'
+                            }
+                        ]
+                    }
+                },
+                'p-applicant-treatment-for-physical-injuries': {
+                    on: {
+                        ANSWER: [
+                            {
+                                target: 'p-applicant-select-treatments',
+                                cond: [
+                                    '==',
+                                    '$.answers.p-applicant-do-you-have-disabling-mental-injury.q-applicant-do-you-have-disabling-mental-injury',
+                                    true
+                                ]
+                            },
+                            {
+                                target: 'p-applicant-has-your-treatment-finished-dmi'
+                            }
+                        ]
+                    }
+                },
+                'p-applicant-medical-help': {
+                    on: {
+                        ANSWER: [
+                            {
+                                target: 'p-applicant-treatment-address',
+                                cond: [
+                                    '==',
+                                    '$.answers.p-applicant-medical-help.q-applicant-medical-help',
+                                    true
+                                ]
+                            },
+                            {
+                                target: 'p--context-compensation'
+                            }
+                        ]
+                    }
+                },
+                'p-applicant-treatment-address': {
+                    on: {
+                        ANSWER: [
+                            {
+                                target: 'p--context-compensation'
                             }
                         ]
                     }
