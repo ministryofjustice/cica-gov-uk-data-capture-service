@@ -1,4 +1,4 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: dcs-app-dev
@@ -27,7 +27,7 @@ spec:
                   name: shared-secrets
                   key: database_url_with_credentials
             - name: DCS_LOG_LEVEL
-              value: 'info'
+              value: info
             - name: MESSAGE_BUS_URL
               valueFrom:
                 secretKeyRef:
@@ -44,4 +44,7 @@ spec:
                   name: shared-secrets
                   key: notify_api_key
             - name: DCS_URL
-              value: 'https://data-capture-service.dev.claim-criminal-injuries-compensation.service.justice.gov.uk'
+              value: https://data-capture-service.dev.claim-criminal-injuries-compensation.service.justice.gov.uk
+  selector:
+    matchLabels:
+      app: dcs-app-dev
