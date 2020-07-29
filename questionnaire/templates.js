@@ -2358,7 +2358,7 @@ module.exports = {
                 },
                 properties: {
                     'q-applicant-select-treatments-dmi': {
-                        title: "Select any treatments you've had",
+                        title: 'What mental health treatments have you had?',
                         description: "Include any treatment you're waiting to get.",
                         type: 'array',
                         items: {
@@ -4016,8 +4016,8 @@ module.exports = {
                         items: {
                             anyOf: [
                                 {
-                                    title: 'Broken shoulder',
-                                    const: 'phyinj-xxx'
+                                    title: 'Broken shoulder blade',
+                                    const: 'phyinj-076'
                                 },
                                 {
                                     title: 'Dislocated shoulder',
@@ -4039,7 +4039,7 @@ module.exports = {
                 },
                 examples: [
                     {
-                        'q-applicant-physical-injury-arms-shoulder': ['phyinj-xxx']
+                        'q-applicant-physical-injury-arms-shoulder': ['phyinj-076']
                     },
                     {
                         'q-applicant-physical-injury-arms-shoulder': ['phyinj-100']
@@ -4761,7 +4761,7 @@ module.exports = {
             },
             'p-applicant-physical-injury-legs-toes': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
-                title: 'Select any injuries to your toes',
+                title: 'What parts of the toes were injured?',
                 type: 'object',
                 required: ['q-applicant-physical-injury-legs-toes'],
                 additionalProperties: false,
@@ -5129,12 +5129,10 @@ module.exports = {
                 },
                 errorMessage: {
                     required: {
-                        'q-applicant-treatment-building-and-street':
-                            "Enter the name of your GP's practice",
+                        'q-applicant-treatment-building-and-street': 'Enter the name of the place',
                         'q-applicant-treatment-building-and-street2':
-                            'Enter the building and street of your GP',
-                        'q-applicant-treatment-town-or-city':
-                            "Enter the town or city where your GP's practice is"
+                            'Enter the building and street',
+                        'q-applicant-treatment-town-or-city': 'Enter the town or city'
                     }
                 },
                 examples: [
