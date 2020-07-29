@@ -2506,7 +2506,6 @@ module.exports = {
             'p-applicant-affect-on-daily-life-dmi': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
                 type: 'object',
-                required: ['q-applicant-affect-on-daily-life-dmi'],
                 properties: {
                     'q-applicant-affect-on-daily-life-dmi': {
                         type: 'string',
@@ -2517,12 +2516,6 @@ module.exports = {
                         errorMessage: {
                             maxLength: 'Description must be 500 characters or less'
                         }
-                    }
-                },
-                errorMessage: {
-                    required: {
-                        'q-applicant-affect-on-daily-life-dmi':
-                            'Describe how the crime has affected your daily life'
                     }
                 },
                 examples: [
@@ -2602,7 +2595,7 @@ module.exports = {
             'p-gp-enter-your-address': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
                 type: 'object',
-                title: "What is your GP's address?",
+                title: "What is the GP's address?",
                 required: [
                     'q-gp-building-and-street',
                     'q-gp-town-or-city',
