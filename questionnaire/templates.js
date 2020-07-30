@@ -4,7 +4,7 @@ module.exports = {
     'sexual-assault': id => ({
         id,
         type: 'apply-for-compensation',
-        version: '1.4.0-prerelease+build',
+        version: '1.5.0',
         sections: {
             'p-applicant-declaration': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
@@ -4899,13 +4899,13 @@ module.exports = {
                 properties: {
                     'q-applicant-infections': {
                         type: 'boolean',
-                        title: 'Do you have HIV or hepatitis as a result of the crime?'
+                        title: 'Do you have HIV, hepatitis or an STI as a result of the crime?'
                     }
                 },
                 errorMessage: {
                     required: {
                         'q-applicant-infections':
-                            'Select yes if you have HIV or hepatitis as a result of the crime'
+                            'Select yes if you have HIV, hepatitis or an STI as a result of the crime'
                     }
                 },
                 examples: [
@@ -4944,6 +4944,10 @@ module.exports = {
                                 {
                                     title: 'Hepatitis C',
                                     const: 'phyinj-143'
+                                },
+                                {
+                                    title: 'Other sexually transmitted infection (STI)',
+                                    const: 'phyinj-145'
                                 }
                             ]
                         }
@@ -4968,6 +4972,37 @@ module.exports = {
                     }
                 ]
             },
+            'p-applicant-pregnancy-loss': {
+                $schema: 'http://json-schema.org/draft-07/schema#',
+                type: 'object',
+                required: ['q-applicant-pregnancy-loss'],
+                additionalProperties: false,
+                properties: {
+                    'q-applicant-pregnancy-loss': {
+                        type: 'boolean',
+                        title: 'Did you lose a pregnancy as a result of the crime?'
+                    }
+                },
+                errorMessage: {
+                    required: {
+                        'q-applicant-pregnancy-loss':
+                            'Select yes if you lost a pregnancy as a result of the crime'
+                    }
+                },
+                examples: [
+                    {
+                        'q-applicant-pregnancy-loss': true
+                    },
+                    {
+                        'q-applicant-pregnancy-loss': false
+                    }
+                ],
+                invalidExamples: [
+                    {
+                        'q-applicant-pregnancy-loss': 'foo'
+                    }
+                ]
+            },
             'p-applicant-pregnancy': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
                 type: 'object',
@@ -4976,13 +5011,13 @@ module.exports = {
                 properties: {
                     'q-applicant-pregnancy': {
                         type: 'boolean',
-                        title: 'Did you lose a pregnancy as a result of the crime?'
+                        title: 'Did you become pregnant as a result of the crime?'
                     }
                 },
                 errorMessage: {
                     required: {
                         'q-applicant-pregnancy':
-                            'Select yes if you lost a pregnancy as a result of the crime'
+                            'Select yes if you became pregnant as a result of the crime?'
                     }
                 },
                 examples: [
@@ -7792,6 +7827,15 @@ module.exports = {
                     }
                 },
                 'p-applicant-pregnancy': {
+                    on: {
+                        ANSWER: [
+                            {
+                                target: 'p-applicant-pregnancy-loss'
+                            }
+                        ]
+                    }
+                },
+                'p-applicant-pregnancy-loss': {
                     on: {
                         ANSWER: [
                             {
