@@ -4,7 +4,7 @@ module.exports = {
     'sexual-assault': id => ({
         id,
         type: 'apply-for-compensation',
-        version: '1.4.0',
+        version: '1.3.0',
         sections: {
             'p-applicant-declaration': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
@@ -2900,6 +2900,7 @@ module.exports = {
             'p-applicant-physical-injury': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
                 title: 'What was injured?',
+                description: 'Select all that apply.',
                 type: 'object',
                 required: ['q-applicant-physical-injury'],
                 additionalProperties: false,
@@ -2956,7 +2957,7 @@ module.exports = {
             },
             'p-applicant-physical-injury-upper': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
-                title: 'What was injured?',
+                title: 'What parts of the head, face or neck was injured?',
                 type: 'object',
                 required: ['q-applicant-physical-injury-upper'],
                 additionalProperties: false,
@@ -3069,7 +3070,7 @@ module.exports = {
             },
             'p-applicant-physical-injury-upper-head': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
-                title: 'Select any injuries to your head or brain',
+                title: 'Select any injuries to the head or brain',
                 type: 'object',
                 required: ['q-applicant-physical-injuries'],
                 additionalProperties: false,
@@ -3079,8 +3080,21 @@ module.exports = {
                         items: {
                             anyOf: [
                                 {
+                                    title:
+                                        'Concussion, headaches or loss of balance lasting 28 or more',
+                                    const: 'phyinj-144'
+                                },
+                                {
                                     title: 'Brain damage',
                                     const: 'phyinj-003'
+                                },
+                                {
+                                    title: 'Fractured skull',
+                                    const: 'phyinj-042'
+                                },
+                                {
+                                    title: 'Hair pulled out',
+                                    const: 'phyinj-053'
                                 },
                                 {
                                     title: 'Epilepsy',
@@ -3091,10 +3105,60 @@ module.exports = {
                                     const: 'phyinj-005'
                                 },
                                 {
-                                    title: 'Fractured skull',
-                                    const: 'phyinj-042'
+                                    title: 'Quadriplegia or tetraplegia (paralysis of all 4 limbs)',
+                                    const: 'phyinj-139'
+                                },
+                                {
+                                    title: 'Hemiplegia (paralysis of one side of the the body)',
+                                    const: 'phyinj-137'
+                                },
+                                {
+                                    title: 'Other',
+                                    const: 'phyinj-149'
                                 }
                             ]
+                        }
+                    },
+                    'q-applicant-physical-injuries-upper-head-other': {
+                        type: 'string',
+                        title: 'Type of injury',
+                        maxLength: 100,
+                        errorMessage: {
+                            maxLength: 'Type of injury must be 100 characters or fewer'
+                        }
+                    }
+                },
+                allOf: [
+                    {
+                        $ref: '#/definitions/if-other-then-other-textbox-is-required'
+                    }
+                ],
+                definitions: {
+                    'if-other-then-other-textbox-is-required': {
+                        if: {
+                            properties: {
+                                'q-applicant-physical-injuries': {
+                                    contains: {
+                                        const: 'phyinj-149'
+                                    }
+                                }
+                            },
+                            required: ['q-applicant-physical-injuries']
+                        },
+                        then: {
+                            required: ['q-applicant-physical-injuries-upper-head-other'],
+                            propertyNames: {
+                                enum: [
+                                    'q-applicant-physical-injuries',
+                                    'q-applicant-physical-injuries-upper-head-other'
+                                ]
+                            },
+                            errorMessage: {
+                                required: {
+                                    'q-applicant-physical-injuries-upper-head-other':
+                                        'Enter a type of injury'
+                                }
+                            }
                         }
                     }
                 },
@@ -3119,7 +3183,7 @@ module.exports = {
             },
             'p-applicant-physical-injury-upper-face': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
-                title: 'Select any injuries to your face',
+                title: 'Select any injuries to the face',
                 type: 'object',
                 required: ['q-applicant-physical-injuries'],
                 additionalProperties: false,
@@ -3151,8 +3215,62 @@ module.exports = {
                                 {
                                     title: 'Dislocated jaw',
                                     const: 'phyinj-030'
+                                },
+                                {
+                                    title: 'Quadriplegia or tetraplegia (paralysis of all 4 limbs)',
+                                    const: 'phyinj-139'
+                                },
+                                {
+                                    title: 'Hemiplegia (paralysis of one side of the the body)',
+                                    const: 'phyinj-137'
+                                },
+                                {
+                                    title: 'Other',
+                                    const: 'phyinj-149'
                                 }
                             ]
+                        }
+                    },
+                    'q-applicant-physical-injuries-upper-face-other': {
+                        type: 'string',
+                        title: 'Type of injury',
+                        maxLength: 100,
+                        errorMessage: {
+                            maxLength: 'Type of injury must be 100 characters or fewer'
+                        }
+                    }
+                },
+                allOf: [
+                    {
+                        $ref: '#/definitions/if-other-then-other-textbox-is-required'
+                    }
+                ],
+                definitions: {
+                    'if-other-then-other-textbox-is-required': {
+                        if: {
+                            properties: {
+                                'q-applicant-physical-injuries': {
+                                    contains: {
+                                        const: 'phyinj-149'
+                                    }
+                                }
+                            },
+                            required: ['q-applicant-physical-injuries']
+                        },
+                        then: {
+                            required: ['q-applicant-physical-injuries-upper-face-other'],
+                            propertyNames: {
+                                enum: [
+                                    'q-applicant-physical-injuries',
+                                    'q-applicant-physical-injuries-upper-face-other'
+                                ]
+                            },
+                            errorMessage: {
+                                required: {
+                                    'q-applicant-physical-injuries-upper-face-other':
+                                        'Enter a type of injury'
+                                }
+                            }
                         }
                     }
                 },
@@ -3177,7 +3295,7 @@ module.exports = {
             },
             'p-applicant-physical-injury-upper-neck': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
-                title: 'Select any injuries to your neck',
+                title: 'Select any injuries to the neck',
                 type: 'object',
                 required: ['q-applicant-physical-injuries'],
                 additionalProperties: false,
@@ -3193,8 +3311,62 @@ module.exports = {
                                 {
                                     title: 'Whiplash',
                                     const: 'phyinj-039'
+                                },
+                                {
+                                    title: 'Quadriplegia or tetraplegia (paralysis of all 4 limbs)',
+                                    const: 'phyinj-139'
+                                },
+                                {
+                                    title: 'Hemiplegia (paralysis of one side of the the body)',
+                                    const: 'phyinj-137'
+                                },
+                                {
+                                    title: 'Other',
+                                    const: 'phyinj-149'
                                 }
                             ]
+                        }
+                    },
+                    'q-applicant-physical-injuries-upper-neck-other': {
+                        type: 'string',
+                        title: 'Type of injury',
+                        maxLength: 100,
+                        errorMessage: {
+                            maxLength: 'Type of injury must be 100 characters or fewer'
+                        }
+                    }
+                },
+                allOf: [
+                    {
+                        $ref: '#/definitions/if-other-then-other-textbox-is-required'
+                    }
+                ],
+                definitions: {
+                    'if-other-then-other-textbox-is-required': {
+                        if: {
+                            properties: {
+                                'q-applicant-physical-injuries': {
+                                    contains: {
+                                        const: 'phyinj-149'
+                                    }
+                                }
+                            },
+                            required: ['q-applicant-physical-injuries']
+                        },
+                        then: {
+                            required: ['q-applicant-physical-injuries-upper-neck-other'],
+                            propertyNames: {
+                                enum: [
+                                    'q-applicant-physical-injuries',
+                                    'q-applicant-physical-injuries-upper-neck-other'
+                                ]
+                            },
+                            errorMessage: {
+                                required: {
+                                    'q-applicant-physical-injuries-upper-neck-other':
+                                        'Enter a type of injury'
+                                }
+                            }
                         }
                     }
                 },
@@ -3219,7 +3391,7 @@ module.exports = {
             },
             'p-applicant-physical-injury-upper-eye': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
-                title: 'Select any injuries to your eye or eyesight',
+                title: 'Select any injuries to the eye or eyesight',
                 type: 'object',
                 required: ['q-applicant-physical-injuries'],
                 additionalProperties: false,
@@ -3239,6 +3411,10 @@ module.exports = {
                                 {
                                     title: 'Permanent blurred vision',
                                     const: 'phyinj-015'
+                                },
+                                {
+                                    title: 'Permanent loss of peripheral vision',
+                                    const: 'phyinj-018'
                                 },
                                 {
                                     title: 'Black eye',
@@ -3291,8 +3467,54 @@ module.exports = {
                                 {
                                     title: 'Damaged eye drain',
                                     const: 'phyinj-028'
+                                },
+                                {
+                                    title: 'Other',
+                                    const: 'phyinj-149'
                                 }
                             ]
+                        }
+                    },
+                    'q-applicant-physical-injuries-upper-eye-other': {
+                        type: 'string',
+                        title: 'Type of injury',
+                        maxLength: 100,
+                        errorMessage: {
+                            maxLength: 'Type of injury must be 100 characters or fewer'
+                        }
+                    }
+                },
+                allOf: [
+                    {
+                        $ref: '#/definitions/if-other-then-other-textbox-is-required'
+                    }
+                ],
+                definitions: {
+                    'if-other-then-other-textbox-is-required': {
+                        if: {
+                            properties: {
+                                'q-applicant-physical-injuries': {
+                                    contains: {
+                                        const: 'phyinj-149'
+                                    }
+                                }
+                            },
+                            required: ['q-applicant-physical-injuries']
+                        },
+                        then: {
+                            required: ['q-applicant-physical-injuries-upper-eye-other'],
+                            propertyNames: {
+                                enum: [
+                                    'q-applicant-physical-injuries',
+                                    'q-applicant-physical-injuries-upper-eye-other'
+                                ]
+                            },
+                            errorMessage: {
+                                required: {
+                                    'q-applicant-physical-injuries-upper-eye-other':
+                                        'Enter a type of injury'
+                                }
+                            }
                         }
                     }
                 },
@@ -3317,7 +3539,7 @@ module.exports = {
             },
             'p-applicant-physical-injury-upper-ear': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
-                title: 'Select any injuries to your ear or hearing',
+                title: 'Select any injuries to the ear or hearing',
                 type: 'object',
                 required: ['q-applicant-physical-injuries'],
                 additionalProperties: false,
@@ -3353,8 +3575,54 @@ module.exports = {
                                 {
                                     title: 'Dizziness',
                                     const: 'phyinj-012'
+                                },
+                                {
+                                    title: 'Other',
+                                    const: 'phyinj-149'
                                 }
                             ]
+                        }
+                    },
+                    'q-applicant-physical-injuries-upper-ear-other': {
+                        type: 'string',
+                        title: 'Type of injury',
+                        maxLength: 100,
+                        errorMessage: {
+                            maxLength: 'Type of injury must be 100 characters or fewer'
+                        }
+                    }
+                },
+                allOf: [
+                    {
+                        $ref: '#/definitions/if-other-then-other-textbox-is-required'
+                    }
+                ],
+                definitions: {
+                    'if-other-then-other-textbox-is-required': {
+                        if: {
+                            properties: {
+                                'q-applicant-physical-injuries': {
+                                    contains: {
+                                        const: 'phyinj-149'
+                                    }
+                                }
+                            },
+                            required: ['q-applicant-physical-injuries']
+                        },
+                        then: {
+                            required: ['q-applicant-physical-injuries-upper-ear-other'],
+                            propertyNames: {
+                                enum: [
+                                    'q-applicant-physical-injuries',
+                                    'q-applicant-physical-injuries-upper-ear-other'
+                                ]
+                            },
+                            errorMessage: {
+                                required: {
+                                    'q-applicant-physical-injuries-upper-ear-other':
+                                        'Enter a type of injury'
+                                }
+                            }
                         }
                     }
                 },
@@ -3379,7 +3647,7 @@ module.exports = {
             },
             'p-applicant-physical-injury-upper-nose': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
-                title: 'Select any injuries to your nose',
+                title: 'Select any injuries to the nose',
                 type: 'object',
                 required: ['q-applicant-physical-injuries'],
                 additionalProperties: false,
@@ -3391,6 +3659,10 @@ module.exports = {
                                 {
                                     title: 'Broken nose',
                                     const: 'phyinj-033'
+                                },
+                                {
+                                    title: 'Bloody nose',
+                                    const: 'phyinj-052'
                                 },
                                 {
                                     title: 'Loss of smell or taste',
@@ -3408,8 +3680,54 @@ module.exports = {
                                     title:
                                         'Broken ethmoid (bone at base of nose) needing operation',
                                     const: 'phyinj-032'
+                                },
+                                {
+                                    title: 'Other',
+                                    const: 'phyinj-149'
                                 }
                             ]
+                        }
+                    },
+                    'q-applicant-physical-injuries-upper-nose-other': {
+                        type: 'string',
+                        title: 'Type of injury',
+                        maxLength: 100,
+                        errorMessage: {
+                            maxLength: 'Type of injury must be 100 characters or fewer'
+                        }
+                    }
+                },
+                allOf: [
+                    {
+                        $ref: '#/definitions/if-other-then-other-textbox-is-required'
+                    }
+                ],
+                definitions: {
+                    'if-other-then-other-textbox-is-required': {
+                        if: {
+                            properties: {
+                                'q-applicant-physical-injuries': {
+                                    contains: {
+                                        const: 'phyinj-149'
+                                    }
+                                }
+                            },
+                            required: ['q-applicant-physical-injuries']
+                        },
+                        then: {
+                            required: ['q-applicant-physical-injuries-upper-nose-other'],
+                            propertyNames: {
+                                enum: [
+                                    'q-applicant-physical-injuries',
+                                    'q-applicant-physical-injuries-upper-nose-other'
+                                ]
+                            },
+                            errorMessage: {
+                                required: {
+                                    'q-applicant-physical-injuries-upper-nose-other':
+                                        'Enter a type of injury'
+                                }
+                            }
                         }
                     }
                 },
@@ -3434,7 +3752,7 @@ module.exports = {
             },
             'p-applicant-physical-injury-upper-mouth': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
-                title: 'Select any injuries to your mouth',
+                title: 'Select any injuries to the mouth',
                 type: 'object',
                 required: ['q-applicant-physical-injuries'],
                 additionalProperties: false,
@@ -3466,8 +3784,54 @@ module.exports = {
                                 {
                                     title: 'Loss of smell or taste',
                                     const: 'phyinj-040'
+                                },
+                                {
+                                    title: 'Other',
+                                    const: 'phyinj-149'
                                 }
                             ]
+                        }
+                    },
+                    'q-applicant-physical-injuries-upper-mouth-other': {
+                        type: 'string',
+                        title: 'Type of injury',
+                        maxLength: 100,
+                        errorMessage: {
+                            maxLength: 'Type of injury must be 100 characters or fewer'
+                        }
+                    }
+                },
+                allOf: [
+                    {
+                        $ref: '#/definitions/if-other-then-other-textbox-is-required'
+                    }
+                ],
+                definitions: {
+                    'if-other-then-other-textbox-is-required': {
+                        if: {
+                            properties: {
+                                'q-applicant-physical-injuries': {
+                                    contains: {
+                                        const: 'phyinj-149'
+                                    }
+                                }
+                            },
+                            required: ['q-applicant-physical-injuries']
+                        },
+                        then: {
+                            required: ['q-applicant-physical-injuries-upper-mouth-other'],
+                            propertyNames: {
+                                enum: [
+                                    'q-applicant-physical-injuries',
+                                    'q-applicant-physical-injuries-upper-mouth-other'
+                                ]
+                            },
+                            errorMessage: {
+                                required: {
+                                    'q-applicant-physical-injuries-upper-mouth-other':
+                                        'Enter a type of injury'
+                                }
+                            }
                         }
                     }
                 },
@@ -3492,7 +3856,7 @@ module.exports = {
             },
             'p-applicant-physical-injury-upper-skin': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
-                title: 'Select any injuries to your skin on your head, face or neck',
+                title: 'Select any injuries to the skin on your head, face or neck',
                 type: 'object',
                 required: ['q-applicant-physical-injuries'],
                 additionalProperties: false,
@@ -3516,8 +3880,54 @@ module.exports = {
                                 {
                                     title: 'Burns',
                                     const: 'phyinj-001'
+                                },
+                                {
+                                    title: 'Other',
+                                    const: 'phyinj-149'
                                 }
                             ]
+                        }
+                    },
+                    'q-applicant-physical-injuries-upper-skin-other': {
+                        type: 'string',
+                        title: 'Type of injury',
+                        maxLength: 100,
+                        errorMessage: {
+                            maxLength: 'Type of injury must be 100 characters or fewer'
+                        }
+                    }
+                },
+                allOf: [
+                    {
+                        $ref: '#/definitions/if-other-then-other-textbox-is-required'
+                    }
+                ],
+                definitions: {
+                    'if-other-then-other-textbox-is-required': {
+                        if: {
+                            properties: {
+                                'q-applicant-physical-injuries': {
+                                    contains: {
+                                        const: 'phyinj-149'
+                                    }
+                                }
+                            },
+                            required: ['q-applicant-physical-injuries']
+                        },
+                        then: {
+                            required: ['q-applicant-physical-injuries-upper-skin-other'],
+                            propertyNames: {
+                                enum: [
+                                    'q-applicant-physical-injuries',
+                                    'q-applicant-physical-injuries-upper-skin-other'
+                                ]
+                            },
+                            errorMessage: {
+                                required: {
+                                    'q-applicant-physical-injuries-upper-skin-other':
+                                        'Enter a type of injury'
+                                }
+                            }
                         }
                     }
                 },
@@ -3542,7 +3952,7 @@ module.exports = {
             },
             'p-applicant-physical-injury-torso': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
-                title: 'What parts of your torso were injured?',
+                title: 'What parts of the torso were injured?',
                 type: 'object',
                 required: ['q-applicant-physical-injury-torso'],
                 additionalProperties: false,
@@ -3642,7 +4052,7 @@ module.exports = {
             },
             'p-applicant-physical-injury-torso-shoulder': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
-                title: 'Select any injuries to your shoulder',
+                title: 'Select any injuries to the shoulder',
                 type: 'object',
                 required: ['q-applicant-physical-injuries'],
                 additionalProperties: false,
@@ -3666,8 +4076,54 @@ module.exports = {
                                 {
                                     title: 'Frozen shoulder',
                                     const: 'phyinj-101'
+                                },
+                                {
+                                    title: 'Other',
+                                    const: 'phyinj-149'
                                 }
                             ]
+                        }
+                    },
+                    'q-applicant-physical-injuries-torso-shoulder-other': {
+                        type: 'string',
+                        title: 'Type of injury',
+                        maxLength: 100,
+                        errorMessage: {
+                            maxLength: 'Type of injury must be 100 characters or fewer'
+                        }
+                    }
+                },
+                allOf: [
+                    {
+                        $ref: '#/definitions/if-other-then-other-textbox-is-required'
+                    }
+                ],
+                definitions: {
+                    'if-other-then-other-textbox-is-required': {
+                        if: {
+                            properties: {
+                                'q-applicant-physical-injuries': {
+                                    contains: {
+                                        const: 'phyinj-149'
+                                    }
+                                }
+                            },
+                            required: ['q-applicant-physical-injuries']
+                        },
+                        then: {
+                            required: ['q-applicant-physical-injuries-torso-shoulder-other'],
+                            propertyNames: {
+                                enum: [
+                                    'q-applicant-physical-injuries',
+                                    'q-applicant-physical-injuries-torso-shoulder-other'
+                                ]
+                            },
+                            errorMessage: {
+                                required: {
+                                    'q-applicant-physical-injuries-torso-shoulder-other':
+                                        'Enter a type of injury'
+                                }
+                            }
                         }
                     }
                 },
@@ -3692,7 +4148,7 @@ module.exports = {
             },
             'p-applicant-physical-injury-torso-chest': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
-                title: 'Select any injuries to your chest',
+                title: 'Select any injuries to the chest',
                 type: 'object',
                 required: ['q-applicant-physical-injuries'],
                 additionalProperties: false,
@@ -3728,8 +4184,54 @@ module.exports = {
                                 {
                                     title: 'Lung damage from smoke or chemicals',
                                     const: 'phyinj-072'
+                                },
+                                {
+                                    title: 'Other',
+                                    const: 'phyinj-149'
                                 }
                             ]
+                        }
+                    },
+                    'q-applicant-physical-injuries-torso-chest-other': {
+                        type: 'string',
+                        title: 'Type of injury',
+                        maxLength: 100,
+                        errorMessage: {
+                            maxLength: 'Type of injury must be 100 characters or fewer'
+                        }
+                    }
+                },
+                allOf: [
+                    {
+                        $ref: '#/definitions/if-other-then-other-textbox-is-required'
+                    }
+                ],
+                definitions: {
+                    'if-other-then-other-textbox-is-required': {
+                        if: {
+                            properties: {
+                                'q-applicant-physical-injuries': {
+                                    contains: {
+                                        const: 'phyinj-149'
+                                    }
+                                }
+                            },
+                            required: ['q-applicant-physical-injuries']
+                        },
+                        then: {
+                            required: ['q-applicant-physical-injuries-torso-chest-other'],
+                            propertyNames: {
+                                enum: [
+                                    'q-applicant-physical-injuries',
+                                    'q-applicant-physical-injuries-torso-chest-other'
+                                ]
+                            },
+                            errorMessage: {
+                                required: {
+                                    'q-applicant-physical-injuries-torso-chest-other':
+                                        'Enter a type of injury'
+                                }
+                            }
                         }
                     }
                 },
@@ -3754,7 +4256,7 @@ module.exports = {
             },
             'p-applicant-physical-injury-torso-abdomen': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
-                title: 'Select any injuries to your abdomen',
+                title: 'Select any injuries to the abdomen',
                 type: 'object',
                 required: ['q-applicant-physical-injuries'],
                 additionalProperties: false,
@@ -3790,8 +4292,62 @@ module.exports = {
                                 {
                                     title: 'Stoma',
                                     const: 'phyinj-058'
+                                },
+                                {
+                                    title: 'Quadriplegia or tetraplegia (paralysis of all 4 limbs)',
+                                    const: 'phyinj-139'
+                                },
+                                {
+                                    title: 'Hemiplegia (paralysis of one side of the the body)',
+                                    const: 'phyinj-137'
+                                },
+                                {
+                                    title: 'Other',
+                                    const: 'phyinj-149'
                                 }
                             ]
+                        }
+                    },
+                    'q-applicant-physical-injuries-torso-abdomen-other': {
+                        type: 'string',
+                        title: 'Type of injury',
+                        maxLength: 100,
+                        errorMessage: {
+                            maxLength: 'Type of injury must be 100 characters or fewer'
+                        }
+                    }
+                },
+                allOf: [
+                    {
+                        $ref: '#/definitions/if-other-then-other-textbox-is-required'
+                    }
+                ],
+                definitions: {
+                    'if-other-then-other-textbox-is-required': {
+                        if: {
+                            properties: {
+                                'q-applicant-physical-injuries': {
+                                    contains: {
+                                        const: 'phyinj-149'
+                                    }
+                                }
+                            },
+                            required: ['q-applicant-physical-injuries']
+                        },
+                        then: {
+                            required: ['q-applicant-physical-injuries-torso-abdomen-other'],
+                            propertyNames: {
+                                enum: [
+                                    'q-applicant-physical-injuries',
+                                    'q-applicant-physical-injuries-torso-abdomen-other'
+                                ]
+                            },
+                            errorMessage: {
+                                required: {
+                                    'q-applicant-physical-injuries-torso-abdomen-other':
+                                        'Enter a type of injury'
+                                }
+                            }
                         }
                     }
                 },
@@ -3816,7 +4372,7 @@ module.exports = {
             },
             'p-applicant-physical-injury-torso-back': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
-                title: 'Select any injuries to your back',
+                title: 'Select any injuries to the back',
                 type: 'object',
                 required: ['q-applicant-physical-injuries'],
                 additionalProperties: false,
@@ -3840,8 +4396,62 @@ module.exports = {
                                 {
                                     title: 'Broken tailbone',
                                     const: 'phyinj-064'
+                                },
+                                {
+                                    title: 'Quadriplegia or tetraplegia (paralysis of all 4 limbs)',
+                                    const: 'phyinj-139'
+                                },
+                                {
+                                    title: 'Hemiplegia (paralysis of one side of the the body)',
+                                    const: 'phyinj-137'
+                                },
+                                {
+                                    title: 'Other',
+                                    const: 'phyinj-149'
                                 }
                             ]
+                        }
+                    },
+                    'q-applicant-physical-injuries-torso-back-other': {
+                        type: 'string',
+                        title: 'Type of injury',
+                        maxLength: 100,
+                        errorMessage: {
+                            maxLength: 'Type of injury must be 100 characters or fewer'
+                        }
+                    }
+                },
+                allOf: [
+                    {
+                        $ref: '#/definitions/if-other-then-other-textbox-is-required'
+                    }
+                ],
+                definitions: {
+                    'if-other-then-other-textbox-is-required': {
+                        if: {
+                            properties: {
+                                'q-applicant-physical-injuries': {
+                                    contains: {
+                                        const: 'phyinj-149'
+                                    }
+                                }
+                            },
+                            required: ['q-applicant-physical-injuries']
+                        },
+                        then: {
+                            required: ['q-applicant-physical-injuries-torso-back-other'],
+                            propertyNames: {
+                                enum: [
+                                    'q-applicant-physical-injuries',
+                                    'q-applicant-physical-injuries-torso-back-other'
+                                ]
+                            },
+                            errorMessage: {
+                                required: {
+                                    'q-applicant-physical-injuries-torso-back-other':
+                                        'Enter a type of injury'
+                                }
+                            }
                         }
                     }
                 },
@@ -3866,7 +4476,7 @@ module.exports = {
             },
             'p-applicant-physical-injury-torso-pelvis': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
-                title: 'Select any injuries to your pelvis',
+                title: 'Select any injuries to the pelvis',
                 type: 'object',
                 required: ['q-applicant-physical-injuries'],
                 additionalProperties: false,
@@ -3878,8 +4488,54 @@ module.exports = {
                                 {
                                     title: 'Broken pelvis',
                                     const: 'phyinj-074'
+                                },
+                                {
+                                    title: 'Other',
+                                    const: 'phyinj-149'
                                 }
                             ]
+                        }
+                    },
+                    'q-applicant-physical-injuries-torso-pelvis-other': {
+                        type: 'string',
+                        title: 'Type of injury',
+                        maxLength: 100,
+                        errorMessage: {
+                            maxLength: 'Type of injury must be 100 characters or fewer'
+                        }
+                    }
+                },
+                allOf: [
+                    {
+                        $ref: '#/definitions/if-other-then-other-textbox-is-required'
+                    }
+                ],
+                definitions: {
+                    'if-other-then-other-textbox-is-required': {
+                        if: {
+                            properties: {
+                                'q-applicant-physical-injuries': {
+                                    contains: {
+                                        const: 'phyinj-149'
+                                    }
+                                }
+                            },
+                            required: ['q-applicant-physical-injuries']
+                        },
+                        then: {
+                            required: ['q-applicant-physical-injuries-torso-pelvis-other'],
+                            propertyNames: {
+                                enum: [
+                                    'q-applicant-physical-injuries',
+                                    'q-applicant-physical-injuries-torso-pelvis-other'
+                                ]
+                            },
+                            errorMessage: {
+                                required: {
+                                    'q-applicant-physical-injuries-torso-pelvis-other':
+                                        'Enter a type of injury'
+                                }
+                            }
                         }
                     }
                 },
@@ -3904,7 +4560,7 @@ module.exports = {
             },
             'p-applicant-physical-injury-torso-genitals': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
-                title: 'Select any injuries to your genitals',
+                title: 'Select any injuries to the genitals',
                 type: 'object',
                 required: ['q-applicant-physical-injuries'],
                 additionalProperties: false,
@@ -3920,8 +4576,54 @@ module.exports = {
                                 {
                                     title: 'Infertility',
                                     const: 'phyinj-066'
+                                },
+                                {
+                                    title: 'Other',
+                                    const: 'phyinj-149'
                                 }
                             ]
+                        }
+                    },
+                    'q-applicant-physical-injuries-torso-genitals-other': {
+                        type: 'string',
+                        title: 'Type of injury',
+                        maxLength: 100,
+                        errorMessage: {
+                            maxLength: 'Type of injury must be 100 characters or fewer'
+                        }
+                    }
+                },
+                allOf: [
+                    {
+                        $ref: '#/definitions/if-other-then-other-textbox-is-required'
+                    }
+                ],
+                definitions: {
+                    'if-other-then-other-textbox-is-required': {
+                        if: {
+                            properties: {
+                                'q-applicant-physical-injuries': {
+                                    contains: {
+                                        const: 'phyinj-149'
+                                    }
+                                }
+                            },
+                            required: ['q-applicant-physical-injuries']
+                        },
+                        then: {
+                            required: ['q-applicant-physical-injuries-torso-genitals-other'],
+                            propertyNames: {
+                                enum: [
+                                    'q-applicant-physical-injuries',
+                                    'q-applicant-physical-injuries-torso-genitals-other'
+                                ]
+                            },
+                            errorMessage: {
+                                required: {
+                                    'q-applicant-physical-injuries-torso-genitals-other':
+                                        'Enter a type of injury'
+                                }
+                            }
                         }
                     }
                 },
@@ -3946,7 +4648,7 @@ module.exports = {
             },
             'p-applicant-physical-injury-torso-skin': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
-                title: 'Select any injuries to your skin on your torso',
+                title: 'Select any injuries to the skin on your torso',
                 type: 'object',
                 required: ['q-applicant-physical-injuries'],
                 additionalProperties: false,
@@ -3970,8 +4672,54 @@ module.exports = {
                                 {
                                     title: 'Burns',
                                     const: 'phyinj-054'
+                                },
+                                {
+                                    title: 'Other',
+                                    const: 'phyinj-149'
                                 }
                             ]
+                        }
+                    },
+                    'q-applicant-physical-injuries-torso-skin-other': {
+                        type: 'string',
+                        title: 'Type of injury',
+                        maxLength: 100,
+                        errorMessage: {
+                            maxLength: 'Type of injury must be 100 characters or fewer'
+                        }
+                    }
+                },
+                allOf: [
+                    {
+                        $ref: '#/definitions/if-other-then-other-textbox-is-required'
+                    }
+                ],
+                definitions: {
+                    'if-other-then-other-textbox-is-required': {
+                        if: {
+                            properties: {
+                                'q-applicant-physical-injuries': {
+                                    contains: {
+                                        const: 'phyinj-149'
+                                    }
+                                }
+                            },
+                            required: ['q-applicant-physical-injuries']
+                        },
+                        then: {
+                            required: ['q-applicant-physical-injuries-torso-skin-other'],
+                            propertyNames: {
+                                enum: [
+                                    'q-applicant-physical-injuries',
+                                    'q-applicant-physical-injuries-torso-skin-other'
+                                ]
+                            },
+                            errorMessage: {
+                                required: {
+                                    'q-applicant-physical-injuries-torso-skin-other':
+                                        'Enter a type of injury'
+                                }
+                            }
                         }
                     }
                 },
@@ -3996,7 +4744,7 @@ module.exports = {
             },
             'p-applicant-physical-injury-arms': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
-                title: 'What part of your arms or hands were injured?',
+                title: 'What part of the arms or hands were injured?',
                 type: 'object',
                 required: ['q-applicant-physical-injury-arms'],
                 additionalProperties: false,
@@ -4096,7 +4844,7 @@ module.exports = {
             },
             'p-applicant-physical-injury-arms-shoulder': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
-                title: 'Select any injuries to your shoulder',
+                title: 'Select any injuries to the shoulder',
                 type: 'object',
                 required: ['q-applicant-physical-injuries'],
                 additionalProperties: false,
@@ -4114,10 +4862,60 @@ module.exports = {
                                     const: 'phyinj-100'
                                 },
                                 {
+                                    title: 'Separated shoulder',
+                                    const: 'phyinj-062'
+                                },
+                                {
                                     title: 'Frozen shoulder',
                                     const: 'phyinj-101'
+                                },
+                                {
+                                    title: 'Other',
+                                    const: 'phyinj-149'
                                 }
                             ]
+                        }
+                    },
+                    'q-applicant-physical-injuries-arms-shoulder-other': {
+                        type: 'string',
+                        title: 'Type of injury',
+                        maxLength: 100,
+                        errorMessage: {
+                            maxLength: 'Type of injury must be 100 characters or fewer'
+                        }
+                    }
+                },
+                allOf: [
+                    {
+                        $ref: '#/definitions/if-other-then-other-textbox-is-required'
+                    }
+                ],
+                definitions: {
+                    'if-other-then-other-textbox-is-required': {
+                        if: {
+                            properties: {
+                                'q-applicant-physical-injuries': {
+                                    contains: {
+                                        const: 'phyinj-149'
+                                    }
+                                }
+                            },
+                            required: ['q-applicant-physical-injuries']
+                        },
+                        then: {
+                            required: ['q-applicant-physical-injuries-arms-shoulder-other'],
+                            propertyNames: {
+                                enum: [
+                                    'q-applicant-physical-injuries',
+                                    'q-applicant-physical-injuries-arms-shoulder-other'
+                                ]
+                            },
+                            errorMessage: {
+                                required: {
+                                    'q-applicant-physical-injuries-arms-shoulder-other':
+                                        'Enter a type of injury'
+                                }
+                            }
                         }
                     }
                 },
@@ -4142,7 +4940,7 @@ module.exports = {
             },
             'p-applicant-physical-injury-arms-arm': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
-                title: 'Select any injuries to your arm',
+                title: 'Select any injuries to the arm',
                 type: 'object',
                 required: ['q-applicant-physical-injuries'],
                 additionalProperties: false,
@@ -4162,8 +4960,58 @@ module.exports = {
                                 {
                                     title: 'Paralysed arm',
                                     const: 'phyinj-085'
+                                },
+                                {
+                                    title: 'Hemiplegia (paralysis of one side of the the body)',
+                                    const: 'phyinj-137'
+                                },
+                                {
+                                    title: 'Other',
+                                    const: 'phyinj-149'
                                 }
                             ]
+                        }
+                    },
+                    'q-applicant-physical-injuries-arms-arm-other': {
+                        type: 'string',
+                        title: 'Type of injury',
+                        maxLength: 100,
+                        errorMessage: {
+                            maxLength: 'Type of injury must be 100 characters or fewer'
+                        }
+                    }
+                },
+                allOf: [
+                    {
+                        $ref: '#/definitions/if-other-then-other-textbox-is-required'
+                    }
+                ],
+                definitions: {
+                    'if-other-then-other-textbox-is-required': {
+                        if: {
+                            properties: {
+                                'q-applicant-physical-injuries': {
+                                    contains: {
+                                        const: 'phyinj-149'
+                                    }
+                                }
+                            },
+                            required: ['q-applicant-physical-injuries']
+                        },
+                        then: {
+                            required: ['q-applicant-physical-injuries-arms-arm-other'],
+                            propertyNames: {
+                                enum: [
+                                    'q-applicant-physical-injuries',
+                                    'q-applicant-physical-injuries-arms-arm-other'
+                                ]
+                            },
+                            errorMessage: {
+                                required: {
+                                    'q-applicant-physical-injuries-arms-arm-other':
+                                        'Enter a type of injury'
+                                }
+                            }
                         }
                     }
                 },
@@ -4188,7 +5036,7 @@ module.exports = {
             },
             'p-applicant-physical-injury-arms-elbow': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
-                title: 'Select any injuries to your elbow',
+                title: 'Select any injuries to the elbow',
                 type: 'object',
                 required: ['q-applicant-physical-injuries'],
                 additionalProperties: false,
@@ -4204,8 +5052,54 @@ module.exports = {
                                 {
                                     title: 'Broken elbow',
                                     const: 'phyinj-087'
+                                },
+                                {
+                                    title: 'Other',
+                                    const: 'phyinj-149'
                                 }
                             ]
+                        }
+                    },
+                    'q-applicant-physical-injuries-arms-elbow-other': {
+                        type: 'string',
+                        title: 'Type of injury',
+                        maxLength: 100,
+                        errorMessage: {
+                            maxLength: 'Type of injury must be 100 characters or fewer'
+                        }
+                    }
+                },
+                allOf: [
+                    {
+                        $ref: '#/definitions/if-other-then-other-textbox-is-required'
+                    }
+                ],
+                definitions: {
+                    'if-other-then-other-textbox-is-required': {
+                        if: {
+                            properties: {
+                                'q-applicant-physical-injuries': {
+                                    contains: {
+                                        const: 'phyinj-149'
+                                    }
+                                }
+                            },
+                            required: ['q-applicant-physical-injuries']
+                        },
+                        then: {
+                            required: ['q-applicant-physical-injuries-arms-elbow-other'],
+                            propertyNames: {
+                                enum: [
+                                    'q-applicant-physical-injuries',
+                                    'q-applicant-physical-injuries-arms-elbow-other'
+                                ]
+                            },
+                            errorMessage: {
+                                required: {
+                                    'q-applicant-physical-injuries-arms-elbow-other':
+                                        'Enter a type of injury'
+                                }
+                            }
                         }
                     }
                 },
@@ -4230,7 +5124,7 @@ module.exports = {
             },
             'p-applicant-physical-injury-arms-wrist': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
-                title: 'Select any injuries to your wrist',
+                title: 'Select any injuries to the wrist',
                 type: 'object',
                 required: ['q-applicant-physical-injuries'],
                 additionalProperties: false,
@@ -4246,8 +5140,54 @@ module.exports = {
                                 {
                                     title: 'Sprained wrist',
                                     const: 'phyinj-105'
+                                },
+                                {
+                                    title: 'Other',
+                                    const: 'phyinj-149'
                                 }
                             ]
+                        }
+                    },
+                    'q-applicant-physical-injuries-arms-wrist-other': {
+                        type: 'string',
+                        title: 'Type of injury',
+                        maxLength: 100,
+                        errorMessage: {
+                            maxLength: 'Type of injury must be 100 characters or fewer'
+                        }
+                    }
+                },
+                allOf: [
+                    {
+                        $ref: '#/definitions/if-other-then-other-textbox-is-required'
+                    }
+                ],
+                definitions: {
+                    'if-other-then-other-textbox-is-required': {
+                        if: {
+                            properties: {
+                                'q-applicant-physical-injuries': {
+                                    contains: {
+                                        const: 'phyinj-149'
+                                    }
+                                }
+                            },
+                            required: ['q-applicant-physical-injuries']
+                        },
+                        then: {
+                            required: ['q-applicant-physical-injuries-arms-wrist-other'],
+                            propertyNames: {
+                                enum: [
+                                    'q-applicant-physical-injuries',
+                                    'q-applicant-physical-injuries-arms-wrist-other'
+                                ]
+                            },
+                            errorMessage: {
+                                required: {
+                                    'q-applicant-physical-injuries-arms-wrist-other':
+                                        'Enter a type of injury'
+                                }
+                            }
                         }
                     }
                 },
@@ -4272,7 +5212,7 @@ module.exports = {
             },
             'p-applicant-physical-injury-arms-hand': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
-                title: 'Select any injuries to your hand',
+                title: 'Select any injuries to the hand',
                 type: 'object',
                 required: ['q-applicant-physical-injuries'],
                 additionalProperties: false,
@@ -4292,8 +5232,54 @@ module.exports = {
                                 {
                                     title: 'Loss of grip',
                                     const: 'phyinj-098'
+                                },
+                                {
+                                    title: 'Other',
+                                    const: 'phyinj-149'
                                 }
                             ]
+                        }
+                    },
+                    'q-applicant-physical-injuries-arms-hand-other': {
+                        type: 'string',
+                        title: 'Type of injury',
+                        maxLength: 100,
+                        errorMessage: {
+                            maxLength: 'Type of injury must be 100 characters or fewer'
+                        }
+                    }
+                },
+                allOf: [
+                    {
+                        $ref: '#/definitions/if-other-then-other-textbox-is-required'
+                    }
+                ],
+                definitions: {
+                    'if-other-then-other-textbox-is-required': {
+                        if: {
+                            properties: {
+                                'q-applicant-physical-injuries': {
+                                    contains: {
+                                        const: 'phyinj-149'
+                                    }
+                                }
+                            },
+                            required: ['q-applicant-physical-injuries']
+                        },
+                        then: {
+                            required: ['q-applicant-physical-injuries-arms-hand-other'],
+                            propertyNames: {
+                                enum: [
+                                    'q-applicant-physical-injuries',
+                                    'q-applicant-physical-injuries-arms-hand-other'
+                                ]
+                            },
+                            errorMessage: {
+                                required: {
+                                    'q-applicant-physical-injuries-arms-hand-other':
+                                        'Enter a type of injury'
+                                }
+                            }
                         }
                     }
                 },
@@ -4318,7 +5304,7 @@ module.exports = {
             },
             'p-applicant-physical-injury-arms-digit': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
-                title: 'Select any injuries to your finger or thumb',
+                title: 'Select any injuries to the finger or thumb',
                 type: 'object',
                 required: ['q-applicant-physical-injuries'],
                 additionalProperties: false,
@@ -4374,8 +5360,58 @@ module.exports = {
                                 {
                                     title: 'Loss of fingernail',
                                     const: 'phyinj-106'
+                                },
+                                {
+                                    title: 'Paralysis of finger',
+                                    const: 'phyinj-xxx'
+                                },
+                                {
+                                    title: 'Other',
+                                    const: 'phyinj-149'
                                 }
                             ]
+                        }
+                    },
+                    'q-applicant-physical-injuries-arms-digit-other': {
+                        type: 'string',
+                        title: 'Type of injury',
+                        maxLength: 100,
+                        errorMessage: {
+                            maxLength: 'Type of injury must be 100 characters or fewer'
+                        }
+                    }
+                },
+                allOf: [
+                    {
+                        $ref: '#/definitions/if-other-then-other-textbox-is-required'
+                    }
+                ],
+                definitions: {
+                    'if-other-then-other-textbox-is-required': {
+                        if: {
+                            properties: {
+                                'q-applicant-physical-injuries': {
+                                    contains: {
+                                        const: 'phyinj-149'
+                                    }
+                                }
+                            },
+                            required: ['q-applicant-physical-injuries']
+                        },
+                        then: {
+                            required: ['q-applicant-physical-injuries-arms-digit-other'],
+                            propertyNames: {
+                                enum: [
+                                    'q-applicant-physical-injuries',
+                                    'q-applicant-physical-injuries-arms-digit-other'
+                                ]
+                            },
+                            errorMessage: {
+                                required: {
+                                    'q-applicant-physical-injuries-arms-digit-other':
+                                        'Enter a type of injury'
+                                }
+                            }
                         }
                     }
                 },
@@ -4400,7 +5436,7 @@ module.exports = {
             },
             'p-applicant-physical-injury-arms-skin': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
-                title: 'Select any injuries to your skin on your arms and hands',
+                title: 'Select any injuries to the skin on your arms and hands',
                 type: 'object',
                 required: ['q-applicant-physical-injuries'],
                 additionalProperties: false,
@@ -4424,14 +5460,60 @@ module.exports = {
                                 {
                                     title: 'Burns',
                                     const: 'phyinj-082'
+                                },
+                                {
+                                    title: 'Other',
+                                    const: 'phyinj-149'
                                 }
                             ]
+                        }
+                    },
+                    'q-applicant-physical-injuries-arms-skin-other': {
+                        type: 'string',
+                        title: 'Type of injury',
+                        maxLength: 100,
+                        errorMessage: {
+                            maxLength: 'Type of injury must be 100 characters or fewer'
                         }
                     }
                 },
                 errorMessage: {
                     required: {
                         'q-applicant-physical-injuries': 'Select an injury from the list'
+                    }
+                },
+                allOf: [
+                    {
+                        $ref: '#/definitions/if-other-then-other-textbox-is-required'
+                    }
+                ],
+                definitions: {
+                    'if-other-then-other-textbox-is-required': {
+                        if: {
+                            properties: {
+                                'q-applicant-physical-injuries': {
+                                    contains: {
+                                        const: 'phyinj-149'
+                                    }
+                                }
+                            },
+                            required: ['q-applicant-physical-injuries']
+                        },
+                        then: {
+                            required: ['q-applicant-physical-injuries-arms-skin-other'],
+                            propertyNames: {
+                                enum: [
+                                    'q-applicant-physical-injuries',
+                                    'q-applicant-physical-injuries-arms-skin-other'
+                                ]
+                            },
+                            errorMessage: {
+                                required: {
+                                    'q-applicant-physical-injuries-arms-skin-other':
+                                        'Enter a type of injury'
+                                }
+                            }
+                        }
                     }
                 },
                 examples: [
@@ -4450,7 +5532,7 @@ module.exports = {
             },
             'p-applicant-physical-injury-legs': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
-                title: 'What part of your legs or feet were injured?',
+                title: 'What part of the legs or feet were injured?',
                 type: 'object',
                 required: ['q-applicant-physical-injury-legs'],
                 additionalProperties: false,
@@ -4538,7 +5620,7 @@ module.exports = {
             },
             'p-applicant-physical-injury-legs-hip': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
-                title: 'Select any injuries to your hip',
+                title: 'Select any injuries to the hip',
                 type: 'object',
                 required: ['q-applicant-physical-injuries'],
                 additionalProperties: false,
@@ -4554,8 +5636,54 @@ module.exports = {
                                 {
                                     title: 'Broken hip',
                                     const: 'phyinj-121'
+                                },
+                                {
+                                    title: 'Other',
+                                    const: 'phyinj-149'
                                 }
                             ]
+                        }
+                    },
+                    'q-applicant-physical-injuries-legs-hip-other': {
+                        type: 'string',
+                        title: 'Type of injury',
+                        maxLength: 100,
+                        errorMessage: {
+                            maxLength: 'Type of injury must be 100 characters or fewer'
+                        }
+                    }
+                },
+                allOf: [
+                    {
+                        $ref: '#/definitions/if-other-then-other-textbox-is-required'
+                    }
+                ],
+                definitions: {
+                    'if-other-then-other-textbox-is-required': {
+                        if: {
+                            properties: {
+                                'q-applicant-physical-injuries': {
+                                    contains: {
+                                        const: 'phyinj-149'
+                                    }
+                                }
+                            },
+                            required: ['q-applicant-physical-injuries']
+                        },
+                        then: {
+                            required: ['q-applicant-physical-injuries-legs-hip-other'],
+                            propertyNames: {
+                                enum: [
+                                    'q-applicant-physical-injuries',
+                                    'q-applicant-physical-injuries-legs-hip-other'
+                                ]
+                            },
+                            errorMessage: {
+                                required: {
+                                    'q-applicant-physical-injuries-legs-hip-other':
+                                        'Enter a type of injury'
+                                }
+                            }
                         }
                     }
                 },
@@ -4580,7 +5708,7 @@ module.exports = {
             },
             'p-applicant-physical-injury-legs-leg': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
-                title: 'Select any injuries to your leg',
+                title: 'Select any injuries to the leg',
                 type: 'object',
                 required: ['q-applicant-physical-injuries'],
                 additionalProperties: false,
@@ -4604,8 +5732,62 @@ module.exports = {
                                 {
                                     title: 'Paralysed leg',
                                     const: 'phyinj-127'
+                                },
+                                {
+                                    title: 'Paraplegia (paralysis of lower half of the body)',
+                                    const: 'phyinj-138'
+                                },
+                                {
+                                    title: 'Hemiplegia (paralysis of one side of the the body)',
+                                    const: 'phyinj-137'
+                                },
+                                {
+                                    title: 'Other',
+                                    const: 'phyinj-149'
                                 }
                             ]
+                        }
+                    },
+                    'q-applicant-physical-injuries-legs-leg-other': {
+                        type: 'string',
+                        title: 'Type of injury',
+                        maxLength: 100,
+                        errorMessage: {
+                            maxLength: 'Type of injury must be 100 characters or fewer'
+                        }
+                    }
+                },
+                allOf: [
+                    {
+                        $ref: '#/definitions/if-other-then-other-textbox-is-required'
+                    }
+                ],
+                definitions: {
+                    'if-other-then-other-textbox-is-required': {
+                        if: {
+                            properties: {
+                                'q-applicant-physical-injuries': {
+                                    contains: {
+                                        const: 'phyinj-149'
+                                    }
+                                }
+                            },
+                            required: ['q-applicant-physical-injuries']
+                        },
+                        then: {
+                            required: ['q-applicant-physical-injuries-legs-leg-other'],
+                            propertyNames: {
+                                enum: [
+                                    'q-applicant-physical-injuries',
+                                    'q-applicant-physical-injuries-legs-leg-other'
+                                ]
+                            },
+                            errorMessage: {
+                                required: {
+                                    'q-applicant-physical-injuries-legs-leg-other':
+                                        'Enter a type of injury'
+                                }
+                            }
                         }
                     }
                 },
@@ -4630,7 +5812,7 @@ module.exports = {
             },
             'p-applicant-physical-injury-legs-knee': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
-                title: 'Select any injuries to your knee',
+                title: 'Select any injuries to the knee',
                 type: 'object',
                 required: ['q-applicant-physical-injuries'],
                 additionalProperties: false,
@@ -4650,8 +5832,54 @@ module.exports = {
                                 {
                                     title: 'Removal of kneecap',
                                     const: 'phyinj-125'
+                                },
+                                {
+                                    title: 'Other',
+                                    const: 'phyinj-149'
                                 }
                             ]
+                        }
+                    },
+                    'q-applicant-physical-injuries-legs-knee-other': {
+                        type: 'string',
+                        title: 'Type of injury',
+                        maxLength: 100,
+                        errorMessage: {
+                            maxLength: 'Type of injury must be 100 characters or fewer'
+                        }
+                    }
+                },
+                allOf: [
+                    {
+                        $ref: '#/definitions/if-other-then-other-textbox-is-required'
+                    }
+                ],
+                definitions: {
+                    'if-other-then-other-textbox-is-required': {
+                        if: {
+                            properties: {
+                                'q-applicant-physical-injuries': {
+                                    contains: {
+                                        const: 'phyinj-149'
+                                    }
+                                }
+                            },
+                            required: ['q-applicant-physical-injuries']
+                        },
+                        then: {
+                            required: ['q-applicant-physical-injuries-legs-knee-other'],
+                            propertyNames: {
+                                enum: [
+                                    'q-applicant-physical-injuries',
+                                    'q-applicant-physical-injuries-legs-knee-other'
+                                ]
+                            },
+                            errorMessage: {
+                                required: {
+                                    'q-applicant-physical-injuries-legs-knee-other':
+                                        'Enter a type of injury'
+                                }
+                            }
                         }
                     }
                 },
@@ -4676,7 +5904,7 @@ module.exports = {
             },
             'p-applicant-physical-injury-legs-ankle': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
-                title: 'Select any injuries to your ankle',
+                title: 'Select any injuries to the ankle',
                 type: 'object',
                 required: ['q-applicant-physical-injuries'],
                 additionalProperties: false,
@@ -4696,8 +5924,54 @@ module.exports = {
                                 {
                                     title: 'Sprained ankle',
                                     const: 'phyinj-116'
+                                },
+                                {
+                                    title: 'Other',
+                                    const: 'phyinj-149'
                                 }
                             ]
+                        }
+                    },
+                    'q-applicant-physical-injuries-legs-ankle-other': {
+                        type: 'string',
+                        title: 'Type of injury',
+                        maxLength: 100,
+                        errorMessage: {
+                            maxLength: 'Type of injury must be 100 characters or fewer'
+                        }
+                    }
+                },
+                allOf: [
+                    {
+                        $ref: '#/definitions/if-other-then-other-textbox-is-required'
+                    }
+                ],
+                definitions: {
+                    'if-other-then-other-textbox-is-required': {
+                        if: {
+                            properties: {
+                                'q-applicant-physical-injuries': {
+                                    contains: {
+                                        const: 'phyinj-149'
+                                    }
+                                }
+                            },
+                            required: ['q-applicant-physical-injuries']
+                        },
+                        then: {
+                            required: ['q-applicant-physical-injuries-legs-ankle-other'],
+                            propertyNames: {
+                                enum: [
+                                    'q-applicant-physical-injuries',
+                                    'q-applicant-physical-injuries-legs-ankle-other'
+                                ]
+                            },
+                            errorMessage: {
+                                required: {
+                                    'q-applicant-physical-injuries-legs-ankle-other':
+                                        'Enter a type of injury'
+                                }
+                            }
                         }
                     }
                 },
@@ -4722,7 +5996,7 @@ module.exports = {
             },
             'p-applicant-physical-injury-legs-foot': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
-                title: 'Select any injuries to your foot',
+                title: 'Select any injuries to the foot',
                 type: 'object',
                 required: ['q-applicant-physical-injuries'],
                 additionalProperties: false,
@@ -4738,8 +6012,54 @@ module.exports = {
                                 {
                                     title: 'Broken heel',
                                     const: 'phyinj-119'
+                                },
+                                {
+                                    title: 'Other',
+                                    const: 'phyinj-149'
                                 }
                             ]
+                        }
+                    },
+                    'q-applicant-physical-injuries-legs-foot-other': {
+                        type: 'string',
+                        title: 'Type of injury',
+                        maxLength: 100,
+                        errorMessage: {
+                            maxLength: 'Type of injury must be 100 characters or fewer'
+                        }
+                    }
+                },
+                allOf: [
+                    {
+                        $ref: '#/definitions/if-other-then-other-textbox-is-required'
+                    }
+                ],
+                definitions: {
+                    'if-other-then-other-textbox-is-required': {
+                        if: {
+                            properties: {
+                                'q-applicant-physical-injuries': {
+                                    contains: {
+                                        const: 'phyinj-149'
+                                    }
+                                }
+                            },
+                            required: ['q-applicant-physical-injuries']
+                        },
+                        then: {
+                            required: ['q-applicant-physical-injuries-legs-foot-other'],
+                            propertyNames: {
+                                enum: [
+                                    'q-applicant-physical-injuries',
+                                    'q-applicant-physical-injuries-legs-foot-other'
+                                ]
+                            },
+                            errorMessage: {
+                                required: {
+                                    'q-applicant-physical-injuries-legs-foot-other':
+                                        'Enter a type of injury'
+                                }
+                            }
                         }
                     }
                 },
@@ -4796,8 +6116,58 @@ module.exports = {
                                 {
                                     title: '2 or more amputated toes',
                                     const: 'phyinj-133'
+                                },
+                                {
+                                    title: 'Paralysed toe',
+                                    const: 'phyinj-xxx'
+                                },
+                                {
+                                    title: 'Other',
+                                    const: 'phyinj-149'
                                 }
                             ]
+                        }
+                    },
+                    'q-applicant-physical-injuries-legs-toes-other': {
+                        type: 'string',
+                        title: 'Type of injury',
+                        maxLength: 100,
+                        errorMessage: {
+                            maxLength: 'Type of injury must be 100 characters or fewer'
+                        }
+                    }
+                },
+                allOf: [
+                    {
+                        $ref: '#/definitions/if-other-then-other-textbox-is-required'
+                    }
+                ],
+                definitions: {
+                    'if-other-then-other-textbox-is-required': {
+                        if: {
+                            properties: {
+                                'q-applicant-physical-injuries': {
+                                    contains: {
+                                        const: 'phyinj-149'
+                                    }
+                                }
+                            },
+                            required: ['q-applicant-physical-injuries']
+                        },
+                        then: {
+                            required: ['q-applicant-physical-injuries-legs-toes-other'],
+                            propertyNames: {
+                                enum: [
+                                    'q-applicant-physical-injuries',
+                                    'q-applicant-physical-injuries-legs-toes-other'
+                                ]
+                            },
+                            errorMessage: {
+                                required: {
+                                    'q-applicant-physical-injuries-legs-toes-other':
+                                        'Enter a type of injury'
+                                }
+                            }
                         }
                     }
                 },
@@ -4822,7 +6192,7 @@ module.exports = {
             },
             'p-applicant-physical-injury-legs-skin': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
-                title: 'Select any injuries to your skin on your legs or feet',
+                title: 'Select any injuries to the skin on your legs or feet',
                 type: 'object',
                 required: ['q-applicant-physical-injuries'],
                 additionalProperties: false,
@@ -4846,8 +6216,54 @@ module.exports = {
                                 {
                                     title: 'Burns',
                                     const: 'phyinj-112'
+                                },
+                                {
+                                    title: 'Other',
+                                    const: 'phyinj-149'
                                 }
                             ]
+                        }
+                    },
+                    'q-applicant-physical-injuries-legs-skin-other': {
+                        type: 'string',
+                        title: 'Type of injury',
+                        maxLength: 100,
+                        errorMessage: {
+                            maxLength: 'Type of injury must be 100 characters or fewer'
+                        }
+                    }
+                },
+                allOf: [
+                    {
+                        $ref: '#/definitions/if-other-then-other-textbox-is-required'
+                    }
+                ],
+                definitions: {
+                    'if-other-then-other-textbox-is-required': {
+                        if: {
+                            properties: {
+                                'q-applicant-physical-injuries': {
+                                    contains: {
+                                        const: 'phyinj-149'
+                                    }
+                                }
+                            },
+                            required: ['q-applicant-physical-injuries']
+                        },
+                        then: {
+                            required: ['q-applicant-physical-injuries-legs-skin-other'],
+                            propertyNames: {
+                                enum: [
+                                    'q-applicant-physical-injuries',
+                                    'q-applicant-physical-injuries-legs-skin-other'
+                                ]
+                            },
+                            errorMessage: {
+                                required: {
+                                    'q-applicant-physical-injuries-legs-skin-other':
+                                        'Enter a type of injury'
+                                }
+                            }
                         }
                     }
                 },
@@ -5364,6 +6780,35 @@ module.exports = {
                                     const: 'no-expenses'
                                 }
                             ]
+                        }
+                    }
+                },
+                allOf: [
+                    {
+                        $ref: '#/definitions/if-other-then-q-applicant-expenses-max-one-item'
+                    }
+                ],
+                definitions: {
+                    'if-other-then-q-applicant-expenses-max-one-item': {
+                        if: {
+                            properties: {
+                                'q-applicant-expenses': {
+                                    contains: {const: 'no-expenses'}
+                                }
+                            },
+                            required: ['q-applicant-expenses']
+                        },
+                        then: {
+                            required: ['q-applicant-expenses'],
+                            properties: {
+                                'q-applicant-expenses': {
+                                    maxItems: 1,
+                                    errorMessage: {
+                                        maxItems:
+                                            'Select any expenses you’ve had or select ‘I have not had these expenses’'
+                                    }
+                                }
+                            }
                         }
                     }
                 },
