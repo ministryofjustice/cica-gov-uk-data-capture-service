@@ -2698,49 +2698,49 @@ module.exports = {
                     }
                 ]
             },
-            'p-dentist-visited': {
+            'p-applicant-dentist-visited': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
                 type: 'object',
-                required: ['q-dentist-visited'],
+                required: ['q-applicant-dentist-visited'],
                 additionalProperties: false,
                 properties: {
-                    'q-dentist-visited': {
+                    'q-applicant-dentist-visited': {
                         type: 'boolean',
                         title: 'Have you seen a dentist about your injuries?'
                     }
                 },
                 errorMessage: {
                     required: {
-                        'q-dentist-visited':
+                        'q-applicant-dentist-visited':
                             'Select yes if you have seen a dentist about your injuries'
                     }
                 },
                 examples: [
                     {
-                        'q-dentist-visited': true
+                        'q-applicant-dentist-visited': true
                     },
                     {
-                        'q-dentist-visited': false
+                        'q-applicant-dentist-visited': false
                     }
                 ],
                 invalidExamples: [
                     {
-                        'q-dentist-visited': 'foo'
+                        'q-applicant-dentist-visited': 'foo'
                     }
                 ]
             },
-            'p-dentist-details': {
+            'p-applicant-dentist-address': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
                 type: 'object',
                 title: "What is the dentist's address?",
                 required: [
-                    'q-dentist-details-building-and-street',
-                    'q-dentist-details-town-or-city',
-                    'q-dentist-details-building-and-street2'
+                    'q-applicant-dentist-address-building-and-street',
+                    'q-applicant-dentist-address-town-or-city',
+                    'q-applicant-dentist-address-building-and-street2'
                 ],
                 additionalProperties: false,
                 properties: {
-                    'q-dentist-details-building-and-street': {
+                    'q-applicant-dentist-address-building-and-street': {
                         type: 'string',
                         title: 'Practice name',
                         maxLength: 60,
@@ -2748,7 +2748,7 @@ module.exports = {
                             maxLength: 'Practice name must be less than 60 characters'
                         }
                     },
-                    'q-dentist-details-building-and-street2': {
+                    'q-applicant-dentist-address-building-and-street2': {
                         type: 'string',
                         title: 'Building and street',
                         maxLength: 60,
@@ -2756,7 +2756,7 @@ module.exports = {
                             maxLength: 'Building and street must be less than 60 characters'
                         }
                     },
-                    'q-dentist-details-town-or-city': {
+                    'q-applicant-dentist-address-town-or-city': {
                         type: 'string',
                         title: 'Town or city',
                         maxLength: 32,
@@ -2764,7 +2764,7 @@ module.exports = {
                             maxLength: 'Town or city must be 60 characters or less'
                         }
                     },
-                    'q-dentist-details-county': {
+                    'q-applicant-dentist-address-county': {
                         type: 'string',
                         title: 'County (optional)',
                         maxLength: 32,
@@ -2772,7 +2772,7 @@ module.exports = {
                             maxLength: 'County must be 60 characters or less'
                         }
                     },
-                    'q-dentist-details-postcode': {
+                    'q-applicant-dentist-address-postcode': {
                         type: 'string',
                         title: 'Postcode (optional)',
                         maxLength: 10,
@@ -2783,58 +2783,58 @@ module.exports = {
                 },
                 errorMessage: {
                     required: {
-                        'q-dentist-details-building-and-street':
+                        'q-applicant-dentist-address-building-and-street':
                             "Enter the name of your dentist's practice",
-                        'q-dentist-details-building-and-street2':
+                        'q-applicant-dentist-address-building-and-street2':
                             'Enter the building and street of your dentist',
-                        'q-dentist-details-town-or-city':
+                        'q-applicant-dentist-address-town-or-city':
                             "Enter the town or city where your dentist's practice is"
                     }
                 },
                 examples: [
                     {
-                        'q-dentist-details-building-and-street': '1 Foo Lane',
-                        'q-dentist-details-building-and-street2': 'Flat 2/3',
-                        'q-dentist-details-town-or-city': 'FooCity',
-                        'q-dentist-details-county': 'FooCounty',
-                        'q-dentist-details-postcode': 'G1 1XX'
+                        'q-applicant-dentist-address-building-and-street': '1 Foo Lane',
+                        'q-applicant-dentist-address-building-and-street2': 'Flat 2/3',
+                        'q-applicant-dentist-address-town-or-city': 'FooCity',
+                        'q-applicant-dentist-address-county': 'FooCounty',
+                        'q-applicant-dentist-address-postcode': 'G1 1XX'
                     }
                 ],
                 invalidExamples: [
                     {
-                        'q-dentist-details-building-and-street': 12345,
-                        'q-dentist-details-building-and-street2': 'Flat 2/3',
-                        'q-dentist-details-town-or-city': 'FooCity',
-                        'q-dentist-details-county': 'FooCounty',
-                        'q-dentist-details-postcode': 'G1 1XX'
+                        'q-applicant-dentist-address-building-and-street': 12345,
+                        'q-applicant-dentist-address-building-and-street2': 'Flat 2/3',
+                        'q-applicant-dentist-address-town-or-city': 'FooCity',
+                        'q-applicant-dentist-address-county': 'FooCounty',
+                        'q-applicant-dentist-address-postcode': 'G1 1XX'
                     },
                     {
-                        'q-dentist-details-building-and-street': '1 Foo Lane',
-                        'q-dentist-details-building-and-street2': 12345,
-                        'q-dentist-details-town-or-city': 'FooCity',
-                        'q-dentist-details-county': 'FooCounty',
-                        'q-dentist-details-postcode': 'G1 1XX'
+                        'q-applicant-dentist-address-building-and-street': '1 Foo Lane',
+                        'q-applicant-dentist-address-building-and-street2': 12345,
+                        'q-applicant-dentist-address-town-or-city': 'FooCity',
+                        'q-applicant-dentist-address-county': 'FooCounty',
+                        'q-applicant-dentist-address-postcode': 'G1 1XX'
                     },
                     {
-                        'q-dentist-details-building-and-street': '1 Foo Lane',
-                        'q-dentist-details-building-and-street2': 'Flat 2/3',
-                        'q-dentist-details-town-or-city': 12345,
-                        'q-dentist-details-county': 'FooCounty',
-                        'q-dentist-details-postcode': 'G1 1XX'
+                        'q-applicant-dentist-address-building-and-street': '1 Foo Lane',
+                        'q-applicant-dentist-address-building-and-street2': 'Flat 2/3',
+                        'q-applicant-dentist-address-town-or-city': 12345,
+                        'q-applicant-dentist-address-county': 'FooCounty',
+                        'q-applicant-dentist-address-postcode': 'G1 1XX'
                     },
                     {
-                        'q-dentist-details-building-and-street': '1 Foo Lane',
-                        'q-dentist-details-building-and-street2': 'Flat 2/3',
-                        'q-dentist-details-town-or-city': 'FooCity',
-                        'q-dentist-details-county': 12345,
-                        'q-dentist-details-postcode': 'G1 1XX'
+                        'q-applicant-dentist-address-building-and-street': '1 Foo Lane',
+                        'q-applicant-dentist-address-building-and-street2': 'Flat 2/3',
+                        'q-applicant-dentist-address-town-or-city': 'FooCity',
+                        'q-applicant-dentist-address-county': 12345,
+                        'q-applicant-dentist-address-postcode': 'G1 1XX'
                     },
                     {
-                        'q-dentist-details-building-and-street': '1 Foo Lane',
-                        'q-dentist-details-building-and-street2': 'Flat 2/3',
-                        'q-dentist-details-town-or-city': 'FooCity',
-                        'q-dentist-details-county': 'FooCounty',
-                        'q-dentist-details-postcode': 12345
+                        'q-applicant-dentist-address-building-and-street': '1 Foo Lane',
+                        'q-applicant-dentist-address-building-and-street2': 'Flat 2/3',
+                        'q-applicant-dentist-address-town-or-city': 'FooCity',
+                        'q-applicant-dentist-address-county': 'FooCounty',
+                        'q-applicant-dentist-address-postcode': 12345
                     }
                 ]
             },
@@ -6332,7 +6332,7 @@ module.exports = {
                                 ]
                             },
                             {
-                                target: 'p-dentist-visited',
+                                target: 'p-applicant-dentist-visited',
                                 cond: [
                                     'includes',
                                     '$.answers.p-applicant-physical-injury.q-applicant-physical-injury',
@@ -6345,12 +6345,16 @@ module.exports = {
                         ]
                     }
                 },
-                'p-dentist-visited': {
+                'p-applicant-dentist-visited': {
                     on: {
                         ANSWER: [
                             {
-                                target: 'p-dentist-details',
-                                cond: ['==', '$.answers.p-dentist-visited.q-dentist-visited', true]
+                                target: 'p-applicant-dentist-address',
+                                cond: [
+                                    '==',
+                                    '$.answers.p-applicant-dentist-visited.q-applicant-dentist-visited',
+                                    true
+                                ]
                             },
                             {
                                 target: 'p-applicant-medical-help',
@@ -6389,7 +6393,7 @@ module.exports = {
                         ]
                     }
                 },
-                'p-dentist-details': {
+                'p-applicant-dentist-address': {
                     on: {
                         ANSWER: [
                             {
