@@ -3000,8 +3000,10 @@ module.exports = {
                                     description: 'Including cuts, bruises, burns and scars'
                                 },
                                 {
-                                    title: 'Muscle, ligament or tendon',
-                                    const: 'muscle'
+                                    title: 'Tissue',
+                                    const: 'muscle',
+                                    description:
+                                        'Including muscles, ligaments, tendons or cartilage'
                                 }
                             ]
                         }
@@ -3122,9 +3124,9 @@ module.exports = {
                     'q-applicant-physical-injuries-upper-head-other': {
                         type: 'string',
                         title: 'Type of injury',
-                        maxLength: 100,
+                        maxLength: 499,
                         errorMessage: {
-                            maxLength: 'Type of injury must be 100 characters or fewer'
+                            maxLength: 'Type of injury must be 499 characters or fewer'
                         }
                     }
                 },
@@ -3234,9 +3236,9 @@ module.exports = {
                     'q-applicant-physical-injuries-upper-face-other': {
                         type: 'string',
                         title: 'Type of injury',
-                        maxLength: 100,
+                        maxLength: 499,
                         errorMessage: {
-                            maxLength: 'Type of injury must be 100 characters or fewer'
+                            maxLength: 'Type of injury must be 499 characters or fewer'
                         }
                     }
                 },
@@ -3330,9 +3332,9 @@ module.exports = {
                     'q-applicant-physical-injuries-upper-neck-other': {
                         type: 'string',
                         title: 'Type of injury',
-                        maxLength: 100,
+                        maxLength: 499,
                         errorMessage: {
-                            maxLength: 'Type of injury must be 100 characters or fewer'
+                            maxLength: 'Type of injury must be 499 characters or fewer'
                         }
                     }
                 },
@@ -3478,9 +3480,9 @@ module.exports = {
                     'q-applicant-physical-injuries-upper-eye-other': {
                         type: 'string',
                         title: 'Type of injury',
-                        maxLength: 100,
+                        maxLength: 499,
                         errorMessage: {
-                            maxLength: 'Type of injury must be 100 characters or fewer'
+                            maxLength: 'Type of injury must be 499 characters or fewer'
                         }
                     }
                 },
@@ -3586,9 +3588,9 @@ module.exports = {
                     'q-applicant-physical-injuries-upper-ear-other': {
                         type: 'string',
                         title: 'Type of injury',
-                        maxLength: 100,
+                        maxLength: 499,
                         errorMessage: {
-                            maxLength: 'Type of injury must be 100 characters or fewer'
+                            maxLength: 'Type of injury must be 499 characters or fewer'
                         }
                     }
                 },
@@ -3691,9 +3693,9 @@ module.exports = {
                     'q-applicant-physical-injuries-upper-nose-other': {
                         type: 'string',
                         title: 'Type of injury',
-                        maxLength: 100,
+                        maxLength: 499,
                         errorMessage: {
-                            maxLength: 'Type of injury must be 100 characters or fewer'
+                            maxLength: 'Type of injury must be 499 characters or fewer'
                         }
                     }
                 },
@@ -3795,9 +3797,9 @@ module.exports = {
                     'q-applicant-physical-injuries-upper-mouth-other': {
                         type: 'string',
                         title: 'Type of injury',
-                        maxLength: 100,
+                        maxLength: 499,
                         errorMessage: {
-                            maxLength: 'Type of injury must be 100 characters or fewer'
+                            maxLength: 'Type of injury must be 499 characters or fewer'
                         }
                     }
                 },
@@ -3891,9 +3893,9 @@ module.exports = {
                     'q-applicant-physical-injuries-upper-skin-other': {
                         type: 'string',
                         title: 'Type of injury',
-                        maxLength: 100,
+                        maxLength: 499,
                         errorMessage: {
-                            maxLength: 'Type of injury must be 100 characters or fewer'
+                            maxLength: 'Type of injury must be 499 characters or fewer'
                         }
                     }
                 },
@@ -3950,6 +3952,102 @@ module.exports = {
                     }
                 ]
             },
+            'p-applicant-physical-injury-upper-muscle': {
+                $schema: 'http://json-schema.org/draft-07/schema#',
+                title: 'Select any injuries to the tissue on your head, face or neck',
+                type: 'object',
+                required: ['q-applicant-physical-injuries'],
+                additionalProperties: false,
+                properties: {
+                    'q-applicant-physical-injuries': {
+                        type: 'array',
+                        items: {
+                            anyOf: [
+                                {
+                                    title: 'Muscle',
+                                    const: 'phyinj-050'
+                                },
+                                {
+                                    title: 'Ligament',
+                                    const: 'phyinj-151'
+                                },
+                                {
+                                    title: 'Tendon',
+                                    const: 'phyinj-152'
+                                },
+                                {
+                                    title: 'Cartilage',
+                                    const: 'phyinj-153'
+                                },
+                                {
+                                    title: 'Other',
+                                    const: 'phyinj-149'
+                                }
+                            ]
+                        }
+                    },
+                    'q-applicant-physical-injuries-upper-muscle-other': {
+                        type: 'string',
+                        title: 'Type of injury',
+                        maxLength: 499,
+                        errorMessage: {
+                            maxLength: 'Type of injury must be 499 characters or fewer'
+                        }
+                    }
+                },
+                allOf: [
+                    {
+                        $ref: '#/definitions/if-other-then-other-textbox-is-required'
+                    }
+                ],
+                definitions: {
+                    'if-other-then-other-textbox-is-required': {
+                        if: {
+                            properties: {
+                                'q-applicant-physical-injuries': {
+                                    contains: {
+                                        const: 'phyinj-149'
+                                    }
+                                }
+                            },
+                            required: ['q-applicant-physical-injuries']
+                        },
+                        then: {
+                            required: ['q-applicant-physical-injuries-upper-muscle-other'],
+                            propertyNames: {
+                                enum: [
+                                    'q-applicant-physical-injuries',
+                                    'q-applicant-physical-injuries-upper-muscle-other'
+                                ]
+                            },
+                            errorMessage: {
+                                required: {
+                                    'q-applicant-physical-injuries-upper-muscle-other':
+                                        'Enter a type of injury'
+                                }
+                            }
+                        }
+                    }
+                },
+                errorMessage: {
+                    required: {
+                        'q-applicant-physical-injuries': 'Select an injury from the list'
+                    }
+                },
+                examples: [
+                    {
+                        'q-applicant-physical-injuries': ['phyinj-151']
+                    }
+                ],
+                invalidExamples: [
+                    {
+                        'q-applicant-physical-injuries': 'not-an-array'
+                    },
+                    {
+                        'q-applicant-physical-injuries': ['not-a-key']
+                    }
+                ]
+            },
             'p-applicant-physical-injury-torso': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
                 title: 'What parts of the torso were injured?',
@@ -3991,8 +4089,10 @@ module.exports = {
                                     description: 'Including cuts, bruises, burns and scars'
                                 },
                                 {
-                                    title: 'Muscle, ligament, or tendon injury',
-                                    const: 'muscle'
+                                    title: 'Tissue',
+                                    const: 'muscle',
+                                    description:
+                                        'Including muscles, ligaments, tendons or cartilage'
                                 }
                             ]
                         }
@@ -4087,9 +4187,9 @@ module.exports = {
                     'q-applicant-physical-injuries-torso-shoulder-other': {
                         type: 'string',
                         title: 'Type of injury',
-                        maxLength: 100,
+                        maxLength: 499,
                         errorMessage: {
-                            maxLength: 'Type of injury must be 100 characters or fewer'
+                            maxLength: 'Type of injury must be 499 characters or fewer'
                         }
                     }
                 },
@@ -4195,9 +4295,9 @@ module.exports = {
                     'q-applicant-physical-injuries-torso-chest-other': {
                         type: 'string',
                         title: 'Type of injury',
-                        maxLength: 100,
+                        maxLength: 499,
                         errorMessage: {
-                            maxLength: 'Type of injury must be 100 characters or fewer'
+                            maxLength: 'Type of injury must be 499 characters or fewer'
                         }
                     }
                 },
@@ -4311,9 +4411,9 @@ module.exports = {
                     'q-applicant-physical-injuries-torso-abdomen-other': {
                         type: 'string',
                         title: 'Type of injury',
-                        maxLength: 100,
+                        maxLength: 499,
                         errorMessage: {
-                            maxLength: 'Type of injury must be 100 characters or fewer'
+                            maxLength: 'Type of injury must be 499 characters or fewer'
                         }
                     }
                 },
@@ -4415,9 +4515,9 @@ module.exports = {
                     'q-applicant-physical-injuries-torso-back-other': {
                         type: 'string',
                         title: 'Type of injury',
-                        maxLength: 100,
+                        maxLength: 499,
                         errorMessage: {
-                            maxLength: 'Type of injury must be 100 characters or fewer'
+                            maxLength: 'Type of injury must be 499 characters or fewer'
                         }
                     }
                 },
@@ -4499,9 +4599,9 @@ module.exports = {
                     'q-applicant-physical-injuries-torso-pelvis-other': {
                         type: 'string',
                         title: 'Type of injury',
-                        maxLength: 100,
+                        maxLength: 499,
                         errorMessage: {
-                            maxLength: 'Type of injury must be 100 characters or fewer'
+                            maxLength: 'Type of injury must be 499 characters or fewer'
                         }
                     }
                 },
@@ -4587,9 +4687,9 @@ module.exports = {
                     'q-applicant-physical-injuries-torso-genitals-other': {
                         type: 'string',
                         title: 'Type of injury',
-                        maxLength: 100,
+                        maxLength: 499,
                         errorMessage: {
-                            maxLength: 'Type of injury must be 100 characters or fewer'
+                            maxLength: 'Type of injury must be 499 characters or fewer'
                         }
                     }
                 },
@@ -4683,9 +4783,9 @@ module.exports = {
                     'q-applicant-physical-injuries-torso-skin-other': {
                         type: 'string',
                         title: 'Type of injury',
-                        maxLength: 100,
+                        maxLength: 499,
                         errorMessage: {
-                            maxLength: 'Type of injury must be 100 characters or fewer'
+                            maxLength: 'Type of injury must be 499 characters or fewer'
                         }
                     }
                 },
@@ -4742,6 +4842,102 @@ module.exports = {
                     }
                 ]
             },
+            'p-applicant-physical-injury-torso-muscle': {
+                $schema: 'http://json-schema.org/draft-07/schema#',
+                title: 'Select any injuries to the tissue on your torso',
+                type: 'object',
+                required: ['q-applicant-physical-injuries'],
+                additionalProperties: false,
+                properties: {
+                    'q-applicant-physical-injuries': {
+                        type: 'array',
+                        items: {
+                            anyOf: [
+                                {
+                                    title: 'Muscle',
+                                    const: 'phyinj-154'
+                                },
+                                {
+                                    title: 'Ligament',
+                                    const: 'phyinj-155'
+                                },
+                                {
+                                    title: 'Tendon',
+                                    const: 'phyinj-156'
+                                },
+                                {
+                                    title: 'Cartilage',
+                                    const: 'phyinj-157'
+                                },
+                                {
+                                    title: 'Other',
+                                    const: 'phyinj-149'
+                                }
+                            ]
+                        }
+                    },
+                    'q-applicant-physical-injuries-torso-muscle-other': {
+                        type: 'string',
+                        title: 'Type of injury',
+                        maxLength: 499,
+                        errorMessage: {
+                            maxLength: 'Type of injury must be 499 characters or fewer'
+                        }
+                    }
+                },
+                allOf: [
+                    {
+                        $ref: '#/definitions/if-other-then-other-textbox-is-required'
+                    }
+                ],
+                definitions: {
+                    'if-other-then-other-textbox-is-required': {
+                        if: {
+                            properties: {
+                                'q-applicant-physical-injuries': {
+                                    contains: {
+                                        const: 'phyinj-149'
+                                    }
+                                }
+                            },
+                            required: ['q-applicant-physical-injuries']
+                        },
+                        then: {
+                            required: ['q-applicant-physical-injuries-torso-muscle-other'],
+                            propertyNames: {
+                                enum: [
+                                    'q-applicant-physical-injuries',
+                                    'q-applicant-physical-injuries-torso-muscle-other'
+                                ]
+                            },
+                            errorMessage: {
+                                required: {
+                                    'q-applicant-physical-injuries-torso-muscle-other':
+                                        'Enter a type of injury'
+                                }
+                            }
+                        }
+                    }
+                },
+                errorMessage: {
+                    required: {
+                        'q-applicant-physical-injuries': 'Select an injury from the list'
+                    }
+                },
+                examples: [
+                    {
+                        'q-applicant-physical-injuries': ['phyinj-154']
+                    }
+                ],
+                invalidExamples: [
+                    {
+                        'q-applicant-physical-injuries': 'not-an-array'
+                    },
+                    {
+                        'q-applicant-physical-injuries': ['not-a-key']
+                    }
+                ]
+            },
             'p-applicant-physical-injury-arms': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
                 title: 'What part of the arms or hands were injured?',
@@ -4783,8 +4979,10 @@ module.exports = {
                                     description: 'Including cuts, bruises, burns and scars'
                                 },
                                 {
-                                    title: 'Muscle, ligament, or tendon injury',
-                                    const: 'muscle'
+                                    title: 'Tissue',
+                                    const: 'muscle',
+                                    description:
+                                        'Including muscles, ligaments, tendons or cartilage'
                                 }
                             ]
                         }
@@ -4879,9 +5077,9 @@ module.exports = {
                     'q-applicant-physical-injuries-arms-shoulder-other': {
                         type: 'string',
                         title: 'Type of injury',
-                        maxLength: 100,
+                        maxLength: 499,
                         errorMessage: {
-                            maxLength: 'Type of injury must be 100 characters or fewer'
+                            maxLength: 'Type of injury must be 499 characters or fewer'
                         }
                     }
                 },
@@ -4954,6 +5152,10 @@ module.exports = {
                                     const: 'phyinj-099'
                                 },
                                 {
+                                    title: 'Nerve damage',
+                                    const: 'phyinj-005'
+                                },
+                                {
                                     title: 'Loss of arm',
                                     const: 'phyinj-084'
                                 },
@@ -4975,9 +5177,9 @@ module.exports = {
                     'q-applicant-physical-injuries-arms-arm-other': {
                         type: 'string',
                         title: 'Type of injury',
-                        maxLength: 100,
+                        maxLength: 499,
                         errorMessage: {
-                            maxLength: 'Type of injury must be 100 characters or fewer'
+                            maxLength: 'Type of injury must be 499 characters or fewer'
                         }
                     }
                 },
@@ -5063,9 +5265,9 @@ module.exports = {
                     'q-applicant-physical-injuries-arms-elbow-other': {
                         type: 'string',
                         title: 'Type of injury',
-                        maxLength: 100,
+                        maxLength: 499,
                         errorMessage: {
-                            maxLength: 'Type of injury must be 100 characters or fewer'
+                            maxLength: 'Type of injury must be 499 characters or fewer'
                         }
                     }
                 },
@@ -5151,9 +5353,9 @@ module.exports = {
                     'q-applicant-physical-injuries-arms-wrist-other': {
                         type: 'string',
                         title: 'Type of injury',
-                        maxLength: 100,
+                        maxLength: 499,
                         errorMessage: {
-                            maxLength: 'Type of injury must be 100 characters or fewer'
+                            maxLength: 'Type of injury must be 499 characters or fewer'
                         }
                     }
                 },
@@ -5234,6 +5436,10 @@ module.exports = {
                                     const: 'phyinj-098'
                                 },
                                 {
+                                    title: 'Nerve damage',
+                                    const: 'phyinj-168'
+                                },
+                                {
                                     title: 'Other',
                                     const: 'phyinj-149'
                                 }
@@ -5243,9 +5449,9 @@ module.exports = {
                     'q-applicant-physical-injuries-arms-hand-other': {
                         type: 'string',
                         title: 'Type of injury',
-                        maxLength: 100,
+                        maxLength: 499,
                         errorMessage: {
-                            maxLength: 'Type of injury must be 100 characters or fewer'
+                            maxLength: 'Type of injury must be 499 characters or fewer'
                         }
                     }
                 },
@@ -5375,9 +5581,9 @@ module.exports = {
                     'q-applicant-physical-injuries-arms-digit-other': {
                         type: 'string',
                         title: 'Type of injury',
-                        maxLength: 100,
+                        maxLength: 499,
                         errorMessage: {
-                            maxLength: 'Type of injury must be 100 characters or fewer'
+                            maxLength: 'Type of injury must be 499 characters or fewer'
                         }
                     }
                 },
@@ -5471,9 +5677,9 @@ module.exports = {
                     'q-applicant-physical-injuries-arms-skin-other': {
                         type: 'string',
                         title: 'Type of injury',
-                        maxLength: 100,
+                        maxLength: 499,
                         errorMessage: {
-                            maxLength: 'Type of injury must be 100 characters or fewer'
+                            maxLength: 'Type of injury must be 499 characters or fewer'
                         }
                     }
                 },
@@ -5530,6 +5736,102 @@ module.exports = {
                     }
                 ]
             },
+            'p-applicant-physical-injury-arms-muscle': {
+                $schema: 'http://json-schema.org/draft-07/schema#',
+                title: 'Select any injuries to the tissue on your arms or hands',
+                type: 'object',
+                required: ['q-applicant-physical-injuries'],
+                additionalProperties: false,
+                properties: {
+                    'q-applicant-physical-injuries': {
+                        type: 'array',
+                        items: {
+                            anyOf: [
+                                {
+                                    title: 'Muscle',
+                                    const: 'phyinj-158'
+                                },
+                                {
+                                    title: 'Ligament',
+                                    const: 'phyinj-159'
+                                },
+                                {
+                                    title: 'Tendon',
+                                    const: 'phyinj-160'
+                                },
+                                {
+                                    title: 'Cartilage',
+                                    const: 'phyinj-161'
+                                },
+                                {
+                                    title: 'Other',
+                                    const: 'phyinj-149'
+                                }
+                            ]
+                        }
+                    },
+                    'q-applicant-physical-injuries-arms-muscle-other': {
+                        type: 'string',
+                        title: 'Type of injury',
+                        maxLength: 499,
+                        errorMessage: {
+                            maxLength: 'Type of injury must be 499 characters or fewer'
+                        }
+                    }
+                },
+                allOf: [
+                    {
+                        $ref: '#/definitions/if-other-then-other-textbox-is-required'
+                    }
+                ],
+                definitions: {
+                    'if-other-then-other-textbox-is-required': {
+                        if: {
+                            properties: {
+                                'q-applicant-physical-injuries': {
+                                    contains: {
+                                        const: 'phyinj-149'
+                                    }
+                                }
+                            },
+                            required: ['q-applicant-physical-injuries']
+                        },
+                        then: {
+                            required: ['q-applicant-physical-injuries-arms-muscle-other'],
+                            propertyNames: {
+                                enum: [
+                                    'q-applicant-physical-injuries',
+                                    'q-applicant-physical-injuries-arms-muscle-other'
+                                ]
+                            },
+                            errorMessage: {
+                                required: {
+                                    'q-applicant-physical-injuries-arms-muscle-other':
+                                        'Enter a type of injury'
+                                }
+                            }
+                        }
+                    }
+                },
+                errorMessage: {
+                    required: {
+                        'q-applicant-physical-injuries': 'Select an injury from the list'
+                    }
+                },
+                examples: [
+                    {
+                        'q-applicant-physical-injuries': ['phyinj-158']
+                    }
+                ],
+                invalidExamples: [
+                    {
+                        'q-applicant-physical-injuries': 'not-an-array'
+                    },
+                    {
+                        'q-applicant-physical-injuries': ['not-a-key']
+                    }
+                ]
+            },
             'p-applicant-physical-injury-legs': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
                 title: 'What part of the legs or feet were injured?',
@@ -5569,6 +5871,12 @@ module.exports = {
                                     title: 'Skin',
                                     const: 'skin',
                                     description: 'Including cuts, bruises, burns and scars'
+                                },
+                                {
+                                    title: 'Tissue',
+                                    const: 'muscle',
+                                    description:
+                                        'Including muscles, ligaments, tendons or cartilage'
                                 }
                             ]
                         }
@@ -5587,27 +5895,35 @@ module.exports = {
                     {'q-applicant-physical-injury-legs': ['hip', 'foot']},
                     {'q-applicant-physical-injury-legs': ['hip', 'toes']},
                     {'q-applicant-physical-injury-legs': ['hip', 'skin']},
+                    {'q-applicant-physical-injury-legs': ['hip', 'muscle']},
                     {'q-applicant-physical-injury-legs': ['leg']},
                     {'q-applicant-physical-injury-legs': ['leg', 'knee']},
                     {'q-applicant-physical-injury-legs': ['leg', 'ankle']},
                     {'q-applicant-physical-injury-legs': ['leg', 'foot']},
                     {'q-applicant-physical-injury-legs': ['leg', 'toes']},
                     {'q-applicant-physical-injury-legs': ['leg', 'skin']},
+                    {'q-applicant-physical-injury-legs': ['leg', 'muscle']},
                     {'q-applicant-physical-injury-legs': ['knee']},
                     {'q-applicant-physical-injury-legs': ['knee', 'ankle']},
                     {'q-applicant-physical-injury-legs': ['knee', 'foot']},
                     {'q-applicant-physical-injury-legs': ['knee', 'toes']},
                     {'q-applicant-physical-injury-legs': ['knee', 'skin']},
+                    {'q-applicant-physical-injury-legs': ['knee', 'muscle']},
                     {'q-applicant-physical-injury-legs': ['ankle']},
                     {'q-applicant-physical-injury-legs': ['ankle', 'foot']},
                     {'q-applicant-physical-injury-legs': ['ankle', 'toes']},
                     {'q-applicant-physical-injury-legs': ['ankle', 'skin']},
+                    {'q-applicant-physical-injury-legs': ['ankle', 'muscle']},
                     {'q-applicant-physical-injury-legs': ['foot']},
                     {'q-applicant-physical-injury-legs': ['foot', 'toes']},
                     {'q-applicant-physical-injury-legs': ['foot', 'skin']},
+                    {'q-applicant-physical-injury-legs': ['foot', 'muscle']},
                     {'q-applicant-physical-injury-legs': ['toes']},
                     {'q-applicant-physical-injury-legs': ['toes', 'skin']},
-                    {'q-applicant-physical-injury-legs': ['skin']}
+                    {'q-applicant-physical-injury-legs': ['toes', 'muscle']},
+                    {'q-applicant-physical-injury-legs': ['skin']},
+                    {'q-applicant-physical-injury-legs': ['skin', 'muscle']},
+                    {'q-applicant-physical-injury-legs': ['muscle']}
                 ],
                 invalidExamples: [
                     {
@@ -5647,9 +5963,9 @@ module.exports = {
                     'q-applicant-physical-injuries-legs-hip-other': {
                         type: 'string',
                         title: 'Type of injury',
-                        maxLength: 100,
+                        maxLength: 499,
                         errorMessage: {
-                            maxLength: 'Type of injury must be 100 characters or fewer'
+                            maxLength: 'Type of injury must be 499 characters or fewer'
                         }
                     }
                 },
@@ -5722,6 +6038,10 @@ module.exports = {
                                     const: 'phyinj-117'
                                 },
                                 {
+                                    title: 'Nerve damage',
+                                    const: 'phyinj-169'
+                                },
+                                {
                                     title: 'Keyhole surgery to leg',
                                     const: 'phyinj-122'
                                 },
@@ -5751,9 +6071,9 @@ module.exports = {
                     'q-applicant-physical-injuries-legs-leg-other': {
                         type: 'string',
                         title: 'Type of injury',
-                        maxLength: 100,
+                        maxLength: 499,
                         errorMessage: {
-                            maxLength: 'Type of injury must be 100 characters or fewer'
+                            maxLength: 'Type of injury must be 499 characters or fewer'
                         }
                     }
                 },
@@ -5843,9 +6163,9 @@ module.exports = {
                     'q-applicant-physical-injuries-legs-knee-other': {
                         type: 'string',
                         title: 'Type of injury',
-                        maxLength: 100,
+                        maxLength: 499,
                         errorMessage: {
-                            maxLength: 'Type of injury must be 100 characters or fewer'
+                            maxLength: 'Type of injury must be 499 characters or fewer'
                         }
                     }
                 },
@@ -5935,9 +6255,9 @@ module.exports = {
                     'q-applicant-physical-injuries-legs-ankle-other': {
                         type: 'string',
                         title: 'Type of injury',
-                        maxLength: 100,
+                        maxLength: 499,
                         errorMessage: {
-                            maxLength: 'Type of injury must be 100 characters or fewer'
+                            maxLength: 'Type of injury must be 499 characters or fewer'
                         }
                     }
                 },
@@ -6014,6 +6334,14 @@ module.exports = {
                                     const: 'phyinj-119'
                                 },
                                 {
+                                    title: 'Nerve damage',
+                                    const: 'phyinj-170'
+                                },
+                                {
+                                    title: 'Paralysed foot',
+                                    const: 'phyinj-162'
+                                },
+                                {
                                     title: 'Other',
                                     const: 'phyinj-149'
                                 }
@@ -6023,9 +6351,9 @@ module.exports = {
                     'q-applicant-physical-injuries-legs-foot-other': {
                         type: 'string',
                         title: 'Type of injury',
-                        maxLength: 100,
+                        maxLength: 499,
                         errorMessage: {
-                            maxLength: 'Type of injury must be 100 characters or fewer'
+                            maxLength: 'Type of injury must be 499 characters or fewer'
                         }
                     }
                 },
@@ -6131,9 +6459,9 @@ module.exports = {
                     'q-applicant-physical-injuries-legs-toes-other': {
                         type: 'string',
                         title: 'Type of injury',
-                        maxLength: 100,
+                        maxLength: 499,
                         errorMessage: {
-                            maxLength: 'Type of injury must be 100 characters or fewer'
+                            maxLength: 'Type of injury must be 499 characters or fewer'
                         }
                     }
                 },
@@ -6227,9 +6555,9 @@ module.exports = {
                     'q-applicant-physical-injuries-legs-skin-other': {
                         type: 'string',
                         title: 'Type of injury',
-                        maxLength: 100,
+                        maxLength: 499,
                         errorMessage: {
-                            maxLength: 'Type of injury must be 100 characters or fewer'
+                            maxLength: 'Type of injury must be 499 characters or fewer'
                         }
                     }
                 },
@@ -6275,6 +6603,102 @@ module.exports = {
                 examples: [
                     {
                         'q-applicant-physical-injuries': ['phyinj-134']
+                    }
+                ],
+                invalidExamples: [
+                    {
+                        'q-applicant-physical-injuries': 'not-an-array'
+                    },
+                    {
+                        'q-applicant-physical-injuries': ['not-a-key']
+                    }
+                ]
+            },
+            'p-applicant-physical-injury-legs-muscle': {
+                $schema: 'http://json-schema.org/draft-07/schema#',
+                title: 'Select any injuries to the tissue on your legs or feet',
+                type: 'object',
+                required: ['q-applicant-physical-injuries'],
+                additionalProperties: false,
+                properties: {
+                    'q-applicant-physical-injuries': {
+                        type: 'array',
+                        items: {
+                            anyOf: [
+                                {
+                                    title: 'Muscle',
+                                    const: 'phyinj-164'
+                                },
+                                {
+                                    title: 'Ligament',
+                                    const: 'phyinj-165'
+                                },
+                                {
+                                    title: 'Tendon',
+                                    const: 'phyinj-166'
+                                },
+                                {
+                                    title: 'Cartilage',
+                                    const: 'phyinj-167'
+                                },
+                                {
+                                    title: 'Other',
+                                    const: 'phyinj-149'
+                                }
+                            ]
+                        }
+                    },
+                    'q-applicant-physical-injuries-legs-muscle-other': {
+                        type: 'string',
+                        title: 'Type of injury',
+                        maxLength: 499,
+                        errorMessage: {
+                            maxLength: 'Type of injury must be 499 characters or fewer'
+                        }
+                    }
+                },
+                allOf: [
+                    {
+                        $ref: '#/definitions/if-other-then-other-textbox-is-required'
+                    }
+                ],
+                definitions: {
+                    'if-other-then-other-textbox-is-required': {
+                        if: {
+                            properties: {
+                                'q-applicant-physical-injuries': {
+                                    contains: {
+                                        const: 'phyinj-149'
+                                    }
+                                }
+                            },
+                            required: ['q-applicant-physical-injuries']
+                        },
+                        then: {
+                            required: ['q-applicant-physical-injuries-legs-muscle-other'],
+                            propertyNames: {
+                                enum: [
+                                    'q-applicant-physical-injuries',
+                                    'q-applicant-physical-injuries-legs-muscle-other'
+                                ]
+                            },
+                            errorMessage: {
+                                required: {
+                                    'q-applicant-physical-injuries-legs-muscle-other':
+                                        'Enter a type of injury'
+                                }
+                            }
+                        }
+                    }
+                },
+                errorMessage: {
+                    required: {
+                        'q-applicant-physical-injuries': 'Select an injury from the list'
+                    }
+                },
+                examples: [
+                    {
+                        'q-applicant-physical-injuries': ['phyinj-164']
                     }
                 ],
                 invalidExamples: [
@@ -7981,6 +8405,14 @@ module.exports = {
                                 ]
                             },
                             {
+                                target: 'p-applicant-physical-injury-upper-muscle',
+                                cond: [
+                                    'includes',
+                                    '$.answers.p-applicant-physical-injury-upper.q-applicant-physical-injury-upper',
+                                    'muscle'
+                                ]
+                            },
+                            {
                                 target: 'p--context-dmi-details'
                             }
                         ]
@@ -8534,6 +8966,14 @@ module.exports = {
                                 ]
                             },
                             {
+                                target: 'p-applicant-physical-injury-torso-muscle',
+                                cond: [
+                                    'includes',
+                                    '$.answers.p-applicant-physical-injury-torso.q-applicant-physical-injury-torso',
+                                    'muscle'
+                                ]
+                            },
+                            {
                                 target: 'p--context-dmi-details'
                             }
                         ]
@@ -8942,6 +9382,14 @@ module.exports = {
                                 ]
                             },
                             {
+                                target: 'p-applicant-physical-injury-arms-muscle',
+                                cond: [
+                                    'includes',
+                                    '$.answers.p-applicant-physical-injury-arms.q-applicant-physical-injury-arms',
+                                    'muscle'
+                                ]
+                            },
+                            {
                                 target: 'p--context-dmi-details'
                             }
                         ]
@@ -9283,6 +9731,14 @@ module.exports = {
                                     'includes',
                                     '$.answers.p-applicant-physical-injury-legs.q-applicant-physical-injury-legs',
                                     'toes'
+                                ]
+                            },
+                            {
+                                target: 'p-applicant-physical-injury-legs-skin',
+                                cond: [
+                                    'includes',
+                                    '$.answers.p-applicant-physical-injury-legs.q-applicant-physical-injury-legs',
+                                    'skin'
                                 ]
                             },
                             {
