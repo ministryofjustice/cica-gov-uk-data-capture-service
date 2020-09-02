@@ -3083,8 +3083,8 @@ module.exports = {
                             anyOf: [
                                 {
                                     title:
-                                        'Concussion, headaches or loss of balance lasting 28 or more',
-                                    const: 'phyinj-144'
+                                        'Head injury causing concussion, headaches or loss of balance',
+                                    const: 'phyinj-146'
                                 },
                                 {
                                     title: 'Brain damage',
@@ -3103,8 +3103,8 @@ module.exports = {
                                     const: 'phyinj-004'
                                 },
                                 {
-                                    title: 'Nerve damage',
-                                    const: 'phyinj-005'
+                                    title: 'Injury affecting balance',
+                                    const: 'phyinj-012'
                                 },
                                 {
                                     title: 'Quadriplegia or tetraplegia (paralysis of all 4 limbs)',
@@ -3407,11 +3407,11 @@ module.exports = {
                                     const: 'phyinj-013'
                                 },
                                 {
-                                    title: 'Temporary blurred vision',
+                                    title: 'Temporary blurred or double vision',
                                     const: 'phyinj-014'
                                 },
                                 {
-                                    title: 'Permanent blurred vision',
+                                    title: 'Permanent blurred or double vision',
                                     const: 'phyinj-015'
                                 },
                                 {
@@ -3443,7 +3443,7 @@ module.exports = {
                                     const: 'phyinj-026'
                                 },
                                 {
-                                    title: 'Object in eye',
+                                    title: 'Punctured eyeball',
                                     const: 'phyinj-027'
                                 },
                                 {
@@ -3469,6 +3469,10 @@ module.exports = {
                                 {
                                     title: 'Damaged eye drain',
                                     const: 'phyinj-028'
+                                },
+                                {
+                                    title: 'Injury affecting eye movement',
+                                    const: 'phyinj-150'
                                 },
                                 {
                                     title: 'Other',
@@ -3571,11 +3575,11 @@ module.exports = {
                                     const: 'phyinj-010'
                                 },
                                 {
-                                    title: 'Ringing in ears',
+                                    title: 'Tinnitus',
                                     const: 'phyinj-011'
                                 },
                                 {
-                                    title: 'Dizziness',
+                                    title: 'Injury affecting balance',
                                     const: 'phyinj-012'
                                 },
                                 {
@@ -5568,8 +5572,8 @@ module.exports = {
                                     const: 'phyinj-106'
                                 },
                                 {
-                                    title: 'Paralysis of finger',
-                                    const: 'phyinj-xxx'
+                                    title: 'Paralysed finger',
+                                    const: 'phyinj-147'
                                 },
                                 {
                                     title: 'Other',
@@ -6447,7 +6451,7 @@ module.exports = {
                                 },
                                 {
                                     title: 'Paralysed toe',
-                                    const: 'phyinj-xxx'
+                                    const: 'phyinj-148'
                                 },
                                 {
                                     title: 'Other',
@@ -8421,6 +8425,14 @@ module.exports = {
                     on: {
                         ANSWER: [
                             {
+                                target: 'p-applicant-dentist-visited',
+                                cond: [
+                                    'includes',
+                                    '$.answers.p-applicant-physical-injury.q-applicant-physical-injury',
+                                    'upper'
+                                ]
+                            },
+                            {
                                 target: 'p--context-money'
                             }
                         ]
@@ -10123,11 +10135,11 @@ module.exports = {
                                 ]
                             },
                             {
-                                target: 'p-applicant-physical-injury-legs-skin',
+                                target: 'p-applicant-physical-injury-legs-muscle',
                                 cond: [
                                     'includes',
                                     '$.answers.p-applicant-physical-injury-legs.q-applicant-physical-injury-legs',
-                                    'skin'
+                                    'muscle'
                                 ]
                             },
                             {
