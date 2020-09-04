@@ -7352,31 +7352,31 @@ module.exports = {
             'p-applicant-non-sa-infections': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
                 type: 'object',
-                required: ['q-applicant-infections'],
+                required: ['q-applicant-non-sa-infections'],
                 additionalProperties: false,
                 properties: {
-                    'q-applicant-infections': {
+                    'q-applicant-non-sa-infections': {
                         type: 'boolean',
                         title: 'Do you have HIV or hepatitis as a result of the crime?'
                     }
                 },
                 errorMessage: {
                     required: {
-                        'q-applicant-infections':
+                        'q-applicant-non-sa-infections':
                             'Select yes if you have HIV or hepatitis as a result of the crime'
                     }
                 },
                 examples: [
                     {
-                        'q-applicant-infections': true
+                        'q-applicant-non-sa-infections': true
                     },
                     {
-                        'q-applicant-infections': false
+                        'q-applicant-non-sa-infections': false
                     }
                 ],
                 invalidExamples: [
                     {
-                        'q-applicant-infections': 'foo'
+                        'q-applicant-non-sa-infections': 'foo'
                     }
                 ]
             },
@@ -7426,6 +7426,37 @@ module.exports = {
                     }
                 ]
             },
+            'p-applicant-fatal-claim': {
+                $schema: 'http://json-schema.org/draft-07/schema#',
+                type: 'object',
+                required: ['q-applicant-fatal-claim'],
+                additionalProperties: false,
+                properties: {
+                    'q-applicant-fatal-claim': {
+                        type: 'boolean',
+                        title: 'Are you applying for someone who died from their injuries?'
+                    }
+                },
+                errorMessage: {
+                    required: {
+                        'q-applicant-fatal-claim':
+                            'Select yes if you are applying for someone who died from their injuries'
+                    }
+                },
+                examples: [
+                    {
+                        'q-applicant-fatal-claim': true
+                    },
+                    {
+                        'q-applicant-fatal-claim': false
+                    }
+                ],
+                invalidExamples: [
+                    {
+                        'q-applicant-fatal-claim': 'foo'
+                    }
+                ]
+            },
             system: {
                 $schema: 'http://json-schema.org/draft-07/schema#',
                 type: 'object',
@@ -7456,7 +7487,7 @@ module.exports = {
             }
         },
         routes: {
-            initial: 'p-applicant-who-are-you-applying-for',
+            initial: 'p-applicant-fatal-claim',
             referrer: 'https://www.gov.uk/claim-compensation-criminal-injury/make-claim',
             summary: 'p-applicant-declaration',
             confirmation: 'p--confirmation',
@@ -8230,49 +8261,37 @@ module.exports = {
                             {
                                 target: 'p--context-treatment',
                                 cond: [
-                                    '==',
-                                    '$.answers.p-applicant-are-you-claiming-for-physical-injuries.q-applicant-are-you-claiming-for-physical-injuries',
-                                    true
-                                ]
-                            },
-                            {
-                                target: 'p--context-treatment',
-                                cond: [
-                                    '==',
-                                    '$.answers.p-applicant-do-you-have-disabling-mental-injury.q-applicant-do-you-have-disabling-mental-injury',
-                                    true
-                                ]
-                            },
-                            {
-                                target: 'p--context-treatment',
-                                cond: [
-                                    '==',
-                                    '$.answers.p-applicant-infections.q-applicant-infections',
-                                    true
-                                ]
-                            },
-                            {
-                                target: 'p--context-treatment',
-                                cond: [
-                                    '==',
-                                    '$.answers.p-applicant-pregnancy.q-applicant-pregnancy',
-                                    true
-                                ]
-                            },
-                            {
-                                target: 'p--context-treatment',
-                                cond: [
-                                    '==',
-                                    '$.answers.p-applicant-pregnancy-loss.q-applicant-pregnancy-loss',
-                                    true
-                                ]
-                            },
-                            {
-                                target: 'p--context-treatment',
-                                cond: [
-                                    '==',
-                                    '$.answers.p-applicant-non-sa-infections.q-applicant-infections',
-                                    true
+                                    'or',
+                                    [
+                                        '==',
+                                        '$.answers.p-applicant-are-you-claiming-for-physical-injuries.q-applicant-are-you-claiming-for-physical-injuries',
+                                        true
+                                    ],
+                                    [
+                                        '==',
+                                        '$.answers.p-applicant-do-you-have-disabling-mental-injury.q-applicant-do-you-have-disabling-mental-injury',
+                                        true
+                                    ],
+                                    [
+                                        '==',
+                                        '$.answers.p-applicant-infections.q-applicant-infections',
+                                        true
+                                    ],
+                                    [
+                                        '==',
+                                        '$.answers.p-applicant-pregnancy.q-applicant-pregnancy',
+                                        true
+                                    ],
+                                    [
+                                        '==',
+                                        '$.answers.p-applicant-pregnancy-loss.q-applicant-pregnancy-loss',
+                                        true
+                                    ],
+                                    [
+                                        '==',
+                                        '$.answers.p-applicant-non-sa-infections.q-applicant-non-sa-infections',
+                                        true
+                                    ]
                                 ]
                             },
                             {
@@ -10652,7 +10671,7 @@ module.exports = {
                                 target: 'p-applicant-select-non-sa-infections',
                                 cond: [
                                     '==',
-                                    '$.answers.p-applicant-non-sa-infections.q-applicant-infections',
+                                    '$.answers.p-applicant-non-sa-infections.q-applicant-non-sa-infections',
                                     true
                                 ]
                             },
@@ -10671,13 +10690,35 @@ module.exports = {
                         ]
                     }
                 },
+                'p-applicant-fatal-claim': {
+                    on: {
+                        ANSWER: [
+                            {
+                                target: 'p--transition',
+                                cond: [
+                                    '==',
+                                    '$.answers.p-applicant-fatal-claim.q-applicant-fatal-claim',
+                                    true
+                                ]
+                            },
+                            {
+                                target: 'p-applicant-who-are-you-applying-for',
+                                cond: [
+                                    '==',
+                                    '$.answers.p-applicant-fatal-claim.q-applicant-fatal-claim',
+                                    false
+                                ]
+                            }
+                        ]
+                    }
+                },
                 system: {
                     type: 'final'
                 }
             }
         },
         answers: {},
-        progress: ['p-applicant-who-are-you-applying-for'],
+        progress: ['p-applicant-fatal-claim'],
         meta: {
             questionnaireDocumentVersion: '1.0.0',
             onComplete: {
