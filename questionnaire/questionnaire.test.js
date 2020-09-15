@@ -1165,3 +1165,127 @@ describe('/questionnaires/{questionnaireId}/progress-entries', () => {
         });
     });
 });
+describe('/questionnaires/{questionnaireId}/dataset', () => {
+    describe('get', () => {
+        describe('200', () => {
+            it('should Success', async () => {
+                const res = await request(app)
+                    .get('/api/v1/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/dataset')
+                    .set('Authorization', `Bearer ${tokens['read:questionnaires']}`);
+
+                expect(res.statusCode).toBe(200);
+                expect(res.type).toBe('application/vnd.api+json');
+                expect(res.body).toMatchSchema({
+                    $schema: 'http://json-schema.org/draft-07/schema#',
+                    type: 'object',
+                    required: ['data'],
+                    properties: {
+                        data: {
+                            type: 'array',
+                            items: {
+                                type: 'object',
+                                required: ['type', 'id', 'attributes'],
+                                properties: {
+                                    type: {const: 'dataset'},
+                                    id: {
+                                        type: 'string',
+                                        pattern:
+                                            '^[a-z0-9]{1,30}(--[a-z0-9]{1,30})?(-[a-z0-9]{1,30})*$'
+                                    },
+                                    attributes: {type: 'object'}
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+        });
+        describe('400', () => {
+            it('should There is an issue with the request', async () => {
+                const res = await request(app)
+                    .get('/api/v1/questionnaires/NOT-A-UUID/dataset')
+                    .set('Authorization', `Bearer ${tokens['read:questionnaires']}`);
+
+                expect(res.statusCode).toBe(400);
+                expect(res.type).toBe('application/vnd.api+json');
+                expect(res.body).toMatchSchema({
+                    $schema: 'http://json-schema.org/draft-07/schema#',
+                    type: 'object',
+                    required: ['errors'],
+                    properties: {
+                        errors: {
+                            type: 'array',
+                            items: {
+                                type: 'object',
+                                required: ['status', 'title', 'detail'],
+                                properties: {
+                                    status: {const: 400},
+                                    title: {const: '400 Bad Request'},
+                                    detail: {type: 'string'}
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+        });
+        describe('401', () => {
+            it('should Access token is missing or invalid', async () => {
+                const res = await request(app).get(
+                    '/api/v1/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/dataset'
+                );
+
+                expect(res.statusCode).toBe(401);
+                expect(res.type).toBe('application/vnd.api+json');
+                expect(res.body).toMatchSchema({
+                    $schema: 'http://json-schema.org/draft-07/schema#',
+                    type: 'object',
+                    required: ['errors'],
+                    properties: {
+                        errors: {
+                            type: 'array',
+                            items: {
+                                type: 'object',
+                                required: ['status', 'title', 'detail'],
+                                properties: {
+                                    status: {const: 401},
+                                    title: {const: '401 Unauthorized'},
+                                    detail: {type: 'string'}
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+        });
+        describe('404', () => {
+            it('should The specified resource was not found', async () => {
+                const res = await request(app)
+                    .get('/api/v1/questionnaires/68653be7-877f-4106-b91e-4ba8dac883f4/dataset')
+                    .set('Authorization', `Bearer ${tokens['read:questionnaires']}`);
+
+                expect(res.statusCode).toBe(404);
+                expect(res.type).toBe('application/vnd.api+json');
+                expect(res.body).toMatchSchema({
+                    $schema: 'http://json-schema.org/draft-07/schema#',
+                    type: 'object',
+                    required: ['errors'],
+                    properties: {
+                        errors: {
+                            type: 'array',
+                            items: {
+                                type: 'object',
+                                required: ['status', 'title', 'detail'],
+                                properties: {
+                                    status: {const: 404},
+                                    title: {const: '404 Not Found'},
+                                    detail: {type: 'string'}
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+        });
+    });
+});

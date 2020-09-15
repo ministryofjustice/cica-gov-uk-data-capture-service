@@ -591,6 +591,73 @@
                     }
                 }
             }
+        },
+        "/questionnaires/{questionnaireId}/dataset": {
+            "get": {
+                "tags": ["Dataset"],
+                "summary": "Get the dataset that has been populated via questions and answers",
+                "description": "Gets a questionnaires dataset",
+                "operationId": "getDataset",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/questionnaireId"
+                    }
+                ],
+                "x-scopes": ["read:questionnaires"],
+                "x-requests": {
+                    "400": {
+                        "parameters": [
+                            {
+                                "name": "questionnaireId",
+                                "example": "NOT-A-UUID"
+                            }
+                        ]
+                    },
+                    "401": {
+                        "auth": false
+                    },
+                    "404": {
+                        "parameters": [
+                            {
+                                "name": "questionnaireId",
+                                "example": "68653be7-877f-4106-b91e-4ba8dac883f4"
+                            }
+                        ]
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/vnd.api+json": {
+                                "schema": {
+                                    "$ref": "json-schemas/_questionnaires_{questionnaireId}_dataset/get/res/200.json"
+                                },
+                                "example": {
+                                    "data": [
+                                        {
+                                            "type": "dataset",
+                                            "id": "0",
+                                            "attributes": {
+                                                "q-applicant-british-citizen-or-eu-national": true
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/UnauthorizedError"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    }
+                }
+            }
         }
     },
     "components": {
