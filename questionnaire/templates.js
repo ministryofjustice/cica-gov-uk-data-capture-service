@@ -1926,7 +1926,7 @@ module.exports = {
                         title: 'Town or city',
                         maxLength: 32,
                         errorMessage: {
-                            maxLength: 'Town or city must be 60 characters or less'
+                            maxLength: 'Town or city must be 32 characters or less'
                         }
                     },
                     'q-applicant-county': {
@@ -1934,7 +1934,7 @@ module.exports = {
                         title: 'County (optional)',
                         maxLength: 32,
                         errorMessage: {
-                            maxLength: 'County must be 60 characters or less'
+                            maxLength: 'County must be 32 characters or less'
                         }
                     },
                     'q-applicant-postcode': {
@@ -2113,7 +2113,10 @@ module.exports = {
                 properties: {
                     'q-applicant-applied-for-other-compensation-briefly-explain-why-not': {
                         type: 'string',
-                        maxLength: 500
+                        maxLength: 500,
+                        errorMessage: {
+                            maxLength: 'Explanation must be 500 characters or less'
+                        }
                     }
                 },
                 errorMessage: {
@@ -2393,7 +2396,10 @@ module.exports = {
                     'q-applicant-other-treatment-dmi': {
                         type: 'string',
                         title: 'Other treatments',
-                        maxLength: 100
+                        maxLength: 499,
+                        errorMessage: {
+                            maxLength: 'Other treatments must be 499 characters or less'
+                        }
                     }
                 },
                 required: ['q-applicant-select-treatments-dmi'],
@@ -2638,7 +2644,7 @@ module.exports = {
                         title: 'Town or city',
                         maxLength: 32,
                         errorMessage: {
-                            maxLength: 'Town or city must be 60 characters or less'
+                            maxLength: 'Town or city must be 32 characters or less'
                         }
                     },
                     'q-gp-county': {
@@ -2646,7 +2652,7 @@ module.exports = {
                         title: 'County (optional)',
                         maxLength: 32,
                         errorMessage: {
-                            maxLength: 'County must be 60 characters or less'
+                            maxLength: 'County must be 32 characters or less'
                         }
                     },
                     'q-gp-postcode': {
