@@ -2891,7 +2891,7 @@ module.exports = {
             }
         },
         routes: {
-            initial: 'p--confirmation',
+            initial: 'p-applicant-who-are-you-applying-for',
             referrer: 'https://www.gov.uk/claim-compensation-criminal-injury/make-claim',
             summary: 'p-applicant-declaration',
             confirmation: 'p--confirmation',
@@ -3792,7 +3792,7 @@ module.exports = {
             }
         },
         answers: {},
-        progress: ['p--confirmation'],
+        progress: ['p-applicant-who-are-you-applying-for'],
         meta: {
             questionnaireDocumentVersion: '1.0.0',
             onComplete: {
