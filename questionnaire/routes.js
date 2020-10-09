@@ -39,6 +39,22 @@ router.route('/').post(permissions('create:questionnaires'), async (req, res, ne
 });
 
 router
+    .route('/:questionnaireId/dataset')
+    .get(permissions('read:questionnaires', 'read:answers'), async (req, res, next) => {
+        try {
+            const {questionnaireId} = req.params;
+            const questionnaireService = createQuestionnaireService({logger: req.log});
+            const resourceCollection = await questionnaireService.getDataset(questionnaireId);
+
+            res.status(200).json({
+                data: resourceCollection
+            });
+        } catch (err) {
+            next(err);
+        }
+    });
+
+router
     .route('/:questionnaireId/sections/answers')
     .get(permissions('read:questionnaires', 'read:answers'), async (req, res, next) => {
         try {
