@@ -2,14 +2,10 @@
 
 'use strict';
 
-const Ajv = require('ajv');
-const AjvErrors = require('ajv-errors');
 const VError = require('verror');
 const createQRouter = require('q-router');
 const uuidv4 = require('uuid/v4');
 const pointer = require('json-pointer');
-const ajvFormatsMobileUk = require('ajv-formats-mobile-uk');
-const templates = require('./templates');
 const createMessageBusCaller = require('../services/message-bus');
 const replaceJsonPointers = require('../services/replace-json-pointer');
 const createNotifyService = require('../services/notify');
@@ -17,21 +13,16 @@ const createNotifyService = require('../services/notify');
 const defaults = {};
 defaults.createQuestionnaireDAL = require('./questionnaire-dal');
 
+const templates = {};
+templates.application = require('q-templates-application');
+
+let templateConfig;
+
 function createQuestionnaireService({
     logger,
     createQuestionnaireDAL = defaults.createQuestionnaireDAL
 } = {}) {
     const db = createQuestionnaireDAL({logger});
-    const ajv = new Ajv({
-        allErrors: true,
-        jsonPointers: true,
-        format: 'full',
-        coerceTypes: true
-    });
-
-    AjvErrors(ajv);
-
-    ajv.addFormat('mobile-uk', ajvFormatsMobileUk);
 
     async function createQuestionnaire(templateName) {
         if (!(templateName in templates)) {
@@ -43,8 +34,10 @@ function createQuestionnaireService({
             );
         }
 
+        templateConfig = templates.application();
+
         const uuidV4 = uuidv4();
-        const questionnaire = templates[templateName](uuidV4);
+        const questionnaire = templateConfig.template(uuidV4);
 
         await db.createQuestionnaire(uuidV4, questionnaire);
 
@@ -325,12 +318,11 @@ function createQuestionnaireService({
 
             // 3 - Section is available. Validate the answers against it
             const sectionSchema = questionnaire.sections[section.id];
-            const validate = ajv.compile(sectionSchema);
-            const valid = validate(answers);
+            const result = templateConfig.validate(sectionSchema, answers);
 
-            if (!valid) {
+            if (result.valid === false) {
                 // TODO: Refactor errorhandler to accept a logger and move this in to it
-                logger.error({err: validate.errors}, 'SCHEMA VALIDATION FAILED');
+                logger.error({err: result.errors}, 'SCHEMA VALIDATION FAILED');
 
                 const validationError = new VError({
                     name: 'JSONSchemaValidationError',
@@ -338,7 +330,7 @@ function createQuestionnaireService({
                         schema: sectionSchema,
                         answers: rawAnswers,
                         coercedAnswers: answers,
-                        schemaErrors: validate.errors
+                        schemaErrors: result.errors
                     }
                 });
 
@@ -393,10 +385,9 @@ function createQuestionnaireService({
         sectionsToValidate.forEach(sectionId => {
             const sectionSchema = questionnaire.sections[sectionId];
             const answers = questionnaire.answers[sectionId];
-            const validate = ajv.compile(sectionSchema);
-            const valid = validate(answers || {});
-            if (!valid) {
-                validationErrors.push(validate.errors);
+            const result = templateConfig.validate(sectionSchema, answers || {});
+            if (result.valid === false) {
+                validationErrors.push(result.errors);
             }
         });
 

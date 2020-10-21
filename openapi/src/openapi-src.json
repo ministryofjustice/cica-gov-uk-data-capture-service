@@ -39,7 +39,7 @@
                                     "example": {
                                         "data": {
                                             "THIS-IS-NOT-A-VALID-PROPERTY-NAME": {
-                                                "templateName": "sexual-assault"
+                                                "templateName": "application"
                                             }
                                         }
                                     }
@@ -81,7 +81,7 @@
                                 "data": {
                                     "type": "questionnaires",
                                     "attributes": {
-                                        "templateName": "sexual-assault"
+                                        "templateName": "application"
                                     }
                                 }
                             }

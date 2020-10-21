@@ -1,5 +1,14 @@
 'use strict';
 
+/* * ****************************************************************************************** * */
+/* * ****************************************************************************************** * */
+/* *         THIS FILE IS GENERATED. ALL MANUAL EDITS MADE TO THIS FILE WILL BE LOST!!!         * */
+/* *         --------------------------------------------------------------------------         * */
+/* *         If you need to make a change to this test file you will need to edit the           * */
+/* *         generate-tests file and regenerate the tests using command line.                   * */
+/* * ****************************************************************************************** * */
+/* * ****************************************************************************************** * */
+
 const VError = require('verror');
 const request = require('supertest');
 const {matchersWithOptions} = require('jest-json-schema');
@@ -95,7 +104,7 @@ describe('/questionnaires', () => {
                     .set('Authorization', `Bearer ${tokens['create:questionnaires']}`)
                     .set('Content-Type', 'application/vnd.api+json')
                     .send({
-                        data: {type: 'questionnaires', attributes: {templateName: 'sexual-assault'}}
+                        data: {type: 'questionnaires', attributes: {templateName: 'application'}}
                     });
 
                 expect(res.statusCode).toBe(201);
@@ -151,8 +160,8 @@ describe('/questionnaires', () => {
                     .send({
                         data: {
                             type: 'questionnaires',
-                            attributes: {templateName: 'sexual-assault'},
-                            'THIS-IS-NOT-A-VALID-PROPERTY-NAME': {templateName: 'sexual-assault'}
+                            attributes: {templateName: 'application'},
+                            'THIS-IS-NOT-A-VALID-PROPERTY-NAME': {templateName: 'application'}
                         }
                     });
 
@@ -185,7 +194,7 @@ describe('/questionnaires', () => {
                     .post('/api/v1/questionnaires')
                     .set('Content-Type', 'application/vnd.api+json')
                     .send({
-                        data: {type: 'questionnaires', attributes: {templateName: 'sexual-assault'}}
+                        data: {type: 'questionnaires', attributes: {templateName: 'application'}}
                     });
 
                 expect(res.statusCode).toBe(401);
@@ -218,7 +227,7 @@ describe('/questionnaires', () => {
                     .set('Authorization', `Bearer ${tokens['create:dummy-resource']}`)
                     .set('Content-Type', 'application/vnd.api+json')
                     .send({
-                        data: {type: 'questionnaires', attributes: {templateName: 'sexual-assault'}}
+                        data: {type: 'questionnaires', attributes: {templateName: 'application'}}
                     });
 
                 expect(res.statusCode).toBe(403);
@@ -757,7 +766,7 @@ describe('/questionnaires/{questionnaireId}/submissions', () => {
                             attributes: {questionnaireId: '285cb104-0c15-4a9c-9840-cb1007f098fb'}
                         }
                     });
-
+                console.log({res});
                 expect(res.statusCode).toBe(201);
                 expect(res.type).toBe('application/vnd.api+json');
                 expect(res.body).toMatchSchema({
