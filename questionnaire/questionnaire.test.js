@@ -766,7 +766,6 @@ describe('/questionnaires/{questionnaireId}/submissions', () => {
                             attributes: {questionnaireId: '285cb104-0c15-4a9c-9840-cb1007f098fb'}
                         }
                     });
-                console.log({res});
                 expect(res.statusCode).toBe(201);
                 expect(res.type).toBe('application/vnd.api+json');
                 expect(res.body).toMatchSchema({
