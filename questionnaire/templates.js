@@ -415,7 +415,7 @@ module.exports = {
                     },
                     'dont-know-if-crime-reported': {
                         description:
-                            '\n                {{ govukDetails({\n                summaryText: "I do not know if the crime was reported to the police",\n                html: \'<p>You can contact us for help with your application on 0300 003 3601. Select option 8.</p>\n                        <p>Our phone lines are open Monday to Friday 8:30am to 5pm except Wednesday when they open at 10am.</p>\'\n                }) }}\n            '
+                            '{% set templateHtml %}{% include \'contact-small.njk\' %}{% endset %}{{ govukDetails({summaryText: "I do not know if the crime was reported to the police",html: "<p>You can contact us for help with your application.</p>" + templateHtml})}}'
                     }
                 },
                 errorMessage: {
@@ -7351,7 +7351,7 @@ module.exports = {
                 properties: {
                     'you-cannot-get-compensation': {
                         description:
-                            '<p class="govuk-body">You can only get compensation from this service if you’ve been a victim of a violent crime.</p>'
+                            '<p class="govuk-body">You cannot get compensation if you were not a victim of a violent crime.</p><p class="govuk-body">Call us if you want to discuss whether you can claim.</p>{% include \'contact-small.njk\' %}'
                     }
                 },
                 examples: [{}],
