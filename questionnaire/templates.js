@@ -28,7 +28,7 @@ module.exports = {
                 additionalProperties: false,
                 properties: {
                     transition: {
-                        description: `<p class="govuk-body">You can apply by calling 0300 003 3601.</p><p class="govuk-body">Our phone lines are open Monday to Friday 8:30am to 5pm, except Wednesday when they open at 10am.</p>{{ govukDetails({summaryText: "If you need help or support",html: '<p class="govuk-body">You can <a class="govuk-link" href="https://www.victimandwitnessinformation.org.uk/">get practical or emotional support</a> after a crime.</p><p class="govuk-body">There is different practical or emotional support <a class="govuk-link" href="https://www.mygov.scot/victim-witness-support/">if you live in Scotland</a>.</p>'}) }}`
+                        description: "{% include 'contact.njk' %}"
                     }
                 },
                 examples: [{}],
@@ -397,7 +397,7 @@ module.exports = {
                 properties: {
                     'applicant-impact-on-you': {
                         description:
-                            '<p class="govuk-body">We’re going to ask you:</p><ul class="govuk-list govuk-list--bullet"><li>when and where the crime happened</li><li>which police force investigated the crime</li></ul><p class="govuk-body">This helps us get the information we need to make a decision about your claim. </p>{{ govukDetails({summaryText: "If you need help or support",html: \'<p class=\\"govuk-body\\">You can contact us for help with your application on 0300 003 3601. Select option 8.</p><p class="govuk-body">Our phone lines are open Monday to Friday 8:30am to 5pm except Wednesday when they open at 10am.</p><p class="govuk-body">You can <a class="govuk-link" href="https://www.victimandwitnessinformation.org.uk/">get practical or emotional support</a> after a crime.</p><p class="govuk-body">There is different practical or emotional support <a class="govuk-link" href="https://www.mygov.scot/victim-witness-support/">if you live in Scotland</a>.</p>\'}) }}'
+                            '<p class="govuk-body">We’re going to ask you:</p><ul class="govuk-list govuk-list--bullet"><li>when and where the crime happened</li><li>which police force investigated the crime</li></ul><p class="govuk-body">This helps us get the information we need to make a decision about your claim.</p>{% set templateHtml %}{% include \'contact.njk\' %}{% endset %}{{ govukDetails({summaryText: "If you need help or support",html: \'<p class="govuk-body">You can contact us for help with your application.</p>\' + templateHtml + \'<p class="govuk-body">You can <a class="govuk-link" href="https://www.victimandwitnessinformation.org.uk/">get practical or emotional support</a> after a crime.</p><p class="govuk-body">There is different practical or emotional support <a class="govuk-link" href="https://www.mygov.scot/victim-witness-support/">if you live in Scotland</a>.</p>\'})}}'
                     }
                 },
                 examples: [{}],
@@ -415,7 +415,7 @@ module.exports = {
                     },
                     'dont-know-if-crime-reported': {
                         description:
-                            '{% set templateHtml %}{% include \'contact-small.njk\' %}{% endset %}{{ govukDetails({summaryText: "I do not know if the crime was reported to the police",html: "<p>You can contact us for help with your application.</p>" + templateHtml})}}'
+                            '{% from "components/details/macro.njk" import govukDetails %}{% set templateHtml %}{% include \'contact.njk\' %}{% endset %}{{ govukDetails({summaryText: "I do not know if the crime was reported to the police",html: \'<p class="govuk-body">You can contact us for help with your application.</p>\' + templateHtml})}}'
                     }
                 },
                 errorMessage: {
@@ -574,7 +574,7 @@ module.exports = {
                     },
                     'when-did-the-crime-happen': {
                         description:
-                            '\n                {{ govukDetails({\n                    summaryText: "I do not know when the crime happened",\n                    html: \'<p>You can contact us for help with your application on 0300 003 3601. Select option 8.</p>\n                            <p>Our phone lines are open Monday to Friday 8:30am to 5pm except Wednesday when they open at 10am.</p>\'\n                }) }}\n            '
+                            '{% from "components/details/macro.njk" import govukDetails %}{% set templateHtml %}{% include \'contact.njk\' %}{% endset %}{{ govukDetails({summaryText: "I do not know when the crime happened",html: \'<p class="govuk-body">You can contact us for help with your application.</p>\' + templateHtml})}}'
                     }
                 },
                 errorMessage: {
@@ -617,7 +617,7 @@ module.exports = {
                     },
                     'i-dont-know-when-the-crime-started': {
                         description:
-                            '\n                {% from "components/details/macro.njk" import govukDetails %}\n                {{ govukDetails({\n                    summaryText: "I do not know when the crime started",\n                    html: \'<p>You can contact us for help with your application on 0300 003 3601. Select option 8.</p>\n                            <p>Our phone lines are open Monday to Friday 8:30am to 5pm except Wednesday when they open at 10am.</p>\'\n                }) }}\n            '
+                            '{% from "components/details/macro.njk" import govukDetails %}{% set templateHtml %}{% include \'contact.njk\' %}{% endset %}{{ govukDetails({summaryText: "I do not know when the crime started",html: \'<p class="govuk-body">You can contact us for help with your application.</p>\' + templateHtml})}}'
                     }
                 },
                 errorMessage: {
@@ -657,7 +657,7 @@ module.exports = {
                     },
                     'i-dont-know-when-the-crime-stopped': {
                         description:
-                            '\n                {% from "components/details/macro.njk" import govukDetails %}\n                {{ govukDetails({\n                    summaryText: "I do not know when the crime stopped",\n                    html: \'<p>You can contact us for help with your application on 0300 003 3601. Select option 8.</p>\n                            <p>Our phone lines are open Monday to Friday 8:30am to 5pm except Wednesday when they open at 10am.</p>\'\n                }) }}\n            '
+                            '{% from "components/details/macro.njk" import govukDetails %}{% set templateHtml %}{% include \'contact.njk\' %}{% endset %}{{ govukDetails({summaryText: "I do not know when the crime stopped",html: \'<p class="govuk-body">You can contact us for help with your application.</p>\' + templateHtml})}}'
                     }
                 },
                 errorMessage: {
@@ -985,7 +985,7 @@ module.exports = {
                 properties: {
                     'you-need-to-ccontact-us': {
                         description:
-                            '\n                <p class="govuk-body">We need to check if you are eligible for compensation.</p>\n                <p class="govuk-body">Call us on 0300 003 3601. Select option 8.</p>\n                <p class="govuk-body">Our phone lines are open Monday to Friday 8:30am to 5pm except Wednesday when they open at 10am.</p>\n            '
+                            '<p class="govuk-body">We need to check if you are eligible for compensation.</p>{% include \'contact.njk\' %}'
                     }
                 },
                 examples: [{}],
@@ -2055,7 +2055,7 @@ module.exports = {
                 properties: {
                     confirmation: {
                         description:
-                            '\n                    {% set mobilePhoneNumber = "||/answers/p-applicant-confirmation-method/q-applicant-enter-your-telephone-number||" %}\n                    {% set emailAddress = "||/answers/p-applicant-confirmation-method/q-applicant-enter-your-email-address||" %}\n\n                    {% if mobilePhoneNumber %}\n                        {% set contactMethod =  mobilePhoneNumber %}\n                    {% else %}\n                        {% set contactMethod =  emailAddress %}\n                    {% endif %}\n\n                    {{ govukPanel({\n                        titleText: "Application submitted",\n                        html: "<p>Your reference number is <br /><strong>||/answers/system/case-reference||</strong></p>\n                    <p>We\'ve sent your reference number to <strong>" + contactMethod + "</strong></p>"\n                    }) }}\n\n                    <p class="govuk-body">Thank you for submitting your application.</p>\n                    <h2 class="govuk-heading-m">What happens next</h2>\n                    <p class="govuk-body">We will:</p>\n                    <ul class="govuk-list govuk-list--bullet">\n                    <li>ask the police for evidence</li>\n                    <li>ask you for more information if we need it</li>\n                    <li>make a decision</li>\n                    <li>send our decision letter by post</li>\n                    </ul>\n                    <p class="govuk-body">We aim to make a decision within 1 year, but it can take longer. We may have to wait until there is enough information about your injuries and recovery.</p>\n                    {{ govukWarningText({\n                        text: "You must inform us immediately if any of the information you have given us changes, especially your address, telephone number or email address.",\n                        iconFallbackText: "Warning"\n                    }) }}\n                    <h2 class="govuk-heading-m">Contact us</h2>\n                    <p class="govuk-body">You can call us on 0300 003 3601.</p>\n                    <p class="govuk-body">We will not usually send an acknowledgement if you:</p>\n                    <ul class="govuk-list govuk-list--bullet">\n                    <li>email us</li>\n                    <li>write to us</li>\n                    <li>send us documents</li>\n                    </ul>\n                    <h2 class="govuk-heading-m">Help us improve this service</h2>\n                    <p class="govuk-body">You can complete a short survey to help us improve this service.</p>\n                    <p class="govuk-body">It does not ask for any details about your case, and has no effect on your application.</p>\n                    <p class="govuk-body"><a class="govuk-link" href="https://www.surveymonkey.com/r/Privatebetafeedback">Tell us what you think of our service</a> (takes 10 minutes)</p>'
+                            '\n                    {% set mobilePhoneNumber = "||/answers/p-applicant-confirmation-method/q-applicant-enter-your-telephone-number||" %}\n                    {% set emailAddress = "||/answers/p-applicant-confirmation-method/q-applicant-enter-your-email-address||" %}\n\n                    {% if mobilePhoneNumber %}\n                        {% set contactMethod =  mobilePhoneNumber %}\n                    {% else %}\n                        {% set contactMethod =  emailAddress %}\n                    {% endif %}\n\n                    {{ govukPanel({\n                        titleText: "Application submitted",\n                        html: "<p>Your reference number is <br /><strong>||/answers/system/case-reference||</strong></p>\n                    <p>We\'ve sent your reference number to <strong>" + contactMethod + "</strong></p>"\n                    }) }}\n\n                    <p class="govuk-body">Thank you for submitting your application.</p>\n                    <h2 class="govuk-heading-m">What happens next</h2>\n                    <p class="govuk-body">We will:</p>\n                    <ul class="govuk-list govuk-list--bullet">\n                    <li>ask the police for evidence</li>\n                    <li>ask you for more information if we need it</li>\n                    <li>make a decision</li>\n                    <li>send our decision letter by post</li>\n                    </ul>\n                    <p class="govuk-body">We aim to make a decision within 1 year, but it can take longer. We may have to wait until there is enough information about your injuries and recovery.</p>\n                    {{ govukWarningText({\n                        text: "You must inform us immediately if any of the information you have given us changes, especially your address, telephone number or email address.",\n                        iconFallbackText: "Warning"\n                    }) }}<h2 class="govuk-heading-m">Contact us</h2>{% include \'contact.njk\' %}           <p class="govuk-body">We will not always send an acknowledgement if you:</p>\n                    <ul class="govuk-list govuk-list--bullet">\n                    <li>email us</li>\n                    <li>write to us</li>\n                    <li>send us documents</li>\n                    </ul>\n                    <h2 class="govuk-heading-m">Help us improve this service</h2>\n                    <p class="govuk-body">You can complete a short survey to help us improve this service.</p>\n                    <p class="govuk-body">It does not ask for any details about your case, and has no effect on your application.</p>\n                    <p class="govuk-body"><a class="govuk-link" href="https://www.surveymonkey.com/r/Privatebetafeedback">Tell us what you think of our service</a> (takes 10 minutes)</p>'
                     }
                 },
                 examples: [{}],
@@ -7351,7 +7351,7 @@ module.exports = {
                 properties: {
                     'you-cannot-get-compensation': {
                         description:
-                            '<p class="govuk-body">You cannot get compensation if you were not a victim of a violent crime.</p><p class="govuk-body">Call us if you want to discuss whether you can claim.</p>{% include \'contact-small.njk\' %}'
+                            '<p class="govuk-body">You can only get compensation from this service if you\'ve been a victim of a violent crime.</p><p class="govuk-body">Call us if you want to discuss whether you can claim.</p>{% include \'contact.njk\' %}'
                     }
                 },
                 examples: [{}],
