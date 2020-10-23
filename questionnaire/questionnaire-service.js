@@ -60,7 +60,6 @@ function createQuestionnaireService({
 
     async function getQuestionnaire(questionnaireId) {
         const questionnaire = await db.getQuestionnaire(questionnaireId);
-
         return questionnaire;
     }
 
@@ -109,7 +108,6 @@ function createQuestionnaireService({
 
         return null;
     }
-
     async function startSubmission(questionnaireId) {
         try {
             await updateQuestionnaireSubmissionStatus(questionnaireId, 'IN_PROGRESS');
@@ -200,7 +198,7 @@ function createQuestionnaireService({
         let submissionStatus = await getQuestionnaireSubmissionStatus(questionnaireId);
 
         // kick things off if it is a POST request and it is not yet started.
-        if (isPostRequest === true && submissionStatus === 'NOT_STARTED') {
+        if (isPostRequest === true && ['NOT_STARTED', 'FAILED'].includes(submissionStatus)) {
             await startSubmission(questionnaireId);
             // `startSubmission` updates the submission status within the
             // database so we need to get it again.
