@@ -4,7 +4,7 @@ module.exports = {
     'sexual-assault': id => ({
         id,
         type: 'apply-for-compensation',
-        version: '1.2.2',
+        version: '1.2.3',
         sections: {
             'p-applicant-declaration': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
@@ -2486,13 +2486,13 @@ module.exports = {
                 properties: {
                     'q-applicant-has-your-treatment-finished-dmi': {
                         type: 'boolean',
-                        title: 'Have you finished your mental health treatment?'
+                        title: 'Have you finished your treatment?'
                     }
                 },
                 errorMessage: {
                     required: {
                         'q-applicant-has-your-treatment-finished-dmi':
-                            'Select yes if you have finished your mental health treatment'
+                            'Select yes if you have finished your treatment'
                     }
                 },
                 examples: [
