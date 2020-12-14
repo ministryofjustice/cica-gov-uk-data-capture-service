@@ -358,37 +358,6 @@ module.exports = {
                     }
                 ]
             },
-            // 'p-applicant-were-you-a-victim-of-sexual-assault-or-abuse': {
-            //     $schema: 'http://json-schema.org/draft-07/schema#',
-            //     type: 'object',
-            //     required: ['q-applicant-were-you-a-victim-of-sexual-assault-or-abuse'],
-            //     additionalProperties: false,
-            //     properties: {
-            //         'q-applicant-were-you-a-victim-of-sexual-assault-or-abuse': {
-            //             type: 'boolean',
-            //             title: 'Were you a victim of sexual assault or abuse?'
-            //         }
-            //     },
-            //     errorMessage: {
-            //         required: {
-            //             'q-applicant-were-you-a-victim-of-sexual-assault-or-abuse':
-            //                 'Select yes if you were a victim of sexual assault or abuse'
-            //         }
-            //     },
-            //     examples: [
-            //         {
-            //             'q-applicant-were-you-a-victim-of-sexual-assault-or-abuse': true
-            //         },
-            //         {
-            //             'q-applicant-were-you-a-victim-of-sexual-assault-or-abuse': false
-            //         }
-            //     ],
-            //     invalidExamples: [
-            //         {
-            //             'q-applicant-were-you-a-victim-of-sexual-assault-or-abuse': 'foo'
-            //         }
-            //     ]
-            // },
             'p--before-you-continue': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
                 title: 'About the crime',
@@ -7310,39 +7279,6 @@ module.exports = {
                     }
                 ]
             },
-            // 'p-applicant-victim-of-violent-crime': {
-            //     $schema: 'http://json-schema.org/draft-07/schema#',
-            //     type: 'object',
-            //     required: ['q-applicant-victim-of-violent-crime'],
-            //     additionalProperties: false,
-            //     properties: {
-            //         'q-applicant-victim-of-violent-crime': {
-            //             type: 'boolean',
-            //             description:
-            //                 'This could include if you were there when a loved one was attacked and saw it happen, or you were there immediately after.',
-            //             title: 'Were you a victim of violent crime?'
-            //         }
-            //     },
-            //     errorMessage: {
-            //         required: {
-            //             'q-applicant-victim-of-violent-crime':
-            //                 'Select yes if you were a victim of violent crime'
-            //         }
-            //     },
-            //     examples: [
-            //         {
-            //             'q-applicant-victim-of-violent-crime': true
-            //         },
-            //         {
-            //             'q-applicant-victim-of-violent-crime': false
-            //         }
-            //     ],
-            //     invalidExamples: [
-            //         {
-            //             'q-applicant-victim-of-violent-crime': 'foo'
-            //         }
-            //     ]
-            // },
             'p-applicant-you-cannot-get-compensation-violent-crime': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
                 title: 'You cannot get compensation',
@@ -7600,14 +7536,6 @@ module.exports = {
                             {
                                 target: 'p--was-the-crime-reported-to-police'
                             }
-                            // {
-                            //     target: 'p-applicant-were-you-a-victim-of-sexual-assault-or-abuse',
-                            //     cond: [
-                            //         '==',
-                            //         '$.answers.p-applicant-british-citizen-or-eu-national.q-applicant-british-citizen-or-eu-national',
-                            //         true
-                            //     ]
-                            // }
                         ]
                     }
                 },
@@ -7655,28 +7583,6 @@ module.exports = {
                         ]
                     }
                 },
-                // 'p-applicant-were-you-a-victim-of-sexual-assault-or-abuse': {
-                //     on: {
-                //         ANSWER: [
-                //             {
-                //                 target: 'p-applicant-victim-of-violent-crime',
-                //                 cond: [
-                //                     '==',
-                //                     '$.answers.p-applicant-were-you-a-victim-of-sexual-assault-or-abuse.q-applicant-were-you-a-victim-of-sexual-assault-or-abuse',
-                //                     false
-                //                 ]
-                //             },
-                //             {
-                //                 target: 'p--was-the-crime-reported-to-police',
-                //                 cond: [
-                //                     '==',
-                //                     '$.answers.p-applicant-were-you-a-victim-of-sexual-assault-or-abuse.q-applicant-were-you-a-victim-of-sexual-assault-or-abuse',
-                //                     true
-                //                 ]
-                //             }
-                //         ]
-                //     }
-                // },
                 'p--before-you-continue': {
                     on: {
                         ANSWER: [
@@ -10718,28 +10624,6 @@ module.exports = {
                         ]
                     }
                 },
-                // 'p-applicant-victim-of-violent-crime': {
-                //     on: {
-                //         ANSWER: [
-                //             {
-                //                 target: 'p-applicant-you-cannot-get-compensation-violent-crime',
-                //                 cond: [
-                //                     '==',
-                //                     '$.answers.p-applicant-victim-of-violent-crime.q-applicant-victim-of-violent-crime',
-                //                     false
-                //                 ]
-                //             },
-                //             {
-                //                 target: 'p--was-the-crime-reported-to-police',
-                //                 cond: [
-                //                     '==',
-                //                     '$.answers.p-applicant-victim-of-violent-crime.q-applicant-victim-of-violent-crime',
-                //                     true
-                //                 ]
-                //             }
-                //         ]
-                //     }
-                // },
                 'p-applicant-you-cannot-get-compensation-violent-crime': {
                     on: {
                         ANSWER: [
