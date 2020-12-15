@@ -7403,12 +7403,12 @@ module.exports = {
             },
             'p-applicant-incident-type': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
-                title: 'What led to your injuries?',
                 type: 'object',
                 required: ['q-applicant-incident-type'],
                 additionalProperties: false,
                 properties: {
                     'q-applicant-incident-type': {
+                        title: 'What led to your injuries?',
                         type: 'string',
                         oneOf: [
                             {
@@ -7452,6 +7452,11 @@ module.exports = {
                                 const: 'OTHER'
                             }
                         ]
+                    }
+                },
+                errorMessage: {
+                    required: {
+                        'q-applicant-incident-type': 'Select what led to your injuries'
                     }
                 },
                 examples: [
