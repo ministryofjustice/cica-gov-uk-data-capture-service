@@ -7586,7 +7586,8 @@ module.exports = {
                     'q-applicant-describe-incident': {
                         type: 'boolean',
                         title: 'Would you like to briefly describe the crime in your own words?',
-                        description: 'The police will send us a report of the crime.'
+                        description:
+                            'The police will send us a report of the crime. Providing an additional description is optional.'
                     }
                 },
                 errorMessage: {
