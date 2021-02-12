@@ -329,9 +329,6 @@ function createQuestionnaireService({
             const valid = validate(answers);
 
             if (!valid) {
-                // TODO: Refactor errorhandler to accept a logger and move this in to it
-                logger.error({err: validate.errors}, 'SCHEMA VALIDATION FAILED');
-
                 const validationError = new VError({
                     name: 'JSONSchemaValidationError',
                     info: {

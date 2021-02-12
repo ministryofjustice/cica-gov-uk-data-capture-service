@@ -102,7 +102,11 @@ app.use(req => {
 app.use((err, req, res, next) => {
     // Get pino to attach the correct error and stack trace to the log entry
     // https://github.com/pinojs/pino-http/issues/61
-    res.err = err;
+    res.err = {
+        name: err.name,
+        message: err.message,
+        stack: err.stack
+    };
 
     // forward the centralised error handler
     next(err);
