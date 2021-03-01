@@ -55,7 +55,7 @@ describe('Dataset resource', () => {
     });
 
     describe('Given multiple sections with the same question id', () => {
-        it('should combine answers agaist a single id instance', async () => {
+        it('should combine answers against a single id instance', async () => {
             const questionnaireService = createQuestionnaireService({
                 logger: () => 'Logged from dataset test',
                 createQuestionnaireDAL: () => ({

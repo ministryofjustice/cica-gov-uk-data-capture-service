@@ -154,6 +154,24 @@ module.exports = async (err, req, res, next) => {
         return res.status(404).json(error);
     }
 
+    if (err.name === 'ResourceConflicts') {
+        const errorInfo = VError.info(err);
+        const errors = errorInfo.errors.map(errorObj => {
+            return {
+                status: 409,
+                title: '409 Resource Conflict',
+                detail: errorObj.message
+            };
+        });
+
+        error.errors.push(...errors);
+        error.meta = {
+            submissions: errorInfo.submissions
+        };
+
+        return res.status(200).json(error);
+    }
+
     if (err.statusCode === 400) {
         error.errors.push({
             status: 400,

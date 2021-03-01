@@ -1,5 +1,14 @@
 'use strict';
 
+/* * ****************************************************************************************** * */
+/* * ****************************************************************************************** * */
+/* *         THIS FILE IS GENERATED. ALL MANUAL EDITS MADE TO THIS FILE WILL BE LOST!!!         * */
+/* *         --------------------------------------------------------------------------         * */
+/* *         If you need to make a change to this test file you will need to edit the           * */
+/* *         generate-tests file and regenerate the tests using command line.                   * */
+/* * ****************************************************************************************** * */
+/* * ****************************************************************************************** * */
+
 const VError = require('verror');
 const request = require('supertest');
 const {matchersWithOptions} = require('jest-json-schema');
@@ -63,7 +72,8 @@ jest.doMock('./questionnaire-dal.js', () =>
         },
         updateQuestionnaireSubmissionStatus: () => undefined,
         createQuestionnaireSubmission: () => true,
-        retrieveCaseReferenceNumber: () => '12345678'
+        retrieveCaseReferenceNumber: () => '12345678',
+        getQuestionnaireIdsBySubmissionStatus: () => ['285cb104-0c15-4a9c-9840-cb1007f098fb']
     }))
 );
 
@@ -950,6 +960,292 @@ describe('/questionnaires/{questionnaireId}/submissions', () => {
                                 properties: {
                                     status: {const: 404},
                                     title: {const: '404 Not Found'},
+                                    detail: {type: 'string'}
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+        });
+    });
+});
+describe('/questionnaires/submissions', () => {
+    describe('get', () => {
+        describe('200', () => {
+            it('should Success', async () => {
+                const res = await request(app)
+                    .get('/api/v1/questionnaires/submissions?filter%5Bstatus%5D=NOT_STARTED')
+                    .set('Authorization', `Bearer ${tokens['read:questionnaires']}`);
+
+                expect(res.statusCode).toBe(200);
+                expect(res.type).toBe('application/vnd.api+json');
+                expect(res.body).toMatchSchema({
+                    $schema: 'http://json-schema.org/draft-07/schema#',
+                    type: 'object',
+                    additionalProperties: false,
+                    required: ['data'],
+                    properties: {
+                        data: {
+                            type: 'array',
+                            items: {
+                                type: 'object',
+                                additionalProperties: false,
+                                required: ['id', 'type', 'attributes'],
+                                properties: {
+                                    id: {
+                                        type: 'string',
+                                        pattern:
+                                            '^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$'
+                                    },
+                                    type: {const: 'submissions'},
+                                    attributes: {
+                                        type: 'object',
+                                        additionalProperties: false,
+                                        required: [
+                                            'questionnaireId',
+                                            'submitted',
+                                            'status',
+                                            'caseReferenceNumber'
+                                        ],
+                                        properties: {
+                                            questionnaireId: {
+                                                type: 'string',
+                                                pattern:
+                                                    '^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$'
+                                            },
+                                            submitted: {type: 'boolean'},
+                                            status: {
+                                                enum: [
+                                                    'NOT_STARTED',
+                                                    'IN_PROGRESS',
+                                                    'COMPLETED',
+                                                    'FAILED'
+                                                ]
+                                            },
+                                            caseReferenceNumber: {
+                                                type: ['string', 'null'],
+                                                pattern: '^[0-9]{2}\\\\[0-9]{6}$'
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+        });
+        describe('400', () => {
+            it('should There is an issue with the request', async () => {
+                const res = await request(app)
+                    .get('/api/v1/questionnaires/submissions?filter%5BNOT-A-VALID-FILTER%5D=FOO')
+                    .set('Authorization', `Bearer ${tokens['read:questionnaires']}`);
+
+                expect(res.statusCode).toBe(400);
+                expect(res.type).toBe('application/vnd.api+json');
+                expect(res.body).toMatchSchema({
+                    $schema: 'http://json-schema.org/draft-07/schema#',
+                    type: 'object',
+                    required: ['errors'],
+                    properties: {
+                        errors: {
+                            type: 'array',
+                            items: {
+                                type: 'object',
+                                required: ['status', 'title', 'detail'],
+                                properties: {
+                                    status: {const: 400},
+                                    title: {const: '400 Bad Request'},
+                                    detail: {type: 'string'}
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+        });
+        describe('401', () => {
+            it('should Access token is missing or invalid', async () => {
+                const res = await request(app).get(
+                    '/api/v1/questionnaires/submissions?filter%5Bstatus%5D=NOT_STARTED'
+                );
+
+                expect(res.statusCode).toBe(401);
+                expect(res.type).toBe('application/vnd.api+json');
+                expect(res.body).toMatchSchema({
+                    $schema: 'http://json-schema.org/draft-07/schema#',
+                    type: 'object',
+                    required: ['errors'],
+                    properties: {
+                        errors: {
+                            type: 'array',
+                            items: {
+                                type: 'object',
+                                required: ['status', 'title', 'detail'],
+                                properties: {
+                                    status: {const: 401},
+                                    title: {const: '401 Unauthorized'},
+                                    detail: {type: 'string'}
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+        });
+    });
+    describe('post', () => {
+        describe('200', () => {
+            it('should Created', async () => {
+                const res = await request(app)
+                    .post('/api/v1/questionnaires/submissions')
+                    .set('Authorization', `Bearer ${tokens['update:questionnaires']}`)
+                    .set('Content-Type', 'application/vnd.api+json')
+                    .send({data: {type: 'submissions', attributes: {status: 'FAILED'}}});
+
+                expect(res.statusCode).toBe(200);
+                expect(res.type).toBe('application/vnd.api+json');
+                expect(res.body).toMatchSchema({
+                    $schema: 'http://json-schema.org/draft-07/schema#',
+                    type: 'object',
+                    additionalProperties: false,
+                    required: ['data'],
+                    properties: {
+                        data: {
+                            type: 'array',
+                            items: {
+                                type: 'object',
+                                additionalProperties: false,
+                                required: ['id', 'type', 'attributes'],
+                                properties: {
+                                    id: {
+                                        type: 'string',
+                                        pattern:
+                                            '^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$'
+                                    },
+                                    type: {const: 'submissions'},
+                                    attributes: {
+                                        type: 'object',
+                                        additionalProperties: false,
+                                        required: [
+                                            'questionnaireId',
+                                            'submitted',
+                                            'status',
+                                            'caseReferenceNumber'
+                                        ],
+                                        properties: {
+                                            questionnaireId: {
+                                                type: 'string',
+                                                pattern:
+                                                    '^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$'
+                                            },
+                                            submitted: {type: 'boolean'},
+                                            status: {
+                                                enum: [
+                                                    'NOT_STARTED',
+                                                    'IN_PROGRESS',
+                                                    'COMPLETED',
+                                                    'FAILED'
+                                                ]
+                                            },
+                                            caseReferenceNumber: {
+                                                type: ['string', 'null'],
+                                                pattern: '^[0-9]{2}\\\\[0-9]{6}$'
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+        });
+        describe('400', () => {
+            it('should There is an issue with the request', async () => {
+                const res = await request(app)
+                    .post('/api/v1/questionnaires/submissions')
+                    .set('Authorization', `Bearer ${tokens['update:questionnaires']}`)
+                    .set('Content-Type', 'application/vnd.api+json')
+                    .send({data: {type: 'submissions', attributes: {status: 'something'}}});
+
+                expect(res.statusCode).toBe(400);
+                expect(res.type).toBe('application/vnd.api+json');
+                expect(res.body).toMatchSchema({
+                    $schema: 'http://json-schema.org/draft-07/schema#',
+                    type: 'object',
+                    required: ['errors'],
+                    properties: {
+                        errors: {
+                            type: 'array',
+                            items: {
+                                type: 'object',
+                                required: ['status', 'title', 'detail'],
+                                properties: {
+                                    status: {const: 400},
+                                    title: {const: '400 Bad Request'},
+                                    detail: {type: 'string'}
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+        });
+        describe('401', () => {
+            it('should Access token is missing or invalid', async () => {
+                const res = await request(app)
+                    .post('/api/v1/questionnaires/submissions')
+                    .set('Content-Type', 'application/vnd.api+json')
+                    .send({data: {type: 'submissions', attributes: {status: 'FAILED'}}});
+
+                expect(res.statusCode).toBe(401);
+                expect(res.type).toBe('application/vnd.api+json');
+                expect(res.body).toMatchSchema({
+                    $schema: 'http://json-schema.org/draft-07/schema#',
+                    type: 'object',
+                    required: ['errors'],
+                    properties: {
+                        errors: {
+                            type: 'array',
+                            items: {
+                                type: 'object',
+                                required: ['status', 'title', 'detail'],
+                                properties: {
+                                    status: {const: 401},
+                                    title: {const: '401 Unauthorized'},
+                                    detail: {type: 'string'}
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+        });
+        describe('403', () => {
+            it("should The JWT doesn't permit access to this endpoint", async () => {
+                const res = await request(app)
+                    .post('/api/v1/questionnaires/submissions')
+                    .set('Authorization', `Bearer ${tokens['create:dummy-resource']}`)
+                    .set('Content-Type', 'application/vnd.api+json')
+                    .send({data: {type: 'submissions', attributes: {status: 'FAILED'}}});
+
+                expect(res.statusCode).toBe(403);
+                expect(res.type).toBe('application/vnd.api+json');
+                expect(res.body).toMatchSchema({
+                    $schema: 'http://json-schema.org/draft-07/schema#',
+                    type: 'object',
+                    required: ['errors'],
+                    properties: {
+                        errors: {
+                            type: 'array',
+                            items: {
+                                type: 'object',
+                                required: ['status', 'title', 'detail'],
+                                properties: {
+                                    status: {const: 403},
+                                    title: {const: '403 Forbidden'},
                                     detail: {type: 'string'}
                                 }
                             }

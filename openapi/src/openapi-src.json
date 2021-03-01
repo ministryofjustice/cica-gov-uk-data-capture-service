@@ -368,9 +368,9 @@
             },
             "post": {
                 "tags": ["Submissions"],
-                "summary": "Submit a questionnaire",
-                "description": "Start the submission of a questionnaire",
-                "operationId": "SubmitQuestionnaire",
+                "summary": "Create a submission resource",
+                "description": "Create a submission resource pertaining to a questionnaire",
+                "operationId": "postSubmissions",
                 "parameters": [
                     {
                         "$ref": "#/components/parameters/questionnaireId"
@@ -466,6 +466,153 @@
                 }
             }
         },
+        "/questionnaires/submissions": {
+            "get": {
+                "tags": ["Submissions"],
+                "summary": "Gets submission resources for questionnaires",
+                "description": "Gets submission resources for all questionnaires. The results can be filtered.",
+                "operationId": "getFilteredSubmissions",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/filter-submissions"
+                    }
+                ],
+                "x-scopes": ["read:questionnaires"],
+                "x-requests": {
+                    "400": {
+                        "parameters": [
+                            {
+                                "name": "filter",
+                                "example": {
+                                    "NOT-A-VALID-FILTER": "FOO",
+                                    "status": "__DELETE__"
+                                }
+                            }
+                        ]
+                    },
+                    "401": {
+                        "auth": false
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/vnd.api+json": {
+                                "schema": {
+                                    "$ref": "./json-schemas/_questionnaires_submissions/get/res/200.json"
+                                },
+                                "example": {
+                                    "data": [
+                                        {
+                                            "id": "0",
+                                            "type": "submissions",
+                                            "attributes": {
+                                                "questionnaireId": "285cb104-0c15-4a9c-9840-cb1007f098fb",
+                                                "submitted": true,
+                                                "status": "IN_PROGRESS",
+                                                "caseReferenceNumber": "11\\111111"
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/UnauthorizedError"
+                    }
+                }
+            },
+            "post": {
+                "tags": ["Submissions"],
+                "summary": "Update submission resources for questionnaires",
+                "description": "Update a submission resource pertaining to a questionnaire. Using a filter, a subset of the questionnaires can be updated only",
+                "operationId": "postFilteredSubmissions",
+                "x-scopes": ["update:questionnaires"],
+                "x-requests": {
+                    "400": {
+                        "requestBody": {
+                            "content": {
+                                "application/vnd.api+json": {
+                                    "example": {
+                                        "data": {
+                                            "type": "submissions",
+                                            "attributes": {
+                                                "status": "something"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "auth": false
+                    },
+                    "403": {
+                        "x-scopes": ["create:dummy-resource"]
+                    }
+                },
+                "requestBody": {
+                    "description": "Submission status",
+                    "required": true,
+                    "content": {
+                        "application/vnd.api+json": {
+                            "schema": {
+                                "$ref": "./json-schemas/_questionnaires_submissions/post/req/200.json"
+                            },
+                            "example": {
+                                "data": {
+                                    "type": "submissions",
+                                    "attributes": {
+                                        "status": "FAILED"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Created",
+                        "content": {
+                            "application/vnd.api+json": {
+                                "schema": {
+                                    "$ref": "./json-schemas/_questionnaires_submissions/post/res/200.json"
+                                },
+                                "example": {
+                                    "data": [
+                                        {
+                                            "id": "0",
+                                            "type": "submissions",
+                                            "attributes": {
+                                                "questionnaireId": "285cb104-0c15-4a9c-9840-cb1007f098fb",
+                                                "submitted": true,
+                                                "status": "IN_PROGRESS",
+                                                "caseReferenceNumber": "11\\111111"
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/UnauthorizedError"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/Forbidden"
+                    }
+                }
+            }
+        },
         "/questionnaires/{questionnaireId}/progress-entries": {
             "get": {
                 "tags": ["ProgressEntries"],
@@ -477,7 +624,7 @@
                         "$ref": "#/components/parameters/questionnaireId"
                     },
                     {
-                        "$ref": "#/components/parameters/filter"
+                        "$ref": "#/components/parameters/filter-progress-entries"
                     },
                     {
                         "$ref": "#/components/parameters/page"
@@ -689,17 +836,30 @@
                 },
                 "example": "system"
             },
-            "filter": {
+            "filter-progress-entries": {
                 "in": "query",
                 "name": "filter",
                 "description": "Filter progress entries",
                 "schema": {
-                    "$ref": "./json-schemas/parameters/filter.json"
+                    "$ref": "./json-schemas/parameters/filter-progress-entries.json"
                 },
                 "style": "deepObject",
                 "explode": true,
                 "example": {
                     "position": "current"
+                }
+            },
+            "filter-submissions": {
+                "in": "query",
+                "name": "filter",
+                "description": "Filter submissions",
+                "schema": {
+                    "$ref": "./json-schemas/parameters/filter-submissions.json"
+                },
+                "style": "deepObject",
+                "explode": true,
+                "example": {
+                    "status": "NOT_STARTED"
                 }
             },
             "page": {
