@@ -89,38 +89,75 @@ function errorMessageToRegExp(errorMessage) {
 }
 
 describe('submissions resource', () => {
-    it('should return a submissions resource', async () => {
-        const response = await questionnaireService.getSubmissionResponseData(
-            '285cb104-0c15-4a9c-9840-cb1007f098fb'
-        );
-        expect(response.type).toEqual('submissions');
+    describe('GET', () => {
+        it('should return a submissions resource', async () => {
+            const response = await questionnaireService.getSubmissionResponseData(
+                '285cb104-0c15-4a9c-9840-cb1007f098fb'
+            );
+            expect(response.type).toEqual('submissions');
+        });
+        it('should have a status of "NOT_STARTED"', async () => {
+            const response = await questionnaireService.getSubmissionResponseData(
+                '285cb104-0c15-4a9c-9840-cb1007f098fb'
+            );
+            expect(response.attributes.status).toEqual('NOT_STARTED');
+        });
+        it('should not be submitted', async () => {
+            const response = await questionnaireService.getSubmissionResponseData(
+                '285cb104-0c15-4a9c-9840-cb1007f098fb'
+            );
+            expect(response.attributes.submitted).toEqual(false);
+        });
+        it('should not have a case reference number', async () => {
+            const response = await questionnaireService.getSubmissionResponseData(
+                '285cb104-0c15-4a9c-9840-cb1007f098fb'
+            );
+            expect(response.attributes.caseReferenceNumber).toEqual(null);
+        });
+        it('should error', async () => {
+            const rxExpectedError = errorMessageToRegExp(
+                `Questionnaire "125cb104-9b78-4ebc-4032-3e9ab320cca1" not found`
+            );
+            await expect(
+                questionnaireService.getSubmissionResponseData(
+                    '125cb104-9b78-4ebc-4032-3e9ab320cca1'
+                )
+            ).rejects.toThrow(rxExpectedError);
+        });
     });
-    it('should have a status of "NOT_STARTED"', async () => {
-        const response = await questionnaireService.getSubmissionResponseData(
-            '285cb104-0c15-4a9c-9840-cb1007f098fb'
-        );
-        expect(response.attributes.status).toEqual('NOT_STARTED');
-    });
-    it('should not be submitted', async () => {
-        const response = await questionnaireService.getSubmissionResponseData(
-            '285cb104-0c15-4a9c-9840-cb1007f098fb'
-        );
-        expect(response.attributes.submitted).toEqual(false);
-    });
-    it('should not have a case reference number', async () => {
-        const response = await questionnaireService.getSubmissionResponseData(
-            '285cb104-0c15-4a9c-9840-cb1007f098fb'
-        );
-        expect(response.attributes.caseReferenceNumber).toEqual(null);
-    });
-    it('should error', async () => {
-        const rxExpectedError = errorMessageToRegExp(
-            `Questionnaire "125cb104-9b78-4ebc-4032-3e9ab320cca1" not found`
-        );
-
-        await expect(
-            questionnaireService.getSubmissionResponseData('125cb104-9b78-4ebc-4032-3e9ab320cca1')
-        ).rejects.toThrow(rxExpectedError);
+    describe('POST', () => {
+        it('should not submit an unfinished questionnaire', async () => {
+            await expect(
+                questionnaireService.getSubmissionResponseData(
+                    '4fa7503f-1f73-42e7-b875-b342dee69941',
+                    true
+                )
+            ).rejects.toThrow();
+        });
+        it('should not resubmit an in-progress questionnaire, and return a submission resource', async () => {
+            const response = await questionnaireService.getSubmissionResponseData(
+                '3fa7bde5-bfad-453a-851d-5e3c8d206d5b',
+                true
+            );
+            expect(response).toEqual({
+                id: '3fa7bde5-bfad-453a-851d-5e3c8d206d5b',
+                type: 'submissions',
+                attributes: {
+                    caseReferenceNumber: null,
+                    questionnaireId: '3fa7bde5-bfad-453a-851d-5e3c8d206d5b',
+                    status: 'IN_PROGRESS',
+                    submitted: false
+                }
+            });
+        });
+        it('should not resubmit a completed questionnaire', async () => {
+            await expect(
+                questionnaireService.getSubmissionResponseData(
+                    'f197d3e9-d8ba-4500-96ed-9ea1d08f1427',
+                    true
+                )
+            ).rejects.toThrow();
+        });
     });
 });
 
