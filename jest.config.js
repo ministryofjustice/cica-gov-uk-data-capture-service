@@ -10,6 +10,8 @@ const config = {
 process.env.DCS_JWT_SECRET = '123';
 process.env.DCS_LOG_LEVEL = 'silent';
 process.env.NOTIFY_API_KEY = '123apiKey';
+process.env.WEBHOOK_DEV_REPORTER_SLACK = 'webhook-url';
+process.env.APP_ENV = 'test';
 
 config.coverageThreshold = {
     './!(db)/!(questionnaire-dal).js': {
@@ -30,7 +32,6 @@ config.coverageThreshold = {
         lines: 9,
         statements: 9
     },
-
     './*/!(message-bus|notify|request)/**/*.js': {
         statements: 54,
         branches: 60,

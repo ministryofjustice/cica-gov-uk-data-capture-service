@@ -15,6 +15,7 @@
     },
     "dependencies": {
         "@netflix/nerror": "^1.1.0",
+        "@slack/webhook": "^6.0.0",
         "ajv": "^6.10.0",
         "ajv-errors": "^1.0.1",
         "ajv-formats-mobile-uk": "github:CriminalInjuriesCompensationAuthority/ajv-formats-mobile-uk#v0.1.0",
@@ -29,6 +30,7 @@
         "helmet": "^3.21.2",
         "json-pointer": "^0.6.0",
         "lodash.merge": "^4.6.2",
+        "moment-timezone": "^0.5.33",
         "morgan": "^1.9.1",
         "notifications-node-client": "^4.7.0",
         "pg": "^7.11.0",

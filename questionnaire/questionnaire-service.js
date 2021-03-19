@@ -13,6 +13,7 @@ const templates = require('./templates');
 const createMessageBusCaller = require('../services/message-bus');
 const replaceJsonPointers = require('../services/replace-json-pointer');
 const createNotifyService = require('../services/notify');
+const createSlackService = require('../services/slack');
 
 const defaults = {};
 defaults.createQuestionnaireDAL = require('./questionnaire-dal');
@@ -122,6 +123,14 @@ function createQuestionnaireService({
                 submissionResponse.body !== 'Message sent'
             ) {
                 await updateQuestionnaireSubmissionStatus(questionnaireId, 'FAILED');
+                const slackService = createSlackService();
+                slackService.sendMessage({
+                    appReference: `${process.env.APP_ENV || 'dev'}.reporter.webhook`,
+                    messageBodyId: 'message-bus-down',
+                    templateParameters: {
+                        timeStamp: new Date().getTime()
+                    }
+                });
             }
         } catch (err) {
             await updateQuestionnaireSubmissionStatus(questionnaireId, 'FAILED');
