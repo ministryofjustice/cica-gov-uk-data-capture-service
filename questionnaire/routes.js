@@ -84,6 +84,12 @@ router
                 answers
             );
 
+            await questionnaireService.updateQuestionnaireSubmissionStatus(
+                req.params.questionnaireId,
+                'COMPLETED'
+            );
+            questionnaireService.sendConfirmationNotification(req.params.questionnaireId);
+
             res.status(201).json(response);
         } catch (err) {
             next(err);

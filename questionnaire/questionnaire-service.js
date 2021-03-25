@@ -190,16 +190,6 @@ function createQuestionnaireService({
     async function getSubmissionResponseData(questionnaireId, isPostRequest = false) {
         let submissionStatus = await getQuestionnaireSubmissionStatus(questionnaireId);
 
-        let submitted = false;
-        let status = 'NOT_STARTED';
-        let caseReferenceNumber = null;
-
-        // if it is already completed, just get the Case Reference Number then
-        // let it fall through to the return.
-        if (submissionStatus === 'COMPLETED') {
-            caseReferenceNumber = await retrieveCaseReferenceNumber(questionnaireId);
-        }
-
         // kick things off if it is a POST request and it is not yet started.
         if (isPostRequest === true && submissionStatus === 'NOT_STARTED') {
             await startSubmission(questionnaireId);
@@ -208,19 +198,9 @@ function createQuestionnaireService({
             submissionStatus = await getQuestionnaireSubmissionStatus(questionnaireId);
         }
 
-        // still waiting on the Case Reference Number.
-        if (submissionStatus === 'IN_PROGRESS') {
-            caseReferenceNumber = await retrieveCaseReferenceNumber(questionnaireId);
-
-            // if the caseReferenceNumber exists, then the submission is COMPLETE.
-            if (caseReferenceNumber) {
-                await updateQuestionnaireSubmissionStatus(questionnaireId, 'COMPLETED');
-                sendConfirmationNotification(questionnaireId);
-            }
-        }
-
-        submitted = !!caseReferenceNumber;
-        status = await getQuestionnaireSubmissionStatus(questionnaireId);
+        const status = await getQuestionnaireSubmissionStatus(questionnaireId);
+        const caseReferenceNumber = await retrieveCaseReferenceNumber(questionnaireId);
+        const submitted = !!caseReferenceNumber;
 
         const response = {
             data: {
@@ -610,7 +590,9 @@ function createQuestionnaireService({
         validateAllAnswers,
         getAnswers,
         getProgressEntries,
-        getDataset
+        getDataset,
+        sendConfirmationNotification,
+        updateQuestionnaireSubmissionStatus
     });
 }
 

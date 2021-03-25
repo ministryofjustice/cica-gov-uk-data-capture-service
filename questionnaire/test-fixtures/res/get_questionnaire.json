@@ -2265,5 +2265,28 @@
             },
             "additionalProperties": false
         }
+    },
+    "meta": {
+        "questionnaireDocumentVersion": "1.0.0",
+        "onComplete": {
+            "tasks": [
+                {
+                    "type": "sendEmail",
+                    "templateId": "template-id-1",
+                    "templatePlaceholderMap": {
+                        "emailAddress": "/answers/p-applicant-confirmation-method/q-applicant-enter-your-email-address",
+                        "caseReference": "/answers/system/case-reference"
+                    }
+                },
+                {
+                    "type": "sendSms",
+                    "templateId": "template-id-2",
+                    "templatePlaceholderMap": {
+                        "phoneNumber": "/answers/p-applicant-confirmation-method/q-applicant-enter-your-telephone-number",
+                        "caseReference": "/answers/system/case-reference"
+                    }
+                }
+            ]
+        }
     }
 }
