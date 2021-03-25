@@ -293,7 +293,6 @@ describe('/questionnaires/{questionnaireId}/sections/{sectionId}/answers', () =>
                     .set('Authorization', `Bearer ${tokens['create:system-answers']}`)
                     .set('Content-Type', 'application/vnd.api+json')
                     .send({data: {type: 'answers', attributes: {'case-reference': '11\\111111'}}});
-
                 expect(res.statusCode).toBe(201);
                 expect(res.type).toBe('application/vnd.api+json');
                 expect(res.body).toMatchSchema({
