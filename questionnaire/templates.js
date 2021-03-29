@@ -2111,6 +2111,8 @@ module.exports = {
                                         questions: {
                                             'p--was-the-crime-reported-to-police':
                                                 'Was the crime reported to police?',
+                                            'p-applicant-has-crime-reference-number':
+                                                'Do you have a crime reference number?',
                                             'p--when-was-the-crime-reported-to-police':
                                                 'When was the crime reported?',
                                             'p--whats-the-crime-reference-number':
