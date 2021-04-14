@@ -1,6 +1,6 @@
 {
     "name": "data-capture-service",
-    "version": "1.3.9",
+    "version": "1.3.10",
     "scripts": {
         "start": "node ./bin/www",
         "start:dev": "nodemon -L --inspect=0.0.0.0:9229 -e .js,.json,.njk,.yml --ignore openapi/openapi.json --exec npm run build:run",
