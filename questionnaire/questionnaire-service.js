@@ -200,7 +200,8 @@ function createQuestionnaireService({
         let submissionStatus = await getQuestionnaireSubmissionStatus(questionnaireId);
 
         // kick things off if it is a POST request and it is not yet started.
-        if (isPostRequest === true && submissionStatus === 'NOT_STARTED') {
+        // allow for resubmission of failed applications also.
+        if (isPostRequest === true && ['NOT_STARTED', 'FAILED'].includes(submissionStatus)) {
             await startSubmission(questionnaireId);
             // `startSubmission` updates the submission status within the
             // database so we need to get it again.
