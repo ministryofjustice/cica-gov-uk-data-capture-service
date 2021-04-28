@@ -171,9 +171,10 @@ router
                 questionnaire.routes.summary
             );
 
-            // if the submission status is anything other than 'NOT_STARTED' then it
-            // means that the submission resource has been previously created.
-            if (!isQuestionnaireComplete || submissionStatus !== 'NOT_STARTED') {
+            // if the submission status is anything other than 'NOT_STARTED' then it means
+            // that the submission resource has been previously created. If it is 'FAILED'
+            // then we are allowing resubmissions.
+            if (!isQuestionnaireComplete || ['NOT_STARTED', 'FAILED'].includes(submissionStatus)) {
                 const errorReasons = {
                     notSubmittable: `Questionnaire with ID "${questionnaireId}" is not in a submittable state`,
                     duplicate: `Submission resource with ID "${questionnaireId}" already exists`
