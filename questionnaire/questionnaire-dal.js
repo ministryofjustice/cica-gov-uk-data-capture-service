@@ -118,12 +118,36 @@ function questionnaireDAL(spec) {
         return result;
     }
 
+    async function getQuestionnaireIdsBySubmissionStatus(submissionStatus) {
+        let result;
+
+        try {
+            result = await db.query('SELECT id FROM questionnaire WHERE submission_status = $1', [
+                submissionStatus
+            ]);
+
+            if (result.rowCount === 0) {
+                throw new VError(
+                    {
+                        name: 'ResourceNotFound'
+                    },
+                    `Questionnaires with submission_status "${submissionStatus}" not found`
+                );
+            }
+        } catch (err) {
+            throw err;
+        }
+
+        return result.rows.map(x => x.id);
+    }
+
     return Object.freeze({
         createQuestionnaire,
         updateQuestionnaire,
         getQuestionnaire,
         getQuestionnaireSubmissionStatus,
-        updateQuestionnaireSubmissionStatus
+        updateQuestionnaireSubmissionStatus,
+        getQuestionnaireIdsBySubmissionStatus
     });
 }
 

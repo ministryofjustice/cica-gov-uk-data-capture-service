@@ -1,49 +1,15 @@
 'use strict';
 
 const VError = require('verror');
-const request = require('supertest');
+const createQuestionnaireService = require('./questionnaire-service');
 
 const questionnaireCompleteWithoutCRN = require('./test-fixtures/res/questionnaireCompleteWithoutCRN');
 const questionnaireCompleteWithCRN = require('./test-fixtures/res/questionnaireCompleteWithCRN');
 const questionnaireIncompleteWithoutCRN = require('./test-fixtures/res/questionnaireIncompleteWithoutCRN');
 
-const tokens = {
-    'create:questionnaires':
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJkYXRhLWNhcHR1cmUtc2VydmljZSIsImlzcyI6IiQuYXVkIiwianRpIjoiYzVjNzc4ZWQtNTg4NC00N2YwLWFiYzctZTQ1MmZiYWRlYTcyIiwic3ViIjoiJC5hdWQiLCJzY29wZSI6ImNyZWF0ZTpxdWVzdGlvbm5haXJlcyByZWFkOnF1ZXN0aW9ubmFpcmVzIHVwZGF0ZTpxdWVzdGlvbm5haXJlcyBkZWxldGU6cXVlc3Rpb25uYWlyZXMiLCJpYXQiOjE1NjQwNTgyNTF9.Adv1qgj-HiNGxw_0cdYpPO8Fbw12rgJTTqMReJUmFBs',
-    'read:questionnaires':
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJkYXRhLWNhcHR1cmUtc2VydmljZSIsImlzcyI6IiQuYXVkIiwianRpIjoiYzVjNzc4ZWQtNTg4NC00N2YwLWFiYzctZTQ1MmZiYWRlYTcyIiwic3ViIjoiJC5hdWQiLCJzY29wZSI6ImNyZWF0ZTpxdWVzdGlvbm5haXJlcyByZWFkOnF1ZXN0aW9ubmFpcmVzIHVwZGF0ZTpxdWVzdGlvbm5haXJlcyBkZWxldGU6cXVlc3Rpb25uYWlyZXMiLCJpYXQiOjE1NjQwNTgyNTF9.Adv1qgj-HiNGxw_0cdYpPO8Fbw12rgJTTqMReJUmFBs',
-    'update:questionnaires':
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJkYXRhLWNhcHR1cmUtc2VydmljZSIsImlzcyI6IiQuYXVkIiwianRpIjoiYzVjNzc4ZWQtNTg4NC00N2YwLWFiYzctZTQ1MmZiYWRlYTcyIiwic3ViIjoiJC5hdWQiLCJzY29wZSI6ImNyZWF0ZTpxdWVzdGlvbm5haXJlcyByZWFkOnF1ZXN0aW9ubmFpcmVzIHVwZGF0ZTpxdWVzdGlvbm5haXJlcyBkZWxldGU6cXVlc3Rpb25uYWlyZXMiLCJpYXQiOjE1NjQwNTgyNTF9.Adv1qgj-HiNGxw_0cdYpPO8Fbw12rgJTTqMReJUmFBs',
-    'delete:questionnaires':
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJkYXRhLWNhcHR1cmUtc2VydmljZSIsImlzcyI6IiQuYXVkIiwianRpIjoiYzVjNzc4ZWQtNTg4NC00N2YwLWFiYzctZTQ1MmZiYWRlYTcyIiwic3ViIjoiJC5hdWQiLCJzY29wZSI6ImNyZWF0ZTpxdWVzdGlvbm5haXJlcyByZWFkOnF1ZXN0aW9ubmFpcmVzIHVwZGF0ZTpxdWVzdGlvbm5haXJlcyBkZWxldGU6cXVlc3Rpb25uYWlyZXMiLCJpYXQiOjE1NjQwNTgyNTF9.Adv1qgj-HiNGxw_0cdYpPO8Fbw12rgJTTqMReJUmFBs',
-    'create:system-answers':
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJkYXRhLWNhcHR1cmUtc2VydmljZSIsImlzcyI6IiQuYXVkIiwianRpIjoiMDhhNTAyMWEtM2JmNC00OTBlLTkyMjAtYjJhN2Y3MGNmMTIzIiwic3ViIjoiYXBwbGljYXRpb24tc2VydmljZSIsInNjb3BlIjoiY3JlYXRlOnN5c3RlbS1hbnN3ZXJzIiwiaWF0IjoxNTY0MDU4MjUxfQ.fThAa30m5CvQRZKBb4Zm5c4wwCEK7k0bBq9MX7Fbfgs',
-    'create:dummy-resource':
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJkYXRhLWNhcHR1cmUtc2VydmljZSIsImlzcyI6IiQuYXVkIiwianRpIjoiYzFhMzJiOTUtNGQxMi00YzVlLWI4MGQtNWUyZTk2ZDU1MmNmIiwic3ViIjoiJC5hdWQiLCJzY29wZSI6ImNyZWF0ZTpkdW1teS1yZXNvdXJjZSIsImlhdCI6MTU2NDA1ODI1MX0.J-WxYzHK2rGJlmtmvhwQBrYFvmIpVeIQWAntDo6HJ-4',
-    'read:progress-entries':
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJkYXRhLWNhcHR1cmUtc2VydmljZSIsImlzcyI6IiQuYXVkIiwianRpIjoiNDUwMzE2ZTYtNDFhNS00MGRjLWI3NTUtMzA2ZGQ2M2FlMDhiIiwic3ViIjoiY2ljYS13ZWIiLCJzY29wZSI6InJlYWQ6cHJvZ3Jlc3MtZW50cmllcyIsImlhdCI6MTU2NTc5NzE1MH0.fF6Ln7GZmq-R36N-Avuo_a_8Jj5-wla17x0552XnMbE'
-};
-
-const failedResubmittedResponse = jest
-    .fn()
-    .mockReturnValueOnce(questionnaireCompleteWithoutCRN)
-    .mockReturnValue(questionnaireCompleteWithCRN);
-
-const failedResubmittedStatus = jest
-    .fn()
-    .mockReturnValueOnce('FAILED')
-    .mockReturnValue('COMPLETED');
-
-jest.doMock('../services/slack', () => {
-    jest.fn(() => ({
-        sendMessage: jest.fn()
-    }));
-});
-
-jest.doMock('./questionnaire-dal.js', () =>
-    // return a modified factory function, that returns an object with a method, that returns a valid created response
-    jest.fn(() => ({
-        // createQuestionnaire: () => createQuestionnaireResponse,
+const questionnaireService = createQuestionnaireService({
+    logger: () => 'Logged from submissions test',
+    createQuestionnaireDAL: () => ({
         getQuestionnaire: questionnaireId => {
             if (
                 questionnaireId === '285cb104-0c15-4a9c-9840-cb1007f098fb' || // not started.
@@ -63,11 +29,6 @@ jest.doMock('./questionnaire-dal.js', () =>
                 return questionnaireIncompleteWithoutCRN;
             }
 
-            // failed, then resubmitted.
-            if (questionnaireId === '6107e721-9532-419a-8205-3ec72903ef0c') {
-                return failedResubmittedResponse();
-            }
-
             throw new VError(
                 {
                     name: 'ResourceNotFound'
@@ -75,7 +36,7 @@ jest.doMock('./questionnaire-dal.js', () =>
                 `Questionnaire "${questionnaireId}" not found`
             );
         },
-        updateQuestionnaire: () => undefined,
+        // updateQuestionnaire: () => undefined,
         getQuestionnaireSubmissionStatus: questionnaireId => {
             if (questionnaireId === '285cb104-0c15-4a9c-9840-cb1007f098fb') {
                 return 'NOT_STARTED';
@@ -86,15 +47,11 @@ jest.doMock('./questionnaire-dal.js', () =>
             if (questionnaireId === '67d8e5d2-44a5-4ab7-91c0-3fd27d009235') {
                 return 'FAILED';
             }
-            if (questionnaireId === 'f197d3e9-d8ba-4500-96ed-9ea1d08f1427') {
-                return 'COMPLETED';
-            }
             if (questionnaireId === '4fa7503f-1f73-42e7-b875-b342dee69941') {
                 return 'NOT_STARTED';
             }
-            // failed, then resubmitted.
-            if (questionnaireId === '6107e721-9532-419a-8205-3ec72903ef0c') {
-                return failedResubmittedStatus();
+            if (questionnaireId === 'f197d3e9-d8ba-4500-96ed-9ea1d08f1427') {
+                return 'COMPLETED';
             }
 
             throw new VError(
@@ -104,371 +61,102 @@ jest.doMock('./questionnaire-dal.js', () =>
                 `Questionnaire "${questionnaireId}" not found`
             );
         },
-        updateQuestionnaireSubmissionStatus: () => undefined,
-        retrieveCaseReferenceNumber: () => undefined
-    }))
-);
+        getQuestionnaireIdsBySubmissionStatus: submissionStatus => {
+            if (submissionStatus === 'FAILED') {
+                return ['67d8e5d2-44a5-4ab7-91c0-3fd27d009235'];
+            }
+            if (submissionStatus === 'NOT_STARTED') {
+                return ['4fa7503f-1f73-42e7-b875-b342dee69941'];
+            }
+            if (submissionStatus === 'IN_PROGRESS') {
+                return ['3fa7bde5-bfad-453a-851d-5e3c8d206d5b'];
+            }
 
-// jest.doMock('../services/message-bus/index.js', () =>
-//     jest.fn(() => ({
-//         post: () => postSubmissionQueueResponse
-//     }))
-// );
+            throw new VError(
+                {
+                    name: 'ResourceNotFound'
+                },
+                `Questionnaires with submission_status "${submissionStatus}" not found`
+            );
+        },
+        updateQuestionnaireSubmissionStatus: () => undefined
+    })
+});
 
-const app = require('../app');
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions
+function escapeRegExp(string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+}
 
-describe('Questionnaire submissions', () => {
-    describe('GET submission resource', () => {
-        it('should return a resource type of "submissions"', async () => {
-            const res = await request(app)
-                .get('/api/v1/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/submissions')
-                .set('Authorization', `Bearer ${tokens['create:questionnaires']}`)
-                .set('Content-Type', 'application/vnd.api+json');
-            expect(res.body.data.type).toEqual('submissions');
+function errorMessageToRegExp(errorMessage) {
+    return new RegExp(`^${escapeRegExp(errorMessage)}$`);
+}
+
+describe('submissions resource', () => {
+    describe('GET', () => {
+        it('should return a submissions resource', async () => {
+            const response = await questionnaireService.getSubmissionResource(
+                '285cb104-0c15-4a9c-9840-cb1007f098fb'
+            );
+            expect(response.type).toEqual('submissions');
         });
-
-        it('should return a "NOT_STARTED" status for a questionnaire that has not been submitted', async () => {
-            const res = await request(app)
-                .get('/api/v1/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/submissions')
-                .set('Authorization', `Bearer ${tokens['create:questionnaires']}`)
-                .set('Content-Type', 'application/vnd.api+json');
-            expect(res.body.data.attributes.status).toEqual('NOT_STARTED');
+        it('should have a status of "NOT_STARTED"', async () => {
+            const response = await questionnaireService.getSubmissionResource(
+                '285cb104-0c15-4a9c-9840-cb1007f098fb'
+            );
+            expect(response.attributes.status).toEqual('NOT_STARTED');
         });
-
-        it('should return a "false" boolean value for "submitted" property for a questionnaire that has not been submitted', async () => {
-            const res = await request(app)
-                .get('/api/v1/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/submissions')
-                .set('Authorization', `Bearer ${tokens['create:questionnaires']}`)
-                .set('Content-Type', 'application/vnd.api+json');
-            expect(res.body.data.attributes.submitted).toEqual(false);
+        it('should not be submitted', async () => {
+            const response = await questionnaireService.getSubmissionResource(
+                '285cb104-0c15-4a9c-9840-cb1007f098fb'
+            );
+            expect(response.attributes.submitted).toEqual(false);
         });
-
-        it('should return a null "caseReferenceNumber" property value for a questionnaire that has not been submitted', async () => {
-            const res = await request(app)
-                .get('/api/v1/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/submissions')
-                .set('Authorization', `Bearer ${tokens['create:questionnaires']}`)
-                .set('Content-Type', 'application/vnd.api+json');
-            expect(res.body.data.attributes.caseReferenceNumber).toEqual(null);
+        it('should not have a case reference number', async () => {
+            const response = await questionnaireService.getSubmissionResource(
+                '285cb104-0c15-4a9c-9840-cb1007f098fb'
+            );
+            expect(response.attributes.caseReferenceNumber).toEqual(null);
+        });
+        it('should error', async () => {
+            const rxExpectedError = errorMessageToRegExp(
+                `Questionnaire "125cb104-9b78-4ebc-4032-3e9ab320cca1" not found`
+            );
+            await expect(
+                questionnaireService.getSubmissionResource('125cb104-9b78-4ebc-4032-3e9ab320cca1')
+            ).rejects.toThrow(rxExpectedError);
         });
     });
-    describe('POST submission resource', () => {
-        describe('In progress', () => {
-            it('should return an "IN_PROGRESS" status for a questionnaire that has been submitted', async () => {
-                await request(app)
-                    .post('/api/v1/questionnaires/3fa7bde5-bfad-453a-851d-5e3c8d206d5b/submissions')
-                    .set('Authorization', `Bearer ${tokens['create:questionnaires']}`)
-                    .set('Content-Type', 'application/vnd.api+json')
-                    .send({
-                        data: {
-                            type: 'submissions',
-                            attributes: {
-                                questionnaireId: '3fa7bde5-bfad-453a-851d-5e3c8d206d5b'
-                            }
-                        }
-                    });
-                const res = await request(app)
-                    .get('/api/v1/questionnaires/3fa7bde5-bfad-453a-851d-5e3c8d206d5b/submissions')
-                    .set('Authorization', `Bearer ${tokens['create:questionnaires']}`);
-                expect(res.body.data.attributes.status).toEqual('IN_PROGRESS');
-            });
-
-            it('should return a "false" boolean value for "submitted" property for a questionnaire that has been submitted', async () => {
-                await request(app)
-                    .post('/api/v1/questionnaires/3fa7bde5-bfad-453a-851d-5e3c8d206d5b/submissions')
-                    .set('Authorization', `Bearer ${tokens['create:questionnaires']}`)
-                    .set('Content-Type', 'application/vnd.api+json')
-                    .send({
-                        data: {
-                            type: 'submissions',
-                            attributes: {
-                                questionnaireId: '3fa7bde5-bfad-453a-851d-5e3c8d206d5b'
-                            }
-                        }
-                    });
-                const res = await request(app)
-                    .get('/api/v1/questionnaires/3fa7bde5-bfad-453a-851d-5e3c8d206d5b/submissions')
-                    .set('Authorization', `Bearer ${tokens['create:questionnaires']}`);
-                expect(res.body.data.attributes.submitted).toEqual(false);
-            });
-
-            it('should return a null "caseReferenceNumber" property value for a questionnaire that has not been submitted', async () => {
-                await request(app)
-                    .post('/api/v1/questionnaires/3fa7bde5-bfad-453a-851d-5e3c8d206d5b/submissions')
-                    .set('Authorization', `Bearer ${tokens['create:questionnaires']}`)
-                    .set('Content-Type', 'application/vnd.api+json')
-                    .send({
-                        data: {
-                            type: 'submissions',
-                            attributes: {
-                                questionnaireId: '3fa7bde5-bfad-453a-851d-5e3c8d206d5b'
-                            }
-                        }
-                    });
-                const res = await request(app)
-                    .get('/api/v1/questionnaires/3fa7bde5-bfad-453a-851d-5e3c8d206d5b/submissions')
-                    .set('Authorization', `Bearer ${tokens['create:questionnaires']}`);
-                expect(res.body.data.attributes.caseReferenceNumber).toEqual(null);
-            });
+    describe('POST', () => {
+        it('should not submit an unfinished questionnaire', async () => {
+            await expect(
+                questionnaireService.createSubmission('4fa7503f-1f73-42e7-b875-b342dee69941')
+            ).rejects.toThrow(
+                'Questionnaire with ID "4fa7503f-1f73-42e7-b875-b342dee69941" is not in a submittable state'
+            );
         });
-
-        describe('Completed', () => {
-            it('should return a "COMPLETED" status for a questionnaire that has been successfully submitted', async () => {
-                await request(app)
-                    .post('/api/v1/questionnaires/f197d3e9-d8ba-4500-96ed-9ea1d08f1427/submissions')
-                    .set('Authorization', `Bearer ${tokens['create:questionnaires']}`)
-                    .set('Content-Type', 'application/vnd.api+json')
-                    .send({
-                        data: {
-                            type: 'submissions',
-                            attributes: {
-                                questionnaireId: 'f197d3e9-d8ba-4500-96ed-9ea1d08f1427'
-                            }
-                        }
-                    });
-                const res = await request(app)
-                    .get('/api/v1/questionnaires/f197d3e9-d8ba-4500-96ed-9ea1d08f1427/submissions')
-                    .set('Authorization', `Bearer ${tokens['create:questionnaires']}`);
-                expect(res.body.data.attributes.status).toEqual('COMPLETED');
-            });
-
-            it('should return a "true" boolean value for "submitted" property for a questionnaire that has been successfully submitted', async () => {
-                await request(app)
-                    .post('/api/v1/questionnaires/f197d3e9-d8ba-4500-96ed-9ea1d08f1427/submissions')
-                    .set('Authorization', `Bearer ${tokens['create:questionnaires']}`)
-                    .set('Content-Type', 'application/vnd.api+json')
-                    .send({
-                        data: {
-                            type: 'submissions',
-                            attributes: {
-                                questionnaireId: 'f197d3e9-d8ba-4500-96ed-9ea1d08f1427'
-                            }
-                        }
-                    });
-                const res = await request(app)
-                    .get('/api/v1/questionnaires/f197d3e9-d8ba-4500-96ed-9ea1d08f1427/submissions')
-                    .set('Authorization', `Bearer ${tokens['create:questionnaires']}`);
-                expect(res.body.data.attributes.submitted).toEqual(true);
-            });
-
-            it('should return a null "caseReferenceNumber" property value for a questionnaire that has not been successfully submitted', async () => {
-                await request(app)
-                    .post('/api/v1/questionnaires/f197d3e9-d8ba-4500-96ed-9ea1d08f1427/submissions')
-                    .set('Authorization', `Bearer ${tokens['create:questionnaires']}`)
-                    .set('Content-Type', 'application/vnd.api+json')
-                    .send({
-                        data: {
-                            type: 'submissions',
-                            attributes: {
-                                questionnaireId: 'f197d3e9-d8ba-4500-96ed-9ea1d08f1427'
-                            }
-                        }
-                    });
-                const res = await request(app)
-                    .get('/api/v1/questionnaires/f197d3e9-d8ba-4500-96ed-9ea1d08f1427/submissions')
-                    .set('Authorization', `Bearer ${tokens['create:questionnaires']}`);
-                expect(res.body.data.attributes.caseReferenceNumber).toEqual('19\\751194');
-            });
+        it('should not resubmit an in-progress questionnaire, and return a submission resource', async () => {
+            await expect(
+                questionnaireService.createSubmission('3fa7bde5-bfad-453a-851d-5e3c8d206d5b')
+            ).rejects.toThrow(
+                'Submission resource with ID "3fa7bde5-bfad-453a-851d-5e3c8d206d5b" already exists'
+            );
         });
-
-        describe('Failed', () => {
-            it('should return a "FAILED" status for a questionnaire that has failed submission', async () => {
-                await request(app)
-                    .post('/api/v1/questionnaires/67d8e5d2-44a5-4ab7-91c0-3fd27d009235/submissions')
-                    .set('Authorization', `Bearer ${tokens['create:questionnaires']}`)
-                    .set('Content-Type', 'application/vnd.api+json')
-                    .send({
-                        data: {
-                            type: 'submissions',
-                            attributes: {
-                                questionnaireId: '67d8e5d2-44a5-4ab7-91c0-3fd27d009235'
-                            }
-                        }
-                    });
-                const res = await request(app)
-                    .get('/api/v1/questionnaires/67d8e5d2-44a5-4ab7-91c0-3fd27d009235/submissions')
-                    .set('Authorization', `Bearer ${tokens['create:questionnaires']}`);
-                expect(res.body.data.attributes.status).toEqual('FAILED');
-            });
-
-            it('should return a "false" boolean value for "submitted" property for a questionnaire that has failed submission', async () => {
-                await request(app)
-                    .post('/api/v1/questionnaires/67d8e5d2-44a5-4ab7-91c0-3fd27d009235/submissions')
-                    .set('Authorization', `Bearer ${tokens['create:questionnaires']}`)
-                    .set('Content-Type', 'application/vnd.api+json')
-                    .send({
-                        data: {
-                            type: 'submissions',
-                            attributes: {
-                                questionnaireId: '67d8e5d2-44a5-4ab7-91c0-3fd27d009235'
-                            }
-                        }
-                    });
-                const res = await request(app)
-                    .get('/api/v1/questionnaires/67d8e5d2-44a5-4ab7-91c0-3fd27d009235/submissions')
-                    .set('Authorization', `Bearer ${tokens['create:questionnaires']}`);
-                expect(res.body.data.attributes.submitted).toEqual(false);
-            });
-
-            it('should return a null "caseReferenceNumber" property value for a questionnaire that has not failed submission', async () => {
-                await request(app)
-                    .post('/api/v1/questionnaires/67d8e5d2-44a5-4ab7-91c0-3fd27d009235/submissions')
-                    .set('Authorization', `Bearer ${tokens['create:questionnaires']}`)
-                    .set('Content-Type', 'application/vnd.api+json')
-                    .send({
-                        data: {
-                            type: 'submissions',
-                            attributes: {
-                                questionnaireId: '67d8e5d2-44a5-4ab7-91c0-3fd27d009235'
-                            }
-                        }
-                    });
-                const res = await request(app)
-                    .get('/api/v1/questionnaires/67d8e5d2-44a5-4ab7-91c0-3fd27d009235/submissions')
-                    .set('Authorization', `Bearer ${tokens['create:questionnaires']}`);
-                expect(res.body.data.attributes.caseReferenceNumber).toEqual(null);
-            });
-
-            it('should allow resubmission of failed applications', async () => {
-                const res = await request(app)
-                    .post('/api/v1/questionnaires/6107e721-9532-419a-8205-3ec72903ef0c/submissions')
-                    .set('Authorization', `Bearer ${tokens['create:questionnaires']}`)
-                    .set('Content-Type', 'application/vnd.api+json')
-                    .send({
-                        data: {
-                            type: 'submissions',
-                            attributes: {
-                                questionnaireId: '6107e721-9532-419a-8205-3ec72903ef0c'
-                            }
-                        }
-                    });
-                expect(res.body.data.attributes.status).toEqual('COMPLETED');
-            });
+        it('should not resubmit a completed questionnaire', async () => {
+            await expect(
+                questionnaireService.createSubmission('f197d3e9-d8ba-4500-96ed-9ea1d08f1427')
+            ).rejects.toThrow(
+                'Submission resource with ID "f197d3e9-d8ba-4500-96ed-9ea1d08f1427" already exists'
+            );
         });
+    });
+});
 
-        describe('multiple POSTS', () => {
-            it('should return a 409 status code when submitted more than once', async () => {
-                await request(app)
-                    .post('/api/v1/questionnaires/3fa7bde5-bfad-453a-851d-5e3c8d206d5b/submissions')
-                    .set('Authorization', `Bearer ${tokens['create:questionnaires']}`)
-                    .set('Content-Type', 'application/vnd.api+json')
-                    .send({
-                        data: {
-                            type: 'submissions',
-                            attributes: {
-                                questionnaireId: '3fa7bde5-bfad-453a-851d-5e3c8d206d5b'
-                            }
-                        }
-                    });
-                const res = await request(app)
-                    .post('/api/v1/questionnaires/3fa7bde5-bfad-453a-851d-5e3c8d206d5b/submissions')
-                    .set('Authorization', `Bearer ${tokens['create:questionnaires']}`)
-                    .set('Content-Type', 'application/vnd.api+json')
-                    .send({
-                        data: {
-                            type: 'submissions',
-                            attributes: {
-                                questionnaireId: '3fa7bde5-bfad-453a-851d-5e3c8d206d5b'
-                            }
-                        }
-                    });
-                expect(res.statusCode).toBe(409);
-            });
-
-            it('should return a specific error message when submitted more than once', async () => {
-                await request(app)
-                    .post('/api/v1/questionnaires/3fa7bde5-bfad-453a-851d-5e3c8d206d5b/submissions')
-                    .set('Authorization', `Bearer ${tokens['create:questionnaires']}`)
-                    .set('Content-Type', 'application/vnd.api+json')
-                    .send({
-                        data: {
-                            type: 'submissions',
-                            attributes: {
-                                questionnaireId: '3fa7bde5-bfad-453a-851d-5e3c8d206d5b'
-                            }
-                        }
-                    });
-                const res = await request(app)
-                    .post('/api/v1/questionnaires/3fa7bde5-bfad-453a-851d-5e3c8d206d5b/submissions')
-                    .set('Authorization', `Bearer ${tokens['create:questionnaires']}`)
-                    .set('Content-Type', 'application/vnd.api+json')
-                    .send({
-                        data: {
-                            type: 'submissions',
-                            attributes: {
-                                questionnaireId: '3fa7bde5-bfad-453a-851d-5e3c8d206d5b'
-                            }
-                        }
-                    });
-                expect(res.body.errors[0].detail).toEqual(
-                    expect.stringMatching(
-                        // eslint-disable-next-line no-useless-escape
-                        /Submission resource with ID "[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}" already exists/
-                    )
-                );
-            });
-        });
-
-        describe('non-submittable POSTS', () => {
-            it('should return a 409 status code when non-submittable questionnaire is submitted', async () => {
-                await request(app)
-                    .post('/api/v1/questionnaires/4fa7503f-1f73-42e7-b875-b342dee69941/submissions')
-                    .set('Authorization', `Bearer ${tokens['create:questionnaires']}`)
-                    .set('Content-Type', 'application/vnd.api+json')
-                    .send({
-                        data: {
-                            type: 'submissions',
-                            attributes: {
-                                questionnaireId: '4fa7503f-1f73-42e7-b875-b342dee69941'
-                            }
-                        }
-                    });
-                const res = await request(app)
-                    .post('/api/v1/questionnaires/4fa7503f-1f73-42e7-b875-b342dee69941/submissions')
-                    .set('Authorization', `Bearer ${tokens['create:questionnaires']}`)
-                    .set('Content-Type', 'application/vnd.api+json')
-                    .send({
-                        data: {
-                            type: 'submissions',
-                            attributes: {
-                                questionnaireId: '4fa7503f-1f73-42e7-b875-b342dee69941'
-                            }
-                        }
-                    });
-                expect(res.statusCode).toBe(409);
-            });
-
-            it('should return a specific error message when non-submittable questionnaire is submitted', async () => {
-                await request(app)
-                    .post('/api/v1/questionnaires/4fa7503f-1f73-42e7-b875-b342dee69941/submissions')
-                    .set('Authorization', `Bearer ${tokens['create:questionnaires']}`)
-                    .set('Content-Type', 'application/vnd.api+json')
-                    .send({
-                        data: {
-                            type: 'submissions',
-                            attributes: {
-                                questionnaireId: '4fa7503f-1f73-42e7-b875-b342dee69941'
-                            }
-                        }
-                    });
-                const res = await request(app)
-                    .post('/api/v1/questionnaires/4fa7503f-1f73-42e7-b875-b342dee69941/submissions')
-                    .set('Authorization', `Bearer ${tokens['create:questionnaires']}`)
-                    .set('Content-Type', 'application/vnd.api+json')
-                    .send({
-                        data: {
-                            type: 'submissions',
-                            attributes: {
-                                questionnaireId: '4fa7503f-1f73-42e7-b875-b342dee69941'
-                            }
-                        }
-                    });
-                expect(res.body.errors[0].detail).toEqual(
-                    expect.stringMatching(
-                        // eslint-disable-next-line no-useless-escape
-                        /Questionnaire with ID "[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}" is not in a submittable state/
-                    )
-                );
-            });
+describe('resubmissions', () => {
+    describe('failed', () => {
+        it('should return submission resource of previously failed submission', async () => {
+            const resource = await questionnaireService.postSubmissions('failed');
+            expect(resource.length).toBe(1);
         });
     });
 });

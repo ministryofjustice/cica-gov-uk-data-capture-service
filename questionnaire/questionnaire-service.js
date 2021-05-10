@@ -194,7 +194,7 @@ function createQuestionnaireService({
         });
     }
 
-    async function getSubmissionResponseData(questionnaireId, isPostRequest = false) {
+    async function getSubmissionResource(questionnaireId, isPostRequest = false) {
         let submissionStatus = await getQuestionnaireSubmissionStatus(questionnaireId);
 
         // kick things off if it is a POST request and it is not yet started.
@@ -209,20 +209,18 @@ function createQuestionnaireService({
         const caseReferenceNumber = await retrieveCaseReferenceNumber(questionnaireId);
         const submitted = !!caseReferenceNumber;
 
-        const response = {
-            data: {
-                id: questionnaireId,
-                type: 'submissions',
-                attributes: {
-                    questionnaireId,
-                    submitted,
-                    status,
-                    caseReferenceNumber
-                }
+        const resource = {
+            id: questionnaireId,
+            type: 'submissions',
+            attributes: {
+                questionnaireId,
+                submitted,
+                status,
+                caseReferenceNumber
             }
         };
 
-        return response;
+        return resource;
     }
 
     function buildAnswerResource(answersId, questionnaire) {
@@ -389,7 +387,7 @@ function createQuestionnaireService({
             const validationError = new VError({
                 name: 'JSONSchemaValidationErrors',
                 info: {
-                    submissions: await getSubmissionResponseData(questionnaireId),
+                    submissions: await getSubmissionResource(questionnaireId),
                     schemaErrors: validationErrors
                 }
             });
@@ -588,18 +586,125 @@ function createQuestionnaireService({
         };
     }
 
+    async function createSubmission(questionnaireId) {
+        // 1) get questionnaire instance.
+        const questionnaire = await getQuestionnaire(questionnaireId);
+        if (!questionnaire) {
+            throw new VError(
+                {
+                    name: 'ResourceNotFound'
+                },
+                `Questionnaire with questionnaireId "${questionnaireId}" does not exist`
+            );
+        }
+
+        // 2) get questionnaire instance's submission status.
+        const submissionStatus = await getQuestionnaireSubmissionStatus(questionnaireId);
+        // 3) are we currently, or have we been on this questionnaire's summary page?
+        // we infer a questionnaire is complete if the user has visited the summary page.
+        const isQuestionnaireComplete = questionnaire.progress.includes(
+            questionnaire.routes.summary
+        );
+
+        if (!isQuestionnaireComplete) {
+            throw new VError(
+                {
+                    name: 'ResourceConflict'
+                },
+                `Questionnaire with ID "${questionnaireId}" is not in a submittable state`
+            );
+        }
+
+        // if the submission status is anything other than 'NOT_STARTED' then it
+        // means that the submission resource has been previously created.
+        // also skip over this for failed application so they can be resubmitted.
+        if (!['NOT_STARTED', 'FAILED'].includes(submissionStatus)) {
+            throw new VError(
+                {
+                    name: 'ResourceConflict'
+                },
+                `Submission resource with ID "${questionnaireId}" already exists`
+            );
+        }
+
+        // check all answers are correct.
+        await validateAllAnswers(questionnaireId);
+
+        // TODO: refactor `getSubmissionResource` to be more intuitive.
+        const resourceCollection = await getSubmissionResource(questionnaireId, true);
+
+        createAnswers(questionnaireId, questionnaire.routes.summary, {});
+
+        return resourceCollection;
+    }
+
+    async function getSubmissions(submissionStatus) {
+        const status = submissionStatus.toUpperCase();
+        const questionnaireIds = await db.getQuestionnaireIdsBySubmissionStatus(status);
+
+        const promises = questionnaireIds.map(async questionnaireId => {
+            const submissionResource = await getSubmissionResource(questionnaireId);
+            return submissionResource;
+        });
+        const resourceCollection = await Promise.all(promises);
+        return resourceCollection;
+    }
+
+    async function postSubmissions(submissionStatus) {
+        const status = submissionStatus.toUpperCase();
+        const questionnaireIds = await db.getQuestionnaireIdsBySubmissionStatus(status);
+
+        const errors = [];
+        const promises = questionnaireIds.map(async questionnaireId => {
+            let submissionResource;
+            try {
+                submissionResource = await createSubmission(questionnaireId);
+            } catch (err) {
+                errors.push(err);
+            }
+            return submissionResource;
+        });
+
+        // attempt to create submissions.
+        const resourceCollection = await Promise.all(promises);
+
+        if (errors.length) {
+            // get all submissions resources pertaining to a status so that they can be
+            // sent alongside the errors.
+            const getSubmissionsPromises = questionnaireIds.map(async questionnaireId => {
+                const submissionResource = await getSubmissionResource(questionnaireId);
+                return submissionResource;
+            });
+
+            const validationError = new VError({
+                name: 'ResourceConflicts',
+                info: {
+                    submissions: await Promise.all(getSubmissionsPromises),
+                    errors
+                }
+            });
+
+            throw validationError;
+        }
+
+        return resourceCollection;
+    }
+
     return Object.freeze({
         createQuestionnaire,
         createAnswers,
         getQuestionnaire,
         getQuestionnaireSubmissionStatus,
-        getSubmissionResponseData,
+        getSubmissionResource,
         validateAllAnswers,
         getAnswers,
         getProgressEntries,
         getDataset,
         sendConfirmationNotification,
-        updateQuestionnaireSubmissionStatus
+        updateQuestionnaireSubmissionStatus,
+        createSubmission,
+        getSubmissions,
+        postSubmissions
     });
 }
 

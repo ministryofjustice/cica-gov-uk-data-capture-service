@@ -197,11 +197,29 @@ module.exports = async (err, req, res, next) => {
     if (err.statusCode === 409) {
         error.errors.push({
             status: 409,
-            title: '409 Conflict',
+            title: '409 Resource Conflict',
             detail: err.message
         });
 
         return res.status(409).json(error);
+    }
+
+    if (err.name === 'ResourceConflicts') {
+        const errorInfo = VError.info(err);
+        const errors = errorInfo.errors.map(errorObj => {
+            return {
+                status: 409,
+                title: '409 Resource Conflict',
+                detail: errorObj.message
+            };
+        });
+
+        error.errors.push(...errors);
+        error.meta = {
+            submissions: errorInfo.submissions
+        };
+
+        return res.status(200).json(error);
     }
 
     if (err.name === 'UnauthorizedError') {
