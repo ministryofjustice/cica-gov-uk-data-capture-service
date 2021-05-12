@@ -4,7 +4,7 @@ module.exports = {
     'sexual-assault': id => ({
         id,
         type: 'apply-for-compensation',
-        version: '1.5.0',
+        version: '1.6.1',
         sections: {
             'p-applicant-declaration': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
@@ -14,7 +14,11 @@ module.exports = {
                 properties: {
                     'applicant-declaration': {
                         description:
-                            '<p class="govuk-body">By submitting the application you agree that:</p><ul class="govuk-list govuk-list--bullet"><li>the information you’ve given here is true as far as you know</li><li>we can share the information you’ve given in this claim with:</li><ul><li>police, prosecutors and ACRO Criminal Records Office</li><li>medical organisations and staff, including police medical staff</li><li>any other individuals or organisations needed to process your application (including medical or other experts)</li></ul><li>we can receive information from the organisations and individuals described above</li></ul><p class="govuk-body">We often have to ask your GP or other health service provider for evidence about your injuries and treatment. We will let you know if we need to do this.</p><p class="govuk-body">Read our privacy notice to see <a class="govuk-link" href="https://www.gov.uk/guidance/cica-privacy-notice">how we use your data</a>.</p>{{ govukWarningText({text: "If you deliberately give false or misleading information, you may get less compensation or be prosecuted.",iconFallbackText: "Warning"}) }}'
+                            '<p class="govuk-body">By submitting the application I, ||/answers/p-applicant-enter-your-name/q-applicant-title|| ||/answers/p-applicant-enter-your-name/q-applicant-first-name|| ||/answers/p-applicant-enter-your-name/q-applicant-last-name||, agree that:</p><ul class="govuk-list govuk-list--bullet"><li>the information I’ve given here is true as far as I know</li><li>CICA can share the information I’ve given in this claim with:</li><ul><li>police, prosecutors and ACRO Criminal Records Office</li><li>medical organisations and staff, including police medical staff</li><li>any other individuals or organisations needed to process my application (including medical or other experts)</li></ul><li>CICA can receive information from the organisations and individuals described above</li><li>If I deliberately provide information that I know is false or misleading, I may be prosecuted and my application for compensation may be refused.</li></ul>'
+                    },
+                    'applicant-info': {
+                        description:
+                            '<p class="govuk-body">We often have to ask your GP or other health service provider for evidence about your injuries and treatment. We will let you know if we need to do this.</p><p class="govuk-body">Read our privacy notice to see <a class="govuk-link" href="https://www.gov.uk/guidance/cica-privacy-notice">how we use your data</a>.</p>'
                     }
                 },
                 examples: [{}],
@@ -2993,10 +2997,11 @@ module.exports = {
                     },
                     'q-applicant-other-treatment-dmi': {
                         type: 'string',
-                        title: 'Other treatments',
+                        title: 'Other mental health treatment',
                         maxLength: 499,
                         errorMessage: {
-                            maxLength: 'Other treatments must be 499 characters or less'
+                            maxLength:
+                                'Other mental health treatment must be 499 characters or less'
                         }
                     }
                 },
@@ -3118,7 +3123,7 @@ module.exports = {
                             'This helps us understand how the crime has affected you. You can leave this blank, but we may have to ask for more information later.',
                         maxLength: 1000,
                         errorMessage: {
-                            maxLength: 'Description must be 500 characters or less'
+                            maxLength: 'Description must be 1000 characters or less'
                         }
                     }
                 },
@@ -3727,10 +3732,11 @@ module.exports = {
                     },
                     'q-applicant-physical-injuries-upper-head-other': {
                         type: 'string',
-                        title: 'Type of injury',
+                        title: 'Other head or brain injuries',
                         maxLength: 499,
                         errorMessage: {
-                            maxLength: 'Type of injury must be 499 characters or fewer'
+                            maxLength:
+                                'Other head or brain injuries must be 499 characters or fewer'
                         }
                     }
                 },
@@ -3762,7 +3768,7 @@ module.exports = {
                             errorMessage: {
                                 required: {
                                     'q-applicant-physical-injuries-upper-head-other':
-                                        'Enter a type of injury'
+                                        'Enter other head or brain injuries'
                                 }
                             }
                         }
@@ -3839,10 +3845,10 @@ module.exports = {
                     },
                     'q-applicant-physical-injuries-upper-face-other': {
                         type: 'string',
-                        title: 'Type of injury',
+                        title: 'Other face injuries',
                         maxLength: 499,
                         errorMessage: {
-                            maxLength: 'Type of injury must be 499 characters or fewer'
+                            maxLength: 'Other face injuries must be 499 characters or fewer'
                         }
                     }
                 },
@@ -3874,7 +3880,7 @@ module.exports = {
                             errorMessage: {
                                 required: {
                                     'q-applicant-physical-injuries-upper-face-other':
-                                        'Enter a type of injury'
+                                        'Enter other face injuries'
                                 }
                             }
                         }
@@ -3935,10 +3941,10 @@ module.exports = {
                     },
                     'q-applicant-physical-injuries-upper-neck-other': {
                         type: 'string',
-                        title: 'Type of injury',
+                        title: 'Other neck injuries',
                         maxLength: 499,
                         errorMessage: {
-                            maxLength: 'Type of injury must be 499 characters or fewer'
+                            maxLength: 'Other neck injuries must be 499 characters or fewer'
                         }
                     }
                 },
@@ -3970,7 +3976,7 @@ module.exports = {
                             errorMessage: {
                                 required: {
                                     'q-applicant-physical-injuries-upper-neck-other':
-                                        'Enter a type of injury'
+                                        'Enter other neck injuries'
                                 }
                             }
                         }
@@ -4087,10 +4093,10 @@ module.exports = {
                     },
                     'q-applicant-physical-injuries-upper-eye-other': {
                         type: 'string',
-                        title: 'Type of injury',
+                        title: 'Other eye injuries',
                         maxLength: 499,
                         errorMessage: {
-                            maxLength: 'Type of injury must be 499 characters or fewer'
+                            maxLength: 'Other eye injuries must be 499 characters or fewer'
                         }
                     }
                 },
@@ -4122,7 +4128,7 @@ module.exports = {
                             errorMessage: {
                                 required: {
                                     'q-applicant-physical-injuries-upper-eye-other':
-                                        'Enter a type of injury'
+                                        'Enter other eye injuries'
                                 }
                             }
                         }
@@ -4195,10 +4201,11 @@ module.exports = {
                     },
                     'q-applicant-physical-injuries-upper-ear-other': {
                         type: 'string',
-                        title: 'Type of injury',
+                        title: 'Other ear or hearing injuries',
                         maxLength: 499,
                         errorMessage: {
-                            maxLength: 'Type of injury must be 499 characters or fewer'
+                            maxLength:
+                                'Other ear or hearing injuries must be 499 characters or fewer'
                         }
                     }
                 },
@@ -4230,7 +4237,7 @@ module.exports = {
                             errorMessage: {
                                 required: {
                                     'q-applicant-physical-injuries-upper-ear-other':
-                                        'Enter a type of injury'
+                                        'Enter other ear or hearing injuries'
                                 }
                             }
                         }
@@ -4300,10 +4307,10 @@ module.exports = {
                     },
                     'q-applicant-physical-injuries-upper-nose-other': {
                         type: 'string',
-                        title: 'Type of injury',
+                        title: 'Other nose injuries',
                         maxLength: 499,
                         errorMessage: {
-                            maxLength: 'Type of injury must be 499 characters or fewer'
+                            maxLength: 'Other nose injuries must be 499 characters or fewer'
                         }
                     }
                 },
@@ -4335,7 +4342,7 @@ module.exports = {
                             errorMessage: {
                                 required: {
                                     'q-applicant-physical-injuries-upper-nose-other':
-                                        'Enter a type of injury'
+                                        'Enter other nose injuries'
                                 }
                             }
                         }
@@ -4404,10 +4411,10 @@ module.exports = {
                     },
                     'q-applicant-physical-injuries-upper-mouth-other': {
                         type: 'string',
-                        title: 'Type of injury',
+                        title: 'Other mouth injuries',
                         maxLength: 499,
                         errorMessage: {
-                            maxLength: 'Type of injury must be 499 characters or fewer'
+                            maxLength: 'Other mouth injuries must be 499 characters or fewer'
                         }
                     }
                 },
@@ -4439,7 +4446,7 @@ module.exports = {
                             errorMessage: {
                                 required: {
                                     'q-applicant-physical-injuries-upper-mouth-other':
-                                        'Enter a type of injury'
+                                        'Enter other mouth injuries'
                                 }
                             }
                         }
@@ -4500,10 +4507,11 @@ module.exports = {
                     },
                     'q-applicant-physical-injuries-upper-skin-other': {
                         type: 'string',
-                        title: 'Type of injury',
+                        title: 'Other skin injuries on head, face or neck',
                         maxLength: 499,
                         errorMessage: {
-                            maxLength: 'Type of injury must be 499 characters or fewer'
+                            maxLength:
+                                'Other skin injuries on head, face or neck must be 499 characters or fewer'
                         }
                     }
                 },
@@ -4535,7 +4543,7 @@ module.exports = {
                             errorMessage: {
                                 required: {
                                     'q-applicant-physical-injuries-upper-skin-other':
-                                        'Enter a type of injury'
+                                        'Enter other skin injuries on head, face or neck'
                                 }
                             }
                         }
@@ -4596,10 +4604,11 @@ module.exports = {
                     },
                     'q-applicant-physical-injuries-upper-muscle-other': {
                         type: 'string',
-                        title: 'Type of injury',
+                        title: 'Other tissue injuries to head, face or neck',
                         maxLength: 499,
                         errorMessage: {
-                            maxLength: 'Type of injury must be 499 characters or fewer'
+                            maxLength:
+                                'Other tissue injuries to head, face or neck must be 499 characters or fewer'
                         }
                     }
                 },
@@ -4631,7 +4640,7 @@ module.exports = {
                             errorMessage: {
                                 required: {
                                     'q-applicant-physical-injuries-upper-muscle-other':
-                                        'Enter a type of injury'
+                                        'Enter other tissue injuries to head, face or neck'
                                 }
                             }
                         }
@@ -4794,10 +4803,10 @@ module.exports = {
                     },
                     'q-applicant-physical-injuries-torso-shoulder-other': {
                         type: 'string',
-                        title: 'Type of injury',
+                        title: 'Other shoulder injuries',
                         maxLength: 499,
                         errorMessage: {
-                            maxLength: 'Type of injury must be 499 characters or fewer'
+                            maxLength: 'Other shoulder injuries must be 499 characters or fewer'
                         }
                     }
                 },
@@ -4829,7 +4838,7 @@ module.exports = {
                             errorMessage: {
                                 required: {
                                     'q-applicant-physical-injuries-torso-shoulder-other':
-                                        'Enter a type of injury'
+                                        'Enter other shoulder injuries'
                                 }
                             }
                         }
@@ -4902,10 +4911,10 @@ module.exports = {
                     },
                     'q-applicant-physical-injuries-torso-chest-other': {
                         type: 'string',
-                        title: 'Type of injury',
+                        title: 'Other chest injuries',
                         maxLength: 499,
                         errorMessage: {
-                            maxLength: 'Type of injury must be 499 characters or fewer'
+                            maxLength: 'Other chest injuries must be 499 characters or fewer'
                         }
                     }
                 },
@@ -4937,7 +4946,7 @@ module.exports = {
                             errorMessage: {
                                 required: {
                                     'q-applicant-physical-injuries-torso-chest-other':
-                                        'Enter a type of injury'
+                                        'Enter other chest injuries'
                                 }
                             }
                         }
@@ -5018,10 +5027,10 @@ module.exports = {
                     },
                     'q-applicant-physical-injuries-torso-abdomen-other': {
                         type: 'string',
-                        title: 'Type of injury',
+                        title: 'Other abdomen injuries',
                         maxLength: 499,
                         errorMessage: {
-                            maxLength: 'Type of injury must be 499 characters or fewer'
+                            maxLength: 'Other abdomen injuries must be 499 characters or fewer'
                         }
                     }
                 },
@@ -5053,7 +5062,7 @@ module.exports = {
                             errorMessage: {
                                 required: {
                                     'q-applicant-physical-injuries-torso-abdomen-other':
-                                        'Enter a type of injury'
+                                        'Enter other abdomen injuries'
                                 }
                             }
                         }
@@ -5122,10 +5131,10 @@ module.exports = {
                     },
                     'q-applicant-physical-injuries-torso-back-other': {
                         type: 'string',
-                        title: 'Type of injury',
+                        title: 'Other back injuries',
                         maxLength: 499,
                         errorMessage: {
-                            maxLength: 'Type of injury must be 499 characters or fewer'
+                            maxLength: 'Other back injuries must be 499 characters or fewer'
                         }
                     }
                 },
@@ -5157,7 +5166,7 @@ module.exports = {
                             errorMessage: {
                                 required: {
                                     'q-applicant-physical-injuries-torso-back-other':
-                                        'Enter a type of injury'
+                                        'Enter other back injuries'
                                 }
                             }
                         }
@@ -5206,10 +5215,10 @@ module.exports = {
                     },
                     'q-applicant-physical-injuries-torso-pelvis-other': {
                         type: 'string',
-                        title: 'Type of injury',
+                        title: 'Other pelvis injuries',
                         maxLength: 499,
                         errorMessage: {
-                            maxLength: 'Type of injury must be 499 characters or fewer'
+                            maxLength: 'Other pelvis injuries must be 499 characters or fewer'
                         }
                     }
                 },
@@ -5241,7 +5250,7 @@ module.exports = {
                             errorMessage: {
                                 required: {
                                     'q-applicant-physical-injuries-torso-pelvis-other':
-                                        'Enter a type of injury'
+                                        'Enter other pelvis injuries'
                                 }
                             }
                         }
@@ -5294,10 +5303,10 @@ module.exports = {
                     },
                     'q-applicant-physical-injuries-torso-genitals-other': {
                         type: 'string',
-                        title: 'Type of injury',
+                        title: 'Other genital injuries',
                         maxLength: 499,
                         errorMessage: {
-                            maxLength: 'Type of injury must be 499 characters or fewer'
+                            maxLength: 'Other genital injuries must be 499 characters or fewer'
                         }
                     }
                 },
@@ -5329,7 +5338,7 @@ module.exports = {
                             errorMessage: {
                                 required: {
                                     'q-applicant-physical-injuries-torso-genitals-other':
-                                        'Enter a type of injury'
+                                        'Enter other genital injuries'
                                 }
                             }
                         }
@@ -5390,10 +5399,11 @@ module.exports = {
                     },
                     'q-applicant-physical-injuries-torso-skin-other': {
                         type: 'string',
-                        title: 'Type of injury',
+                        title: 'Other skin injuries on torso',
                         maxLength: 499,
                         errorMessage: {
-                            maxLength: 'Type of injury must be 499 characters or fewer'
+                            maxLength:
+                                'Other skin injuries on torso must be 499 characters or fewer'
                         }
                     }
                 },
@@ -5425,7 +5435,7 @@ module.exports = {
                             errorMessage: {
                                 required: {
                                     'q-applicant-physical-injuries-torso-skin-other':
-                                        'Enter a type of injury'
+                                        'Enter other skin injuries on torso'
                                 }
                             }
                         }
@@ -5486,10 +5496,11 @@ module.exports = {
                     },
                     'q-applicant-physical-injuries-torso-muscle-other': {
                         type: 'string',
-                        title: 'Type of injury',
+                        title: 'Other tissue injuries to torso',
                         maxLength: 499,
                         errorMessage: {
-                            maxLength: 'Type of injury must be 499 characters or fewer'
+                            maxLength:
+                                'Other tissue injuries to torso must be 499 characters or fewer'
                         }
                     }
                 },
@@ -5521,7 +5532,7 @@ module.exports = {
                             errorMessage: {
                                 required: {
                                     'q-applicant-physical-injuries-torso-muscle-other':
-                                        'Enter a type of injury'
+                                        'Enter other tissue injuries to torso'
                                 }
                             }
                         }
@@ -5684,10 +5695,10 @@ module.exports = {
                     },
                     'q-applicant-physical-injuries-arms-shoulder-other': {
                         type: 'string',
-                        title: 'Type of injury',
+                        title: 'Other shoulder injuries',
                         maxLength: 499,
                         errorMessage: {
-                            maxLength: 'Type of injury must be 499 characters or fewer'
+                            maxLength: 'Other shoulder injuries must be 499 characters or fewer'
                         }
                     }
                 },
@@ -5719,7 +5730,7 @@ module.exports = {
                             errorMessage: {
                                 required: {
                                     'q-applicant-physical-injuries-arms-shoulder-other':
-                                        'Enter a type of injury'
+                                        'Enter other shoulder injuries'
                                 }
                             }
                         }
@@ -5784,10 +5795,10 @@ module.exports = {
                     },
                     'q-applicant-physical-injuries-arms-arm-other': {
                         type: 'string',
-                        title: 'Type of injury',
+                        title: 'Other arm injuries',
                         maxLength: 499,
                         errorMessage: {
-                            maxLength: 'Type of injury must be 499 characters or fewer'
+                            maxLength: 'Other arm injuries must be 499 characters or fewer'
                         }
                     }
                 },
@@ -5819,7 +5830,7 @@ module.exports = {
                             errorMessage: {
                                 required: {
                                     'q-applicant-physical-injuries-arms-arm-other':
-                                        'Enter a type of injury'
+                                        'Enter other arm injuries'
                                 }
                             }
                         }
@@ -5872,10 +5883,10 @@ module.exports = {
                     },
                     'q-applicant-physical-injuries-arms-elbow-other': {
                         type: 'string',
-                        title: 'Type of injury',
+                        title: 'Other elbow injuries',
                         maxLength: 499,
                         errorMessage: {
-                            maxLength: 'Type of injury must be 499 characters or fewer'
+                            maxLength: 'Other elbow injuries must be 499 characters or fewer'
                         }
                     }
                 },
@@ -5907,7 +5918,7 @@ module.exports = {
                             errorMessage: {
                                 required: {
                                     'q-applicant-physical-injuries-arms-elbow-other':
-                                        'Enter a type of injury'
+                                        'Enter other elbow injuries'
                                 }
                             }
                         }
@@ -5960,10 +5971,10 @@ module.exports = {
                     },
                     'q-applicant-physical-injuries-arms-wrist-other': {
                         type: 'string',
-                        title: 'Type of injury',
+                        title: 'Other wrist injuries',
                         maxLength: 499,
                         errorMessage: {
-                            maxLength: 'Type of injury must be 499 characters or fewer'
+                            maxLength: 'Other wrist injuries must be 499 characters or fewer'
                         }
                     }
                 },
@@ -5995,7 +6006,7 @@ module.exports = {
                             errorMessage: {
                                 required: {
                                     'q-applicant-physical-injuries-arms-wrist-other':
-                                        'Enter a type of injury'
+                                        'Enter other wrist injuries'
                                 }
                             }
                         }
@@ -6056,10 +6067,10 @@ module.exports = {
                     },
                     'q-applicant-physical-injuries-arms-hand-other': {
                         type: 'string',
-                        title: 'Type of injury',
+                        title: 'Other hand injuries',
                         maxLength: 499,
                         errorMessage: {
-                            maxLength: 'Type of injury must be 499 characters or fewer'
+                            maxLength: 'Other hand injuries must be 499 characters or fewer'
                         }
                     }
                 },
@@ -6091,7 +6102,7 @@ module.exports = {
                             errorMessage: {
                                 required: {
                                     'q-applicant-physical-injuries-arms-hand-other':
-                                        'Enter a type of injury'
+                                        'Enter other hand injuries'
                                 }
                             }
                         }
@@ -6188,10 +6199,11 @@ module.exports = {
                     },
                     'q-applicant-physical-injuries-arms-digit-other': {
                         type: 'string',
-                        title: 'Type of injury',
+                        title: 'Other finger or thumb injuries',
                         maxLength: 499,
                         errorMessage: {
-                            maxLength: 'Type of injury must be 499 characters or fewer'
+                            maxLength:
+                                'Other finger or thumb injuries must be 499 characters or fewer'
                         }
                     }
                 },
@@ -6223,7 +6235,7 @@ module.exports = {
                             errorMessage: {
                                 required: {
                                     'q-applicant-physical-injuries-arms-digit-other':
-                                        'Enter a type of injury'
+                                        'Enter other finger or thumb injuries'
                                 }
                             }
                         }
@@ -6284,10 +6296,11 @@ module.exports = {
                     },
                     'q-applicant-physical-injuries-arms-skin-other': {
                         type: 'string',
-                        title: 'Type of injury',
+                        title: 'Other skin injuries on arms or hands',
                         maxLength: 499,
                         errorMessage: {
-                            maxLength: 'Type of injury must be 499 characters or fewer'
+                            maxLength:
+                                'Other skin injuries on arms or hands must be 499 characters or fewer'
                         }
                     }
                 },
@@ -6324,7 +6337,7 @@ module.exports = {
                             errorMessage: {
                                 required: {
                                     'q-applicant-physical-injuries-arms-skin-other':
-                                        'Enter a type of injury'
+                                        'Enter other skin injuries on arms or hands'
                                 }
                             }
                         }
@@ -6380,10 +6393,11 @@ module.exports = {
                     },
                     'q-applicant-physical-injuries-arms-muscle-other': {
                         type: 'string',
-                        title: 'Type of injury',
+                        title: 'Other tissue injuries to arms or hands',
                         maxLength: 499,
                         errorMessage: {
-                            maxLength: 'Type of injury must be 499 characters or fewer'
+                            maxLength:
+                                'Other tissue injuries to arms or hands must be 499 characters or fewer'
                         }
                     }
                 },
@@ -6415,7 +6429,7 @@ module.exports = {
                             errorMessage: {
                                 required: {
                                     'q-applicant-physical-injuries-arms-muscle-other':
-                                        'Enter a type of injury'
+                                        'Enter other tissue injuries to arms or hands'
                                 }
                             }
                         }
@@ -6570,10 +6584,10 @@ module.exports = {
                     },
                     'q-applicant-physical-injuries-legs-hip-other': {
                         type: 'string',
-                        title: 'Type of injury',
+                        title: 'Other hip injuries',
                         maxLength: 499,
                         errorMessage: {
-                            maxLength: 'Type of injury must be 499 characters or fewer'
+                            maxLength: 'Other hip injuries must be 499 characters or fewer'
                         }
                     }
                 },
@@ -6605,7 +6619,7 @@ module.exports = {
                             errorMessage: {
                                 required: {
                                     'q-applicant-physical-injuries-legs-hip-other':
-                                        'Enter a type of injury'
+                                        'Enter other hip injuries'
                                 }
                             }
                         }
@@ -6678,10 +6692,10 @@ module.exports = {
                     },
                     'q-applicant-physical-injuries-legs-leg-other': {
                         type: 'string',
-                        title: 'Type of injury',
+                        title: 'Other leg injuries',
                         maxLength: 499,
                         errorMessage: {
-                            maxLength: 'Type of injury must be 499 characters or fewer'
+                            maxLength: 'Other leg injuries must be 499 characters or fewer'
                         }
                     }
                 },
@@ -6713,7 +6727,7 @@ module.exports = {
                             errorMessage: {
                                 required: {
                                     'q-applicant-physical-injuries-legs-leg-other':
-                                        'Enter a type of injury'
+                                        'Enter other leg injuries'
                                 }
                             }
                         }
@@ -6770,10 +6784,10 @@ module.exports = {
                     },
                     'q-applicant-physical-injuries-legs-knee-other': {
                         type: 'string',
-                        title: 'Type of injury',
+                        title: 'Other knee injuries',
                         maxLength: 499,
                         errorMessage: {
-                            maxLength: 'Type of injury must be 499 characters or fewer'
+                            maxLength: 'Other knee injuries must be 499 characters or fewer'
                         }
                     }
                 },
@@ -6805,7 +6819,7 @@ module.exports = {
                             errorMessage: {
                                 required: {
                                     'q-applicant-physical-injuries-legs-knee-other':
-                                        'Enter a type of injury'
+                                        'Enter other knee injuries'
                                 }
                             }
                         }
@@ -6862,10 +6876,10 @@ module.exports = {
                     },
                     'q-applicant-physical-injuries-legs-ankle-other': {
                         type: 'string',
-                        title: 'Type of injury',
+                        title: 'Other ankle injuries',
                         maxLength: 499,
                         errorMessage: {
-                            maxLength: 'Type of injury must be 499 characters or fewer'
+                            maxLength: 'Other ankle injuries must be 499 characters or fewer'
                         }
                     }
                 },
@@ -6897,7 +6911,7 @@ module.exports = {
                             errorMessage: {
                                 required: {
                                     'q-applicant-physical-injuries-legs-ankle-other':
-                                        'Enter a type of injury'
+                                        'Enter other ankle injuries'
                                 }
                             }
                         }
@@ -6958,10 +6972,10 @@ module.exports = {
                     },
                     'q-applicant-physical-injuries-legs-foot-other': {
                         type: 'string',
-                        title: 'Type of injury',
+                        title: 'Other foot injuries',
                         maxLength: 499,
                         errorMessage: {
-                            maxLength: 'Type of injury must be 499 characters or fewer'
+                            maxLength: 'Other foot injuries must be 499 characters or fewer'
                         }
                     }
                 },
@@ -6993,7 +7007,7 @@ module.exports = {
                             errorMessage: {
                                 required: {
                                     'q-applicant-physical-injuries-legs-foot-other':
-                                        'Enter a type of injury'
+                                        'Enter other foot injuries'
                                 }
                             }
                         }
@@ -7066,10 +7080,10 @@ module.exports = {
                     },
                     'q-applicant-physical-injuries-legs-toes-other': {
                         type: 'string',
-                        title: 'Type of injury',
+                        title: 'Other toe injuries',
                         maxLength: 499,
                         errorMessage: {
-                            maxLength: 'Type of injury must be 499 characters or fewer'
+                            maxLength: 'Other toe injuries must be 499 characters or fewer'
                         }
                     }
                 },
@@ -7101,7 +7115,7 @@ module.exports = {
                             errorMessage: {
                                 required: {
                                     'q-applicant-physical-injuries-legs-toes-other':
-                                        'Enter a type of injury'
+                                        'Enter other toe injuries'
                                 }
                             }
                         }
@@ -7162,10 +7176,11 @@ module.exports = {
                     },
                     'q-applicant-physical-injuries-legs-skin-other': {
                         type: 'string',
-                        title: 'Type of injury',
+                        title: 'Other skin injuries on legs or feet',
                         maxLength: 499,
                         errorMessage: {
-                            maxLength: 'Type of injury must be 499 characters or fewer'
+                            maxLength:
+                                'Other skin injuries on legs or feet must be 499 characters or fewer'
                         }
                     }
                 },
@@ -7197,7 +7212,7 @@ module.exports = {
                             errorMessage: {
                                 required: {
                                     'q-applicant-physical-injuries-legs-skin-other':
-                                        'Enter a type of injury'
+                                        'Enter other skin injuries on legs or feet'
                                 }
                             }
                         }
@@ -7258,10 +7273,11 @@ module.exports = {
                     },
                     'q-applicant-physical-injuries-legs-muscle-other': {
                         type: 'string',
-                        title: 'Type of injury',
+                        title: 'Other tissue injuries to legs or feet',
                         maxLength: 499,
                         errorMessage: {
-                            maxLength: 'Type of injury must be 499 characters or fewer'
+                            maxLength:
+                                'Other tissue injuries to legs or feet must be 499 characters or fewer'
                         }
                     }
                 },
@@ -7293,7 +7309,7 @@ module.exports = {
                             errorMessage: {
                                 required: {
                                     'q-applicant-physical-injuries-legs-muscle-other':
-                                        'Enter a type of injury'
+                                        'Enter other tissue injuries to legs or feet'
                                 }
                             }
                         }
