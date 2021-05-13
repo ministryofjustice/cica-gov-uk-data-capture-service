@@ -652,7 +652,13 @@ function createQuestionnaireService({
 
     async function postSubmissions(submissionStatus) {
         const status = submissionStatus.toUpperCase();
-        const questionnaireIds = await db.getQuestionnaireIdsBySubmissionStatus(status);
+        let questionnaireIds;
+        try {
+            questionnaireIds = await db.getQuestionnaireIdsBySubmissionStatus(status);
+        } catch (err) {
+            // no IDs means there is nothing to submit, so return early.
+            return [];
+        }
 
         const errors = [];
         const promises = questionnaireIds.map(async questionnaireId => {
