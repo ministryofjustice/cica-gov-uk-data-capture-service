@@ -79,7 +79,8 @@ const questionnaireService = createQuestionnaireService({
                 `Questionnaires with submission_status "${submissionStatus}" not found`
             );
         },
-        updateQuestionnaireSubmissionStatus: () => undefined
+        updateQuestionnaireSubmissionStatus: () => undefined,
+        updateQuestionnaire: () => undefined
     })
 });
 

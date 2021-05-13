@@ -29,10 +29,10 @@ config.coverageThreshold = {
     './questionnaire/questionnaire-dal.js': {
         branches: 0,
         functions: 0,
-        lines: 9,
-        statements: 9
+        lines: 7,
+        statements: 7
     },
-    './*/!(message-bus|notify|request)/**/*.js': {
+    './*/!(message-bus|notify|request|error-handler)/**/*.js': {
         statements: 54,
         branches: 60,
         functions: 50,
@@ -55,6 +55,12 @@ config.coverageThreshold = {
         branches: 60,
         functions: 0,
         lines: 23
+    },
+    './*/error-handler/**/*.js': {
+        statements: 45,
+        branches: 60,
+        functions: 40,
+        lines: 47
     }
 };
 
