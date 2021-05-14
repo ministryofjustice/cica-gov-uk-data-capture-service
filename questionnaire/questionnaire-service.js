@@ -589,14 +589,6 @@ function createQuestionnaireService({
     async function createSubmission(questionnaireId) {
         // 1) get questionnaire instance.
         const questionnaire = await getQuestionnaire(questionnaireId);
-        if (!questionnaire) {
-            throw new VError(
-                {
-                    name: 'ResourceNotFound'
-                },
-                `Questionnaire with questionnaireId "${questionnaireId}" does not exist`
-            );
-        }
 
         // 2) get questionnaire instance's submission status.
         const submissionStatus = await getQuestionnaireSubmissionStatus(questionnaireId);
@@ -652,13 +644,7 @@ function createQuestionnaireService({
 
     async function postSubmissions(submissionStatus) {
         const status = submissionStatus.toUpperCase();
-        let questionnaireIds;
-        try {
-            questionnaireIds = await db.getQuestionnaireIdsBySubmissionStatus(status);
-        } catch (err) {
-            // no IDs means there is nothing to submit, so return early.
-            return [];
-        }
+        const questionnaireIds = await db.getQuestionnaireIdsBySubmissionStatus(status);
 
         const errors = [];
         const promises = questionnaireIds.map(async questionnaireId => {

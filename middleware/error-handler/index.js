@@ -141,7 +141,7 @@ module.exports = async (err, req, res, next) => {
             submissions: errorInfo.submissions
         };
 
-        return res.status(200).json(error);
+        return res.status(422).json(error);
     }
 
     if (err.name === 'UpdateNotSuccessful') {
@@ -197,7 +197,7 @@ module.exports = async (err, req, res, next) => {
     if (err.statusCode === 409) {
         error.errors.push({
             status: 409,
-            title: '409 Resource Conflict',
+            title: '409 Conflict',
             detail: err.message
         });
 
@@ -209,7 +209,7 @@ module.exports = async (err, req, res, next) => {
         const errors = errorInfo.errors.map(errorObj => {
             return {
                 status: 409,
-                title: '409 Resource Conflict',
+                title: '409 Conflict',
                 detail: errorObj.message
             };
         });
@@ -219,7 +219,7 @@ module.exports = async (err, req, res, next) => {
             submissions: errorInfo.submissions
         };
 
-        return res.status(200).json(error);
+        return res.status(409).json(error);
     }
 
     if (err.name === 'UnauthorizedError') {

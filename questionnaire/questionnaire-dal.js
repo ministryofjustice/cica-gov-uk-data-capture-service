@@ -127,12 +127,7 @@ function questionnaireDAL(spec) {
             ]);
 
             if (result.rowCount === 0) {
-                throw new VError(
-                    {
-                        name: 'ResourceNotFound'
-                    },
-                    `Questionnaires with submission_status "${submissionStatus}" not found`
-                );
+                result = [];
             }
         } catch (err) {
             throw err;
