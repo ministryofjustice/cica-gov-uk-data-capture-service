@@ -125,15 +125,11 @@ function questionnaireDAL(spec) {
             result = await db.query('SELECT id FROM questionnaire WHERE submission_status = $1', [
                 submissionStatus
             ]);
-
-            if (result.rowCount === 0) {
-                result = [];
-            }
         } catch (err) {
             throw err;
         }
 
-        return result.rows.map(x => x.id);
+        return result.rowCount ? result.rows.map(x => x.id) : [];
     }
 
     return Object.freeze({
