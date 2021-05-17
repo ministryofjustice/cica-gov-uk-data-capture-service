@@ -1,5 +1,14 @@
 'use strict';
 
+/* * ****************************************************************************************** * */
+/* * ****************************************************************************************** * */
+/* *         THIS FILE IS GENERATED. ALL MANUAL EDITS MADE TO THIS FILE WILL BE LOST!!!         * */
+/* *         --------------------------------------------------------------------------         * */
+/* *         If you need to make a change to this test file you will need to edit the           * */
+/* *         generate-tests file and regenerate the tests using command line.                   * */
+/* * ****************************************************************************************** * */
+/* * ****************************************************************************************** * */
+
 const VError = require('verror');
 const request = require('supertest');
 const {matchersWithOptions} = require('jest-json-schema');
@@ -293,6 +302,7 @@ describe('/questionnaires/{questionnaireId}/sections/{sectionId}/answers', () =>
                     .set('Authorization', `Bearer ${tokens['create:system-answers']}`)
                     .set('Content-Type', 'application/vnd.api+json')
                     .send({data: {type: 'answers', attributes: {'case-reference': '11\\111111'}}});
+
                 expect(res.statusCode).toBe(201);
                 expect(res.type).toBe('application/vnd.api+json');
                 expect(res.body).toMatchSchema({
