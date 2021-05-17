@@ -75,7 +75,7 @@
                     "content": {
                         "application/vnd.api+json": {
                             "schema": {
-                                "$ref": "./json-schemas/_questionnaires/post/req/201.json"
+                                "$ref": "./json-schemas/api/_questionnaires/post/req/201.json"
                             },
                             "example": {
                                 "data": {
@@ -94,7 +94,7 @@
                         "content": {
                             "application/vnd.api+json": {
                                 "schema": {
-                                    "$ref": "./json-schemas/_questionnaires/post/res/201.json"
+                                    "$ref": "./json-schemas/api/_questionnaires/post/res/201.json"
                                 },
                                 "example": {
                                     "data": {
@@ -177,7 +177,7 @@
                     "content": {
                         "application/vnd.api+json": {
                             "schema": {
-                                "$ref": "./json-schemas/_questionnaires_{questionnaireId}_sections_{sectionId}_answers/post/req/201.json"
+                                "$ref": "./json-schemas/api/_questionnaires_{questionnaireId}_sections_{sectionId}_answers/post/req/201.json"
                             },
                             "example": {
                                 "data": {
@@ -196,7 +196,7 @@
                         "content": {
                             "application/vnd.api+json": {
                                 "schema": {
-                                    "$ref": "./json-schemas/_questionnaires_{questionnaireId}_sections_{sectionId}_answers/post/res/201.json"
+                                    "$ref": "./json-schemas/api/_questionnaires_{questionnaireId}_sections_{sectionId}_answers/post/res/201.json"
                                 },
                                 "example": {
                                     "data": {
@@ -264,7 +264,7 @@
                         "content": {
                             "application/vnd.api+json": {
                                 "schema": {
-                                    "$ref": "json-schemas/_questionnaires_{questionnaireId}_sections_answers/get/res/200.json"
+                                    "$ref": "json-schemas/api/_questionnaires_{questionnaireId}_sections_answers/get/res/200.json"
                                 },
                                 "example": {
                                     "data": [
@@ -338,7 +338,7 @@
                         "content": {
                             "application/vnd.api+json": {
                                 "schema": {
-                                    "$ref": "./json-schemas/_questionnaires_{questionnaireId}_submissions/get/res/200.json"
+                                    "$ref": "./json-schemas/api/_questionnaires_{questionnaireId}_submissions/get/res/200.json"
                                 },
                                 "example": {
                                     "data": {
@@ -415,7 +415,7 @@
                     "content": {
                         "application/vnd.api+json": {
                             "schema": {
-                                "$ref": "./json-schemas/_questionnaires_{questionnaireId}_submissions/post/req/201.json"
+                                "$ref": "./json-schemas/api/_questionnaires_{questionnaireId}_submissions/post/req/201.json"
                             },
                             "example": {
                                 "data": {
@@ -434,7 +434,7 @@
                         "content": {
                             "application/vnd.api+json": {
                                 "schema": {
-                                    "$ref": "./json-schemas/_questionnaires_{questionnaireId}_submissions/post/res/201.json"
+                                    "$ref": "./json-schemas/api/_questionnaires_{questionnaireId}_submissions/post/res/201.json"
                                 },
                                 "example": {
                                     "data": {
@@ -520,7 +520,7 @@
                         "content": {
                             "application/vnd.api+json": {
                                 "schema": {
-                                    "$ref": "json-schemas/_questionnaires_{questionnaireId}_progress-entries/get/res/200.json"
+                                    "$ref": "json-schemas/api/_questionnaires_{questionnaireId}_progress-entries/get/res/200.json"
                                 },
                                 "example": {
                                     "data": [
@@ -631,7 +631,7 @@
                         "content": {
                             "application/vnd.api+json": {
                                 "schema": {
-                                    "$ref": "json-schemas/_questionnaires_{questionnaireId}_dataset/get/res/200.json"
+                                    "$ref": "json-schemas/api/_questionnaires_{questionnaireId}_dataset/get/res/200.json"
                                 },
                                 "example": {
                                     "data": [
@@ -675,7 +675,7 @@
                 "required": true,
                 "description": "The id of the specific questionnaire instance. Format UUIDv4.",
                 "schema": {
-                    "$ref": "./json-schemas/parameters/questionnaireId.json"
+                    "$ref": "./json-schemas/api/parameters/questionnaireId.json"
                 },
                 "example": "285cb104-0c15-4a9c-9840-cb1007f098fb"
             },
@@ -685,7 +685,7 @@
                 "required": true,
                 "description": "The id of the specific questionnaire section.",
                 "schema": {
-                    "$ref": "./json-schemas/parameters/sectionId.json"
+                    "$ref": "./json-schemas/api/parameters/sectionId.json"
                 },
                 "example": "system"
             },
@@ -694,7 +694,7 @@
                 "name": "filter",
                 "description": "Filter progress entries",
                 "schema": {
-                    "$ref": "./json-schemas/parameters/filter.json"
+                    "$ref": "./json-schemas/api/parameters/filter.json"
                 },
                 "style": "deepObject",
                 "explode": true,
@@ -707,7 +707,7 @@
                 "name": "page",
                 "description": "Paginate progress entries",
                 "schema": {
-                    "$ref": "./json-schemas/parameters/page.json"
+                    "$ref": "./json-schemas/api/parameters/page.json"
                 },
                 "style": "deepObject",
                 "explode": true,
@@ -722,7 +722,7 @@
                 "content": {
                     "application/vnd.api+json": {
                         "schema": {
-                            "$ref": "./json-schemas/responses/400.json"
+                            "$ref": "./json-schemas/api/responses/400.json"
                         },
                         "example": {
                             "errors": [
@@ -741,7 +741,7 @@
                 "content": {
                     "application/vnd.api+json": {
                         "schema": {
-                            "$ref": "./json-schemas/responses/401.json"
+                            "$ref": "./json-schemas/api/responses/401.json"
                         },
                         "example": {
                             "errors": [
@@ -759,7 +759,7 @@
                 "content": {
                     "application/vnd.api+json": {
                         "schema": {
-                            "$ref": "./json-schemas/responses/403.json"
+                            "$ref": "./json-schemas/api/responses/403.json"
                         },
                         "example": {
                             "errors": [
@@ -778,7 +778,7 @@
                 "content": {
                     "application/vnd.api+json": {
                         "schema": {
-                            "$ref": "./json-schemas/responses/404.json"
+                            "$ref": "./json-schemas/api/responses/404.json"
                         },
                         "example": {
                             "errors": [
@@ -797,7 +797,7 @@
                 "content": {
                     "application/vnd.api+json": {
                         "schema": {
-                            "$ref": "./json-schemas/responses/409.json"
+                            "$ref": "./json-schemas/api/responses/409.json"
                         },
                         "example": {
                             "errors": [
