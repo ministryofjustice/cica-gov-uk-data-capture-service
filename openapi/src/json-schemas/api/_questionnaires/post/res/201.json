@@ -1,55 +1,15 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema#",
-    "type": "object",
-    "additionalProperties": false,
-    "required": ["data"],
-    "properties": {
-        "data": {
-            "type": "object",
-            "additionalProperties": false,
-            "required": ["type", "id", "attributes"],
+    "title": "Questionnaires document",
+    "allOf": [
+        {"$ref": "../../../json-api-base-document.json"},
+        {
             "properties": {
-                "type": {
-                    "const": "questionnaires"
-                },
-                "id": {
-                    "type": "string",
-                    "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
-                },
-                "attributes": {
+                "data": {
                     "type": "object",
-                    "additionalProperties": false,
-                    "required": ["id", "type", "sections", "routes"],
-                    "properties": {
-                        "id": {
-                            "type": "string",
-                            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
-                        },
-                        "type": {
-                            "type": "string",
-                            "pattern": "^[a-zA-Z0-9-]{1,30}$"
-                        },
-                        "version": {
-                            "type": "string"
-                        },
-                        "sections": {
-                            "type": "object"
-                        },
-                        "routes": {
-                            "type": "object"
-                        },
-                        "answers": {
-                            "type": "object"
-                        },
-                        "progress": {
-                            "type": "array"
-                        },
-                        "meta": {
-                            "type": "object"
-                        }
-                    }
+                    "$ref": "../../../resources/questionnaire-resource.json"
                 }
             }
         }
-    }
+    ]
 }
