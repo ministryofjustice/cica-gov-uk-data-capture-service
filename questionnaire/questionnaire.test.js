@@ -1504,26 +1504,83 @@ describe('/questionnaires/{questionnaireId}/dataset', () => {
                 expect(res.type).toBe('application/vnd.api+json');
                 expect(res.body).toMatchSchema({
                     $schema: 'http://json-schema.org/draft-07/schema#',
-                    type: 'object',
-                    required: ['data'],
-                    properties: {
-                        data: {
-                            type: 'array',
-                            items: {
-                                type: 'object',
-                                required: ['type', 'id', 'attributes'],
-                                properties: {
-                                    type: {const: 'dataset'},
-                                    id: {
-                                        type: 'string',
-                                        pattern:
-                                            '^[a-z0-9]{1,30}(--[a-z0-9]{1,30})?(-[a-z0-9]{1,30})*$'
-                                    },
-                                    attributes: {type: 'object'}
+                    title: 'Dataset document',
+                    allOf: [
+                        {
+                            $schema: 'http://json-schema.org/draft-07/schema#',
+                            title: 'Loosely describes the JSON:API document format',
+                            type: 'object',
+                            additionalProperties: false,
+                            required: ['data'],
+                            properties: {
+                                data: {anyOf: [{type: 'object'}, {type: 'array'}]},
+                                included: {type: 'array'},
+                                links: {type: 'object'},
+                                meta: {type: 'object'}
+                            }
+                        },
+                        {
+                            properties: {
+                                data: {
+                                    type: 'array',
+                                    items: {
+                                        $schema: 'http://json-schema.org/draft-07/schema#',
+                                        title: 'Dataset resource',
+                                        allOf: [
+                                            {
+                                                $schema: 'http://json-schema.org/draft-07/schema#',
+                                                title:
+                                                    'Loosely describes the JSON:API resource format',
+                                                type: 'object',
+                                                additionalProperties: false,
+                                                required: ['type', 'id', 'attributes'],
+                                                properties: {
+                                                    type: {type: 'string'},
+                                                    id: {
+                                                        type: 'string',
+                                                        anyOf: [
+                                                            {
+                                                                $schema:
+                                                                    'http://json-schema.org/draft-07/schema#',
+                                                                title: 'Section Id',
+                                                                type: 'string',
+                                                                pattern:
+                                                                    '^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer)$'
+                                                            },
+                                                            {
+                                                                $schema:
+                                                                    'http://json-schema.org/draft-07/schema#',
+                                                                title: 'UUID v4',
+                                                                type: 'string',
+                                                                pattern:
+                                                                    '^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$'
+                                                            },
+                                                            {
+                                                                const: '0',
+                                                                description:
+                                                                    'Used by dataset endpoint'
+                                                            }
+                                                        ]
+                                                    },
+                                                    attributes: {
+                                                        type: 'object',
+                                                        title: 'Any valid resource'
+                                                    },
+                                                    relationships: {type: 'object'}
+                                                }
+                                            },
+                                            {
+                                                properties: {
+                                                    type: {const: 'dataset'},
+                                                    id: {type: 'string', const: '0'}
+                                                }
+                                            }
+                                        ]
+                                    }
                                 }
                             }
                         }
-                    }
+                    ]
                 });
             });
         });

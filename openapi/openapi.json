@@ -2225,29 +2225,102 @@
                         "content": {
                             "application/vnd.api+json": {
                                 "schema": {
-                                    "type": "object",
-                                    "required": ["data"],
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "object",
-                                                "required": ["type", "id", "attributes"],
-                                                "properties": {
-                                                    "type": {
-                                                        "enum": ["dataset"]
-                                                    },
-                                                    "id": {
-                                                        "type": "string",
-                                                        "pattern": "^[a-z0-9]{1,30}(--[a-z0-9]{1,30})?(-[a-z0-9]{1,30})*$"
-                                                    },
-                                                    "attributes": {
-                                                        "type": "object"
+                                    "title": "Dataset document",
+                                    "allOf": [
+                                        {
+                                            "title": "Loosely describes the JSON:API document format",
+                                            "type": "object",
+                                            "additionalProperties": false,
+                                            "required": ["data"],
+                                            "properties": {
+                                                "data": {
+                                                    "anyOf": [
+                                                        {
+                                                            "type": "object"
+                                                        },
+                                                        {
+                                                            "type": "array",
+                                                            "items": {}
+                                                        }
+                                                    ]
+                                                },
+                                                "included": {
+                                                    "type": "array",
+                                                    "items": {}
+                                                },
+                                                "links": {
+                                                    "type": "object"
+                                                },
+                                                "meta": {
+                                                    "type": "object"
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "title": "Dataset resource",
+                                                        "allOf": [
+                                                            {
+                                                                "title": "Loosely describes the JSON:API resource format",
+                                                                "type": "object",
+                                                                "additionalProperties": false,
+                                                                "required": [
+                                                                    "type",
+                                                                    "id",
+                                                                    "attributes"
+                                                                ],
+                                                                "properties": {
+                                                                    "type": {
+                                                                        "type": "string"
+                                                                    },
+                                                                    "id": {
+                                                                        "type": "string",
+                                                                        "anyOf": [
+                                                                            {
+                                                                                "title": "Section Id",
+                                                                                "type": "string",
+                                                                                "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer)$"
+                                                                            },
+                                                                            {
+                                                                                "title": "UUID v4",
+                                                                                "type": "string",
+                                                                                "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+                                                                            },
+                                                                            {
+                                                                                "description": "Used by dataset endpoint",
+                                                                                "enum": ["0"]
+                                                                            }
+                                                                        ]
+                                                                    },
+                                                                    "attributes": {
+                                                                        "type": "object",
+                                                                        "title": "Any valid resource"
+                                                                    },
+                                                                    "relationships": {
+                                                                        "type": "object"
+                                                                    }
+                                                                }
+                                                            },
+                                                            {
+                                                                "properties": {
+                                                                    "type": {
+                                                                        "enum": ["dataset"]
+                                                                    },
+                                                                    "id": {
+                                                                        "type": "string",
+                                                                        "enum": ["0"]
+                                                                    }
+                                                                }
+                                                            }
+                                                        ]
                                                     }
                                                 }
                                             }
                                         }
-                                    }
+                                    ]
                                 },
                                 "example": {
                                     "data": [
