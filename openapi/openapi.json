@@ -571,6 +571,7 @@
                         "required": true,
                         "description": "The id of the specific questionnaire instance. Format UUIDv4.",
                         "schema": {
+                            "title": "UUID v4",
                             "type": "string",
                             "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
                         },
@@ -582,8 +583,9 @@
                         "required": true,
                         "description": "The id of the specific questionnaire section.",
                         "schema": {
+                            "title": "Section Id",
                             "type": "string",
-                            "pattern": "^(p--?([a-z0-9-]+)|system)$"
+                            "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer)$"
                         },
                         "example": "system"
                     }
@@ -940,6 +942,7 @@
                         "required": true,
                         "description": "The id of the specific questionnaire instance. Format UUIDv4.",
                         "schema": {
+                            "title": "UUID v4",
                             "type": "string",
                             "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
                         },
@@ -1223,6 +1226,7 @@
                         "required": true,
                         "description": "The id of the specific questionnaire instance. Format UUIDv4.",
                         "schema": {
+                            "title": "UUID v4",
                             "type": "string",
                             "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
                         },
@@ -1460,6 +1464,7 @@
                         "required": true,
                         "description": "The id of the specific questionnaire instance. Format UUIDv4.",
                         "schema": {
+                            "title": "UUID v4",
                             "type": "string",
                             "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
                         },
@@ -1793,6 +1798,7 @@
                         "required": true,
                         "description": "The id of the specific questionnaire instance. Format UUIDv4.",
                         "schema": {
+                            "title": "UUID v4",
                             "type": "string",
                             "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
                         },
@@ -1810,8 +1816,9 @@
                                     "enum": ["current", "first"]
                                 },
                                 "sectionId": {
+                                    "title": "Section Id",
                                     "type": "string",
-                                    "pattern": "^[a-z0-9]{1,30}(--[a-z0-9]{1,30})?(-[a-z0-9]{1,30})*$"
+                                    "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer)$"
                                 }
                             }
                         },
@@ -1830,8 +1837,9 @@
                             "additionalProperties": false,
                             "properties": {
                                 "before": {
+                                    "title": "Section Id",
                                     "type": "string",
-                                    "pattern": "^[a-z0-9]{1,30}(--[a-z0-9]{1,30})?(-[a-z0-9]{1,30})*$"
+                                    "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer)$"
                                 }
                             }
                         },
@@ -1866,7 +1874,7 @@
                             {
                                 "name": "filter",
                                 "example": {
-                                    "sectionId": "not-a-valid-section",
+                                    "sectionId": "p--not-a-valid-section",
                                     "position": "__DELETE__"
                                 }
                             }
@@ -1879,87 +1887,287 @@
                         "content": {
                             "application/vnd.api+json": {
                                 "schema": {
-                                    "type": "object",
-                                    "additionalProperties": false,
-                                    "required": ["data"],
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "object",
-                                                "additionalProperties": false,
-                                                "required": [
-                                                    "type",
-                                                    "id",
-                                                    "attributes",
-                                                    "relationships"
-                                                ],
-                                                "properties": {
-                                                    "type": {
-                                                        "enum": ["progress-entries"]
-                                                    },
-                                                    "id": {
-                                                        "type": "string",
-                                                        "pattern": "^[a-z0-9]{1,30}(--[a-z0-9]{1,30})?(-[a-z0-9]{1,30})*$"
-                                                    },
-                                                    "attributes": {
-                                                        "type": "object",
-                                                        "additionalProperties": false,
-                                                        "required": ["sectionId", "url"],
-                                                        "properties": {
-                                                            "sectionId": {
-                                                                "type": "string",
-                                                                "pattern": "^[a-z0-9]{1,30}(--[a-z0-9]{1,30})?(-[a-z0-9]{1,30})*$",
-                                                                "nullable": true
-                                                            },
-                                                            "url": {
-                                                                "type": "string",
-                                                                "nullable": true
-                                                            }
+                                    "title": "Progress entries document",
+                                    "allOf": [
+                                        {
+                                            "title": "Loosely describes the JSON:API document format",
+                                            "type": "object",
+                                            "additionalProperties": false,
+                                            "required": ["data"],
+                                            "properties": {
+                                                "data": {
+                                                    "anyOf": [
+                                                        {
+                                                            "type": "object"
+                                                        },
+                                                        {
+                                                            "type": "array",
+                                                            "items": {}
                                                         }
-                                                    },
-                                                    "relationships": {
-                                                        "type": "object",
-                                                        "additionalProperties": false,
-                                                        "required": ["section"],
-                                                        "properties": {
-                                                            "section": {
+                                                    ]
+                                                },
+                                                "included": {
+                                                    "type": "array",
+                                                    "items": {}
+                                                },
+                                                "links": {
+                                                    "type": "object"
+                                                },
+                                                "meta": {
+                                                    "type": "object"
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "title": "Progress entry resource",
+                                                        "allOf": [
+                                                            {
+                                                                "title": "Loosely describes the JSON:API resource format",
                                                                 "type": "object",
                                                                 "additionalProperties": false,
-                                                                "required": ["data"],
+                                                                "required": [
+                                                                    "type",
+                                                                    "id",
+                                                                    "attributes"
+                                                                ],
                                                                 "properties": {
-                                                                    "data": {
+                                                                    "type": {
+                                                                        "type": "string"
+                                                                    },
+                                                                    "id": {
+                                                                        "type": "string",
+                                                                        "anyOf": [
+                                                                            {
+                                                                                "title": "Section Id",
+                                                                                "type": "string",
+                                                                                "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer)$"
+                                                                            },
+                                                                            {
+                                                                                "title": "UUID v4",
+                                                                                "type": "string",
+                                                                                "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+                                                                            },
+                                                                            {
+                                                                                "description": "Used by dataset endpoint",
+                                                                                "enum": ["0"]
+                                                                            }
+                                                                        ]
+                                                                    },
+                                                                    "attributes": {
+                                                                        "type": "object",
+                                                                        "title": "Any valid resource"
+                                                                    },
+                                                                    "relationships": {
+                                                                        "type": "object"
+                                                                    }
+                                                                }
+                                                            },
+                                                            {
+                                                                "required": ["relationships"],
+                                                                "properties": {
+                                                                    "type": {
+                                                                        "enum": ["progress-entries"]
+                                                                    },
+                                                                    "attributes": {
+                                                                        "additionalProperties": false,
+                                                                        "required": [
+                                                                            "sectionId",
+                                                                            "url"
+                                                                        ],
+                                                                        "properties": {
+                                                                            "sectionId": {
+                                                                                "anyOf": [
+                                                                                    {
+                                                                                        "nullable": true
+                                                                                    },
+                                                                                    {
+                                                                                        "title": "Section Id",
+                                                                                        "type": "string",
+                                                                                        "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer)$"
+                                                                                    }
+                                                                                ]
+                                                                            },
+                                                                            "url": {
+                                                                                "type": "string",
+                                                                                "nullable": true
+                                                                            }
+                                                                        }
+                                                                    },
+                                                                    "relationships": {
+                                                                        "additionalProperties": false,
+                                                                        "required": ["section"],
+                                                                        "properties": {
+                                                                            "section": {
+                                                                                "type": "object",
+                                                                                "additionalProperties": false,
+                                                                                "required": [
+                                                                                    "data"
+                                                                                ],
+                                                                                "properties": {
+                                                                                    "data": {
+                                                                                        "type": "object",
+                                                                                        "additionalProperties": false,
+                                                                                        "required": [
+                                                                                            "type",
+                                                                                            "id"
+                                                                                        ],
+                                                                                        "properties": {
+                                                                                            "type": {
+                                                                                                "type": "string"
+                                                                                            },
+                                                                                            "id": {
+                                                                                                "title": "Section Id",
+                                                                                                "type": "string",
+                                                                                                "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer)$"
+                                                                                            }
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        ]
+                                                    }
+                                                },
+                                                "included": {
+                                                    "items": {
+                                                        "oneOf": [
+                                                            {
+                                                                "title": "Section resource",
+                                                                "allOf": [
+                                                                    {
+                                                                        "title": "Loosely describes the JSON:API resource format",
                                                                         "type": "object",
                                                                         "additionalProperties": false,
-                                                                        "required": ["type", "id"],
+                                                                        "required": [
+                                                                            "type",
+                                                                            "id",
+                                                                            "attributes"
+                                                                        ],
                                                                         "properties": {
                                                                             "type": {
                                                                                 "type": "string"
                                                                             },
                                                                             "id": {
                                                                                 "type": "string",
-                                                                                "pattern": "^[a-z0-9]{1,30}(--[a-z0-9]{1,30})?(-[a-z0-9]{1,30})*$"
+                                                                                "anyOf": [
+                                                                                    {
+                                                                                        "title": "Section Id",
+                                                                                        "type": "string",
+                                                                                        "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer)$"
+                                                                                    },
+                                                                                    {
+                                                                                        "title": "UUID v4",
+                                                                                        "type": "string",
+                                                                                        "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+                                                                                    },
+                                                                                    {
+                                                                                        "description": "Used by dataset endpoint",
+                                                                                        "enum": [
+                                                                                            "0"
+                                                                                        ]
+                                                                                    }
+                                                                                ]
+                                                                            },
+                                                                            "attributes": {
+                                                                                "type": "object",
+                                                                                "title": "Any valid resource"
+                                                                            },
+                                                                            "relationships": {
+                                                                                "type": "object"
+                                                                            }
+                                                                        }
+                                                                    },
+                                                                    {
+                                                                        "properties": {
+                                                                            "type": {
+                                                                                "enum": ["sections"]
+                                                                            },
+                                                                            "attributes": {
+                                                                                "title": "Section",
+                                                                                "type": "object",
+                                                                                "required": [
+                                                                                    "$schema"
+                                                                                ],
+                                                                                "properties": {
+                                                                                    "$schema": {
+                                                                                        "enum": [
+                                                                                            "http://json-schema.org/draft-07/schema#"
+                                                                                        ]
+                                                                                    }
+                                                                                }
                                                                             }
                                                                         }
                                                                     }
-                                                                }
+                                                                ]
+                                                            },
+                                                            {
+                                                                "title": "Answer resource",
+                                                                "allOf": [
+                                                                    {
+                                                                        "title": "Loosely describes the JSON:API resource format",
+                                                                        "type": "object",
+                                                                        "additionalProperties": false,
+                                                                        "required": [
+                                                                            "type",
+                                                                            "id",
+                                                                            "attributes"
+                                                                        ],
+                                                                        "properties": {
+                                                                            "type": {
+                                                                                "type": "string"
+                                                                            },
+                                                                            "id": {
+                                                                                "type": "string",
+                                                                                "anyOf": [
+                                                                                    {
+                                                                                        "title": "Section Id",
+                                                                                        "type": "string",
+                                                                                        "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer)$"
+                                                                                    },
+                                                                                    {
+                                                                                        "title": "UUID v4",
+                                                                                        "type": "string",
+                                                                                        "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+                                                                                    },
+                                                                                    {
+                                                                                        "description": "Used by dataset endpoint",
+                                                                                        "enum": [
+                                                                                            "0"
+                                                                                        ]
+                                                                                    }
+                                                                                ]
+                                                                            },
+                                                                            "attributes": {
+                                                                                "type": "object",
+                                                                                "title": "Any valid resource"
+                                                                            },
+                                                                            "relationships": {
+                                                                                "type": "object"
+                                                                            }
+                                                                        }
+                                                                    },
+                                                                    {
+                                                                        "properties": {
+                                                                            "type": {
+                                                                                "enum": ["answers"]
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                ]
                                                             }
-                                                        }
+                                                        ]
                                                     }
                                                 }
                                             }
-                                        },
-                                        "included": {
-                                            "type": "array",
-                                            "items": {}
-                                        },
-                                        "links": {
-                                            "type": "object"
-                                        },
-                                        "meta": {
-                                            "type": "object"
                                         }
-                                    }
+                                    ]
                                 },
                                 "example": {
                                     "data": [
@@ -2191,6 +2399,7 @@
                         "required": true,
                         "description": "The id of the specific questionnaire instance. Format UUIDv4.",
                         "schema": {
+                            "title": "UUID v4",
                             "type": "string",
                             "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
                         },
@@ -2474,6 +2683,7 @@
                 "required": true,
                 "description": "The id of the specific questionnaire instance. Format UUIDv4.",
                 "schema": {
+                    "title": "UUID v4",
                     "type": "string",
                     "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
                 },
@@ -2485,8 +2695,9 @@
                 "required": true,
                 "description": "The id of the specific questionnaire section.",
                 "schema": {
+                    "title": "Section Id",
                     "type": "string",
-                    "pattern": "^(p--?([a-z0-9-]+)|system)$"
+                    "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer)$"
                 },
                 "example": "system"
             },
@@ -2502,8 +2713,9 @@
                             "enum": ["current", "first"]
                         },
                         "sectionId": {
+                            "title": "Section Id",
                             "type": "string",
-                            "pattern": "^[a-z0-9]{1,30}(--[a-z0-9]{1,30})?(-[a-z0-9]{1,30})*$"
+                            "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer)$"
                         }
                     }
                 },
@@ -2522,8 +2734,9 @@
                     "additionalProperties": false,
                     "properties": {
                         "before": {
+                            "title": "Section Id",
                             "type": "string",
-                            "pattern": "^[a-z0-9]{1,30}(--[a-z0-9]{1,30})?(-[a-z0-9]{1,30})*$"
+                            "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer)$"
                         }
                     }
                 },
