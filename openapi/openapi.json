@@ -102,8 +102,9 @@
                                                 "additionalProperties": false,
                                                 "properties": {
                                                     "templateName": {
+                                                        "title": "Questionnaire template name",
                                                         "type": "string",
-                                                        "pattern": "^[a-zA-Z0-9-]{1,30}$"
+                                                        "pattern": "^[a-z]{1,20}(?:-[a-z]{1,20}){0,10}$"
                                                     }
                                                 }
                                             }
