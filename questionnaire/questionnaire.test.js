@@ -1426,7 +1426,7 @@ describe('/questionnaires/{questionnaireId}/progress-entries', () => {
                                 },
                                 included: {
                                     items: {
-                                        oneOf: [
+                                        anyOf: [
                                             {
                                                 $schema: 'http://json-schema.org/draft-07/schema#',
                                                 title: 'Section resource',

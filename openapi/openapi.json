@@ -2037,7 +2037,7 @@
                                                 },
                                                 "included": {
                                                     "items": {
-                                                        "oneOf": [
+                                                        "anyOf": [
                                                             {
                                                                 "title": "Section resource",
                                                                 "allOf": [
