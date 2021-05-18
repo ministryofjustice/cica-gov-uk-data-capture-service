@@ -529,30 +529,74 @@ describe('/questionnaires/{questionnaireId}/sections/{sectionId}/answers', () =>
                 expect(res.type).toBe('application/vnd.api+json');
                 expect(res.body).toMatchSchema({
                     $schema: 'http://json-schema.org/draft-07/schema#',
-                    type: 'object',
-                    additionalProperties: false,
-                    required: ['data'],
-                    properties: {
-                        data: {
+                    title: 'Single answers document',
+                    allOf: [
+                        {
+                            $schema: 'http://json-schema.org/draft-07/schema#',
+                            title: 'Loosely describes the JSON:API document format',
                             type: 'object',
                             additionalProperties: false,
-                            required: ['type', 'id', 'attributes'],
+                            required: ['data'],
                             properties: {
-                                type: {const: 'answers'},
-                                id: {type: 'string', pattern: '^[a-z0-9]{1,30}(-[a-z0-9]{1,30})*$'},
-                                attributes: {
+                                data: {anyOf: [{type: 'object'}, {type: 'array'}]},
+                                included: {type: 'array'},
+                                links: {type: 'object'},
+                                meta: {type: 'object'}
+                            }
+                        },
+                        {
+                            properties: {
+                                data: {
                                     type: 'object',
-                                    additionalProperties: false,
-                                    properties: {
-                                        'case-reference': {
-                                            type: 'string',
-                                            pattern: '^[0-9]{2}\\\\[0-9]{6}$'
-                                        }
-                                    }
+                                    $schema: 'http://json-schema.org/draft-07/schema#',
+                                    title: 'Answer resource',
+                                    allOf: [
+                                        {
+                                            $schema: 'http://json-schema.org/draft-07/schema#',
+                                            title: 'Loosely describes the JSON:API resource format',
+                                            type: 'object',
+                                            additionalProperties: false,
+                                            required: ['type', 'id', 'attributes'],
+                                            properties: {
+                                                type: {type: 'string'},
+                                                id: {
+                                                    type: 'string',
+                                                    anyOf: [
+                                                        {
+                                                            $schema:
+                                                                'http://json-schema.org/draft-07/schema#',
+                                                            title: 'Section Id',
+                                                            type: 'string',
+                                                            pattern:
+                                                                '^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer)$'
+                                                        },
+                                                        {
+                                                            $schema:
+                                                                'http://json-schema.org/draft-07/schema#',
+                                                            title: 'UUID v4',
+                                                            type: 'string',
+                                                            pattern:
+                                                                '^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$'
+                                                        },
+                                                        {
+                                                            const: '0',
+                                                            description: 'Used by dataset endpoint'
+                                                        }
+                                                    ]
+                                                },
+                                                attributes: {
+                                                    type: 'object',
+                                                    title: 'Any valid resource'
+                                                },
+                                                relationships: {type: 'object'}
+                                            }
+                                        },
+                                        {properties: {type: {const: 'answers'}}}
+                                    ]
                                 }
                             }
                         }
-                    }
+                    ]
                 });
             });
         });
