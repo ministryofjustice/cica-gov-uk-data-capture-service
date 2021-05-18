@@ -1301,70 +1301,256 @@ describe('/questionnaires/{questionnaireId}/progress-entries', () => {
                 expect(res.type).toBe('application/vnd.api+json');
                 expect(res.body).toMatchSchema({
                     $schema: 'http://json-schema.org/draft-07/schema#',
-                    type: 'object',
-                    additionalProperties: false,
-                    required: ['data'],
-                    properties: {
-                        data: {
-                            type: 'array',
-                            items: {
-                                type: 'object',
-                                additionalProperties: false,
-                                required: ['type', 'id', 'attributes', 'relationships'],
-                                properties: {
-                                    type: {const: 'progress-entries'},
-                                    id: {
-                                        type: 'string',
-                                        pattern:
-                                            '^[a-z0-9]{1,30}(--[a-z0-9]{1,30})?(-[a-z0-9]{1,30})*$'
-                                    },
-                                    attributes: {
-                                        type: 'object',
-                                        additionalProperties: false,
-                                        required: ['sectionId', 'url'],
-                                        properties: {
-                                            sectionId: {
-                                                type: ['string', 'null'],
-                                                pattern:
-                                                    '^[a-z0-9]{1,30}(--[a-z0-9]{1,30})?(-[a-z0-9]{1,30})*$'
-                                            },
-                                            url: {type: ['string', 'null']}
-                                        }
-                                    },
-                                    relationships: {
-                                        type: 'object',
-                                        additionalProperties: false,
-                                        required: ['section'],
-                                        properties: {
-                                            section: {
+                    title: 'Progress entries document',
+                    allOf: [
+                        {
+                            $schema: 'http://json-schema.org/draft-07/schema#',
+                            title: 'Loosely describes the JSON:API document format',
+                            type: 'object',
+                            additionalProperties: false,
+                            required: ['data'],
+                            properties: {
+                                data: {anyOf: [{type: 'object'}, {type: 'array'}]},
+                                included: {type: 'array'},
+                                links: {type: 'object'},
+                                meta: {type: 'object'}
+                            }
+                        },
+                        {
+                            properties: {
+                                data: {
+                                    type: 'array',
+                                    items: {
+                                        $schema: 'http://json-schema.org/draft-07/schema#',
+                                        title: 'Progress entry resource',
+                                        allOf: [
+                                            {
+                                                $schema: 'http://json-schema.org/draft-07/schema#',
+                                                title:
+                                                    'Loosely describes the JSON:API resource format',
                                                 type: 'object',
                                                 additionalProperties: false,
-                                                required: ['data'],
+                                                required: ['type', 'id', 'attributes'],
                                                 properties: {
-                                                    data: {
-                                                        type: 'object',
-                                                        additionalProperties: false,
-                                                        required: ['type', 'id'],
-                                                        properties: {
-                                                            type: {type: 'string'},
-                                                            id: {
+                                                    type: {type: 'string'},
+                                                    id: {
+                                                        type: 'string',
+                                                        anyOf: [
+                                                            {
+                                                                $schema:
+                                                                    'http://json-schema.org/draft-07/schema#',
+                                                                title: 'Section Id',
                                                                 type: 'string',
                                                                 pattern:
-                                                                    '^[a-z0-9]{1,30}(--[a-z0-9]{1,30})?(-[a-z0-9]{1,30})*$'
+                                                                    '^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer)$'
+                                                            },
+                                                            {
+                                                                $schema:
+                                                                    'http://json-schema.org/draft-07/schema#',
+                                                                title: 'UUID v4',
+                                                                type: 'string',
+                                                                pattern:
+                                                                    '^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$'
+                                                            },
+                                                            {
+                                                                const: '0',
+                                                                description:
+                                                                    'Used by dataset endpoint'
+                                                            }
+                                                        ]
+                                                    },
+                                                    attributes: {
+                                                        type: 'object',
+                                                        title: 'Any valid resource'
+                                                    },
+                                                    relationships: {type: 'object'}
+                                                }
+                                            },
+                                            {
+                                                required: ['relationships'],
+                                                properties: {
+                                                    type: {const: 'progress-entries'},
+                                                    attributes: {
+                                                        additionalProperties: false,
+                                                        required: ['sectionId', 'url'],
+                                                        properties: {
+                                                            sectionId: {
+                                                                anyOf: [
+                                                                    {type: 'null'},
+                                                                    {
+                                                                        $schema:
+                                                                            'http://json-schema.org/draft-07/schema#',
+                                                                        title: 'Section Id',
+                                                                        type: 'string',
+                                                                        pattern:
+                                                                            '^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer)$'
+                                                                    }
+                                                                ]
+                                                            },
+                                                            url: {type: ['string', 'null']}
+                                                        }
+                                                    },
+                                                    relationships: {
+                                                        additionalProperties: false,
+                                                        required: ['section'],
+                                                        properties: {
+                                                            section: {
+                                                                type: 'object',
+                                                                additionalProperties: false,
+                                                                required: ['data'],
+                                                                properties: {
+                                                                    data: {
+                                                                        type: 'object',
+                                                                        additionalProperties: false,
+                                                                        required: ['type', 'id'],
+                                                                        properties: {
+                                                                            type: {type: 'string'},
+                                                                            id: {
+                                                                                $schema:
+                                                                                    'http://json-schema.org/draft-07/schema#',
+                                                                                title: 'Section Id',
+                                                                                type: 'string',
+                                                                                pattern:
+                                                                                    '^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer)$'
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
                                                             }
                                                         }
                                                     }
                                                 }
                                             }
-                                        }
+                                        ]
+                                    }
+                                },
+                                included: {
+                                    items: {
+                                        anyOf: [
+                                            {
+                                                $schema: 'http://json-schema.org/draft-07/schema#',
+                                                title: 'Section resource',
+                                                allOf: [
+                                                    {
+                                                        $schema:
+                                                            'http://json-schema.org/draft-07/schema#',
+                                                        title:
+                                                            'Loosely describes the JSON:API resource format',
+                                                        type: 'object',
+                                                        additionalProperties: false,
+                                                        required: ['type', 'id', 'attributes'],
+                                                        properties: {
+                                                            type: {type: 'string'},
+                                                            id: {
+                                                                type: 'string',
+                                                                anyOf: [
+                                                                    {
+                                                                        $schema:
+                                                                            'http://json-schema.org/draft-07/schema#',
+                                                                        title: 'Section Id',
+                                                                        type: 'string',
+                                                                        pattern:
+                                                                            '^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer)$'
+                                                                    },
+                                                                    {
+                                                                        $schema:
+                                                                            'http://json-schema.org/draft-07/schema#',
+                                                                        title: 'UUID v4',
+                                                                        type: 'string',
+                                                                        pattern:
+                                                                            '^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$'
+                                                                    },
+                                                                    {
+                                                                        const: '0',
+                                                                        description:
+                                                                            'Used by dataset endpoint'
+                                                                    }
+                                                                ]
+                                                            },
+                                                            attributes: {
+                                                                type: 'object',
+                                                                title: 'Any valid resource'
+                                                            },
+                                                            relationships: {type: 'object'}
+                                                        }
+                                                    },
+                                                    {
+                                                        properties: {
+                                                            type: {const: 'sections'},
+                                                            attributes: {
+                                                                $schema:
+                                                                    'http://json-schema.org/draft-07/schema#',
+                                                                title: 'Section',
+                                                                type: 'object',
+                                                                required: ['$schema'],
+                                                                properties: {
+                                                                    $schema: {
+                                                                        enum: [
+                                                                            'http://json-schema.org/draft-07/schema#'
+                                                                        ]
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                $schema: 'http://json-schema.org/draft-07/schema#',
+                                                title: 'Answer resource',
+                                                allOf: [
+                                                    {
+                                                        $schema:
+                                                            'http://json-schema.org/draft-07/schema#',
+                                                        title:
+                                                            'Loosely describes the JSON:API resource format',
+                                                        type: 'object',
+                                                        additionalProperties: false,
+                                                        required: ['type', 'id', 'attributes'],
+                                                        properties: {
+                                                            type: {type: 'string'},
+                                                            id: {
+                                                                type: 'string',
+                                                                anyOf: [
+                                                                    {
+                                                                        $schema:
+                                                                            'http://json-schema.org/draft-07/schema#',
+                                                                        title: 'Section Id',
+                                                                        type: 'string',
+                                                                        pattern:
+                                                                            '^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer)$'
+                                                                    },
+                                                                    {
+                                                                        $schema:
+                                                                            'http://json-schema.org/draft-07/schema#',
+                                                                        title: 'UUID v4',
+                                                                        type: 'string',
+                                                                        pattern:
+                                                                            '^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$'
+                                                                    },
+                                                                    {
+                                                                        const: '0',
+                                                                        description:
+                                                                            'Used by dataset endpoint'
+                                                                    }
+                                                                ]
+                                                            },
+                                                            attributes: {
+                                                                type: 'object',
+                                                                title: 'Any valid resource'
+                                                            },
+                                                            relationships: {type: 'object'}
+                                                        }
+                                                    },
+                                                    {properties: {type: {const: 'answers'}}}
+                                                ]
+                                            }
+                                        ]
                                     }
                                 }
                             }
-                        },
-                        included: {type: 'array'},
-                        links: {type: 'object'},
-                        meta: {type: 'object'}
-                    }
+                        }
+                    ]
                 });
             });
         });
@@ -1463,7 +1649,7 @@ describe('/questionnaires/{questionnaireId}/progress-entries', () => {
             it('should The specified resource was not found', async () => {
                 const res = await request(app)
                     .get(
-                        '/api/v1/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/progress-entries?filter%5BsectionId%5D=not-a-valid-section'
+                        '/api/v1/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/progress-entries?filter%5BsectionId%5D=p--not-a-valid-section'
                     )
                     .set('Authorization', `Bearer ${tokens['read:progress-entries']}`);
 
