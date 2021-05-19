@@ -507,7 +507,7 @@
                             {
                                 "name": "filter",
                                 "example": {
-                                    "sectionId": "not-a-valid-section",
+                                    "sectionId": "p--not-a-valid-section",
                                     "position": "__DELETE__"
                                 }
                             }
@@ -675,7 +675,7 @@
                 "required": true,
                 "description": "The id of the specific questionnaire instance. Format UUIDv4.",
                 "schema": {
-                    "$ref": "./json-schemas/api/parameters/questionnaireId.json"
+                    "$ref": "./json-schemas/models/definitions/uuid-v4.json"
                 },
                 "example": "285cb104-0c15-4a9c-9840-cb1007f098fb"
             },
@@ -685,7 +685,7 @@
                 "required": true,
                 "description": "The id of the specific questionnaire section.",
                 "schema": {
-                    "$ref": "./json-schemas/api/parameters/sectionId.json"
+                    "$ref": "./json-schemas/models/definitions/section-id.json"
                 },
                 "example": "system"
             },
