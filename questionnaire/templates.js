@@ -379,8 +379,8 @@ module.exports = {
                 additionalProperties: false,
                 properties: {
                     'q--was-the-crime-reported-to-police': {
-                        type: 'boolean',
-                        title: 'Was the crime reported to the police?'
+                        title: 'Was the crime reported to the police?',
+                        type: 'boolean'
                     },
                     'dont-know-if-crime-reported': {
                         description:
@@ -2920,6 +2920,7 @@ module.exports = {
             'p--context-offender': {
                 $schema: 'http://json-schema.org/draft-07/schema#',
                 type: 'object',
+                title: 'About the offender',
                 additionalProperties: false,
                 properties: {
                     'offender-context': {
