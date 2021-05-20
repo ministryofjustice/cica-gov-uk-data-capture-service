@@ -9,6 +9,7 @@ const pino = require('pino-http');
 const errorHandler = require('./middleware/error-handler');
 const docsRouter = require('./docs/routes');
 const questionnaireRouter = require('./questionnaire/routes');
+const submissionsRouter = require('./questionnaire/submissions-routes');
 
 const app = express();
 const logger = pino({
@@ -81,6 +82,8 @@ app.use((req, res, next) => {
     res.set('Application-Version', process.env.npm_package_version);
     next();
 });
+
+app.use('/api/v1/submissions', submissionsRouter);
 
 // Install the OpenApiValidator onto express app
 new OpenApiValidator({

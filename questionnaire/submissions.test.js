@@ -40,10 +40,22 @@ jest.doMock('../services/slack', () => {
     }));
 });
 
+const messageBusPost = jest.fn(async (queueName, payload) => {
+    if (payload.applicationId === '4ddb0208-f7da-4237-a244-34e7e58d2ddf') {
+        throw new Error('some error');
+    }
+    return {body: 'Message sent'};
+});
+
+jest.doMock('../services/message-bus/index.js', () => {
+    return jest.fn(() => ({
+        post: messageBusPost
+    }));
+});
+
+const updateQuestionnaireSubmissionStatus = jest.fn();
 jest.doMock('./questionnaire-dal.js', () =>
-    // return a modified factory function, that returns an object with a method, that returns a valid created response
     jest.fn(() => ({
-        // createQuestionnaire: () => createQuestionnaireResponse,
         getQuestionnaire: questionnaireId => {
             if (
                 questionnaireId === '285cb104-0c15-4a9c-9840-cb1007f098fb' || // not started.
@@ -104,16 +116,14 @@ jest.doMock('./questionnaire-dal.js', () =>
                 `Questionnaire "${questionnaireId}" not found`
             );
         },
-        updateQuestionnaireSubmissionStatus: () => undefined,
-        retrieveCaseReferenceNumber: () => undefined
+        updateQuestionnaireSubmissionStatus,
+        retrieveCaseReferenceNumber: () => undefined,
+        getQuestionnaireIdsBySubmissionStatus: () => [
+            '4ddb0208-f7da-4237-a244-34e7e58d2ddf',
+            '93259f6d-1826-4e97-ba39-53b4e232dd81'
+        ]
     }))
 );
-
-// jest.doMock('../services/message-bus/index.js', () =>
-//     jest.fn(() => ({
-//         post: () => postSubmissionQueueResponse
-//     }))
-// );
 
 const app = require('../app');
 
@@ -470,5 +480,54 @@ describe('Questionnaire submissions', () => {
                 );
             });
         });
+    });
+});
+
+describe('Questionnaire resubmissions', () => {
+    describe('Message Bus operational', () => {
+        it('should set a submission to IN_PROGRESS', async () => {
+            jest.clearAllMocks();
+            // eslint-disable-next-line global-require
+            const createSubmissionsService = require('./submissions-service');
+            const submissionsService = createSubmissionsService({logger: jest.fn()});
+            const response = await submissionsService.postFailedSubmissions();
+            expect(response.length).toBe(2);
+            expect(response[1]).toEqual({
+                id: '93259f6d-1826-4e97-ba39-53b4e232dd81',
+                resubmitted: true
+            });
+        });
+    });
+    describe('Message Bus NOT operational', () => {
+        it('should set a submission to FAILED', async () => {
+            jest.clearAllMocks();
+            // eslint-disable-next-line global-require
+            const createSubmissionsService = require('./submissions-service');
+            const submissionsService = createSubmissionsService({logger: jest.fn()});
+            const response = await submissionsService.postFailedSubmissions();
+            expect(response.length).toBe(2);
+            expect(response[0]).toEqual({
+                id: '4ddb0208-f7da-4237-a244-34e7e58d2ddf',
+                resubmitted: false
+            });
+        });
+    });
+    it('should resubmit failed submissions', async () => {
+        const response = await request(app)
+            .post('/api/v1/submissions/resubmit-failed')
+            .set('Authorization', `Bearer ${tokens['update:questionnaires']}`)
+            .set('Content-Type', 'application/vnd.api+json')
+            .send({});
+        expect(response.body.length).toBe(2);
+        expect(response.body).toEqual([
+            {
+                id: '4ddb0208-f7da-4237-a244-34e7e58d2ddf',
+                resubmitted: false
+            },
+            {
+                id: '93259f6d-1826-4e97-ba39-53b4e232dd81',
+                resubmitted: true
+            }
+        ]);
     });
 });
