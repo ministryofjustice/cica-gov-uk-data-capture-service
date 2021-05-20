@@ -118,12 +118,27 @@ function questionnaireDAL(spec) {
         return result;
     }
 
+    async function getQuestionnaireIdsBySubmissionStatus(submissionStatus) {
+        let result;
+
+        try {
+            result = await db.query('SELECT id FROM questionnaire WHERE submission_status = $1', [
+                submissionStatus
+            ]);
+        } catch (err) {
+            throw err;
+        }
+
+        return result.rowCount ? result.rows.map(x => x.id) : [];
+    }
+
     return Object.freeze({
         createQuestionnaire,
         updateQuestionnaire,
         getQuestionnaire,
         getQuestionnaireSubmissionStatus,
-        updateQuestionnaireSubmissionStatus
+        updateQuestionnaireSubmissionStatus,
+        getQuestionnaireIdsBySubmissionStatus
     });
 }
 
