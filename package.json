@@ -11,7 +11,9 @@
         "coverage": "jest --coverage",
         "dump-eslint-conf": "eslint --print-config ./app.js > ./stuff/eslint-conf.json",
         "lint": "eslint .",
-        "lint:fix": "eslint --fix ."
+        "lint:fix": "eslint --fix .",
+        "generate-tests": "node ./stuff/generate-tests-latest.js",
+        "buildtest": "npm run openapi:build && npm run generate-tests && npm run test"
     },
     "dependencies": {
         "@netflix/nerror": "^1.1.0",
