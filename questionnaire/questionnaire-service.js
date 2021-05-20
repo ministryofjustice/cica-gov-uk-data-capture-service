@@ -14,6 +14,7 @@ const createMessageBusCaller = require('../services/message-bus');
 const replaceJsonPointers = require('../services/replace-json-pointer');
 const createNotifyService = require('../services/notify');
 const createSlackService = require('../services/slack');
+const questionnaireResource = require('./resources/questionnaire-resource');
 
 const defaults = {};
 defaults.createQuestionnaireDAL = require('./questionnaire-dal');
@@ -49,13 +50,7 @@ function createQuestionnaireService({
 
         await db.createQuestionnaire(uuidV4, questionnaire);
 
-        return {
-            data: {
-                type: 'questionnaires',
-                id: questionnaire.id,
-                attributes: questionnaire
-            }
-        };
+        return questionnaireResource({questionnaire});
     }
 
     async function getQuestionnaire(questionnaireId) {
