@@ -401,12 +401,17 @@ function createQuestionnaireService({
     }
 
     function buildSectionResource(sectionId, questionnaire) {
-        const sectionAsJson = JSON.stringify(questionnaire.sections[sectionId]);
-        const sectionAsJsonWithReplacements = replaceJsonPointers(sectionAsJson, questionnaire);
+        const section = questionnaire.sections[sectionId];
+        const {schema: sectionSchema} = section;
+        const sectionSchemaAsJson = JSON.stringify(sectionSchema);
+        const sectionSchemaAsJsonWithReplacements = replaceJsonPointers(
+            sectionSchemaAsJson,
+            questionnaire
+        );
         const sectionResource = {
             type: 'sections',
             id: sectionId,
-            attributes: JSON.parse(sectionAsJsonWithReplacements)
+            attributes: JSON.parse(sectionSchemaAsJsonWithReplacements)
         };
 
         // Add any answer relationships
