@@ -36,7 +36,6 @@ const tokens = {
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJkYXRhLWNhcHR1cmUtc2VydmljZSIsImlzcyI6IiQuYXVkIiwianRpIjoiYzVjNzc4ZWQtNTg4NC00N2YwLWFiYzctZTQ1MmZiYWRlYTcyIiwic3ViIjoiJC5hdWQiLCJzY29wZSI6ImNyZWF0ZTpxdWVzdGlvbm5haXJlcyByZWFkOnF1ZXN0aW9ubmFpcmVzIHVwZGF0ZTpxdWVzdGlvbm5haXJlcyBkZWxldGU6cXVlc3Rpb25uYWlyZXMiLCJpYXQiOjE1NjQwNTgyNTF9.Adv1qgj-HiNGxw_0cdYpPO8Fbw12rgJTTqMReJUmFBs'
 };
 
-const createQuestionnaireResponse = require('./test-fixtures/res/post_questionnaire.json');
 const getQuestionnaireResponse = require('./test-fixtures/res/get_questionnaire.json');
 const postSubmissionQueueResponse = require('./test-fixtures/res/post_submissionQueue.json');
 
@@ -44,7 +43,7 @@ const postSubmissionQueueResponse = require('./test-fixtures/res/post_submission
 jest.doMock('./questionnaire-dal.js', () =>
     // return a modified factory function, that returns an object with a method, that returns a valid created response
     jest.fn(() => ({
-        createQuestionnaire: () => createQuestionnaireResponse,
+        createQuestionnaire: () => {},
         getQuestionnaire: questionnaireId => {
             if (questionnaireId === '285cb104-0c15-4a9c-9840-cb1007f098fb') {
                 return getQuestionnaireResponse;
