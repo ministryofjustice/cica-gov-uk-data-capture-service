@@ -50,7 +50,9 @@ function createQuestionnaireService({
 
         await db.createQuestionnaire(uuidV4, questionnaire);
 
-        return questionnaireResource({questionnaire});
+        return {
+            data: questionnaireResource({questionnaire})
+        };
     }
 
     async function getQuestionnaire(questionnaireId) {

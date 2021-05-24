@@ -5,16 +5,14 @@ function questionnaireResource(spec) {
     const {id, type, version, routes} = questionnaire;
 
     return Object.freeze({
-        data: {
-            type: 'questionnaires',
-            id: questionnaire.id,
-            attributes: {
-                id,
-                type,
-                version,
-                routes: {
-                    initial: routes.initial
-                }
+        type: 'questionnaires',
+        id: questionnaire.id,
+        attributes: {
+            id,
+            type,
+            version,
+            routes: {
+                initial: routes.initial
             }
         }
     });
