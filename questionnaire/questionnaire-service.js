@@ -310,7 +310,9 @@ function createQuestionnaireService({
             // 3 - Section is available. Validate the answers against it
             const sectionSchema = questionnaire.sections[section.id].schema;
             const validate = ajv.compile(sectionSchema);
+            // The AJV validate function coerces the answers and mutates the answers object
             const valid = validate(answers);
+            const coercedAnswers = answers;
 
             if (!valid) {
                 const validationError = new VError({
@@ -318,7 +320,7 @@ function createQuestionnaireService({
                     info: {
                         schema: sectionSchema,
                         answers: rawAnswers,
-                        coercedAnswers: answers,
+                        coercedAnswers,
                         schemaErrors: validate.errors
                     }
                 });
@@ -332,10 +334,10 @@ function createQuestionnaireService({
 
             if (section.id === 'system') {
                 const currentSection = qRouter.current();
-                currentSection.context.answers.system = answers;
+                currentSection.context.answers.system = coercedAnswers;
                 answeredQuestionnaire = currentSection.context;
             } else {
-                const nextSection = qRouter.next(answers, section.id);
+                const nextSection = qRouter.next(coercedAnswers, section.id);
                 answeredQuestionnaire = nextSection.context;
             }
 
@@ -346,7 +348,7 @@ function createQuestionnaireService({
                 data: {
                     type: 'answers',
                     id: section.id,
-                    attributes: answers
+                    attributes: coercedAnswers
                 }
             };
         } catch (err) {
