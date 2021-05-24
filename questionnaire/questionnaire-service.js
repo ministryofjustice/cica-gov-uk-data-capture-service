@@ -308,7 +308,7 @@ function createQuestionnaireService({
             const section = getSection(sectionId, qRouter);
 
             // 3 - Section is available. Validate the answers against it
-            const sectionSchema = questionnaire.sections[section.id];
+            const sectionSchema = questionnaire.sections[section.id].schema;
             const validate = ajv.compile(sectionSchema);
             const valid = validate(answers);
 

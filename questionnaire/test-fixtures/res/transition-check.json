@@ -1,0 +1,134 @@
+{
+    "retractedAnswers": {},
+    "sections": {
+        "p-applicant-fatal-claim": {
+            "schema": {
+                "required": ["q-applicant-fatal-claim"],
+                "invalidExamples": [
+                    {
+                        "q-applicant-fatal-claim": "foo"
+                    }
+                ],
+                "errorMessage": {
+                    "required": {
+                        "q-applicant-fatal-claim": "Select yes if you are applying for someone who died from their injuries"
+                    }
+                },
+                "examples": [
+                    {
+                        "q-applicant-fatal-claim": true
+                    },
+                    {
+                        "q-applicant-fatal-claim": false
+                    }
+                ],
+                "additionalProperties": false,
+                "$schema": "http://json-schema.org/draft-07/schema#",
+                "type": "object",
+                "properties": {
+                    "q-applicant-fatal-claim": {
+                        "type": "boolean",
+                        "title": "Are you applying for someone who died from their injuries?"
+                    }
+                }
+            }
+        },
+        "p--was-the-crime-reported-to-police": {
+            "schema": {
+                "required": ["q--was-the-crime-reported-to-police"],
+                "invalidExamples": [
+                    {
+                        "q--was-the-crime-reported-to-police": "foo"
+                    }
+                ],
+                "errorMessage": {
+                    "required": {
+                        "q--was-the-crime-reported-to-police": "Select yes if the crime was reported to the police"
+                    }
+                },
+                "examples": [
+                    {
+                        "q--was-the-crime-reported-to-police": true
+                    },
+                    {
+                        "q--was-the-crime-reported-to-police": false
+                    }
+                ],
+                "additionalProperties": false,
+                "$schema": "http://json-schema.org/draft-07/schema#",
+                "type": "object",
+                "properties": {
+                    "dont-know-if-crime-reported": {
+                        "description": "{% from \"components/details/macro.njk\" import govukDetails %}{% set templateHtml %}{% include 'contact.njk' %}{% endset %}{{ govukDetails({summaryText: \"I do not know if the crime was reported to the police\",html: '<p class=\"govuk-body\">You can contact us for help with your application.</p>' + templateHtml})}}"
+                    },
+                    "q--was-the-crime-reported-to-police": {
+                        "type": "boolean",
+                        "title": "Was the crime reported to the police?"
+                    }
+                }
+            }
+        }
+    },
+    "answers": {},
+    "version": "3.0.0",
+    "meta": {
+        "onComplete": {
+            "tasks": [
+                {
+                    "templatePlaceholderMap": {
+                        "emailAddress": "/answers/p-applicant-confirmation-method/q-applicant-enter-your-email-address",
+                        "caseReference": "/answers/system/case-reference"
+                    },
+                    "type": "sendEmail",
+                    "templateId": "cb79653c-cf6e-44d4-8c03-087ba21cfd01"
+                },
+                {
+                    "templatePlaceholderMap": {
+                        "phoneNumber": "/answers/p-applicant-confirmation-method/q-applicant-enter-your-telephone-number",
+                        "caseReference": "/answers/system/case-reference"
+                    },
+                    "type": "sendSms",
+                    "templateId": "3c847bb8-957a-4bba-9fad-090657bb5c71"
+                }
+            ]
+        },
+        "questionnaireDocumentVersion": "2.0.0"
+    },
+    "routes": {
+        "states": {
+            "p-applicant-fatal-claim": {
+                "on": {
+                    "ANSWER": [
+                        {
+                            "cond": [
+                                "==",
+                                "$.answers.p-applicant-fatal-claim.q-applicant-fatal-claim",
+                                true
+                            ],
+                            "target": "p--transition"
+                        },
+                        {
+                            "cond": [
+                                "==",
+                                "$.answers.p-applicant-fatal-claim.q-applicant-fatal-claim",
+                                false
+                            ],
+                            "target": "p--was-the-crime-reported-to-police"
+                        }
+                    ]
+                }
+            },
+            "p--was-the-crime-reported-to-police": {
+                "type": "final"
+            }
+        },
+        "referrer": "https://www.gov.uk/claim-compensation-criminal-injury/make-claim",
+        "confirmation": "p--confirmation",
+        "initial": "p-applicant-fatal-claim",
+        "summary": "p-applicant-declaration"
+    },
+    "progress": ["p-applicant-fatal-claim"],
+    "currentSectionId": "p-applicant-fatal-claim",
+    "type": "apply-for-compensation",
+    "id": "1b7c6441-00ed-48c2-8c46-00bc90d446ec"
+}
