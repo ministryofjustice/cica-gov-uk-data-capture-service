@@ -48,6 +48,50 @@ describe('/questionnaires/{questionnaireId}/progress-entries?filter[position]=cu
 
 describe('Answering and retrieving the next section', () => {
     describe('Given a valid answer', () => {
+        it('should coerce answer values', async () => {
+            // eslint-disable-next-line global-require
+            const mockQuestionnaire = require('./test-fixtures/res/transition-check.json');
+
+            // mock the DAL db integration
+            jest.doMock('./questionnaire-dal.js', () =>
+                // return a modified factory function, that returns an object with a method, that returns a valid created response
+                jest.fn(() => ({
+                    getQuestionnaire: () => mockQuestionnaire,
+                    updateQuestionnaire: () => undefined
+                }))
+            );
+
+            const tokens = {
+                'update:questionnaires':
+                    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJkYXRhLWNhcHR1cmUtc2VydmljZSIsImlzcyI6IiQuYXVkIiwianRpIjoiYzVjNzc4ZWQtNTg4NC00N2YwLWFiYzctZTQ1MmZiYWRlYTcyIiwic3ViIjoiJC5hdWQiLCJzY29wZSI6ImNyZWF0ZTpxdWVzdGlvbm5haXJlcyByZWFkOnF1ZXN0aW9ubmFpcmVzIHVwZGF0ZTpxdWVzdGlvbm5haXJlcyBkZWxldGU6cXVlc3Rpb25uYWlyZXMiLCJpYXQiOjE1NjQwNTgyNTF9.Adv1qgj-HiNGxw_0cdYpPO8Fbw12rgJTTqMReJUmFBs'
+            };
+            // app has an indirect dependency on questionnaire-dal.js, require it after
+            // the mock so that it references the mocked version
+            // eslint-disable-next-line global-require
+            const app = require('../app');
+
+            function submitSectionAnswer(answer) {
+                return request(app)
+                    .post(
+                        `/api/v1/questionnaires/1b7c6441-00ed-48c2-8c46-00bc90d446ec/sections/p-applicant-fatal-claim/answers`
+                    )
+                    .set('Authorization', `Bearer ${tokens['update:questionnaires']}`)
+                    .set('Content-Type', 'application/vnd.api+json')
+                    .send({data: {type: 'answers', attributes: answer}});
+            }
+
+            const booleanValueAsString = 'false';
+            const submitAnswerRes = await submitSectionAnswer({
+                'q-applicant-fatal-claim': booleanValueAsString
+            });
+            const coercedType = typeof submitAnswerRes.body.data.attributes[
+                'q-applicant-fatal-claim'
+            ];
+
+            expect(submitAnswerRes.statusCode).toBe(201);
+            expect(coercedType).toEqual('boolean');
+        });
+
         it('should return the next section', async () => {
             // eslint-disable-next-line global-require
             let mockQuestionnaire = require('./test-fixtures/res/transition-check.json');
@@ -84,10 +128,10 @@ describe('Answering and retrieving the next section', () => {
                 return res.body.data[0].id;
             }
 
-            function submitSectionAnswer(sectionId, answer) {
+            function submitSectionAnswer(answer) {
                 return request(app)
                     .post(
-                        `/api/v1/questionnaires/1b7c6441-00ed-48c2-8c46-00bc90d446ec/sections/${sectionId}/answers`
+                        `/api/v1/questionnaires/1b7c6441-00ed-48c2-8c46-00bc90d446ec/sections/p-applicant-fatal-claim/answers`
                     )
                     .set('Authorization', `Bearer ${tokens['update:questionnaires']}`)
                     .set('Content-Type', 'application/vnd.api+json')
@@ -95,9 +139,8 @@ describe('Answering and retrieving the next section', () => {
             }
 
             const currentSectionId = await getCurrentSectionId();
-            const nonCoercedBooleanValue = 'false';
-            const submitAnswerRes = await submitSectionAnswer(currentSectionId, {
-                'q-applicant-fatal-claim': nonCoercedBooleanValue
+            const submitAnswerRes = await submitSectionAnswer({
+                'q-applicant-fatal-claim': 'false'
             });
             const newSectionId = await getCurrentSectionId();
 
