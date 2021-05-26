@@ -36,15 +36,14 @@ const tokens = {
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJkYXRhLWNhcHR1cmUtc2VydmljZSIsImlzcyI6IiQuYXVkIiwianRpIjoiYzVjNzc4ZWQtNTg4NC00N2YwLWFiYzctZTQ1MmZiYWRlYTcyIiwic3ViIjoiJC5hdWQiLCJzY29wZSI6ImNyZWF0ZTpxdWVzdGlvbm5haXJlcyByZWFkOnF1ZXN0aW9ubmFpcmVzIHVwZGF0ZTpxdWVzdGlvbm5haXJlcyBkZWxldGU6cXVlc3Rpb25uYWlyZXMiLCJpYXQiOjE1NjQwNTgyNTF9.Adv1qgj-HiNGxw_0cdYpPO8Fbw12rgJTTqMReJUmFBs'
 };
 
-const createQuestionnaireResponse = require('./test-fixtures/res/post_questionnaire.json');
-const getQuestionnaireResponse = require('./test-fixtures/res/get_questionnaire.json');
+const getQuestionnaireResponse = require('./test-fixtures/res/get_questionnaire.js');
 const postSubmissionQueueResponse = require('./test-fixtures/res/post_submissionQueue.json');
 
 // mock the DAL db integration
 jest.doMock('./questionnaire-dal.js', () =>
     // return a modified factory function, that returns an object with a method, that returns a valid created response
     jest.fn(() => ({
-        createQuestionnaire: () => createQuestionnaireResponse,
+        createQuestionnaire: () => {},
         getQuestionnaire: questionnaireId => {
             if (questionnaireId === '285cb104-0c15-4a9c-9840-cb1007f098fb') {
                 return getQuestionnaireResponse;
@@ -177,20 +176,8 @@ describe('/questionnaires', () => {
                                             properties: {
                                                 type: {const: 'questionnaires'},
                                                 attributes: {
-                                                    $schema:
-                                                        'http://json-schema.org/draft-07/schema#',
                                                     type: 'object',
-                                                    title: 'Questionnaire instance schema',
-                                                    required: [
-                                                        'id',
-                                                        'type',
-                                                        'version',
-                                                        'sections',
-                                                        'routes',
-                                                        'answers',
-                                                        'progress',
-                                                        'meta'
-                                                    ],
+                                                    required: ['id', 'type', 'version', 'routes'],
                                                     additionalProperties: false,
                                                     properties: {
                                                         id: {
@@ -200,17 +187,6 @@ describe('/questionnaires', () => {
                                                             type: 'string',
                                                             pattern:
                                                                 '^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$'
-                                                        },
-                                                        meta: {
-                                                            type: 'object',
-                                                            required: [
-                                                                'questionnaireDocumentVersion'
-                                                            ],
-                                                            properties: {
-                                                                questionnaireDocumentVersion: {
-                                                                    enum: ['1.0.0']
-                                                                }
-                                                            }
                                                         },
                                                         type: {
                                                             $schema:
@@ -228,32 +204,9 @@ describe('/questionnaires', () => {
                                                             pattern:
                                                                 '^[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}$'
                                                         },
-                                                        sections: {
-                                                            type: 'object',
-                                                            additionalProperties: {
-                                                                $schema:
-                                                                    'http://json-schema.org/draft-07/schema#',
-                                                                title: 'Section',
-                                                                type: 'object',
-                                                                required: ['$schema'],
-                                                                properties: {
-                                                                    $schema: {
-                                                                        enum: [
-                                                                            'http://json-schema.org/draft-07/schema#'
-                                                                        ]
-                                                                    }
-                                                                }
-                                                            }
-                                                        },
                                                         routes: {
                                                             type: 'object',
-                                                            required: [
-                                                                'initial',
-                                                                'referrer',
-                                                                'summary',
-                                                                'confirmation',
-                                                                'states'
-                                                            ],
+                                                            required: ['initial'],
                                                             properties: {
                                                                 initial: {
                                                                     $schema:
@@ -262,103 +215,7 @@ describe('/questionnaires', () => {
                                                                     type: 'string',
                                                                     pattern:
                                                                         '^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer)$'
-                                                                },
-                                                                referrer: {
-                                                                    type: 'string',
-                                                                    format: 'uri',
-                                                                    pattern: '^https://'
-                                                                },
-                                                                summary: {
-                                                                    $schema:
-                                                                        'http://json-schema.org/draft-07/schema#',
-                                                                    title: 'Section Id',
-                                                                    type: 'string',
-                                                                    pattern:
-                                                                        '^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer)$'
-                                                                },
-                                                                confirmation: {
-                                                                    $schema:
-                                                                        'http://json-schema.org/draft-07/schema#',
-                                                                    title: 'Section Id',
-                                                                    type: 'string',
-                                                                    pattern:
-                                                                        '^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer)$'
-                                                                },
-                                                                states: {
-                                                                    type: 'object',
-                                                                    additionalProperties: {
-                                                                        type: 'object',
-                                                                        oneOf: [
-                                                                            {
-                                                                                additionalProperties: false,
-                                                                                required: ['type'],
-                                                                                properties: {
-                                                                                    type: {
-                                                                                        const:
-                                                                                            'final'
-                                                                                    }
-                                                                                }
-                                                                            },
-                                                                            {
-                                                                                additionalProperties: false,
-                                                                                required: ['on'],
-                                                                                properties: {
-                                                                                    on: {
-                                                                                        type:
-                                                                                            'object',
-                                                                                        required: [
-                                                                                            'ANSWER'
-                                                                                        ],
-                                                                                        properties: {
-                                                                                            ANSWER: {
-                                                                                                type:
-                                                                                                    'array',
-                                                                                                minItems: 1,
-                                                                                                items: {
-                                                                                                    type:
-                                                                                                        'object',
-                                                                                                    required: [
-                                                                                                        'target'
-                                                                                                    ],
-                                                                                                    properties: {
-                                                                                                        target: {
-                                                                                                            $schema:
-                                                                                                                'http://json-schema.org/draft-07/schema#',
-                                                                                                            title:
-                                                                                                                'Section Id',
-                                                                                                            type:
-                                                                                                                'string',
-                                                                                                            pattern:
-                                                                                                                '^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer)$'
-                                                                                                        },
-                                                                                                        cond: {
-                                                                                                            type:
-                                                                                                                'array',
-                                                                                                            minItems: 1
-                                                                                                        }
-                                                                                                    }
-                                                                                                }
-                                                                                            }
-                                                                                        }
-                                                                                    }
-                                                                                }
-                                                                            }
-                                                                        ]
-                                                                    }
                                                                 }
-                                                            }
-                                                        },
-                                                        answers: {type: 'object'},
-                                                        progress: {
-                                                            type: 'array',
-                                                            minItems: 1,
-                                                            items: {
-                                                                $schema:
-                                                                    'http://json-schema.org/draft-07/schema#',
-                                                                title: 'Section Id',
-                                                                type: 'string',
-                                                                pattern:
-                                                                    '^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer)$'
                                                             }
                                                         }
                                                     }

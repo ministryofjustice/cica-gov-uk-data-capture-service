@@ -9,7 +9,29 @@
                     "const": "questionnaires"
                 },
                 "attributes": {
-                    "$ref": "../../models/questionnaire-instance.json"
+                    "type": "object",
+                    "required": ["id", "type", "version", "routes"],
+                    "additionalProperties": false,
+                    "properties": {
+                        "id": {
+                            "$ref": "../../models/definitions/uuid-v4.json"
+                        },
+                        "type": {
+                            "$ref": "../../models/definitions/questionnaire-template-name.json"
+                        },
+                        "version": {
+                            "$ref": "../../models/definitions/semver.json"
+                        },
+                        "routes": {
+                            "type": "object",
+                            "required": ["initial"],
+                            "properties": {
+                                "initial": {
+                                    "$ref": "../../models/definitions/section-id.json"
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
