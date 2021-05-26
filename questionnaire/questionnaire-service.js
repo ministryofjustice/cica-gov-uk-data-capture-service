@@ -14,6 +14,7 @@ const createMessageBusCaller = require('../services/message-bus');
 const replaceJsonPointers = require('../services/replace-json-pointer');
 const createNotifyService = require('../services/notify');
 const createSlackService = require('../services/slack');
+const questionnaireResource = require('./resources/questionnaire-resource');
 
 const defaults = {};
 defaults.createQuestionnaireDAL = require('./questionnaire-dal');
@@ -50,11 +51,7 @@ function createQuestionnaireService({
         await db.createQuestionnaire(uuidV4, questionnaire);
 
         return {
-            data: {
-                type: 'questionnaires',
-                id: questionnaire.id,
-                attributes: questionnaire
-            }
+            data: questionnaireResource({questionnaire})
         };
     }
 
@@ -311,9 +308,11 @@ function createQuestionnaireService({
             const section = getSection(sectionId, qRouter);
 
             // 3 - Section is available. Validate the answers against it
-            const sectionSchema = questionnaire.sections[section.id];
+            const sectionSchema = questionnaire.sections[section.id].schema;
             const validate = ajv.compile(sectionSchema);
+            // The AJV validate function coerces the answers and mutates the answers object
             const valid = validate(answers);
+            const coercedAnswers = answers;
 
             if (!valid) {
                 const validationError = new VError({
@@ -321,7 +320,7 @@ function createQuestionnaireService({
                     info: {
                         schema: sectionSchema,
                         answers: rawAnswers,
-                        coercedAnswers: answers,
+                        coercedAnswers,
                         schemaErrors: validate.errors
                     }
                 });
@@ -335,10 +334,10 @@ function createQuestionnaireService({
 
             if (section.id === 'system') {
                 const currentSection = qRouter.current();
-                currentSection.context.answers.system = answers;
+                currentSection.context.answers.system = coercedAnswers;
                 answeredQuestionnaire = currentSection.context;
             } else {
-                const nextSection = qRouter.next(answers, section.id);
+                const nextSection = qRouter.next(coercedAnswers, section.id);
                 answeredQuestionnaire = nextSection.context;
             }
 
@@ -349,7 +348,7 @@ function createQuestionnaireService({
                 data: {
                     type: 'answers',
                     id: section.id,
-                    attributes: answers
+                    attributes: coercedAnswers
                 }
             };
         } catch (err) {
@@ -404,12 +403,17 @@ function createQuestionnaireService({
     }
 
     function buildSectionResource(sectionId, questionnaire) {
-        const sectionAsJson = JSON.stringify(questionnaire.sections[sectionId]);
-        const sectionAsJsonWithReplacements = replaceJsonPointers(sectionAsJson, questionnaire);
+        const section = questionnaire.sections[sectionId];
+        const {schema: sectionSchema} = section;
+        const sectionSchemaAsJson = JSON.stringify(sectionSchema);
+        const sectionSchemaAsJsonWithReplacements = replaceJsonPointers(
+            sectionSchemaAsJson,
+            questionnaire
+        );
         const sectionResource = {
             type: 'sections',
             id: sectionId,
-            attributes: JSON.parse(sectionAsJsonWithReplacements)
+            attributes: JSON.parse(sectionSchemaAsJsonWithReplacements)
         };
 
         // Add any answer relationships
