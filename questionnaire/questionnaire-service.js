@@ -11,10 +11,10 @@ const pointer = require('jsonpointer');
 const ajvFormatsMobileUk = require('ajv-formats-mobile-uk');
 const templates = require('./templates');
 const createMessageBusCaller = require('../services/message-bus');
-const replaceJsonPointers = require('../services/replace-json-pointer');
 const createNotifyService = require('../services/notify');
 const createSlackService = require('../services/slack');
 const questionnaireResource = require('./resources/questionnaire-resource');
+const SectionResource = require('./resources/section-resource');
 
 const defaults = {};
 defaults.createQuestionnaireDAL = require('./questionnaire-dal');
@@ -355,38 +355,6 @@ function createQuestionnaireService({
         };
     }
 
-    function buildSectionResource(sectionId, questionnaire) {
-        const section = questionnaire.sections[sectionId];
-        const {schema: sectionSchema} = section;
-        const sectionSchemaAsJson = JSON.stringify(sectionSchema);
-        const sectionSchemaAsJsonWithReplacements = replaceJsonPointers(
-            sectionSchemaAsJson,
-            questionnaire
-        );
-        const sectionResource = {
-            type: 'sections',
-            id: sectionId,
-            attributes: JSON.parse(sectionSchemaAsJsonWithReplacements)
-        };
-
-        // Add any answer relationships
-        const {answers} = questionnaire;
-        const sectionAnswers = answers ? answers[sectionId] : undefined;
-
-        if (sectionAnswers) {
-            sectionResource.relationships = {
-                answer: {
-                    data: {
-                        type: 'answers',
-                        id: sectionId
-                    }
-                }
-            };
-        }
-
-        return sectionResource;
-    }
-
     function buildProgressEntryResource(sectionId) {
         const progressEntryResource = {
             type: 'progress-entries',
@@ -485,7 +453,8 @@ function createQuestionnaireService({
                 compoundDocument.data = [buildProgressEntryResource(sectionId)];
                 // Include related resources
                 // Currently this is a one-to-one relationship with a section resource
-                compoundDocument.included = [buildSectionResource(sectionId, questionnaire)];
+                compoundDocument.included = [await SectionResource({sectionId, questionnaire})];
+
                 // If the included resource has a relationship, include it too. Only works with "answers" resources at the moment.
                 compoundDocument.included = compoundDocument.included.reduce(
                     (acc, includedResource) => {
