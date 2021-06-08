@@ -26,7 +26,9 @@ async function SectionResource({sectionId, questionnaire}) {
     const sectionSchemaAsJson = JSON.stringify(sectionSchema);
     const contextualisedSectionSchemaAsJson = await contextualiseJson(sectionSchemaAsJson, {
         l10n,
-        data: questionnaire.answers
+        data: {
+            answers: questionnaire.answers
+        }
     });
     const sectionSchemaAsJsonWithReplacements = replaceJsonPointers(
         contextualisedSectionSchemaAsJson,
