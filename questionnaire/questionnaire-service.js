@@ -260,8 +260,9 @@ function createQuestionnaireService({
             const qRouter = createQRouter(questionnaire);
             const section = getSection(sectionId, qRouter);
 
-            // 3 - Section is available. Validate the answers against it
-            const sectionSchema = questionnaire.sections[section.id].schema;
+            // 3 - Section is available. Obtain the section resource and validate the answers against the schema.
+            const sectionResource = await SectionResource({sectionId, questionnaire});
+            const sectionSchema = sectionResource.attributes;
             const validate = ajv.compile(sectionSchema);
             // The AJV validate function coerces the answers and mutates the answers object
             const valid = validate(answers);
