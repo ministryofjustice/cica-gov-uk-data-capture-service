@@ -12,6 +12,28 @@ function putQuestionnaireInToSubmittableState(questionnaireInstance) {
     return questionnaireInstance;
 }
 
+function populateQuestionnaireAnswersObject(questionaireInstance) {
+    // eslint-disable-next-line no-param-reassign
+    questionaireInstance.answers = {
+        ...questionaireInstance.answers,
+        // notifications need this answer to exist.
+        'p-applicant-who-are-you-applying-for': {
+            'q-applicant-who-are-you-applying-for': 'myself'
+        },
+        'p-applicant-confirmation-method': {
+            'q-applicant-confirmation-method': 'email',
+            'q-applicant-enter-your-telephone-number': '07701234567',
+            'q-applicant-enter-your-email-address': 'somebody@cica.gov.uk'
+        },
+        system: {
+            'case-reference': '21\\123456'
+        }
+    };
+
+    return questionaireInstance;
+}
+
 questionnaire = putQuestionnaireInToSubmittableState(questionnaire);
+questionnaire = populateQuestionnaireAnswersObject(questionnaire);
 
 module.exports = questionnaire;
