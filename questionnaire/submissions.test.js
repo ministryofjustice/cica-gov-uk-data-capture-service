@@ -34,15 +34,22 @@ const failedResubmittedStatus = jest
     .mockReturnValueOnce('FAILED')
     .mockReturnValue('COMPLETED');
 
+const slackServiceSendMessage = jest.fn();
 jest.doMock('../services/slack', () => {
-    jest.fn(() => ({
-        sendMessage: jest.fn()
+    return jest.fn(() => ({
+        sendMessage: slackServiceSendMessage
     }));
 });
 
 const messageBusPost = jest.fn(async (queueName, payload) => {
-    if (payload.applicationId === '4ddb0208-f7da-4237-a244-34e7e58d2ddf') {
+    if (
+        payload.applicationId === '4ddb0208-f7da-4237-a244-34e7e58d2ddf' ||
+        payload.applicationId === '0687821f-cd26-482f-a412-80002a83fec6'
+    ) {
         throw new Error('some error');
+    }
+    if (payload.applicationId === 'c1d1b8ab-31e8-446c-95c9-d76f8abbe72d') {
+        return '';
     }
     return {body: 'Message sent'};
 });
@@ -60,7 +67,9 @@ jest.doMock('./questionnaire-dal.js', () =>
             if (
                 questionnaireId === '285cb104-0c15-4a9c-9840-cb1007f098fb' || // not started.
                 questionnaireId === '3fa7bde5-bfad-453a-851d-5e3c8d206d5b' || // in progress.
-                questionnaireId === '67d8e5d2-44a5-4ab7-91c0-3fd27d009235' // failed.
+                questionnaireId === '67d8e5d2-44a5-4ab7-91c0-3fd27d009235' || // failed.
+                questionnaireId === '0687821f-cd26-482f-a412-80002a83fec6' || // failed + MB down.
+                questionnaireId === 'c1d1b8ab-31e8-446c-95c9-d76f8abbe72d' // MB unexpected response.
             ) {
                 return questionnaireCompleteWithoutCRN;
             }
@@ -89,7 +98,11 @@ jest.doMock('./questionnaire-dal.js', () =>
         },
         updateQuestionnaire: () => undefined,
         getQuestionnaireSubmissionStatus: questionnaireId => {
-            if (questionnaireId === '285cb104-0c15-4a9c-9840-cb1007f098fb') {
+            if (
+                questionnaireId === '285cb104-0c15-4a9c-9840-cb1007f098fb' ||
+                questionnaireId === '0687821f-cd26-482f-a412-80002a83fec6' || // failed + MB down.
+                questionnaireId === 'c1d1b8ab-31e8-446c-95c9-d76f8abbe72d' // MB unexpected response.
+            ) {
                 return 'NOT_STARTED';
             }
             if (questionnaireId === '3fa7bde5-bfad-453a-851d-5e3c8d206d5b') {
@@ -477,6 +490,58 @@ describe('Questionnaire submissions', () => {
                         // eslint-disable-next-line no-useless-escape
                         /Questionnaire with ID "[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}" is not in a submittable state/
                     )
+                );
+            });
+        });
+
+        describe('Message Bus down', () => {
+            it('should send a Slack message if error response', async () => {
+                jest.clearAllMocks();
+                // eslint-disable-next-line global-require
+                const createSlackService = require('../services/slack');
+                const slackService = createSlackService();
+                await request(app)
+                    .post('/api/v1/questionnaires/0687821f-cd26-482f-a412-80002a83fec6/submissions')
+                    .set('Authorization', `Bearer ${tokens['create:questionnaires']}`)
+                    .set('Content-Type', 'application/vnd.api+json')
+                    .send({
+                        data: {
+                            type: 'submissions',
+                            attributes: {
+                                questionnaireId: '0687821f-cd26-482f-a412-80002a83fec6'
+                            }
+                        }
+                    });
+                expect(slackService.sendMessage).toHaveBeenCalledWith(
+                    expect.objectContaining({
+                        appReference: 'test.reporter.webhook',
+                        messageBodyId: 'message-bus-down'
+                    })
+                );
+            });
+
+            it('should send a Slack message if unexpected string response', async () => {
+                jest.clearAllMocks();
+                // eslint-disable-next-line global-require
+                const createSlackService = require('../services/slack');
+                const slackService = createSlackService();
+                await request(app)
+                    .post('/api/v1/questionnaires/c1d1b8ab-31e8-446c-95c9-d76f8abbe72d/submissions')
+                    .set('Authorization', `Bearer ${tokens['create:questionnaires']}`)
+                    .set('Content-Type', 'application/vnd.api+json')
+                    .send({
+                        data: {
+                            type: 'submissions',
+                            attributes: {
+                                questionnaireId: 'c1d1b8ab-31e8-446c-95c9-d76f8abbe72d'
+                            }
+                        }
+                    });
+                expect(slackService.sendMessage).toHaveBeenCalledWith(
+                    expect.objectContaining({
+                        appReference: 'test.reporter.webhook',
+                        messageBodyId: 'message-bus-down'
+                    })
                 );
             });
         });

@@ -117,18 +117,20 @@ function createQuestionnaireService({
                 !submissionResponse.body ||
                 submissionResponse.body !== 'Message sent'
             ) {
-                await updateQuestionnaireSubmissionStatus(questionnaireId, 'FAILED');
-                const slackService = createSlackService();
-                slackService.sendMessage({
-                    appReference: `${process.env.APP_ENV || 'dev'}.reporter.webhook`,
-                    messageBodyId: 'message-bus-down',
-                    templateParameters: {
-                        timeStamp: new Date().getTime()
-                    }
-                });
+                throw new VError(
+                    `Questionnaire with id "${questionnaireId}" was not successfully added to the Message Bus queue`
+                );
             }
         } catch (err) {
             await updateQuestionnaireSubmissionStatus(questionnaireId, 'FAILED');
+            const slackService = createSlackService();
+            slackService.sendMessage({
+                appReference: `${process.env.APP_ENV || 'dev'}.reporter.webhook`,
+                messageBodyId: 'message-bus-down',
+                templateParameters: {
+                    timeStamp: new Date().getTime()
+                }
+            });
         }
     }
 
