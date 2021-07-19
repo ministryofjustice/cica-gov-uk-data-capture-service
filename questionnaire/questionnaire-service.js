@@ -155,11 +155,14 @@ function createQuestionnaireService({
 
         const notifyService = createNotifyService({logger});
         const {method} = replacedJsonPointersConfig.l10n.vars;
+
         if (method === 'email') {
-            await notifyService.sendEmail(contextualisedJson);
+            notifyService.sendEmail(contextualisedJson);
         } else if (method === 'text') {
-            await notifyService.sendSms(contextualisedJson);
+            notifyService.sendSms(contextualisedJson);
         }
+
+        return contextualisedJson;
     }
 
     async function getSubmissionResponseData(questionnaireId, isPostRequest = false) {
