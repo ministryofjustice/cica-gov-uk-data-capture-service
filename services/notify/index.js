@@ -14,9 +14,9 @@ function createNotifyService(spec) {
         try {
             response = notifyClient.sendSms(options.templateId, options.phoneNumber, {
                 personalisation: {
-                    case_reference: options.personalisation.caseReference
+                    body: options.personalisation.body
                 },
-                reference: null
+                reference: options.reference
             });
         } catch (err) {
             logger.error({err}, 'SMS SEND FAILURE');
@@ -31,9 +31,10 @@ function createNotifyService(spec) {
             templateId: options.templateId,
             emailAddress: options.emailAddress,
             personalisation: {
-                case_reference: options.personalisation.caseReference
+                subject: options.personalisation.subject,
+                body: options.personalisation.body
             },
-            reference: null
+            reference: options.reference
         });
     }
 
