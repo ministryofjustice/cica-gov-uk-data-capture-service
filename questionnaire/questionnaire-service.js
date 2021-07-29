@@ -138,7 +138,22 @@ function createQuestionnaireService({
         const jsonTranslator = await sharedJsonTranslator;
 
         const questionnaire = await getQuestionnaire(questionnaireId);
-        const confirmationNotificationConfig = questionnaire.notifications.confirmation;
+
+        const onCompleteTasks = questionnaire.meta.onComplete.tasks;
+        // resolve json pointers within the tasks' data property so they
+        // can be queried against later.
+        Object.keys(onCompleteTasks).forEach(taskName => {
+            onCompleteTasks[taskName].data = JSON.parse(
+                replaceJsonPointers(JSON.stringify(onCompleteTasks[taskName].data), questionnaire)
+            );
+        });
+
+        let confirmationNotificationConfig;
+        if (onCompleteTasks.sendEmail.data.emailAddress !== '') {
+            confirmationNotificationConfig = onCompleteTasks.sendEmail;
+        } else if (onCompleteTasks.sendSms.data.phoneNumber !== '') {
+            confirmationNotificationConfig = onCompleteTasks.sendSms;
+        }
 
         const replacedJsonPointersConfig = JSON.parse(
             replaceJsonPointers(JSON.stringify(confirmationNotificationConfig), questionnaire)
@@ -152,13 +167,10 @@ function createQuestionnaireService({
                 }
             })
         );
-
         const notifyService = createNotifyService({logger});
-        const {method} = replacedJsonPointersConfig.l10n.vars;
-
-        if (method === 'email') {
+        if (contextualisedJson.emailAddress) {
             notifyService.sendEmail(contextualisedJson);
-        } else if (method === 'text') {
+        } else if (contextualisedJson.phoneNumber) {
             notifyService.sendSms(contextualisedJson);
         }
 
