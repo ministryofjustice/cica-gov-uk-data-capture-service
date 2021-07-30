@@ -1441,6 +1441,17 @@
     },
     "version": "3.0.0",
     "meta": {
+        "onComplete": {
+            "tasks": [
+                {
+                    "emailTemplateId": "cb79653c-cf6e-44d4-8c03-087ba21cfd01",
+                    "emailTemplatePlaceholderMap": {
+                        "applicantEmail": "/answers/p-applicant-enter-your-email-address/q-applicant-enter-your-email-address",
+                        "caseReference": "/answers/system/case-reference"
+                    }
+                }
+            ]
+        },
         "questionnaireDocumentVersion": "2.0.0"
     },
     "routes": {
