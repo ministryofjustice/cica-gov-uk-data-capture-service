@@ -155,6 +155,9 @@ function createQuestionnaireService({
             confirmationNotificationConfig = onCompleteTasks.sendSms;
         }
 
+        if (!confirmationNotificationConfig) {
+            return false;
+        }
         const replacedJsonPointersConfig = JSON.parse(
             replaceJsonPointers(JSON.stringify(confirmationNotificationConfig), questionnaire)
         );
