@@ -1546,82 +1546,471 @@ describe('/questionnaires/{questionnaireId}/dataset', () => {
                 expect(res.statusCode).toBe(200);
                 expect(res.type).toBe('application/vnd.api+json');
                 expect(res.body).toMatchSchema({
-                    $schema: 'http://json-schema.org/draft-07/schema#',
-                    title: 'Dataset document',
-                    allOf: [
+                    anyOf: [
                         {
                             $schema: 'http://json-schema.org/draft-07/schema#',
-                            title: 'Loosely describes the JSON:API document format',
-                            type: 'object',
-                            additionalProperties: false,
-                            required: ['data'],
-                            properties: {
-                                data: {anyOf: [{type: 'object'}, {type: 'array'}]},
-                                included: {type: 'array'},
-                                links: {type: 'object'},
-                                meta: {type: 'object'}
-                            }
-                        },
-                        {
-                            properties: {
-                                data: {
-                                    type: 'array',
-                                    items: {
-                                        $schema: 'http://json-schema.org/draft-07/schema#',
-                                        title: 'Dataset resource',
-                                        allOf: [
-                                            {
+                            title: 'Dataset document v1.0.0',
+                            allOf: [
+                                {
+                                    $schema: 'http://json-schema.org/draft-07/schema#',
+                                    title: 'Loosely describes the JSON:API document format',
+                                    type: 'object',
+                                    additionalProperties: false,
+                                    required: ['data'],
+                                    properties: {
+                                        data: {anyOf: [{type: 'object'}, {type: 'array'}]},
+                                        included: {type: 'array'},
+                                        links: {type: 'object'},
+                                        meta: {type: 'object'}
+                                    }
+                                },
+                                {
+                                    properties: {
+                                        data: {
+                                            type: 'array',
+                                            items: {
                                                 $schema: 'http://json-schema.org/draft-07/schema#',
-                                                title:
-                                                    'Loosely describes the JSON:API resource format',
-                                                type: 'object',
-                                                additionalProperties: false,
-                                                required: ['type', 'id', 'attributes'],
-                                                properties: {
-                                                    type: {type: 'string'},
-                                                    id: {
-                                                        type: 'string',
-                                                        anyOf: [
-                                                            {
-                                                                $schema:
-                                                                    'http://json-schema.org/draft-07/schema#',
-                                                                title: 'Section Id',
-                                                                type: 'string',
-                                                                pattern:
-                                                                    '^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer)$'
-                                                            },
-                                                            {
-                                                                $schema:
-                                                                    'http://json-schema.org/draft-07/schema#',
-                                                                title: 'UUID v4',
-                                                                type: 'string',
-                                                                pattern:
-                                                                    '^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$'
-                                                            },
-                                                            {
-                                                                const: '0',
-                                                                description:
-                                                                    'Used by dataset endpoint'
-                                                            }
-                                                        ]
-                                                    },
-                                                    attributes: {
+                                                title: 'Dataset resource v1.0.0',
+                                                allOf: [
+                                                    {
+                                                        $schema:
+                                                            'http://json-schema.org/draft-07/schema#',
+                                                        title:
+                                                            'Loosely describes the JSON:API resource format',
                                                         type: 'object',
-                                                        title: 'Any valid resource'
+                                                        additionalProperties: false,
+                                                        required: ['type', 'id', 'attributes'],
+                                                        properties: {
+                                                            type: {type: 'string'},
+                                                            id: {
+                                                                type: 'string',
+                                                                anyOf: [
+                                                                    {
+                                                                        $schema:
+                                                                            'http://json-schema.org/draft-07/schema#',
+                                                                        title: 'Section Id',
+                                                                        type: 'string',
+                                                                        pattern:
+                                                                            '^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer)$'
+                                                                    },
+                                                                    {
+                                                                        $schema:
+                                                                            'http://json-schema.org/draft-07/schema#',
+                                                                        title: 'UUID v4',
+                                                                        type: 'string',
+                                                                        pattern:
+                                                                            '^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$'
+                                                                    },
+                                                                    {
+                                                                        const: '0',
+                                                                        description:
+                                                                            'Used by dataset endpoint'
+                                                                    }
+                                                                ]
+                                                            },
+                                                            attributes: {
+                                                                type: 'object',
+                                                                title: 'Any valid resource'
+                                                            },
+                                                            relationships: {type: 'object'}
+                                                        }
                                                     },
-                                                    relationships: {type: 'object'}
-                                                }
-                                            },
-                                            {
-                                                properties: {
-                                                    type: {const: 'dataset'},
-                                                    id: {type: 'string', const: '0'}
-                                                }
+                                                    {
+                                                        properties: {
+                                                            type: {const: 'dataset'},
+                                                            id: {type: 'string', const: '0'},
+                                                            attributes: {
+                                                                type: 'object',
+                                                                additionalProperties: false,
+                                                                patternProperties: {
+                                                                    '^q-?(?:-[a-z0-9]{1,20}){1,20}$': {
+                                                                        type: [
+                                                                            'string',
+                                                                            'number',
+                                                                            'boolean',
+                                                                            'array'
+                                                                        ]
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                ]
                                             }
-                                        ]
+                                        }
                                     }
                                 }
-                            }
+                            ]
+                        },
+                        {
+                            $schema: 'http://json-schema.org/draft-07/schema#',
+                            title: 'Dataset document v2.0.0',
+                            allOf: [
+                                {
+                                    $schema: 'http://json-schema.org/draft-07/schema#',
+                                    title: 'Loosely describes the JSON:API document format',
+                                    type: 'object',
+                                    additionalProperties: false,
+                                    required: ['data'],
+                                    properties: {
+                                        data: {anyOf: [{type: 'object'}, {type: 'array'}]},
+                                        included: {type: 'array'},
+                                        links: {type: 'object'},
+                                        meta: {type: 'object'}
+                                    }
+                                },
+                                {
+                                    properties: {
+                                        data: {
+                                            type: 'array',
+                                            items: {
+                                                $schema: 'http://json-schema.org/draft-07/schema#',
+                                                title: 'Dataset resource v2.0.0',
+                                                allOf: [
+                                                    {
+                                                        $schema:
+                                                            'http://json-schema.org/draft-07/schema#',
+                                                        title:
+                                                            'Loosely describes the JSON:API resource format',
+                                                        type: 'object',
+                                                        additionalProperties: false,
+                                                        required: ['type', 'id', 'attributes'],
+                                                        properties: {
+                                                            type: {type: 'string'},
+                                                            id: {
+                                                                type: 'string',
+                                                                anyOf: [
+                                                                    {
+                                                                        $schema:
+                                                                            'http://json-schema.org/draft-07/schema#',
+                                                                        title: 'Section Id',
+                                                                        type: 'string',
+                                                                        pattern:
+                                                                            '^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer)$'
+                                                                    },
+                                                                    {
+                                                                        $schema:
+                                                                            'http://json-schema.org/draft-07/schema#',
+                                                                        title: 'UUID v4',
+                                                                        type: 'string',
+                                                                        pattern:
+                                                                            '^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$'
+                                                                    },
+                                                                    {
+                                                                        const: '0',
+                                                                        description:
+                                                                            'Used by dataset endpoint'
+                                                                    }
+                                                                ]
+                                                            },
+                                                            attributes: {
+                                                                type: 'object',
+                                                                title: 'Any valid resource'
+                                                            },
+                                                            relationships: {type: 'object'}
+                                                        }
+                                                    },
+                                                    {
+                                                        properties: {
+                                                            type: {const: 'dataset'},
+                                                            id: {type: 'string', const: '0'},
+                                                            attributes: {
+                                                                type: 'object',
+                                                                required: ['values'],
+                                                                additionalProperties: false,
+                                                                properties: {
+                                                                    values: {
+                                                                        type: 'array',
+                                                                        items: {
+                                                                            anyOf: [
+                                                                                {
+                                                                                    title:
+                                                                                        'Simple closed question',
+                                                                                    type: 'object',
+                                                                                    required: [
+                                                                                        'type',
+                                                                                        'id',
+                                                                                        'label',
+                                                                                        'value',
+                                                                                        'valueLabel'
+                                                                                    ],
+                                                                                    properties: {
+                                                                                        type: {
+                                                                                            const:
+                                                                                                'simple'
+                                                                                        },
+                                                                                        id: {
+                                                                                            $schema:
+                                                                                                'http://json-schema.org/draft-07/schema#',
+                                                                                            title:
+                                                                                                'Question Id',
+                                                                                            type:
+                                                                                                'string',
+                                                                                            pattern:
+                                                                                                '^q-?(?:-[a-z0-9]{1,20}){1,20}$'
+                                                                                        },
+                                                                                        label: {
+                                                                                            type:
+                                                                                                'string'
+                                                                                        },
+                                                                                        closedQuestion: {
+                                                                                            enum: [
+                                                                                                true
+                                                                                            ]
+                                                                                        },
+                                                                                        value: {
+                                                                                            anyOf: [
+                                                                                                {
+                                                                                                    type:
+                                                                                                        'string'
+                                                                                                },
+                                                                                                {
+                                                                                                    type:
+                                                                                                        'number'
+                                                                                                },
+                                                                                                {
+                                                                                                    type:
+                                                                                                        'boolean'
+                                                                                                },
+                                                                                                {
+                                                                                                    type:
+                                                                                                        'array'
+                                                                                                }
+                                                                                            ]
+                                                                                        },
+                                                                                        valueLabel: {
+                                                                                            anyOf: [
+                                                                                                {
+                                                                                                    type:
+                                                                                                        'string'
+                                                                                                },
+                                                                                                {
+                                                                                                    type:
+                                                                                                        'array'
+                                                                                                }
+                                                                                            ]
+                                                                                        }
+                                                                                    }
+                                                                                },
+                                                                                {
+                                                                                    title:
+                                                                                        'Simple open question',
+                                                                                    type: 'object',
+                                                                                    required: [
+                                                                                        'type',
+                                                                                        'id',
+                                                                                        'label',
+                                                                                        'value'
+                                                                                    ],
+                                                                                    properties: {
+                                                                                        type: {
+                                                                                            const:
+                                                                                                'simple'
+                                                                                        },
+                                                                                        id: {
+                                                                                            $schema:
+                                                                                                'http://json-schema.org/draft-07/schema#',
+                                                                                            title:
+                                                                                                'Question Id',
+                                                                                            type:
+                                                                                                'string',
+                                                                                            pattern:
+                                                                                                '^q-?(?:-[a-z0-9]{1,20}){1,20}$'
+                                                                                        },
+                                                                                        label: {
+                                                                                            type:
+                                                                                                'string'
+                                                                                        },
+                                                                                        value: {
+                                                                                            anyOf: [
+                                                                                                {
+                                                                                                    type:
+                                                                                                        'string'
+                                                                                                },
+                                                                                                {
+                                                                                                    type:
+                                                                                                        'number'
+                                                                                                },
+                                                                                                {
+                                                                                                    type:
+                                                                                                        'boolean'
+                                                                                                }
+                                                                                            ]
+                                                                                        }
+                                                                                    }
+                                                                                },
+                                                                                {
+                                                                                    title:
+                                                                                        'Composite question',
+                                                                                    type: 'object',
+                                                                                    required: [
+                                                                                        'type',
+                                                                                        'id',
+                                                                                        'label',
+                                                                                        'values'
+                                                                                    ],
+                                                                                    properties: {
+                                                                                        type: {
+                                                                                            const:
+                                                                                                'composite'
+                                                                                        },
+                                                                                        id: {
+                                                                                            $schema:
+                                                                                                'http://json-schema.org/draft-07/schema#',
+                                                                                            title:
+                                                                                                'Composite question Id',
+                                                                                            description:
+                                                                                                'Allows for questions with multiple parts e.g. fullname consists of title, firstname, lastname.',
+                                                                                            type:
+                                                                                                'string',
+                                                                                            pattern:
+                                                                                                '^[a-z][a-z0-9]{0,19}(?:-[a-z0-9]{1,20}){0,20}$'
+                                                                                        },
+                                                                                        label: {
+                                                                                            type:
+                                                                                                'string'
+                                                                                        },
+                                                                                        values: {
+                                                                                            type:
+                                                                                                'array',
+                                                                                            items: {
+                                                                                                anyOf: [
+                                                                                                    {
+                                                                                                        title:
+                                                                                                            'Simple closed question',
+                                                                                                        type:
+                                                                                                            'object',
+                                                                                                        required: [
+                                                                                                            'type',
+                                                                                                            'id',
+                                                                                                            'label',
+                                                                                                            'value',
+                                                                                                            'valueLabel'
+                                                                                                        ],
+                                                                                                        properties: {
+                                                                                                            type: {
+                                                                                                                const:
+                                                                                                                    'simple'
+                                                                                                            },
+                                                                                                            id: {
+                                                                                                                $schema:
+                                                                                                                    'http://json-schema.org/draft-07/schema#',
+                                                                                                                title:
+                                                                                                                    'Question Id',
+                                                                                                                type:
+                                                                                                                    'string',
+                                                                                                                pattern:
+                                                                                                                    '^q-?(?:-[a-z0-9]{1,20}){1,20}$'
+                                                                                                            },
+                                                                                                            label: {
+                                                                                                                type:
+                                                                                                                    'string'
+                                                                                                            },
+                                                                                                            closedQuestion: {
+                                                                                                                enum: [
+                                                                                                                    true
+                                                                                                                ]
+                                                                                                            },
+                                                                                                            value: {
+                                                                                                                anyOf: [
+                                                                                                                    {
+                                                                                                                        type:
+                                                                                                                            'string'
+                                                                                                                    },
+                                                                                                                    {
+                                                                                                                        type:
+                                                                                                                            'number'
+                                                                                                                    },
+                                                                                                                    {
+                                                                                                                        type:
+                                                                                                                            'boolean'
+                                                                                                                    },
+                                                                                                                    {
+                                                                                                                        type:
+                                                                                                                            'array'
+                                                                                                                    }
+                                                                                                                ]
+                                                                                                            },
+                                                                                                            valueLabel: {
+                                                                                                                anyOf: [
+                                                                                                                    {
+                                                                                                                        type:
+                                                                                                                            'string'
+                                                                                                                    },
+                                                                                                                    {
+                                                                                                                        type:
+                                                                                                                            'array'
+                                                                                                                    }
+                                                                                                                ]
+                                                                                                            }
+                                                                                                        }
+                                                                                                    },
+                                                                                                    {
+                                                                                                        title:
+                                                                                                            'Simple open question',
+                                                                                                        type:
+                                                                                                            'object',
+                                                                                                        required: [
+                                                                                                            'type',
+                                                                                                            'id',
+                                                                                                            'label',
+                                                                                                            'value'
+                                                                                                        ],
+                                                                                                        properties: {
+                                                                                                            type: {
+                                                                                                                const:
+                                                                                                                    'simple'
+                                                                                                            },
+                                                                                                            id: {
+                                                                                                                $schema:
+                                                                                                                    'http://json-schema.org/draft-07/schema#',
+                                                                                                                title:
+                                                                                                                    'Question Id',
+                                                                                                                type:
+                                                                                                                    'string',
+                                                                                                                pattern:
+                                                                                                                    '^q-?(?:-[a-z0-9]{1,20}){1,20}$'
+                                                                                                            },
+                                                                                                            label: {
+                                                                                                                type:
+                                                                                                                    'string'
+                                                                                                            },
+                                                                                                            value: {
+                                                                                                                anyOf: [
+                                                                                                                    {
+                                                                                                                        type:
+                                                                                                                            'string'
+                                                                                                                    },
+                                                                                                                    {
+                                                                                                                        type:
+                                                                                                                            'number'
+                                                                                                                    },
+                                                                                                                    {
+                                                                                                                        type:
+                                                                                                                            'boolean'
+                                                                                                                    }
+                                                                                                                ]
+                                                                                                            }
+                                                                                                        }
+                                                                                                    }
+                                                                                                ]
+                                                                                            }
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            ]
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     ]
                 });

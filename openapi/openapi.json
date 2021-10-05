@@ -2278,6 +2278,17 @@
                             "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
                         },
                         "example": "285cb104-0c15-4a9c-9840-cb1007f098fb"
+                    },
+                    {
+                        "in": "header",
+                        "name": "Accept-Version",
+                        "description": "Specify the specific version of the resource (SemVer). Defaults to latest version.",
+                        "schema": {
+                            "type": "string",
+                            "enum": ["1.0.0", "2.0.0"],
+                            "default": "2.0.0"
+                        },
+                        "example": "2.0.0"
                     }
                 ],
                 "x-scopes": ["read:questionnaires"],
@@ -2308,113 +2319,601 @@
                         "content": {
                             "application/vnd.api+json": {
                                 "schema": {
-                                    "title": "Dataset document",
-                                    "allOf": [
+                                    "anyOf": [
                                         {
-                                            "title": "Loosely describes the JSON:API document format",
-                                            "type": "object",
-                                            "additionalProperties": false,
-                                            "required": ["data"],
-                                            "properties": {
-                                                "data": {
-                                                    "anyOf": [
-                                                        {
-                                                            "type": "object"
+                                            "title": "Dataset document v1.0.0",
+                                            "allOf": [
+                                                {
+                                                    "title": "Loosely describes the JSON:API document format",
+                                                    "type": "object",
+                                                    "additionalProperties": false,
+                                                    "required": ["data"],
+                                                    "properties": {
+                                                        "data": {
+                                                            "anyOf": [
+                                                                {
+                                                                    "type": "object"
+                                                                },
+                                                                {
+                                                                    "type": "array",
+                                                                    "items": {}
+                                                                }
+                                                            ]
                                                         },
-                                                        {
+                                                        "included": {
                                                             "type": "array",
                                                             "items": {}
+                                                        },
+                                                        "links": {
+                                                            "type": "object"
+                                                        },
+                                                        "meta": {
+                                                            "type": "object"
                                                         }
-                                                    ]
+                                                    }
                                                 },
-                                                "included": {
-                                                    "type": "array",
-                                                    "items": {}
-                                                },
-                                                "links": {
-                                                    "type": "object"
-                                                },
-                                                "meta": {
-                                                    "type": "object"
+                                                {
+                                                    "properties": {
+                                                        "data": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "title": "Dataset resource v1.0.0",
+                                                                "allOf": [
+                                                                    {
+                                                                        "title": "Loosely describes the JSON:API resource format",
+                                                                        "type": "object",
+                                                                        "additionalProperties": false,
+                                                                        "required": [
+                                                                            "type",
+                                                                            "id",
+                                                                            "attributes"
+                                                                        ],
+                                                                        "properties": {
+                                                                            "type": {
+                                                                                "type": "string"
+                                                                            },
+                                                                            "id": {
+                                                                                "type": "string",
+                                                                                "anyOf": [
+                                                                                    {
+                                                                                        "title": "Section Id",
+                                                                                        "type": "string",
+                                                                                        "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer)$"
+                                                                                    },
+                                                                                    {
+                                                                                        "title": "UUID v4",
+                                                                                        "type": "string",
+                                                                                        "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+                                                                                    },
+                                                                                    {
+                                                                                        "description": "Used by dataset endpoint",
+                                                                                        "enum": [
+                                                                                            "0"
+                                                                                        ]
+                                                                                    }
+                                                                                ]
+                                                                            },
+                                                                            "attributes": {
+                                                                                "type": "object",
+                                                                                "title": "Any valid resource"
+                                                                            },
+                                                                            "relationships": {
+                                                                                "type": "object"
+                                                                            }
+                                                                        }
+                                                                    },
+                                                                    {
+                                                                        "properties": {
+                                                                            "type": {
+                                                                                "enum": ["dataset"]
+                                                                            },
+                                                                            "id": {
+                                                                                "type": "string",
+                                                                                "enum": ["0"]
+                                                                            },
+                                                                            "attributes": {
+                                                                                "type": "object",
+                                                                                "additionalProperties": false,
+                                                                                "x-patternProperties": {
+                                                                                    "^q-?(?:-[a-z0-9]{1,20}){1,20}$": {
+                                                                                        "type": [
+                                                                                            "string",
+                                                                                            "number",
+                                                                                            "boolean",
+                                                                                            "array"
+                                                                                        ]
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                ]
+                                                            }
+                                                        }
+                                                    }
                                                 }
-                                            }
+                                            ]
                                         },
                                         {
-                                            "properties": {
-                                                "data": {
-                                                    "type": "array",
-                                                    "items": {
-                                                        "title": "Dataset resource",
-                                                        "allOf": [
-                                                            {
-                                                                "title": "Loosely describes the JSON:API resource format",
-                                                                "type": "object",
-                                                                "additionalProperties": false,
-                                                                "required": [
-                                                                    "type",
-                                                                    "id",
-                                                                    "attributes"
-                                                                ],
-                                                                "properties": {
-                                                                    "type": {
-                                                                        "type": "string"
-                                                                    },
-                                                                    "id": {
-                                                                        "type": "string",
-                                                                        "anyOf": [
-                                                                            {
-                                                                                "title": "Section Id",
-                                                                                "type": "string",
-                                                                                "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer)$"
-                                                                            },
-                                                                            {
-                                                                                "title": "UUID v4",
-                                                                                "type": "string",
-                                                                                "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
-                                                                            },
-                                                                            {
-                                                                                "description": "Used by dataset endpoint",
-                                                                                "enum": ["0"]
-                                                                            }
-                                                                        ]
-                                                                    },
-                                                                    "attributes": {
-                                                                        "type": "object",
-                                                                        "title": "Any valid resource"
-                                                                    },
-                                                                    "relationships": {
-                                                                        "type": "object"
-                                                                    }
+                                            "title": "Dataset document v2.0.0",
+                                            "allOf": [
+                                                {
+                                                    "title": "Loosely describes the JSON:API document format",
+                                                    "type": "object",
+                                                    "additionalProperties": false,
+                                                    "required": ["data"],
+                                                    "properties": {
+                                                        "data": {
+                                                            "anyOf": [
+                                                                {
+                                                                    "type": "object"
+                                                                },
+                                                                {
+                                                                    "type": "array",
+                                                                    "items": {}
                                                                 }
+                                                            ]
+                                                        },
+                                                        "included": {
+                                                            "type": "array",
+                                                            "items": {}
+                                                        },
+                                                        "links": {
+                                                            "type": "object"
+                                                        },
+                                                        "meta": {
+                                                            "type": "object"
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    "properties": {
+                                                        "data": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "title": "Dataset resource v2.0.0",
+                                                                "allOf": [
+                                                                    {
+                                                                        "title": "Loosely describes the JSON:API resource format",
+                                                                        "type": "object",
+                                                                        "additionalProperties": false,
+                                                                        "required": [
+                                                                            "type",
+                                                                            "id",
+                                                                            "attributes"
+                                                                        ],
+                                                                        "properties": {
+                                                                            "type": {
+                                                                                "type": "string"
+                                                                            },
+                                                                            "id": {
+                                                                                "type": "string",
+                                                                                "anyOf": [
+                                                                                    {
+                                                                                        "title": "Section Id",
+                                                                                        "type": "string",
+                                                                                        "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer)$"
+                                                                                    },
+                                                                                    {
+                                                                                        "title": "UUID v4",
+                                                                                        "type": "string",
+                                                                                        "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+                                                                                    },
+                                                                                    {
+                                                                                        "description": "Used by dataset endpoint",
+                                                                                        "enum": [
+                                                                                            "0"
+                                                                                        ]
+                                                                                    }
+                                                                                ]
+                                                                            },
+                                                                            "attributes": {
+                                                                                "type": "object",
+                                                                                "title": "Any valid resource"
+                                                                            },
+                                                                            "relationships": {
+                                                                                "type": "object"
+                                                                            }
+                                                                        }
+                                                                    },
+                                                                    {
+                                                                        "properties": {
+                                                                            "type": {
+                                                                                "enum": ["dataset"]
+                                                                            },
+                                                                            "id": {
+                                                                                "type": "string",
+                                                                                "enum": ["0"]
+                                                                            },
+                                                                            "attributes": {
+                                                                                "type": "object",
+                                                                                "required": [
+                                                                                    "values"
+                                                                                ],
+                                                                                "additionalProperties": false,
+                                                                                "properties": {
+                                                                                    "values": {
+                                                                                        "type": "array",
+                                                                                        "items": {
+                                                                                            "anyOf": [
+                                                                                                {
+                                                                                                    "title": "Simple closed question",
+                                                                                                    "type": "object",
+                                                                                                    "required": [
+                                                                                                        "type",
+                                                                                                        "id",
+                                                                                                        "label",
+                                                                                                        "value",
+                                                                                                        "valueLabel"
+                                                                                                    ],
+                                                                                                    "properties": {
+                                                                                                        "type": {
+                                                                                                            "enum": [
+                                                                                                                "simple"
+                                                                                                            ]
+                                                                                                        },
+                                                                                                        "id": {
+                                                                                                            "title": "Question Id",
+                                                                                                            "type": "string",
+                                                                                                            "pattern": "^q-?(?:-[a-z0-9]{1,20}){1,20}$"
+                                                                                                        },
+                                                                                                        "label": {
+                                                                                                            "type": "string"
+                                                                                                        },
+                                                                                                        "closedQuestion": {
+                                                                                                            "enum": [
+                                                                                                                true
+                                                                                                            ]
+                                                                                                        },
+                                                                                                        "value": {
+                                                                                                            "anyOf": [
+                                                                                                                {
+                                                                                                                    "type": "string"
+                                                                                                                },
+                                                                                                                {
+                                                                                                                    "type": "number"
+                                                                                                                },
+                                                                                                                {
+                                                                                                                    "type": "boolean"
+                                                                                                                },
+                                                                                                                {
+                                                                                                                    "type": "array",
+                                                                                                                    "items": {}
+                                                                                                                }
+                                                                                                            ]
+                                                                                                        },
+                                                                                                        "valueLabel": {
+                                                                                                            "anyOf": [
+                                                                                                                {
+                                                                                                                    "type": "string"
+                                                                                                                },
+                                                                                                                {
+                                                                                                                    "type": "array",
+                                                                                                                    "items": {}
+                                                                                                                }
+                                                                                                            ]
+                                                                                                        }
+                                                                                                    }
+                                                                                                },
+                                                                                                {
+                                                                                                    "title": "Simple open question",
+                                                                                                    "type": "object",
+                                                                                                    "required": [
+                                                                                                        "type",
+                                                                                                        "id",
+                                                                                                        "label",
+                                                                                                        "value"
+                                                                                                    ],
+                                                                                                    "properties": {
+                                                                                                        "type": {
+                                                                                                            "enum": [
+                                                                                                                "simple"
+                                                                                                            ]
+                                                                                                        },
+                                                                                                        "id": {
+                                                                                                            "title": "Question Id",
+                                                                                                            "type": "string",
+                                                                                                            "pattern": "^q-?(?:-[a-z0-9]{1,20}){1,20}$"
+                                                                                                        },
+                                                                                                        "label": {
+                                                                                                            "type": "string"
+                                                                                                        },
+                                                                                                        "value": {
+                                                                                                            "anyOf": [
+                                                                                                                {
+                                                                                                                    "type": "string"
+                                                                                                                },
+                                                                                                                {
+                                                                                                                    "type": "number"
+                                                                                                                },
+                                                                                                                {
+                                                                                                                    "type": "boolean"
+                                                                                                                }
+                                                                                                            ]
+                                                                                                        }
+                                                                                                    }
+                                                                                                },
+                                                                                                {
+                                                                                                    "title": "Composite question",
+                                                                                                    "type": "object",
+                                                                                                    "required": [
+                                                                                                        "type",
+                                                                                                        "id",
+                                                                                                        "label",
+                                                                                                        "values"
+                                                                                                    ],
+                                                                                                    "properties": {
+                                                                                                        "type": {
+                                                                                                            "enum": [
+                                                                                                                "composite"
+                                                                                                            ]
+                                                                                                        },
+                                                                                                        "id": {
+                                                                                                            "title": "Composite question Id",
+                                                                                                            "description": "Allows for questions with multiple parts e.g. fullname consists of title, firstname, lastname.",
+                                                                                                            "type": "string",
+                                                                                                            "pattern": "^[a-z][a-z0-9]{0,19}(?:-[a-z0-9]{1,20}){0,20}$"
+                                                                                                        },
+                                                                                                        "label": {
+                                                                                                            "type": "string"
+                                                                                                        },
+                                                                                                        "values": {
+                                                                                                            "type": "array",
+                                                                                                            "items": {
+                                                                                                                "anyOf": [
+                                                                                                                    {
+                                                                                                                        "title": "Simple closed question",
+                                                                                                                        "type": "object",
+                                                                                                                        "required": [
+                                                                                                                            "type",
+                                                                                                                            "id",
+                                                                                                                            "label",
+                                                                                                                            "value",
+                                                                                                                            "valueLabel"
+                                                                                                                        ],
+                                                                                                                        "properties": {
+                                                                                                                            "type": {
+                                                                                                                                "enum": [
+                                                                                                                                    "simple"
+                                                                                                                                ]
+                                                                                                                            },
+                                                                                                                            "id": {
+                                                                                                                                "title": "Question Id",
+                                                                                                                                "type": "string",
+                                                                                                                                "pattern": "^q-?(?:-[a-z0-9]{1,20}){1,20}$"
+                                                                                                                            },
+                                                                                                                            "label": {
+                                                                                                                                "type": "string"
+                                                                                                                            },
+                                                                                                                            "closedQuestion": {
+                                                                                                                                "enum": [
+                                                                                                                                    true
+                                                                                                                                ]
+                                                                                                                            },
+                                                                                                                            "value": {
+                                                                                                                                "anyOf": [
+                                                                                                                                    {
+                                                                                                                                        "type": "string"
+                                                                                                                                    },
+                                                                                                                                    {
+                                                                                                                                        "type": "number"
+                                                                                                                                    },
+                                                                                                                                    {
+                                                                                                                                        "type": "boolean"
+                                                                                                                                    },
+                                                                                                                                    {
+                                                                                                                                        "type": "array",
+                                                                                                                                        "items": {}
+                                                                                                                                    }
+                                                                                                                                ]
+                                                                                                                            },
+                                                                                                                            "valueLabel": {
+                                                                                                                                "anyOf": [
+                                                                                                                                    {
+                                                                                                                                        "type": "string"
+                                                                                                                                    },
+                                                                                                                                    {
+                                                                                                                                        "type": "array",
+                                                                                                                                        "items": {}
+                                                                                                                                    }
+                                                                                                                                ]
+                                                                                                                            }
+                                                                                                                        }
+                                                                                                                    },
+                                                                                                                    {
+                                                                                                                        "title": "Simple open question",
+                                                                                                                        "type": "object",
+                                                                                                                        "required": [
+                                                                                                                            "type",
+                                                                                                                            "id",
+                                                                                                                            "label",
+                                                                                                                            "value"
+                                                                                                                        ],
+                                                                                                                        "properties": {
+                                                                                                                            "type": {
+                                                                                                                                "enum": [
+                                                                                                                                    "simple"
+                                                                                                                                ]
+                                                                                                                            },
+                                                                                                                            "id": {
+                                                                                                                                "title": "Question Id",
+                                                                                                                                "type": "string",
+                                                                                                                                "pattern": "^q-?(?:-[a-z0-9]{1,20}){1,20}$"
+                                                                                                                            },
+                                                                                                                            "label": {
+                                                                                                                                "type": "string"
+                                                                                                                            },
+                                                                                                                            "value": {
+                                                                                                                                "anyOf": [
+                                                                                                                                    {
+                                                                                                                                        "type": "string"
+                                                                                                                                    },
+                                                                                                                                    {
+                                                                                                                                        "type": "number"
+                                                                                                                                    },
+                                                                                                                                    {
+                                                                                                                                        "type": "boolean"
+                                                                                                                                    }
+                                                                                                                                ]
+                                                                                                                            }
+                                                                                                                        }
+                                                                                                                    }
+                                                                                                                ]
+                                                                                                            }
+                                                                                                        }
+                                                                                                    }
+                                                                                                }
+                                                                                            ]
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                ]
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                "examples": {
+                                    "v1.0.0": {
+                                        "summary": "Request Header \"Accept-Version: 1.0.0\"",
+                                        "value": {
+                                            "data": [
+                                                {
+                                                    "type": "dataset",
+                                                    "id": "0",
+                                                    "attributes": {
+                                                        "q-applicant-british-citizen-or-eu-national": true
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "v2.0.0": {
+                                        "summary": "Request Header \"Accept-Version: 2.0.0\"",
+                                        "value": {
+                                            "data": [
+                                                {
+                                                    "type": "dataset",
+                                                    "id": "0",
+                                                    "attributes": {
+                                                        "values": [
+                                                            {
+                                                                "type": "simple",
+                                                                "id": "q-applicant-british-citizen-or-eu-national",
+                                                                "label": "Are you a British citizen or EU national?",
+                                                                "value": true,
+                                                                "valueLabel": "Yes"
                                                             },
                                                             {
-                                                                "properties": {
-                                                                    "type": {
-                                                                        "enum": ["dataset"]
+                                                                "type": "composite",
+                                                                "id": "applicant-name",
+                                                                "label": "Enter your name",
+                                                                "values": [
+                                                                    {
+                                                                        "type": "simple",
+                                                                        "id": "q-applicant-title",
+                                                                        "label": "Title",
+                                                                        "value": "Mr"
                                                                     },
-                                                                    "id": {
-                                                                        "type": "string",
-                                                                        "enum": ["0"]
+                                                                    {
+                                                                        "type": "simple",
+                                                                        "id": "q-applicant-first-name",
+                                                                        "label": "First name",
+                                                                        "value": "Foo"
+                                                                    },
+                                                                    {
+                                                                        "type": "simple",
+                                                                        "id": "q-applicant-last-name",
+                                                                        "label": "Last name",
+                                                                        "value": "Bar"
                                                                     }
-                                                                }
+                                                                ]
+                                                            },
+                                                            {
+                                                                "type": "composite",
+                                                                "id": "applicant-address",
+                                                                "label": "Enter your address",
+                                                                "values": [
+                                                                    {
+                                                                        "type": "simple",
+                                                                        "id": "q-applicant-building-and-street",
+                                                                        "label": "Building and street",
+                                                                        "value": "The Oaks"
+                                                                    },
+                                                                    {
+                                                                        "type": "simple",
+                                                                        "id": "q-applicant-building-and-street-2",
+                                                                        "label": "Building and street line 2",
+                                                                        "value": "1 Test Lane"
+                                                                    },
+                                                                    {
+                                                                        "type": "simple",
+                                                                        "id": "q-applicant-town-or-city",
+                                                                        "label": "Town or city",
+                                                                        "value": "Testertown"
+                                                                    },
+                                                                    {
+                                                                        "type": "simple",
+                                                                        "id": "q-applicant-county",
+                                                                        "label": "County (optional)",
+                                                                        "value": "Testshire"
+                                                                    },
+                                                                    {
+                                                                        "type": "simple",
+                                                                        "id": "q-applicant-postcode",
+                                                                        "label": "Postcode (optional)",
+                                                                        "value": "Z1 ZZ1"
+                                                                    }
+                                                                ]
+                                                            },
+                                                            {
+                                                                "type": "simple",
+                                                                "id": "q-confirmation-method",
+                                                                "label": "How should we tell you we've got your application?",
+                                                                "value": "email",
+                                                                "valueLabel": "Email"
+                                                            },
+                                                            {
+                                                                "type": "simple",
+                                                                "id": "q-applicant-enter-your-email-address",
+                                                                "label": "Email address",
+                                                                "value": "foo@36d52b7e-ac5a-418b-8b1d-d2b617b11a41.com"
+                                                            },
+                                                            {
+                                                                "type": "simple",
+                                                                "id": "q-applicant-physical-injuries",
+                                                                "label": "What was injured?",
+                                                                "value": [
+                                                                    "phyinj-146",
+                                                                    "phyinj-003",
+                                                                    "phyinj-042",
+                                                                    "phyinj-053"
+                                                                ],
+                                                                "valueLabel": [
+                                                                    "Head injury causing concussion, headaches or loss of balance",
+                                                                    "Brain damage",
+                                                                    "Fractured skull",
+                                                                    "Hair pulled out"
+                                                                ]
+                                                            },
+                                                            {
+                                                                "type": "simple",
+                                                                "id": "q-applicant-enter-your-date-of-birth",
+                                                                "label": "Enter your date of birth",
+                                                                "value": "1970-01-01T00:00:00.000Z"
                                                             }
                                                         ]
                                                     }
                                                 }
-                                            }
+                                            ]
                                         }
-                                    ]
-                                },
-                                "example": {
-                                    "data": [
-                                        {
-                                            "type": "dataset",
-                                            "id": "0",
-                                            "attributes": {
-                                                "q-applicant-british-citizen-or-eu-national": true
-                                            }
-                                        }
-                                    ]
+                                    }
                                 }
                             }
                         }

@@ -1,6 +1,6 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema#",
-    "title": "Dataset document",
+    "title": "Dataset document v1.0.0",
     "allOf": [
         {"$ref": "../../../json-api-base-document.json"},
         {
@@ -8,7 +8,7 @@
                 "data": {
                     "type": "array",
                     "items": {
-                        "$ref": "../../../resources/dataset-resource.json"
+                        "$ref": "../../../resources/dataset-resource-v1.0.0.json"
                     }
                 }
             }

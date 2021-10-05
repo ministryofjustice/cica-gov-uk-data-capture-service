@@ -1,0 +1,27 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Dataset resource v1.0.0",
+    "allOf": [
+        {"$ref": "../json-api-base-resource.json"},
+        {
+            "properties": {
+                "type": {
+                    "const": "dataset"
+                },
+                "id": {
+                    "type": "string",
+                    "const": "0"
+                },
+                "attributes": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "patternProperties": {
+                        "^q-?(?:-[a-z0-9]{1,20}){1,20}$": {
+                            "type": ["string", "number", "boolean", "array"]
+                        }
+                    }
+                }
+            }
+        }
+    ]
+}
