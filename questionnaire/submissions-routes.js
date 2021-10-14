@@ -8,7 +8,7 @@ const permissions = require('../middleware/route-permissions');
 
 const router = express.Router();
 
-router.use(validateJWT({secret: process.env.DCS_JWT_SECRET}));
+router.use(validateJWT({secret: process.env.DCS_JWT_SECRET, algorithms: ['HS256']}));
 
 router
     .route('/resubmit-failed')
