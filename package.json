@@ -35,8 +35,8 @@
         "notifications-node-client": "^4.7.0",
         "pg": "^7.11.0",
         "pino-http": "^5.5.0",
-        "q-router": "github:CriminalInjuriesCompensationAuthority/q-router#v2.5.3",
-        "q-templates-application": "github:CriminalInjuriesCompensationAuthority/q-templates-application#l10n-rc-newscreens",
+        "q-router": "github:CriminalInjuriesCompensationAuthority/q-router#add-date-compare",
+        "q-templates-application": "github:CriminalInjuriesCompensationAuthority/q-templates-application#l10n-rc",
         "swagger-ui-express": "^4.0.2",
         "uuid": "^3.3.2",
         "verror": "^1.10.0"
