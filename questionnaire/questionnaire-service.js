@@ -15,6 +15,7 @@ const replaceJsonPointers = require('../services/replace-json-pointer');
 const createNotifyService = require('../services/notify');
 const createSlackService = require('../services/slack');
 const questionnaireResource = require('./resources/questionnaire-resource');
+const themesResource = require('./resources/themes-resource');
 
 const defaults = {};
 defaults.createQuestionnaireDAL = require('./questionnaire-dal');
@@ -358,11 +359,30 @@ function createQuestionnaireService({
     function buildSectionResource(sectionId, questionnaire) {
         const section = questionnaire.sections[sectionId];
         const {schema: sectionSchema} = section;
+
+        if (sectionSchema.properties) {
+            // get themes array data
+            // get data from new endpoint
+            const themes = themesResource.data;
+            Object.keys(sectionSchema.properties).forEach(subSchema => {
+                if (
+                    sectionSchema.properties[subSchema].properties &&
+                    'summaryInfo' in sectionSchema.properties[subSchema].properties
+                ) {
+                    // Seed the 'summaryStructure' with the themes
+                    sectionSchema.properties[
+                        subSchema
+                    ].properties.summaryInfo.summaryStructure = themes;
+                }
+            });
+        }
+
         const sectionSchemaAsJson = JSON.stringify(sectionSchema);
         const sectionSchemaAsJsonWithReplacements = replaceJsonPointers(
             sectionSchemaAsJson,
             questionnaire
         );
+
         const sectionResource = {
             type: 'sections',
             id: sectionId,
