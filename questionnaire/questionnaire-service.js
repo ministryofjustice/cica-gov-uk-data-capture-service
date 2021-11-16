@@ -15,6 +15,7 @@ const replaceJsonPointers = require('../services/replace-json-pointer');
 const createNotifyService = require('../services/notify');
 const createSlackService = require('../services/slack');
 const questionnaireResource = require('./resources/questionnaire-resource');
+const createDatasetService = require('./dataset/dataset-service.js');
 
 const defaults = {};
 defaults.createQuestionnaireDAL = require('./questionnaire-dal');
@@ -358,6 +359,27 @@ function createQuestionnaireService({
     function buildSectionResource(sectionId, questionnaire) {
         const section = questionnaire.sections[sectionId];
         const {schema: sectionSchema} = section;
+
+        // Check if schema is a summary page. Only summary pages have a 'summaryInfo' property
+        if (sectionSchema.properties) {
+            Object.keys(sectionSchema.properties).forEach(async subSchema => {
+                if (
+                    sectionSchema.properties[subSchema].properties &&
+                    'summaryInfo' in sectionSchema.properties[subSchema].properties
+                ) {
+                    // get resource from datasetService
+                    const datasetService = createDatasetService({logger});
+                    const themesResource = await datasetService.getResource(
+                        questionnaire.id,
+                        '2.0.0'
+                    );
+                    // Seed the 'summaryStructure' with the themes
+                    sectionSchema.properties[subSchema].properties.summaryInfo.summaryStructure =
+                        themesResource[0].attributes.values;
+                }
+            });
+        }
+
         const sectionSchemaAsJson = JSON.stringify(sectionSchema);
         const sectionSchemaAsJsonWithReplacements = replaceJsonPointers(
             sectionSchemaAsJson,
