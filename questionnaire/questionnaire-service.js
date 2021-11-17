@@ -7,7 +7,7 @@ const AjvErrors = require('ajv-errors');
 const VError = require('verror');
 const createQRouter = require('q-router');
 const uuidv4 = require('uuid/v4');
-const pointer = require('json-pointer');
+const pointer = require('jsonpointer');
 const ajvFormatsMobileUk = require('ajv-formats-mobile-uk');
 const templates = require('./templates');
 const createMessageBusCaller = require('../services/message-bus');
@@ -145,15 +145,15 @@ function createQuestionnaireService({
             }
             try {
                 const notifyService = createNotifyService({logger});
-
                 if (task.type === 'sendEmail') {
-                    if (pointer.has(questionnaire, task.templatePlaceholderMap.emailAddress)) {
+                    const emailAddress = pointer.get(
+                        questionnaire,
+                        task.templatePlaceholderMap.emailAddress
+                    );
+                    if (emailAddress !== undefined) {
                         const transformedTaskOptions = {
                             ...task,
-                            emailAddress: pointer.get(
-                                questionnaire,
-                                task.templatePlaceholderMap.emailAddress
-                            ),
+                            emailAddress,
                             personalisation: {
                                 caseReference: pointer.get(
                                     questionnaire,
@@ -167,13 +167,14 @@ function createQuestionnaireService({
                 }
 
                 if (task.type === 'sendSms') {
-                    if (pointer.has(questionnaire, task.templatePlaceholderMap.phoneNumber)) {
+                    const phoneNumber = pointer.get(
+                        questionnaire,
+                        task.templatePlaceholderMap.phoneNumber
+                    );
+                    if (phoneNumber !== undefined) {
                         const transformedTaskOptions = {
                             ...task,
-                            phoneNumber: pointer.get(
-                                questionnaire,
-                                task.templatePlaceholderMap.phoneNumber
-                            ),
+                            phoneNumber,
                             personalisation: {
                                 caseReference: pointer.get(
                                     questionnaire,
