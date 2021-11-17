@@ -1,15 +1,13 @@
 'use strict';
 
-const pointer = require('json-pointer');
+const pointer = require('jsonpointer');
 
 const rxJsonPointerToken = /\|\|(.+?)\|\|/gi;
 
 function replaceJsonPointer(content, data) {
     const modifiedContent = content.replace(rxJsonPointerToken, (token, jsonPointer) => {
-        let value;
-        if (pointer.has(data, jsonPointer)) {
-            value = pointer.get(data, jsonPointer);
-        } else {
+        let value = pointer.get(data, jsonPointer);
+        if (value === undefined) {
             value = '';
         }
 

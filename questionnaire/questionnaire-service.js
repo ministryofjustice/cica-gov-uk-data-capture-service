@@ -7,7 +7,7 @@ const AjvErrors = require('ajv-errors');
 const VError = require('verror');
 const createQRouter = require('q-router');
 const uuidv4 = require('uuid/v4');
-const pointer = require('json-pointer');
+const pointer = require('jsonpointer');
 const ajvFormatsMobileUk = require('ajv-formats-mobile-uk');
 const templates = require('./templates');
 const createMessageBusCaller = require('../services/message-bus');
@@ -147,7 +147,10 @@ function createQuestionnaireService({
                 const notifyService = createNotifyService({logger});
 
                 if (task.type === 'sendEmail') {
-                    if (pointer.has(questionnaire, task.templatePlaceholderMap.emailAddress)) {
+                    if (
+                        pointer.get(questionnaire, task.templatePlaceholderMap.emailAddress) !==
+                        undefined
+                    ) {
                         const transformedTaskOptions = {
                             ...task,
                             emailAddress: pointer.get(
@@ -167,7 +170,10 @@ function createQuestionnaireService({
                 }
 
                 if (task.type === 'sendSms') {
-                    if (pointer.has(questionnaire, task.templatePlaceholderMap.phoneNumber)) {
+                    if (
+                        pointer.get(questionnaire, task.templatePlaceholderMap.phoneNumber) !==
+                        undefined
+                    ) {
                         const transformedTaskOptions = {
                             ...task,
                             phoneNumber: pointer.get(
