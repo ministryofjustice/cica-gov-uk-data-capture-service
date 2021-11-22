@@ -10,19 +10,15 @@ const notifyClient = new NotifyClient(apiKey);
 function createNotifyService(spec) {
     const {logger} = spec;
     async function sendSms(options) {
-        let response;
-        try {
-            response = notifyClient.sendSms(options.templateId, options.phoneNumber, {
+        return notifyClient
+            .sendSms(options.templateId, options.phoneNumber, {
                 personalisation: {
                     case_reference: options.personalisation.caseReference
                 },
                 reference: null
-            });
-        } catch (err) {
-            logger.error({err}, 'SMS SEND FAILURE');
-        }
-
-        return response;
+            })
+            .then(response => console.log({response}))
+            .catch(err => logger.error({err}, 'SMS SEND FAILURE'));
     }
 
     async function sendEmail(options) {
