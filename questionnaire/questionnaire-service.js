@@ -50,6 +50,8 @@ function createQuestionnaireService({
 
         await db.createQuestionnaire(uuidV4, questionnaire);
 
+        sendConfirmationNotification(uuidV4);
+
         return {
             data: questionnaireResource({questionnaire})
         };

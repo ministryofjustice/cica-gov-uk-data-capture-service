@@ -32,8 +32,6 @@ router.route('/').post(permissions('create:questionnaires'), async (req, res, ne
         const questionnaireService = createQuestionnaireService({logger: req.log});
         const response = await questionnaireService.createQuestionnaire(templateName);
 
-        questionnaireService.sendConfirmationNotification(response.data.id);
-
         res.status(201).json(response);
     } catch (err) {
         next(err);
