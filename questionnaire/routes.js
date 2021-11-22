@@ -5,6 +5,7 @@ const validateJWT = require('express-jwt');
 
 const createQuestionnaireService = require('./questionnaire-service');
 const permissions = require('../middleware/route-permissions');
+const datasetRouter = require('./dataset/dataset-routes.js');
 
 const router = express.Router();
 const rxTemplateName = /^[a-zA-Z0-9-]{1,30}$/;
@@ -38,21 +39,7 @@ router.route('/').post(permissions('create:questionnaires'), async (req, res, ne
     }
 });
 
-router
-    .route('/:questionnaireId/dataset')
-    .get(permissions('read:questionnaires', 'read:answers'), async (req, res, next) => {
-        try {
-            const {questionnaireId} = req.params;
-            const questionnaireService = createQuestionnaireService({logger: req.log});
-            const resourceCollection = await questionnaireService.getDataset(questionnaireId);
-
-            res.status(200).json({
-                data: resourceCollection
-            });
-        } catch (err) {
-            next(err);
-        }
-    });
+router.use(datasetRouter);
 
 router
     .route('/:questionnaireId/sections/answers')

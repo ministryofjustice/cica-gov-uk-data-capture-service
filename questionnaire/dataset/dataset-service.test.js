@@ -1,6 +1,6 @@
 'use strict';
 
-const createQuestionnaireService = require('./questionnaire-service');
+const createDatasetService = require('./dataset-service');
 
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions
 function escapeRegExp(string) {
@@ -13,7 +13,7 @@ function errorMessageToRegExp(errorMessage) {
 
 describe('Dataset resource', () => {
     it('should return a dataset resource', async () => {
-        const questionnaireService = createQuestionnaireService({
+        const datasetService = createDatasetService({
             logger: () => 'Logged from dataset test',
             createQuestionnaireDAL: () => ({
                 getQuestionnaire: () => ({
@@ -39,7 +39,7 @@ describe('Dataset resource', () => {
             })
         });
 
-        const dataset = await questionnaireService.getDataset();
+        const dataset = await datasetService.getResource();
 
         expect(dataset[0]).toEqual({
             type: 'dataset',
@@ -56,7 +56,7 @@ describe('Dataset resource', () => {
 
     describe('Given multiple sections with the same question id', () => {
         it('should combine answers agaist a single id instance', async () => {
-            const questionnaireService = createQuestionnaireService({
+            const datasetService = createDatasetService({
                 logger: () => 'Logged from dataset test',
                 createQuestionnaireDAL: () => ({
                     getQuestionnaire: () => ({
@@ -82,7 +82,7 @@ describe('Dataset resource', () => {
                 })
             });
 
-            const dataset = await questionnaireService.getDataset();
+            const dataset = await datasetService.getResource();
 
             expect(dataset[0]).toEqual({
                 type: 'dataset',
@@ -96,7 +96,7 @@ describe('Dataset resource', () => {
         });
 
         it('should throw if the answers to be combined are of different types', async () => {
-            const questionnaireService = createQuestionnaireService({
+            const datasetService = createDatasetService({
                 logger: () => 'Logged from dataset test',
                 createQuestionnaireDAL: () => ({
                     getQuestionnaire: () => ({
@@ -123,11 +123,11 @@ describe('Dataset resource', () => {
                 `Question id "bar" found more than once with different answer types. Unable to combine type "array" with "string"`
             );
 
-            await expect(questionnaireService.getDataset()).rejects.toThrow(rxExpectedError);
+            await expect(datasetService.getResource()).rejects.toThrow(rxExpectedError);
         });
 
         it('should throw if the answers to be combined are not arrays', async () => {
-            const questionnaireService = createQuestionnaireService({
+            const datasetService = createDatasetService({
                 logger: () => 'Logged from dataset test',
                 createQuestionnaireDAL: () => ({
                     getQuestionnaire: () => ({
@@ -154,7 +154,7 @@ describe('Dataset resource', () => {
                 `Question id "bar" found more than once with unsupported type "string". Only arrays can be used to combine answers for a single id`
             );
 
-            await expect(questionnaireService.getDataset()).rejects.toThrow(rxExpectedError);
+            await expect(datasetService.getResource()).rejects.toThrow(rxExpectedError);
         });
     });
 });

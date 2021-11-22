@@ -247,54 +247,6 @@ function createQuestionnaireService({
         return resourceCollection;
     }
 
-    async function getDataset(questionnaireId) {
-        const questionnaire = await getQuestionnaire(questionnaireId);
-        const dataset = new Map();
-
-        questionnaire.progress.forEach(sectionId => {
-            const sectionAnswers = questionnaire.answers[sectionId];
-
-            if (sectionAnswers) {
-                Object.keys(sectionAnswers).forEach(questionId => {
-                    const answer = sectionAnswers[questionId];
-
-                    if (dataset.has(questionId)) {
-                        const existingAnswer = dataset.get(questionId);
-
-                        // Answers for a specific question id can be collected over multiple sections.
-                        // If previous answers have already be processed for an id, use an appropriate
-                        // merge strategy for the given data type e.g. push to an array, concatenate strings with a delimiter
-                        // ONLY SUPPORTS ARRAYS AT THE MOMENT
-                        if (Array.isArray(existingAnswer)) {
-                            // Ensure answers are of the same type
-                            if (Array.isArray(answer)) {
-                                existingAnswer.push(...answer);
-                            } else {
-                                throw new VError(
-                                    `Question id "${questionId}" found more than once with different answer types. Unable to combine type "array" with "${typeof answer}"`
-                                );
-                            }
-                        } else {
-                            throw new VError(
-                                `Question id "${questionId}" found more than once with unsupported type "${typeof existingAnswer}". Only arrays can be used to combine answers for a single id`
-                            );
-                        }
-                    } else {
-                        dataset.set(questionId, answer);
-                    }
-                });
-            }
-        });
-
-        return [
-            {
-                type: 'dataset',
-                id: 0,
-                attributes: Object.fromEntries(dataset)
-            }
-        ];
-    }
-
     async function createAnswers(questionnaireId, sectionId, answers) {
         // Make a copy of the supplied answers. These will be returned if they fail validation
         const rawAnswers = JSON.parse(JSON.stringify(answers));
@@ -602,7 +554,6 @@ function createQuestionnaireService({
         validateAllAnswers,
         getAnswers,
         getProgressEntries,
-        getDataset,
         sendConfirmationNotification,
         updateQuestionnaireSubmissionStatus
     });
