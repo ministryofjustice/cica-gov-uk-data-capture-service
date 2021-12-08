@@ -1,5 +1,8 @@
 'use strict';
 
+const VError = require('verror');
+
+const questionnaireFixtures = require('./test-fixtures');
 const createDatasetService = require('./dataset-service');
 
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions
@@ -11,150 +14,172 @@ function errorMessageToRegExp(errorMessage) {
     return new RegExp(`^${escapeRegExp(errorMessage)}$`);
 }
 
-describe('Dataset resource', () => {
-    it('should return a dataset resource', async () => {
-        const datasetService = createDatasetService({
-            logger: () => 'Logged from dataset test',
-            createQuestionnaireDAL: () => ({
-                getQuestionnaire: () => ({
-                    progress: ['page-a', 'page-b', 'page-c', 'page-x', 'page-z'],
-                    answers: {
-                        'page-a': {
-                            foo: 'foo'
-                        },
-                        'page-b': {
-                            bar: 'bar'
-                        },
-                        'page-c': {
-                            baz: 'baz'
-                        },
-                        'page-x': {
-                            biz: true
-                        },
-                        'page-z': {
-                            qux: ['a', 'b', 'c']
-                        }
-                    }
-                })
-            })
-        });
+const QUESTIONNAIRE_UNIQUE_ATTRIBUTE_IDS = '3094f910-62d0-4698-9409-387320b7004b';
+const QUESTIONNAIRE_DUPLICATE_ATTRIBUTE_IDS = '55376963-0675-4ee9-a184-d6858ec0cf33';
+const QUESTIONNAIRE_DUPLICATE_ATTRIBUTE_IDS_DIFFERENT_DATA_TYPES =
+    '292cd67f-8ff8-4b04-a29c-a1b8c2231ed5';
+const QUESTIONNAIRE_DUPLICATE_ATTRIBUTE_IDS_NON_ARRAY_DATA_TYPES =
+    '7f3eec38-1e5f-4806-b8ea-99bbf8918665';
 
-        const dataset = await datasetService.getResource();
-
-        expect(dataset[0]).toEqual({
-            type: 'dataset',
-            id: 0,
-            attributes: {
-                foo: 'foo',
-                bar: 'bar',
-                baz: 'baz',
-                biz: true,
-                qux: ['a', 'b', 'c']
+const datasetService = createDatasetService({
+    logger: () => 'Logged from dataset test',
+    createQuestionnaireDAL: () => ({
+        getQuestionnaire: questionnaireId => {
+            if (questionnaireId === QUESTIONNAIRE_UNIQUE_ATTRIBUTE_IDS) {
+                return questionnaireFixtures.getUniqueAttributeIds();
             }
-        });
+
+            if (questionnaireId === QUESTIONNAIRE_DUPLICATE_ATTRIBUTE_IDS) {
+                return questionnaireFixtures.getDuplicateAttributeIds();
+            }
+
+            if (questionnaireId === QUESTIONNAIRE_DUPLICATE_ATTRIBUTE_IDS_DIFFERENT_DATA_TYPES) {
+                return questionnaireFixtures.getDuplicateAttributeIdsDifferentDataTypes();
+            }
+
+            if (questionnaireId === QUESTIONNAIRE_DUPLICATE_ATTRIBUTE_IDS_NON_ARRAY_DATA_TYPES) {
+                return questionnaireFixtures.getDuplicateAttributeIdsNonArrayDataTypes();
+            }
+
+            throw new VError(
+                {
+                    name: 'ResourceNotFound'
+                },
+                `Questionnaire "${questionnaireId}" not found`
+            );
+        }
+    })
+});
+
+describe('Dataset service', () => {
+    it('should throw is the requested resource version does not exist', async () => {
+        const rxExpectedError = errorMessageToRegExp(
+            'Dataset resource version "1.2.3" is unsupported'
+        );
+
+        await expect(
+            datasetService.getResource(QUESTIONNAIRE_UNIQUE_ATTRIBUTE_IDS, '1.2.3')
+        ).rejects.toThrow(rxExpectedError);
     });
 
-    describe('Given multiple sections with the same question id', () => {
-        it('should combine answers agaist a single id instance', async () => {
-            const datasetService = createDatasetService({
-                logger: () => 'Logged from dataset test',
-                createQuestionnaireDAL: () => ({
-                    getQuestionnaire: () => ({
-                        progress: ['page-a', 'page-b', 'page-c', 'page-x', 'page-z'],
-                        answers: {
-                            'page-a': {
-                                foo: 'foo'
-                            },
-                            'page-b': {
-                                bar: ['bar1', 'bar2']
-                            },
-                            'page-c': {
-                                bar: ['bar3', 'bar4', 'bar5']
-                            },
-                            'page-x': {
-                                baz: true
-                            },
-                            'page-z': {
-                                bar: ['bar6']
-                            }
-                        }
-                    })
-                })
-            });
-
-            const dataset = await datasetService.getResource();
+    describe('Dataset resource v1.0.0', () => {
+        it('should return a dataset resource', async () => {
+            const dataset = await datasetService.getResource(
+                QUESTIONNAIRE_UNIQUE_ATTRIBUTE_IDS,
+                '1.0.0'
+            );
 
             expect(dataset[0]).toEqual({
                 type: 'dataset',
                 id: 0,
                 attributes: {
-                    foo: 'foo',
-                    bar: ['bar1', 'bar2', 'bar3', 'bar4', 'bar5', 'bar6'],
-                    baz: true
+                    'q-applicant-british-citizen-or-eu-national': true,
+                    'q-applicant-enter-your-email-address':
+                        'bar@9f7b855e-586b-49f0-ac7a-026919732b06.gov.uk'
                 }
             });
         });
 
-        it('should throw if the answers to be combined are of different types', async () => {
-            const datasetService = createDatasetService({
-                logger: () => 'Logged from dataset test',
-                createQuestionnaireDAL: () => ({
-                    getQuestionnaire: () => ({
-                        progress: ['page-a', 'page-b', 'page-x', 'page-z'],
-                        answers: {
-                            'page-a': {
-                                foo: 'foo'
-                            },
-                            'page-b': {
-                                bar: ['bar1', 'bar2']
-                            },
-                            'page-x': {
-                                baz: true
-                            },
-                            'page-z': {
-                                bar: 'bar3'
-                            }
-                        }
-                    })
-                })
+        describe('Given multiple sections with the same question id', () => {
+            it('should combine answers agaist a single id instance', async () => {
+                const dataset = await datasetService.getResource(
+                    QUESTIONNAIRE_DUPLICATE_ATTRIBUTE_IDS,
+                    '1.0.0'
+                );
+
+                expect(dataset[0]).toEqual({
+                    type: 'dataset',
+                    id: 0,
+                    attributes: {
+                        'q-applicant-physical-injury-upper': ['head', 'ear', 'skin', 'muscle']
+                    }
+                });
             });
 
-            const rxExpectedError = errorMessageToRegExp(
-                `Question id "bar" found more than once with different answer types. Unable to combine type "array" with "string"`
+            it('should throw if the answers to be combined are of different types', async () => {
+                const rxExpectedError = errorMessageToRegExp(
+                    'Target and Source must be arrays. Target type: "array". Source type: "string"'
+                );
+
+                await expect(
+                    datasetService.getResource(
+                        QUESTIONNAIRE_DUPLICATE_ATTRIBUTE_IDS_DIFFERENT_DATA_TYPES,
+                        '1.0.0'
+                    )
+                ).rejects.toThrow(rxExpectedError);
+            });
+
+            it('should throw if the answers to be combined are not arrays', async () => {
+                const rxExpectedError = errorMessageToRegExp(
+                    'Target and Source must be arrays. Target type: "string". Source type: "string"'
+                );
+
+                await expect(
+                    datasetService.getResource(
+                        QUESTIONNAIRE_DUPLICATE_ATTRIBUTE_IDS_NON_ARRAY_DATA_TYPES,
+                        '1.0.0'
+                    )
+                ).rejects.toThrow(rxExpectedError);
+            });
+        });
+    });
+
+    describe('Dataset resource v2.0.0', () => {
+        it('should return a dataset resource', async () => {
+            const dataset = await datasetService.getResource(
+                QUESTIONNAIRE_UNIQUE_ATTRIBUTE_IDS,
+                '2.0.0'
             );
 
-            await expect(datasetService.getResource()).rejects.toThrow(rxExpectedError);
+            expect(dataset[0]).toEqual({
+                type: 'dataset',
+                id: 0,
+                attributes: {
+                    values: [
+                        {
+                            id: 'q-applicant-enter-your-email-address',
+                            type: 'simple',
+                            label: 'Enter your email address',
+                            value: 'bar@9f7b855e-586b-49f0-ac7a-026919732b06.gov.uk',
+                            format: {
+                                value: 'email'
+                            }
+                        },
+                        {
+                            id: 'q-applicant-british-citizen-or-eu-national',
+                            type: 'simple',
+                            label: 'Are you a British citizen or EU national?',
+                            value: true,
+                            valueLabel: 'Yes'
+                        }
+                    ]
+                }
+            });
         });
 
-        it('should throw if the answers to be combined are not arrays', async () => {
-            const datasetService = createDatasetService({
-                logger: () => 'Logged from dataset test',
-                createQuestionnaireDAL: () => ({
-                    getQuestionnaire: () => ({
-                        progress: ['page-a', 'page-b', 'page-x', 'page-z'],
-                        answers: {
-                            'page-a': {
-                                foo: 'foo'
-                            },
-                            'page-b': {
-                                bar: 'bar1'
-                            },
-                            'page-x': {
-                                baz: true
-                            },
-                            'page-z': {
-                                bar: 'bar2'
+        describe('Given multiple sections with the same question id', () => {
+            it('should combine answers agaist a single id instance', async () => {
+                const dataset = await datasetService.getResource(
+                    QUESTIONNAIRE_DUPLICATE_ATTRIBUTE_IDS,
+                    '2.0.0'
+                );
+
+                expect(dataset[0]).toEqual({
+                    type: 'dataset',
+                    id: 0,
+                    attributes: {
+                        values: [
+                            {
+                                id: 'q-applicant-physical-injury-upper',
+                                type: 'simple',
+                                label: 'What was injured?',
+                                value: ['head', 'ear', 'skin', 'muscle'],
+                                valueLabel: ['Head or brain', 'Ear or hearing', 'Skin', 'Tissue']
                             }
-                        }
-                    })
-                })
+                        ]
+                    }
+                });
             });
-
-            const rxExpectedError = errorMessageToRegExp(
-                `Question id "bar" found more than once with unsupported type "string". Only arrays can be used to combine answers for a single id`
-            );
-
-            await expect(datasetService.getResource()).rejects.toThrow(rxExpectedError);
         });
     });
 });
