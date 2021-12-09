@@ -15,10 +15,11 @@ const config = {
     rules: {
         'prettier/prettier': ['error'],
         'linebreak-style': ['error', process.platform === 'win32' ? 'windows' : 'unix'],
-        'curly': ['error', 'all'],
+        curly: ['error', 'all'],
         'jest/expect-expect': ['error'],
         // https://github.com/eslint/eslint/issues/8953#issuecomment-317697474
-        strict: ['error', 'safe']
+        strict: ['error', 'safe'],
+        'no-param-reassign': ['error', {props: false}]
     },
     plugins: ['prettier']
 };
@@ -27,4 +28,3 @@ const config = {
 /*! m0-start */
 module.exports = config;
 /*! m0-end */
-
