@@ -232,7 +232,33 @@ const questionnaires = {
         };
 
         return q;
-    }
+    },
+    getSimpleAndCompositeAttributes: () => ({
+        sections: {
+            'p-applicant-enter-your-email-address': sections.simpleAttributeSingleValue,
+            'p-applicant-enter your-name': sections.singleCompositeAttribute,
+            'p-applicant-british-citizen-or-eu-national': sections.simpleAttributeSingleValue
+        },
+        progress: [
+            'p-applicant-enter-your-email-address',
+            'p-applicant-enter your-name',
+            'p-applicant-british-citizen-or-eu-national'
+        ],
+        answers: {
+            'p-applicant-enter-your-email-address': {
+                'q-applicant-enter-your-email-address':
+                    'bar@9f7b855e-586b-49f0-ac7a-026919732b06.gov.uk'
+            },
+            'p-applicant-enter-your-name': {
+                'q-applicant-title': 'Mr',
+                'q-applicant-first-name': 'Foo',
+                'q-applicant-last-name': 'Bar'
+            },
+            'p-applicant-british-citizen-or-eu-national': {
+                'q-applicant-british-citizen-or-eu-national': true
+            }
+        }
+    })
 };
 
 module.exports = questionnaires;
