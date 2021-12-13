@@ -80,6 +80,12 @@ app.use((req, res, next) => {
     // https://stackoverflow.com/a/22339262/2952356
     // `process.env.npm_package_version` only works if you use npm start to run the app.
     res.set('Application-Version', process.env.npm_package_version);
+
+    // TODO: Remove this var once legacy stack is in sync
+    // OpenApiValidator mutates request object. Before any
+    // req mutation, capture raw Accept-Version request header
+    res.locals.rawAcceptVersion = req.get('Accept-Version');
+
     next();
 });
 
