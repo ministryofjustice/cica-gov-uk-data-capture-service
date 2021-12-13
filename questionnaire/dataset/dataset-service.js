@@ -129,7 +129,7 @@ function createDatasetService({
             return [
                 {
                     type: 'dataset',
-                    id: 0,
+                    id: '0',
                     attributes: dataset
                 }
             ];
@@ -141,7 +141,7 @@ function createDatasetService({
             return [
                 {
                     type: 'dataset',
-                    id: 0,
+                    id: '0',
                     attributes: {
                         values: dataset
                     }

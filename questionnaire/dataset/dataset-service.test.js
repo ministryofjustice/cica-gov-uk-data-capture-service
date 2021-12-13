@@ -71,7 +71,7 @@ describe('Dataset service', () => {
 
             expect(dataset[0]).toEqual({
                 type: 'dataset',
-                id: 0,
+                id: '0',
                 attributes: {
                     'q-applicant-british-citizen-or-eu-national': true,
                     'q-applicant-enter-your-email-address':
@@ -89,7 +89,7 @@ describe('Dataset service', () => {
 
                 expect(dataset[0]).toEqual({
                     type: 'dataset',
-                    id: 0,
+                    id: '0',
                     attributes: {
                         'q-applicant-physical-injury-upper': ['head', 'ear', 'skin', 'muscle']
                     }
@@ -133,7 +133,7 @@ describe('Dataset service', () => {
 
             expect(dataset[0]).toEqual({
                 type: 'dataset',
-                id: 0,
+                id: '0',
                 attributes: {
                     values: [
                         {
@@ -166,7 +166,7 @@ describe('Dataset service', () => {
 
                 expect(dataset[0]).toEqual({
                     type: 'dataset',
-                    id: 0,
+                    id: '0',
                     attributes: {
                         values: [
                             {
