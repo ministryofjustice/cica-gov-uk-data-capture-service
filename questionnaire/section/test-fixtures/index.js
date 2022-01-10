@@ -161,5 +161,38 @@ module.exports = {
             type: 'object',
             allOf: [attributes.composite]
         }
+    },
+    sectionWithDeclaration: {
+        schema: {
+            $schema: 'http://json-schema.org/draft-07/schema#',
+            type: 'object',
+            title: 'Declaration',
+            allOf: [
+                {
+                    properties: {
+                        'applicant-declaration': {
+                            $id: '#applicant-declaration',
+                            description:
+                                'By submitting the application I, ||/answers/p-applicant-enter-your-name/q-applicant-title|| ||/answers/p-applicant-enter-your-name/q-applicant-first-name|| ||/answers/p-applicant-enter-your-name/q-applicant-last-name||, agree that:'
+                        }
+                    }
+                },
+                {
+                    properties: {
+                        'q-applicant-declaration': {
+                            type: 'string',
+                            title:
+                                'I have read and understood the <a href="#declaration" class="govuk-link">information and declaration</a>',
+                            const: 'i-agree',
+                            meta: {
+                                describedBy: {
+                                    $ref: '#/allOf/0/properties/applicant-declaration/description'
+                                }
+                            }
+                        }
+                    }
+                }
+            ]
+        }
     }
 };
