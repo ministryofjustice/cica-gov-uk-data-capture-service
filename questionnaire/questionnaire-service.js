@@ -360,18 +360,20 @@ function createQuestionnaireService({
         const section = questionnaire.sections[sectionId];
         const {schema: sectionSchema} = section;
 
+        // Check if schema is a summary page. Only summary pages have a 'summaryInfo' property
         if (sectionSchema.properties) {
-            // get themes array data
-            // get data from new endpoint
-            Object.keys(sectionSchema.properties).forEach(subSchema => {
+            Object.keys(sectionSchema.properties).forEach(async subSchema => {
                 if (
                     sectionSchema.properties[subSchema].properties &&
                     'summaryInfo' in sectionSchema.properties[subSchema].properties
                 ) {
+                    // get resource from datasetService
                     const datasetService = createDatasetService({logger});
-                    const themesResource = datasetService.getResource(questionnaire.id, '2.0.0');
+                    const themesResource = await datasetService.getResource(
+                        questionnaire.id,
+                        '2.0.0'
+                    );
                     // Seed the 'summaryStructure' with the themes
-                    console.log(themesResource[0].attributes.values);
                     sectionSchema.properties[subSchema].properties.summaryInfo.summaryStructure =
                         themesResource[0].attributes.values;
                 }
