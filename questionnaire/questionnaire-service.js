@@ -15,7 +15,7 @@ const replaceJsonPointers = require('../services/replace-json-pointer');
 const createNotifyService = require('../services/notify');
 const createSlackService = require('../services/slack');
 const questionnaireResource = require('./resources/questionnaire-resource');
-const themesResource = require('./resources/themes-resource');
+const createDatasetService = require('./dataset/dataset-service.js');
 
 const defaults = {};
 defaults.createQuestionnaireDAL = require('./questionnaire-dal');
@@ -363,16 +363,17 @@ function createQuestionnaireService({
         if (sectionSchema.properties) {
             // get themes array data
             // get data from new endpoint
-            const themes = themesResource.data;
             Object.keys(sectionSchema.properties).forEach(subSchema => {
                 if (
                     sectionSchema.properties[subSchema].properties &&
                     'summaryInfo' in sectionSchema.properties[subSchema].properties
                 ) {
+                    const datasetService = createDatasetService({logger});
+                    const themesResource = datasetService.getResource(questionnaire.id, '2.0.0');
                     // Seed the 'summaryStructure' with the themes
-                    sectionSchema.properties[
-                        subSchema
-                    ].properties.summaryInfo.summaryStructure = themes;
+                    console.log(themesResource[0].attributes.values);
+                    sectionSchema.properties[subSchema].properties.summaryInfo.summaryStructure =
+                        themesResource[0].attributes.values;
                 }
             });
         }
