@@ -2,6 +2,9 @@
 
 const VError = require('verror');
 
+// TODO: Remove replaceJsonPointers dependency on next major template release
+const replaceJsonPointers = require('../../services/replace-json-pointer');
+
 const defaults = {};
 defaults.createQuestionnaireDAL = require('../questionnaire-dal');
 defaults.createSection = require('../section/section');
@@ -95,7 +98,24 @@ function createDatasetService({
         progress.forEach(sectionId => {
             const questionAnswers = answers[sectionId];
 
-            if (questionAnswers !== undefined) {
+            if (sectionId === 'p-applicant-declaration' && questionnaire.version === '5.2.1') {
+                // TODO: START - Remove this block (hardcoded declaration) on next major template release
+                const sectionDefinition = sections[sectionId];
+                const {schema} = sectionDefinition;
+                const schemaJSON = JSON.stringify(schema);
+                const interpolatedSchemaJSON = replaceJsonPointers(schemaJSON, questionnaire);
+                const interpolatedSchema = JSON.parse(interpolatedSchemaJSON);
+                const simpleAttribute = {
+                    type: 'simple',
+                    id: 'q-applicant-declaration',
+                    label: interpolatedSchema.properties['applicant-declaration'].description,
+                    value: 'i-agree',
+                    valueLabel: 'Agree and submit'
+                };
+
+                dataset.set('q-applicant-declaration', simpleAttribute);
+                // TODO: END - Remove this block (hardcoded declaration) on next major template release
+            } else if (questionAnswers !== undefined) {
                 const sectionDefinition = sections[sectionId];
                 const section = createSection({sectionDefinition});
                 const attributes = section.getAttributesByData(questionAnswers);
