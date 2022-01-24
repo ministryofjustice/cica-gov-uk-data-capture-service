@@ -236,12 +236,13 @@ const questionnaires = {
     getSimpleAndCompositeAttributes: () => ({
         sections: {
             'p-applicant-enter-your-email-address': sections.simpleAttributeSingleValue,
-            'p-applicant-enter your-name': sections.singleCompositeAttribute,
-            'p-applicant-british-citizen-or-eu-national': sections.simpleAttributeSingleValue
+            'p-applicant-enter-your-name': sections.singleCompositeAttribute,
+            'p-applicant-british-citizen-or-eu-national':
+                sections.simpleAttributeSinglePredefinedValue
         },
         progress: [
             'p-applicant-enter-your-email-address',
-            'p-applicant-enter your-name',
+            'p-applicant-enter-your-name',
             'p-applicant-british-citizen-or-eu-national'
         ],
         answers: {

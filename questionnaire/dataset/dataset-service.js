@@ -2,6 +2,9 @@
 
 const VError = require('verror');
 
+// TODO: Remove replaceJsonPointers dependency on next major template release
+const replaceJsonPointers = require('../../services/replace-json-pointer');
+
 const defaults = {};
 defaults.createQuestionnaireDAL = require('../questionnaire-dal');
 defaults.createSection = require('../section/section');
@@ -114,6 +117,23 @@ function createDatasetService({
                         dataset.set(mutatedAttribute.id, mutatedAttribute);
                     }
                 });
+            }
+            // TODO: Remove hardcoded declaration on next major template release
+            else if (sectionId === 'p-applicant-declaration' && questionnaire.version === '5.2.1') {
+                const sectionDefinition = sections[sectionId];
+                const {schema} = sectionDefinition;
+                const schemaJSON = JSON.stringify(schema);
+                const interpolatedSchemaJSON = replaceJsonPointers(schemaJSON, questionnaire);
+                const interpolatedSchema = JSON.parse(interpolatedSchemaJSON);
+                const simpleAttribute = {
+                    type: 'simple',
+                    id: 'q-applicant-declaration',
+                    label: interpolatedSchema.properties['applicant-declaration'].description,
+                    value: 'i-agree',
+                    valueLabel: 'Agree and submit'
+                };
+
+                dataset.set('q-applicant-declaration', simpleAttribute);
             }
         });
 
