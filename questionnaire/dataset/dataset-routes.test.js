@@ -109,40 +109,5 @@ describe('/questionnaires/{questionnaireId}/dataset', () => {
             expect(res.status).toEqual(200);
             expect(res.body).toMatchSchema(v2Schema);
         });
-
-        // TODO: Remove this test once legacy stack is in sync
-        describe('And in a non-test environment', () => {
-            const currentAppEnvironment = process.env.APP_ENV;
-
-            beforeEach(() => {
-                process.env.APP_ENV = 'dev';
-            });
-
-            afterEach(() => {
-                process.env.APP_ENV = currentAppEnvironment;
-            });
-
-            it('should return a corresponding "Content-Version: 1.0.0" header', async () => {
-                const res = await request(app)
-                    .get('/api/v1/questionnaires/cb2eadc7-9189-4c4d-9eb3-896b72a1ed16/dataset')
-                    .set('Authorization', `Bearer ${tokens['read:questionnaires']}`)
-                    .set('Accept-Version', '1.0.0');
-
-                expect(process.env.APP_ENV).toEqual('dev');
-                expect(res.get('Content-Version')).toBe('1.0.0');
-            });
-
-            it('should return v1.0.0 of the dataset resource', async () => {
-                const res = await request(app)
-                    .get('/api/v1/questionnaires/cb2eadc7-9189-4c4d-9eb3-896b72a1ed16/dataset')
-                    .set('Authorization', `Bearer ${tokens['read:questionnaires']}`)
-                    .set('Accept-Version', '1.0.0');
-                const v1Schema = await $RefParser.dereference(v1SchemaFilepath);
-
-                expect(process.env.APP_ENV).toEqual('dev');
-                expect(res.status).toEqual(200);
-                expect(res.body).toMatchSchema(v1Schema);
-            });
-        });
     });
 });
