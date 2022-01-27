@@ -1,13 +1,13 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: dcs-service-dev
+  name: dcs-service-prod
   labels:
-    app: dcs-app-dev
+    app: dcs-app-prod
 spec:
   ports:
     - port: 80
       name: http
       targetPort: 3100
   selector:
-    app: dcs-app-dev
+    app: dcs-app-prod
