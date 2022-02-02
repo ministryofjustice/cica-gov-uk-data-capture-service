@@ -88,34 +88,36 @@ function createDatasetService({
         return Object.fromEntries(dataset);
     }
 
-    function getHierachicalDataView(questionnaire) {
+    async function getHierachicalDataView(questionnaire) {
         const {progress, sections, answers} = questionnaire;
         const dataset = new Map();
 
-        progress.forEach(sectionId => {
-            const questionAnswers = answers[sectionId];
+        await Promise.all(
+            progress.map(async sectionId => {
+                const questionAnswers = answers[sectionId];
 
-            if (questionAnswers !== undefined) {
-                const sectionDefinition = sections[sectionId];
-                const section = createSection({sectionDefinition});
-                const attributes = section.getAttributesByData(questionAnswers);
+                if (questionAnswers !== undefined) {
+                    const sectionDefinition = sections[sectionId];
+                    const section = createSection({sectionDefinition, answers});
+                    const attributes = await section.getAttributesByData(questionAnswers);
 
-                attributes.forEach(attribute => {
-                    const existingAttribute = dataset.get(attribute.id);
+                    attributes.forEach(attribute => {
+                        const existingAttribute = dataset.get(attribute.id);
 
-                    if (existingAttribute !== undefined) {
-                        mergeAttributeValues(existingAttribute, attribute);
-                    } else {
-                        const mutatedAttribute = applyGlobalAttributeDetails(
-                            attribute,
-                            questionnaire
-                        );
+                        if (existingAttribute !== undefined) {
+                            mergeAttributeValues(existingAttribute, attribute);
+                        } else {
+                            const mutatedAttribute = applyGlobalAttributeDetails(
+                                attribute,
+                                questionnaire
+                            );
 
-                        dataset.set(mutatedAttribute.id, mutatedAttribute);
-                    }
-                });
-            }
-        });
+                            dataset.set(mutatedAttribute.id, mutatedAttribute);
+                        }
+                    });
+                }
+            })
+        );
 
         return Array.from(dataset.values());
     }
@@ -136,7 +138,7 @@ function createDatasetService({
         }
 
         if (resourceVersion === '2.0.0') {
-            const dataset = getHierachicalDataView(questionnaire);
+            const dataset = await getHierachicalDataView(questionnaire);
 
             return [
                 {

@@ -15,7 +15,7 @@ describe('Section', () => {
                         'q-applicant-enter-your-email-address':
                             'bar@9f7b855e-586b-49f0-ac7a-026919732b06.gov.uk'
                     };
-                    const sectionAttributes = section.getAttributesByData(data);
+                    const sectionAttributes = await section.getAttributesByData(data);
 
                     expect(sectionAttributes).toEqual([
                         {
@@ -30,7 +30,7 @@ describe('Section', () => {
                     ]);
                 });
 
-                it('should include any value format metadata', () => {
+                it('should include any value format metadata', async () => {
                     const section = createSection({
                         sectionDefinition: {
                             schema: {
@@ -60,7 +60,7 @@ describe('Section', () => {
                     const data = {
                         'q-applicant-when-did-the-crime-start': '2021-01-01T00:00:00.000Z'
                     };
-                    const sectionAttributes = section.getAttributesByData(data);
+                    const sectionAttributes = await section.getAttributesByData(data);
 
                     expect(sectionAttributes).toEqual([
                         {
@@ -87,7 +87,7 @@ describe('Section', () => {
                         const data = {
                             'this-key-does-not-exist-in-the-section-schema': 'dummy value'
                         };
-                        const sectionAttributes = section.getAttributesByData(data);
+                        const sectionAttributes = await section.getAttributesByData(data);
 
                         expect(sectionAttributes).toEqual([]);
                     });
@@ -102,7 +102,7 @@ describe('Section', () => {
                     const data = {
                         'q-applicant-british-citizen-or-eu-national': true
                     };
-                    const sectionAttributes = section.getAttributesByData(data);
+                    const sectionAttributes = await section.getAttributesByData(data);
 
                     expect(sectionAttributes).toEqual([
                         {
@@ -125,7 +125,7 @@ describe('Section', () => {
                     const data = {
                         'q-applicant-physical-injury-upper': ['head', 'eye', 'nose']
                     };
-                    const sectionAttributes = section.getAttributesByData(data);
+                    const sectionAttributes = await section.getAttributesByData(data);
 
                     expect(sectionAttributes).toEqual([
                         {
@@ -149,7 +149,7 @@ describe('Section', () => {
                         'q-applicant-first-name': 'Foo',
                         'q-applicant-last-name': 'Bar'
                     };
-                    const sectionAttributes = section.getAttributesByData(data);
+                    const sectionAttributes = await section.getAttributesByData(data);
 
                     expect(sectionAttributes).toEqual([
                         {
@@ -189,7 +189,7 @@ describe('Section', () => {
                             'q-applicant-title': 'Mr',
                             'q-applicant-last-name': 'Bar'
                         };
-                        const sectionAttributes = section.getAttributesByData(data);
+                        const sectionAttributes = await section.getAttributesByData(data);
 
                         expect(sectionAttributes).toEqual([
                             {
@@ -213,6 +213,35 @@ describe('Section', () => {
                             }
                         ]);
                     });
+                });
+            });
+
+            describe('And the schema contains a declaration', () => {
+                it('should return an attribute with a label derived from declaration title and a value containing declaration content and question title', async () => {
+                    const section = createSection({
+                        sectionDefinition: fixtures.sectionWithDeclaration,
+                        answers: {
+                            'p-applicant-enter-your-name': {
+                                'q-applicant-title': 'Mr',
+                                'q-applicant-first-name': 'Test',
+                                'q-applicant-last-name': 'Declaration'
+                            }
+                        }
+                    });
+                    const data = {
+                        'q-applicant-declaration': ['i-agree']
+                    };
+                    const sectionAttributes = await section.getAttributesByData(data);
+
+                    expect(sectionAttributes).toEqual([
+                        {
+                            id: 'q-applicant-declaration',
+                            type: 'simple', // declaration?
+                            label: 'Declaration',
+                            value:
+                                'By submitting the application I, Mr Test Declaration, agree that: I have read and understood the <a href="#declaration" class="govuk-link">information and declaration</a>'
+                        }
+                    ]);
                 });
             });
         });

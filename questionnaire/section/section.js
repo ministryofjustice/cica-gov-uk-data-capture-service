@@ -1,6 +1,9 @@
 'use strict';
 
-function createSection({sectionDefinition}) {
+const $RefParser = require('json-schema-ref-parser');
+const replaceJsonPointers = require('../../services/replace-json-pointer/index');
+
+function createSection({sectionDefinition, answers}) {
     function getAttributeFormat(attributeSchema) {
         if ('format' in attributeSchema) {
             const format = {
@@ -87,9 +90,67 @@ function createSection({sectionDefinition}) {
         return compositeAttribute;
     }
 
-    function getAttributesByData(data = {}, schema = sectionDefinition.schema) {
+    async function getDescribedByRefValue(questionId, schema) {
+        const schemaObj = await $RefParser.dereference(schema);
+        return schemaObj.allOf[1].properties[questionId].meta.describedBy;
+    }
+
+    async function createDescribedByAttribute(questionId, schema, questionnaireAnswers = answers) {
+        const {allOf} = schema;
+        const questionTitle = allOf[1].properties[questionId].title;
+
+        const attribute = {
+            id: questionId,
+            type: 'simple',
+            label: schema.title ? schema.title : '',
+            value: `${replaceJsonPointers(await getDescribedByRefValue(questionId, schema), {
+                answers: questionnaireAnswers
+            })} ${questionTitle || ''}`
+        };
+
+        return attribute;
+    }
+
+    // TODO add in a gist reference to the target shape here.
+    function isDescribedBy(questionId, schema) {
+        if ('allOf' in schema) {
+            const {allOf} = schema;
+            if (
+                allOf[1] &&
+                allOf[1].properties &&
+                allOf[1].properties[questionId] &&
+                allOf[1].properties[questionId].meta &&
+                allOf[1].properties[questionId].meta.describedBy
+            ) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function getDescribedById(data = {}, schema) {
+        const {allOf} = schema;
+        if (allOf !== undefined) {
+            return Object.keys(data).find(questionId => {
+                if (isDescribedBy(questionId, schema)) {
+                    return true;
+                }
+                return false;
+            });
+        }
+        return undefined;
+    }
+
+    async function getAttributesByData(data = {}, schema = sectionDefinition.schema) {
         const {properties, allOf} = schema;
         const attributes = [];
+
+        const describedById = getDescribedById(data, schema);
+
+        if (describedById !== undefined) {
+            attributes.push(await createDescribedByAttribute(describedById, schema));
+            return attributes;
+        }
 
         if (properties !== undefined) {
             Object.keys(data).forEach(attributeId => {
@@ -109,12 +170,13 @@ function createSection({sectionDefinition}) {
             const compositeAttributeSchema = allOf[0];
             const compositeAttribute = createCompositeAttribute(compositeAttributeSchema);
 
-            compositeAttributeSchema.allOf.forEach(subSchema => {
-                compositeAttribute.values.push(...getAttributesByData(data, subSchema));
-            });
-
+            await compositeAttributeSchema.allOf.reduce(async (previousPromise, subSchema) => {
+                // const attArray = await previousPromise;
+                const attribute = await getAttributesByData(data, subSchema);
+                compositeAttribute.values.push(...attribute);
+                // return attArray;
+            }, Promise.resolve([]));
             attributes.push(compositeAttribute);
-
             return attributes;
         }
 
