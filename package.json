@@ -16,7 +16,7 @@
     "dependencies": {
         "@netflix/nerror": "^1.1.0",
         "@slack/webhook": "^6.0.0",
-        "ajv": "^6.10.0",
+        "ajv": "^6.12.3",
         "ajv-errors": "^1.0.1",
         "ajv-formats-mobile-uk": "github:CriminalInjuriesCompensationAuthority/ajv-formats-mobile-uk#v1.0.0",
         "cookie-parser": "~1.4.3",
