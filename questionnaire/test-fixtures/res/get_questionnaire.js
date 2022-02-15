@@ -5,11 +5,11 @@ const templates = require('../../templates');
 const questionnaireId = '285cb104-0c15-4a9c-9840-cb1007f098fb';
 let questionnaire = templates['sexual-assault'](questionnaireId);
 
-function putQuestionnaireInToSubmittableState(questionaireInstance) {
+function putQuestionnaireInToSubmittableState(questionnaireInstance) {
     // This is currently how a questionnaire is deemed submittable :(
-    questionaireInstance.progress.push(questionaireInstance.routes.summary);
+    questionnaireInstance.progress.push(...questionnaireInstance.routes.summary);
 
-    return questionaireInstance;
+    return questionnaireInstance;
 }
 
 questionnaire = putQuestionnaireInToSubmittableState(questionnaire);
