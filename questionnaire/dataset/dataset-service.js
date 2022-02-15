@@ -95,25 +95,83 @@ function createDatasetService({
         const {progress, sections, answers} = questionnaire;
         const dataset = new Map();
 
+        function getDatasetEntryForConvertedStringToBoolean({sectionDefinition, sectionId}) {
+            const {schema} = sectionDefinition;
+            const schemaJSON = JSON.stringify(schema);
+            const interpolatedSchemaJSON = replaceJsonPointers(schemaJSON, questionnaire);
+            const interpolatedSchema = JSON.parse(interpolatedSchemaJSON);
+            const questionId = Object.keys(sectionDefinition.schema.properties)[0];
+            const currentAnswer = questionnaire.answers[sectionId][questionId];
+            return {
+                questionId,
+                entry: {
+                    type: 'simple',
+                    id: questionId,
+                    label: interpolatedSchema.properties[questionId].title,
+                    value: currentAnswer === 'yes',
+                    valueLabel: currentAnswer === 'not-sure' ? 'no' : currentAnswer
+                }
+            };
+        }
+
+        function getDatasetEntryForSummarySection({sectionDefinition, sectionId}) {
+            const {schema} = sectionDefinition;
+            const schemaJSON = JSON.stringify(schema);
+            const interpolatedSchemaJSON = replaceJsonPointers(schemaJSON, questionnaire);
+            const interpolatedSchema = JSON.parse(interpolatedSchemaJSON);
+
+            const questionId =
+                sectionId.indexOf('mainapplicant') !== -1
+                    ? 'q-mainapplicant-declaration'
+                    : 'q-applicant-declaration';
+            const descriptionId = questionId.replace('q-', '');
+            const value = `i-agree-${sectionId
+                .split('-')
+                .splice(3)
+                .join('-')}`.replace(/(-$)/, '');
+
+            return {
+                questionId,
+                entry: {
+                    type: 'simple',
+                    id: questionId,
+                    label: interpolatedSchema.allOf[0].properties[descriptionId].description,
+                    value,
+                    valueLabel: 'Submit'
+                }
+            };
+        }
+
         progress.forEach(sectionId => {
             const questionAnswers = answers[sectionId];
 
-            if (sectionId === 'p-applicant-declaration' && questionnaire.version === '5.2.1') {
-                // TODO: START - Remove this block (hardcoded declaration) on next major template release
-                const sectionDefinition = sections[sectionId];
-                const {schema} = sectionDefinition;
-                const schemaJSON = JSON.stringify(schema);
-                const interpolatedSchemaJSON = replaceJsonPointers(schemaJSON, questionnaire);
-                const interpolatedSchema = JSON.parse(interpolatedSchemaJSON);
-                const simpleAttribute = {
-                    type: 'simple',
-                    id: 'q-applicant-declaration',
-                    label: interpolatedSchema.properties['applicant-declaration'].description,
-                    value: 'i-agree',
-                    valueLabel: 'Agree and submit'
-                };
-
-                dataset.set('q-applicant-declaration', simpleAttribute);
+            if (
+                [
+                    'p-applicant-infections',
+                    'p-applicant-pregnancy',
+                    'p-applicant-pregnancy-loss'
+                ].includes(sectionId) &&
+                questionnaire.version === '5.2.1'
+            ) {
+                const datasetEntry = getDatasetEntryForConvertedStringToBoolean({
+                    sectionDefinition: sections[sectionId],
+                    sectionId
+                });
+                dataset.set(datasetEntry.questionId, datasetEntry.entry);
+            } else if (
+                [
+                    'p-applicant-declaration',
+                    'p-mainapplicant-declaration-under-12',
+                    'p-mainapplicant-declaration-12-and-over'
+                ].includes(sectionId) &&
+                questionnaire.version === '5.2.1'
+            ) {
+                // // TODO: START - Remove this block (hardcoded declaration) on next major template release
+                const datasetEntry = getDatasetEntryForSummarySection({
+                    sectionDefinition: sections[sectionId],
+                    sectionId
+                });
+                dataset.set(datasetEntry.questionId, datasetEntry.entry);
                 // TODO: END - Remove this block (hardcoded declaration) on next major template release
             } else if (questionAnswers !== undefined) {
                 const sectionDefinition = sections[sectionId];
