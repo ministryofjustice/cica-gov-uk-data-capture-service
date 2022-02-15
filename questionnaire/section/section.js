@@ -51,6 +51,18 @@ function createSection({sectionDefinition}) {
         return undefined;
     }
 
+    function getThemeId(attributeSchema) {
+        if (
+            'meta' in attributeSchema &&
+            'classifications' in attributeSchema.meta &&
+            'theme' in attributeSchema.meta.classifications
+        ) {
+            return attributeSchema.meta.classifications.theme;
+        }
+
+        return 'other-information';
+    }
+
     function createSimpleAttribute(id, attributeSchema, data) {
         const format = getAttributeFormat(attributeSchema);
         const value = data[id];
@@ -58,7 +70,8 @@ function createSection({sectionDefinition}) {
         const simpleAttribute = {
             id,
             type: 'simple',
-            label: attributeSchema.title
+            label: attributeSchema.title,
+            themeId: getThemeId(attributeSchema)
         };
 
         if (format !== undefined) {
@@ -81,6 +94,7 @@ function createSection({sectionDefinition}) {
             id: getCompositeAttributeId(compositeAttributeSchema),
             type: 'composite',
             label: compositeAttributeSchema.title,
+            themeId: getThemeId(compositeAttributeSchema),
             values: []
         };
 

@@ -356,6 +356,20 @@ function createQuestionnaireService({
         };
     }
 
+    function buildThemeResource(themes, dataset) {
+        const themeResource = [];
+        Object.keys(themes).forEach(theme => {
+            const themeData = {
+                type: 'theme',
+                id: theme,
+                title: themes[theme].title,
+                values: dataset.filter(value => value.themeId === theme)
+            };
+            themeResource.push(themeData);
+        });
+        return themeResource;
+    }
+
     function buildSectionResource(sectionId, questionnaire) {
         const section = questionnaire.sections[sectionId];
         const {schema: sectionSchema} = section;
@@ -369,13 +383,18 @@ function createQuestionnaireService({
                 ) {
                     // get resource from datasetService
                     const datasetService = createDatasetService({logger});
-                    const themesResource = await datasetService.getResource(
+                    const datasetResource = await datasetService.getResource(
                         questionnaire.id,
                         '2.0.0'
                     );
+                    const questionnaireThemes = questionnaire.taxonomies.theme.taxa;
                     // Seed the 'summaryStructure' with the themes
-                    sectionSchema.properties[subSchema].properties.summaryInfo.summaryStructure =
-                        themesResource[0].attributes.values;
+                    sectionSchema.properties[
+                        subSchema
+                    ].properties.summaryInfo.summaryStructure = buildThemeResource(
+                        questionnaireThemes,
+                        datasetResource[0].attributes.values
+                    );
                 }
             });
         }
@@ -577,7 +596,8 @@ function createQuestionnaireService({
         getAnswers,
         getProgressEntries,
         sendConfirmationNotification,
-        updateQuestionnaireSubmissionStatus
+        updateQuestionnaireSubmissionStatus,
+        buildThemeResource
     });
 }
 
