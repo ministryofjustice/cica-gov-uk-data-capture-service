@@ -1933,7 +1933,7 @@
         "referrer": "https://uat.claim-criminal-injuries-compensation.service.justice.gov.uk/start-page",
         "confirmation": "p--confirmation",
         "initial": "p-applicant-declaration",
-        "summary": "p--check-your-answers"
+        "summary": ["p--check-your-answers"]
     },
     "progress": [
         "p-applicant-declaration",

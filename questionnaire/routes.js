@@ -152,8 +152,8 @@ router
 
             // are we currently, or have we been on this questionnaire's summary page?
             // we infer a questionnaire is complete if the user has visited the summary page.
-            const isQuestionnaireComplete = questionnaire.routes.summary.some(x =>
-                questionnaire.progress.includes(x)
+            const isQuestionnaireComplete = questionnaire.routes.summary.some(summarySectionId =>
+                questionnaire.progress.includes(summarySectionId)
             );
 
             // if the summary section ID is in the progress array, then that means
