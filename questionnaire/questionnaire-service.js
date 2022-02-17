@@ -367,36 +367,51 @@ function createQuestionnaireService({
             };
             themeResource.push(themeData);
         });
+
         return themeResource;
     }
 
     function buildSectionResource(sectionId, questionnaire) {
         const section = questionnaire.sections[sectionId];
         const {schema: sectionSchema} = section;
-
         // Check if schema is a summary page. Only summary pages have a 'summaryInfo' property
-        if (sectionSchema.properties) {
-            Object.keys(sectionSchema.properties).forEach(async subSchema => {
+        /* if (sectionSchema.properties) {
+            Object.keys(sectionSchema.properties).forEach( async subSchema => {
                 if (
                     sectionSchema.properties[subSchema].properties &&
                     'summaryInfo' in sectionSchema.properties[subSchema].properties
                 ) {
-                    // get resource from datasetService
                     const datasetService = createDatasetService({logger});
                     const datasetResource = await datasetService.getResource(
                         questionnaire.id,
                         '2.0.0'
                     );
                     const questionnaireThemes = questionnaire.taxonomies.theme.taxa;
+                    const themesResource = await buildThemeResource(questionnaireThemes, datasetResource[0].attributes.values);
                     // Seed the 'summaryStructure' with the themes
                     sectionSchema.properties[
                         subSchema
-                    ].properties.summaryInfo.summaryStructure = buildThemeResource(
-                        questionnaireThemes,
-                        datasetResource[0].attributes.values
-                    );
+                    ].properties.summaryInfo.summaryStructure = themesResource;
+                    console.log(JSON.stringify(sectionSchema.properties[subSchema].properties.summaryInfo.summaryStructure, null, 4));
+                    console.log(JSON.stringify(themesResource, null, 4));
                 }
             });
+        } */
+
+        // Todo - Do not hard code this id.
+        if (sectionSchema.properties && 'p-check-your-answers' in sectionSchema.properties) {
+            const datasetService = createDatasetService({logger});
+            const datasetResource = datasetService.getResource(questionnaire.id, '2.0.0');
+            const questionnaireThemes = questionnaire.taxonomies.theme.taxa;
+            const themesResource = buildThemeResource(
+                questionnaireThemes,
+                datasetResource[0].attributes.values
+            );
+            // Seed the 'summaryStructure' with the themes
+            sectionSchema.properties[
+                'p-check-your-answers'
+            ].properties.summaryInfo.summaryStructure = themesResource;
+            console.log(JSON.stringify(themesResource, null, 4));
         }
 
         const sectionSchemaAsJson = JSON.stringify(sectionSchema);
@@ -424,6 +439,8 @@ function createQuestionnaireService({
                 }
             };
         }
+
+        console.log(JSON.stringify(sectionResource.attributes, null, 4));
 
         return sectionResource;
     }
@@ -563,7 +580,6 @@ function createQuestionnaireService({
                     confirmation: questionnaire.routes.confirmation,
                     final: isFinalType
                 };
-
                 return compoundDocument;
             }
 
@@ -580,7 +596,6 @@ function createQuestionnaireService({
         const progressEntriesCollection = questionnaire.progress.map(sectionId =>
             buildProgressEntryResource(sectionId, questionnaire)
         );
-
         return {
             data: progressEntriesCollection
         };

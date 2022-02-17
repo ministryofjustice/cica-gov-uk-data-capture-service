@@ -1,6 +1,6 @@
 'use strict';
 
-function createSection({sectionDefinition}) {
+function createSection({sectionDefinition, sectionId}) {
     function getAttributeFormat(attributeSchema) {
         if ('format' in attributeSchema) {
             const format = {
@@ -71,7 +71,8 @@ function createSection({sectionDefinition}) {
             id,
             type: 'simple',
             label: attributeSchema.title,
-            themeId: getThemeId(attributeSchema)
+            themeId: getThemeId(attributeSchema),
+            sectionId
         };
 
         if (format !== undefined) {
@@ -95,6 +96,7 @@ function createSection({sectionDefinition}) {
             type: 'composite',
             label: compositeAttributeSchema.title,
             themeId: getThemeId(compositeAttributeSchema),
+            sectionId,
             values: []
         };
 

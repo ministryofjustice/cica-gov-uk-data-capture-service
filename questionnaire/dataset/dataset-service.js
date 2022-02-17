@@ -117,7 +117,7 @@ function createDatasetService({
                 // TODO: END - Remove this block (hardcoded declaration) on next major template release
             } else if (questionAnswers !== undefined) {
                 const sectionDefinition = sections[sectionId];
-                const section = createSection({sectionDefinition});
+                const section = createSection({sectionDefinition, sectionId});
                 const attributes = section.getAttributesByData(questionAnswers);
 
                 attributes.forEach(attribute => {
