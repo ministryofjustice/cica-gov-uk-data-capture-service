@@ -1,26 +1,45 @@
 'use strict';
 
-function createSection({sectionDefinition}) {
+function createSection({id, sectionDefinition}) {
+    function getId() {
+        return id;
+    }
+
     function getAttributeFormat(attributeSchema) {
         if ('format' in attributeSchema) {
             const format = {
                 value: attributeSchema.format
             };
 
-            if (
-                'meta' in attributeSchema &&
-                'keywords' in attributeSchema.meta &&
-                'format' in attributeSchema.meta.keywords
-            ) {
-                const formatMetadata = attributeSchema.meta.keywords.format;
-
-                return {...format, ...formatMetadata};
-            }
-
             return format;
         }
 
         return undefined;
+    }
+
+    function getAttributeMetadata(attributeSchema) {
+        const sectionId = getId();
+        const meta = {sectionId};
+        const attributeMeta = attributeSchema.meta;
+        const format = getAttributeFormat(attributeSchema);
+
+        if (attributeMeta !== undefined) {
+            Object.assign(meta, attributeMeta);
+        }
+
+        if (format !== undefined) {
+            meta.keywords = meta.keywords || {};
+
+            if ('format' in meta.keywords) {
+                const formatMetadata = meta.keywords.format;
+
+                meta.keywords.format = {...format, ...formatMetadata};
+            } else {
+                meta.keywords.format = format;
+            }
+        }
+
+        return meta;
     }
 
     function getCompositeAttributeId(attributeSchema) {
@@ -51,19 +70,14 @@ function createSection({sectionDefinition}) {
         return undefined;
     }
 
-    function createSimpleAttribute(id, attributeSchema, data) {
-        const format = getAttributeFormat(attributeSchema);
-        const value = data[id];
+    function createSimpleAttribute(attributeId, attributeSchema, data, includeMetadata) {
+        const value = data[attributeId];
         const valueLabel = getValueLabel(attributeSchema, value);
         const simpleAttribute = {
-            id,
+            id: attributeId,
             type: 'simple',
             label: attributeSchema.title
         };
-
-        if (format !== undefined) {
-            simpleAttribute.format = format;
-        }
 
         if (value !== undefined) {
             simpleAttribute.value = value;
@@ -73,10 +87,18 @@ function createSection({sectionDefinition}) {
             simpleAttribute.valueLabel = valueLabel;
         }
 
+        if (includeMetadata === true) {
+            const meta = getAttributeMetadata(attributeSchema);
+
+            if (meta !== undefined) {
+                simpleAttribute.meta = meta;
+            }
+        }
+
         return simpleAttribute;
     }
 
-    function createCompositeAttribute(compositeAttributeSchema) {
+    function createCompositeAttribute(compositeAttributeSchema, includeMetadata) {
         const compositeAttribute = {
             id: getCompositeAttributeId(compositeAttributeSchema),
             type: 'composite',
@@ -84,10 +106,22 @@ function createSection({sectionDefinition}) {
             values: []
         };
 
+        if (includeMetadata === true) {
+            const meta = getAttributeMetadata(compositeAttributeSchema);
+
+            if (meta !== undefined) {
+                compositeAttribute.meta = meta;
+            }
+        }
+
         return compositeAttribute;
     }
 
-    function getAttributesByData(data = {}, schema = sectionDefinition.schema) {
+    function getAttributesByData(
+        data = {},
+        includeMetadata = false,
+        schema = sectionDefinition.schema
+    ) {
         const {properties, allOf} = schema;
         const attributes = [];
 
@@ -96,7 +130,12 @@ function createSection({sectionDefinition}) {
                 const questionSchema = properties[attributeId];
 
                 if (questionSchema !== undefined) {
-                    const attribute = createSimpleAttribute(attributeId, questionSchema, data);
+                    const attribute = createSimpleAttribute(
+                        attributeId,
+                        questionSchema,
+                        data,
+                        includeMetadata
+                    );
 
                     attributes.push(attribute);
                 }
@@ -107,10 +146,15 @@ function createSection({sectionDefinition}) {
 
         if (allOf !== undefined) {
             const compositeAttributeSchema = allOf[0];
-            const compositeAttribute = createCompositeAttribute(compositeAttributeSchema);
+            const compositeAttribute = createCompositeAttribute(
+                compositeAttributeSchema,
+                includeMetadata
+            );
 
             compositeAttributeSchema.allOf.forEach(subSchema => {
-                compositeAttribute.values.push(...getAttributesByData(data, subSchema));
+                compositeAttribute.values.push(
+                    ...getAttributesByData(data, includeMetadata, subSchema)
+                );
             });
 
             attributes.push(compositeAttribute);

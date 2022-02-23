@@ -22,59 +22,7 @@ describe('Section', () => {
                             id: 'q-applicant-enter-your-email-address',
                             type: 'simple',
                             label: 'Enter your email address',
-                            value: 'bar@9f7b855e-586b-49f0-ac7a-026919732b06.gov.uk',
-                            format: {
-                                value: 'email'
-                            }
-                        }
-                    ]);
-                });
-
-                it('should include any value format metadata', () => {
-                    const section = createSection({
-                        sectionDefinition: {
-                            schema: {
-                                type: 'object',
-                                properties: {
-                                    'q-applicant-when-did-the-crime-start': {
-                                        title: 'When did it start?',
-                                        meta: {
-                                            keywords: {
-                                                format: {
-                                                    precision: 'YYYY-MM',
-                                                    defaults: {
-                                                        DD: '01'
-                                                    }
-                                                }
-                                            }
-                                        },
-                                        type: 'string',
-                                        format: 'date-time',
-                                        description:
-                                            'For example, 02 2020. You can enter an approximate date.'
-                                    }
-                                }
-                            }
-                        }
-                    });
-                    const data = {
-                        'q-applicant-when-did-the-crime-start': '2021-01-01T00:00:00.000Z'
-                    };
-                    const sectionAttributes = section.getAttributesByData(data);
-
-                    expect(sectionAttributes).toEqual([
-                        {
-                            id: 'q-applicant-when-did-the-crime-start',
-                            type: 'simple',
-                            label: 'When did it start?',
-                            value: '2021-01-01T00:00:00.000Z',
-                            format: {
-                                value: 'date-time',
-                                precision: 'YYYY-MM',
-                                defaults: {
-                                    DD: '01'
-                                }
-                            }
+                            value: 'bar@9f7b855e-586b-49f0-ac7a-026919732b06.gov.uk'
                         }
                     ]);
                 });
@@ -213,6 +161,101 @@ describe('Section', () => {
                             }
                         ]);
                     });
+                });
+            });
+
+            describe('And the schema contains attributes with metadata', () => {
+                function getSectionDefinition() {
+                    return {
+                        schema: {
+                            type: 'object',
+                            properties: {
+                                'q-applicant-when-did-the-crime-start': {
+                                    title: 'When did it start?',
+                                    meta: {
+                                        keywords: {
+                                            format: {
+                                                precision: 'YYYY-MM',
+                                                defaults: {
+                                                    DD: '01'
+                                                }
+                                            }
+                                        },
+                                        classifications: {
+                                            theme: 'crime-details'
+                                        },
+                                        summary: {
+                                            title: 'Crime start date'
+                                        }
+                                    },
+                                    type: 'string',
+                                    format: 'date-time',
+                                    description:
+                                        'For example, 02 2020. You can enter an approximate date.'
+                                }
+                            }
+                        }
+                    };
+                }
+
+                it('should default to exclude metadata', () => {
+                    const sectionDefinition = getSectionDefinition();
+                    const section = createSection({
+                        id: 'p-some-section',
+                        sectionDefinition
+                    });
+                    const data = {
+                        'q-applicant-when-did-the-crime-start': '2021-01-01T00:00:00.000Z'
+                    };
+                    const sectionAttributes = section.getAttributesByData(data);
+
+                    expect(sectionAttributes).toEqual([
+                        {
+                            id: 'q-applicant-when-did-the-crime-start',
+                            type: 'simple',
+                            label: 'When did it start?',
+                            value: '2021-01-01T00:00:00.000Z'
+                        }
+                    ]);
+                });
+
+                it('should allow metatdata to be optionally included', () => {
+                    const sectionDefinition = getSectionDefinition();
+                    const section = createSection({
+                        id: 'p-some-section',
+                        sectionDefinition
+                    });
+                    const data = {
+                        'q-applicant-when-did-the-crime-start': '2021-01-01T00:00:00.000Z'
+                    };
+                    const sectionAttributes = section.getAttributesByData(data, true);
+
+                    expect(sectionAttributes).toEqual([
+                        {
+                            id: 'q-applicant-when-did-the-crime-start',
+                            type: 'simple',
+                            label: 'When did it start?',
+                            value: '2021-01-01T00:00:00.000Z',
+                            meta: {
+                                sectionId: 'p-some-section',
+                                keywords: {
+                                    format: {
+                                        value: 'date-time',
+                                        precision: 'YYYY-MM',
+                                        defaults: {
+                                            DD: '01'
+                                        }
+                                    }
+                                },
+                                classifications: {
+                                    theme: 'crime-details'
+                                },
+                                summary: {
+                                    title: 'Crime start date'
+                                }
+                            }
+                        }
+                    ]);
                 });
             });
         });
