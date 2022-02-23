@@ -140,10 +140,7 @@ describe('Dataset service', () => {
                             id: 'q-applicant-enter-your-email-address',
                             type: 'simple',
                             label: 'Enter your email address',
-                            value: 'bar@9f7b855e-586b-49f0-ac7a-026919732b06.gov.uk',
-                            format: {
-                                value: 'email'
-                            }
+                            value: 'bar@9f7b855e-586b-49f0-ac7a-026919732b06.gov.uk'
                         },
                         {
                             id: 'q-applicant-british-citizen-or-eu-national',
