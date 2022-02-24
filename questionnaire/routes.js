@@ -10,8 +10,20 @@ const datasetRouter = require('./dataset/dataset-routes.js');
 const router = express.Router();
 const rxTemplateName = /^[a-zA-Z0-9-]{1,30}$/;
 
+function multipleJwts(req, payload, done) {
+    // If the JTW payload has a JTI matching the new tokens
+    if (payload && 'jti' in payload) {
+        if (payload.jti === process.env.NEW_CW_JTI || payload.jti === process.env.NEW_AS_JTI) {
+            // Validate them using the new JWT secret+
+            return done(null, process.env.NEW_JWT_SECRET);
+        }
+    }
+    // Else, validate using the existing secret
+    return done(null, process.env.DCS_JWT_SECRET);
+}
+
 // Ensure JWT is valid
-router.use(validateJWT({secret: process.env.DCS_JWT_SECRET, algorithms: ['HS256']}));
+router.use(validateJWT({secret: multipleJwts, algorithms: ['HS256']}));
 
 router.route('/').post(permissions('create:questionnaires'), async (req, res, next) => {
     try {

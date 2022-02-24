@@ -21,6 +21,21 @@ spec:
                 secretKeyRef:
                   name: data-capture-service-secrets
                   key: dcs_jwt_secret
+            - name: NEW_CW_JTI
+              valueFrom:
+                secretKeyRef:
+                  name: data-capture-service-secrets
+                  key: new_cw_jti
+            - name: NEW_AS_JTI
+              valueFrom:
+                secretKeyRef:
+                  name: data-capture-service-secrets
+                  key: new_as_jti
+            - name: NEW_JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: data-capture-service-secrets
+                  key: new_jwt_secret
             - name: DATABASE_URL_WITH_CREDENTIALS
               valueFrom:
                 secretKeyRef:
