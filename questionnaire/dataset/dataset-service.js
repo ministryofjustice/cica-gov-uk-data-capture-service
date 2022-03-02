@@ -118,7 +118,9 @@ function createDatasetService({
             } else if (questionAnswers !== undefined) {
                 const sectionDefinition = sections[sectionId];
                 const section = createSection({sectionDefinition});
-                const attributes = section.getAttributesByData(questionAnswers);
+                const attributes = section.getAttributesByData({
+                    data: questionAnswers
+                });
 
                 attributes.forEach(attribute => {
                     const existingAttribute = dataset.get(attribute.id);
