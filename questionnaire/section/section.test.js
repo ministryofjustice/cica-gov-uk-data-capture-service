@@ -15,7 +15,7 @@ describe('Section', () => {
                         'q-applicant-enter-your-email-address':
                             'bar@9f7b855e-586b-49f0-ac7a-026919732b06.gov.uk'
                     };
-                    const sectionAttributes = section.getAttributesByData(data);
+                    const sectionAttributes = section.getAttributesByData({data});
 
                     expect(sectionAttributes).toEqual([
                         {
@@ -35,7 +35,7 @@ describe('Section', () => {
                         const data = {
                             'this-key-does-not-exist-in-the-section-schema': 'dummy value'
                         };
-                        const sectionAttributes = section.getAttributesByData(data);
+                        const sectionAttributes = section.getAttributesByData({data});
 
                         expect(sectionAttributes).toEqual([]);
                     });
@@ -50,7 +50,7 @@ describe('Section', () => {
                     const data = {
                         'q-applicant-british-citizen-or-eu-national': true
                     };
-                    const sectionAttributes = section.getAttributesByData(data);
+                    const sectionAttributes = section.getAttributesByData({data});
 
                     expect(sectionAttributes).toEqual([
                         {
@@ -73,7 +73,7 @@ describe('Section', () => {
                     const data = {
                         'q-applicant-physical-injury-upper': ['head', 'eye', 'nose']
                     };
-                    const sectionAttributes = section.getAttributesByData(data);
+                    const sectionAttributes = section.getAttributesByData({data});
 
                     expect(sectionAttributes).toEqual([
                         {
@@ -97,7 +97,7 @@ describe('Section', () => {
                         'q-applicant-first-name': 'Foo',
                         'q-applicant-last-name': 'Bar'
                     };
-                    const sectionAttributes = section.getAttributesByData(data);
+                    const sectionAttributes = section.getAttributesByData({data});
 
                     expect(sectionAttributes).toEqual([
                         {
@@ -137,7 +137,7 @@ describe('Section', () => {
                             'q-applicant-title': 'Mr',
                             'q-applicant-last-name': 'Bar'
                         };
-                        const sectionAttributes = section.getAttributesByData(data);
+                        const sectionAttributes = section.getAttributesByData({data});
 
                         expect(sectionAttributes).toEqual([
                             {
@@ -207,7 +207,7 @@ describe('Section', () => {
                     const data = {
                         'q-applicant-when-did-the-crime-start': '2021-01-01T00:00:00.000Z'
                     };
-                    const sectionAttributes = section.getAttributesByData(data);
+                    const sectionAttributes = section.getAttributesByData({data});
 
                     expect(sectionAttributes).toEqual([
                         {
@@ -228,7 +228,10 @@ describe('Section', () => {
                     const data = {
                         'q-applicant-when-did-the-crime-start': '2021-01-01T00:00:00.000Z'
                     };
-                    const sectionAttributes = section.getAttributesByData(data, true);
+                    const sectionAttributes = section.getAttributesByData({
+                        data,
+                        includeMetadata: true
+                    });
 
                     expect(sectionAttributes).toEqual([
                         {
@@ -254,6 +257,65 @@ describe('Section', () => {
                                     title: 'Crime start date'
                                 }
                             }
+                        }
+                    ]);
+                });
+            });
+
+            describe('And a mapping function is supplied', () => {
+                it('should return the result of the mapping function', () => {
+                    const sectionDefinition = {
+                        schema: {
+                            type: 'object',
+                            properties: {
+                                'q-applicant-when-did-the-crime-start': {
+                                    title: 'When did it start?',
+                                    meta: {
+                                        keywords: {
+                                            format: {
+                                                precision: 'YYYY-MM',
+                                                defaults: {
+                                                    DD: '01'
+                                                }
+                                            }
+                                        },
+                                        classifications: {
+                                            theme: 'crime-details'
+                                        },
+                                        summary: {
+                                            title: 'Crime start date'
+                                        }
+                                    },
+                                    type: 'string',
+                                    format: 'date-time',
+                                    description:
+                                        'For example, 02 2020. You can enter an approximate date.'
+                                }
+                            }
+                        }
+                    };
+                    const section = createSection({
+                        id: 'p-some-section',
+                        sectionDefinition
+                    });
+                    const sectionAttributes = section.getAttributesByData({
+                        data: {
+                            'q-applicant-when-did-the-crime-start': '2021-01-01T00:00:00.000Z'
+                        },
+                        mapAttribute: dataAttribute => {
+                            dataAttribute.id = 'some-new-id';
+                            dataAttribute.someNewProperty = true;
+                            return dataAttribute;
+                        }
+                    });
+
+                    expect(sectionAttributes).toEqual([
+                        {
+                            id: 'some-new-id',
+                            type: 'simple',
+                            label: 'When did it start?',
+                            value: '2021-01-01T00:00:00.000Z',
+                            someNewProperty: true
                         }
                     ]);
                 });

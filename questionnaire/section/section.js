@@ -117,11 +117,12 @@ function createSection({id, sectionDefinition}) {
         return compositeAttribute;
     }
 
-    function getAttributesByData(
+    function getAttributesByData({
         data = {},
         includeMetadata = false,
+        mapAttribute,
         schema = sectionDefinition.schema
-    ) {
+    }) {
         const {properties, allOf} = schema;
         const attributes = [];
 
@@ -137,7 +138,11 @@ function createSection({id, sectionDefinition}) {
                         includeMetadata
                     );
 
-                    attributes.push(attribute);
+                    if (mapAttribute !== undefined) {
+                        attributes.push(mapAttribute(attribute));
+                    } else {
+                        attributes.push(attribute);
+                    }
                 }
             });
 
@@ -153,11 +158,20 @@ function createSection({id, sectionDefinition}) {
 
             compositeAttributeSchema.allOf.forEach(subSchema => {
                 compositeAttribute.values.push(
-                    ...getAttributesByData(data, includeMetadata, subSchema)
+                    ...getAttributesByData({
+                        data,
+                        includeMetadata,
+                        mapAttribute,
+                        schema: subSchema
+                    })
                 );
             });
 
-            attributes.push(compositeAttribute);
+            if (mapAttribute !== undefined) {
+                attributes.push(mapAttribute(compositeAttribute));
+            } else {
+                attributes.push(compositeAttribute);
+            }
 
             return attributes;
         }
