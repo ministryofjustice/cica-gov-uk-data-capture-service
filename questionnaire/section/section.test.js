@@ -322,4 +322,26 @@ describe('Section', () => {
             });
         });
     });
+
+    it("should return the section's schema", async () => {
+        const section = createSection({
+            sectionDefinition: fixtures.sectionWithSimpleAttributeSingleValue
+        });
+        const sectionSchema = section.getSchema();
+
+        expect(sectionSchema).toEqual({
+            $schema: 'http://json-schema.org/draft-07/schema#',
+            type: 'object',
+            properties: {
+                'q-applicant-enter-your-email-address': {
+                    description:
+                        'We may use this to contact you if we need to clarify something on your application form (optional).',
+                    format: 'email',
+                    maxLength: 50,
+                    title: 'Enter your email address',
+                    type: 'string'
+                }
+            }
+        });
+    });
 });

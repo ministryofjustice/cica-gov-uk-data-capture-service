@@ -5,6 +5,10 @@ function createSection({id, sectionDefinition}) {
         return id;
     }
 
+    function getSchema() {
+        return sectionDefinition.schema;
+    }
+
     function getAttributeFormat(attributeSchema) {
         if ('format' in attributeSchema) {
             const format = {
@@ -121,7 +125,7 @@ function createSection({id, sectionDefinition}) {
         data = {},
         includeMetadata = false,
         mapAttribute,
-        schema = sectionDefinition.schema
+        schema = getSchema()
     }) {
         const {properties, allOf} = schema;
         const attributes = [];
@@ -180,7 +184,8 @@ function createSection({id, sectionDefinition}) {
     }
 
     return Object.freeze({
-        getAttributesByData
+        getAttributesByData,
+        getSchema
     });
 }
 
