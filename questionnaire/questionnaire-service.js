@@ -11,10 +11,10 @@ const pointer = require('jsonpointer');
 const ajvFormatsMobileUk = require('ajv-formats-mobile-uk');
 const templates = require('./templates');
 const createMessageBusCaller = require('../services/message-bus');
-const replaceJsonPointers = require('../services/replace-json-pointer');
 const createNotifyService = require('../services/notify');
 const createSlackService = require('../services/slack');
 const questionnaireResource = require('./resources/questionnaire-resource');
+const createQuestionnaireHelper = require('./questionnaire/questionnaire');
 
 const defaults = {};
 defaults.createQuestionnaireDAL = require('./questionnaire-dal');
@@ -355,25 +355,20 @@ function createQuestionnaireService({
         };
     }
 
-    function buildSectionResource(sectionId, questionnaire) {
-        const section = questionnaire.sections[sectionId];
-        const {schema: sectionSchema} = section;
-        const sectionSchemaAsJson = JSON.stringify(sectionSchema);
-        const sectionSchemaAsJsonWithReplacements = replaceJsonPointers(
-            sectionSchemaAsJson,
-            questionnaire
-        );
+    function buildSectionResource(sectionId, questionnaireDefinition) {
+        const questionnaire = createQuestionnaireHelper({questionnaireDefinition});
+        const section = questionnaire.getSection(sectionId);
         const sectionResource = {
             type: 'sections',
             id: sectionId,
-            attributes: JSON.parse(sectionSchemaAsJsonWithReplacements)
+            attributes: section.getSchema()
         };
 
         // Add any answer relationships
-        const {answers} = questionnaire;
+        const {answers} = questionnaireDefinition;
         const sectionAnswers = answers ? answers[sectionId] : undefined;
 
-        if (sectionAnswers) {
+        if (sectionAnswers !== undefined) {
             sectionResource.relationships = {
                 answer: {
                     data: {
