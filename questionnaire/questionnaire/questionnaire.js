@@ -57,6 +57,7 @@ function createQuestionnaire({
         const {sectionId} = meta;
         const summaryTitle = meta.summary && meta.summary.title;
         const themeId = meta.classifications && meta.classifications.theme;
+        const format = meta.keywords && meta.keywords.format;
         const transformedData = {...dataAttribute};
 
         delete transformedData.meta;
@@ -71,6 +72,10 @@ function createQuestionnaire({
 
         if (themeId !== undefined) {
             transformedData.theme = themeId;
+        }
+
+        if (format !== undefined) {
+            transformedData.format = format;
         }
 
         return transformedData;

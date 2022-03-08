@@ -302,7 +302,11 @@ describe('Questionnaire', () => {
                                                 label: 'Date of birth',
                                                 value: '1970-01-01T00:00:00.000Z',
                                                 sectionId: 'p-applicant-date-of-birth',
-                                                theme: 'applicant-details'
+                                                theme: 'applicant-details',
+                                                format: {
+                                                    precision: 'YYYY-MM-DD',
+                                                    value: 'date-time'
+                                                }
                                             },
                                             {
                                                 id: 'q-fullname',
@@ -362,7 +366,10 @@ describe('Questionnaire', () => {
                                                 value:
                                                     'bar@9f7b855e-586b-49f0-ac7a-026919732b06.gov.uk',
                                                 sectionId: 'p-applicant-enter-your-email-address',
-                                                theme: 'contact-details'
+                                                theme: 'contact-details',
+                                                format: {
+                                                    value: 'email'
+                                                }
                                             }
                                         ]
                                     }
