@@ -98,7 +98,10 @@ function createDatasetService({
         progress.forEach(sectionId => {
             const questionAnswers = answers[sectionId];
 
-            if (sectionId === 'p-applicant-declaration' && questionnaire.version === '5.2.1') {
+            if (
+                sectionId === 'p-applicant-declaration' &&
+                (questionnaire.version === '5.2.1' || questionnaire.version === '5.2.2')
+            ) {
                 // TODO: START - Remove this block (hardcoded declaration) on next major template release
                 const sectionDefinition = sections[sectionId];
                 const {schema} = sectionDefinition;

@@ -37,8 +37,8 @@ const datasetService = createDatasetService({
 });
 
 describe('Dataset service', () => {
-    it('should be using template version 5.2.1', () => {
-        expect(templateInstance.version).toEqual('5.2.1');
+    it('should be using template version 5.2.2', () => {
+        expect(templateInstance.version).toEqual('5.2.2');
     });
 
     describe('Dataset resource v1.0.0', () => {
