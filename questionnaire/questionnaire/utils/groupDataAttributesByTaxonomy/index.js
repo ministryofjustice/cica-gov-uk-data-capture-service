@@ -1,11 +1,10 @@
 'use strict';
 
-function createGroup(groupId, taxonomy) {
-    const groupDetails = taxonomy.getTaxon(groupId);
+function createGroup(type, id, title) {
     const group = {
-        type: taxonomy.getId(),
-        id: groupId,
-        title: groupDetails.title,
+        type,
+        id,
+        title,
         values: []
     };
 
@@ -13,12 +12,18 @@ function createGroup(groupId, taxonomy) {
 }
 
 function getOrCreateGroup(groupId, groups, taxonomy) {
-    const existingGroup = groups.get(groupId);
+    const defaultGroupDetails = {
+        id: 'default',
+        title: 'Answers'
+    };
+    const {id, title} = taxonomy.getTaxon(groupId) || defaultGroupDetails;
+    const existingGroup = groups.get(id);
 
     if (existingGroup === undefined) {
-        const group = createGroup(groupId, taxonomy);
+        const groupType = taxonomy.getId();
+        const group = createGroup(groupType, id, title);
 
-        groups.set(groupId, group);
+        groups.set(id, group);
 
         return group;
     }

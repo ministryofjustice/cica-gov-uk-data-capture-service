@@ -200,6 +200,37 @@ const questionnaireDefinition = {
                     }
                 }
             }
+        },
+        'p-applicant-theme-undefined': {
+            schema: {
+                $schema: 'http://json-schema.org/draft-07/schema#',
+                type: 'object',
+                properties: {
+                    'q-applicant-theme-undefined': {
+                        type: 'string',
+                        title: 'Enter your fav colour',
+                        maxLength: 50
+                    }
+                }
+            }
+        },
+        'p-applicant-theme-not-found': {
+            schema: {
+                $schema: 'http://json-schema.org/draft-07/schema#',
+                type: 'object',
+                properties: {
+                    'q-applicant-theme-not-found': {
+                        type: 'string',
+                        title: 'Enter your fav colour',
+                        maxLength: 50,
+                        meta: {
+                            classifications: {
+                                theme: 'this-theme-is-not-found'
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     progress: [
@@ -207,6 +238,8 @@ const questionnaireDefinition = {
         'p-applicant-enter-your-email-address',
         'p-applicant-enter-your-name',
         'p-applicant-british-citizen-or-eu-national',
+        'p-applicant-theme-undefined',
+        'p-applicant-theme-not-found',
         'p--check-your-answers'
     ],
     answers: {
@@ -224,6 +257,12 @@ const questionnaireDefinition = {
         },
         'p-applicant-british-citizen-or-eu-national': {
             'q-applicant-british-citizen-or-eu-national': true
+        },
+        'p-applicant-theme-undefined': {
+            'q-applicant-theme-undefined': 'red'
+        },
+        'p-applicant-theme-not-found': {
+            'q-applicant-theme-not-found': 'blue'
         }
     }
 };
@@ -370,6 +409,28 @@ describe('Questionnaire', () => {
                                                 format: {
                                                     value: 'email'
                                                 }
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        type: 'theme',
+                                        id: 'default',
+                                        title: 'Answers',
+                                        values: [
+                                            {
+                                                id: 'q-applicant-theme-undefined',
+                                                type: 'simple',
+                                                label: 'Enter your fav colour',
+                                                value: 'red',
+                                                sectionId: 'p-applicant-theme-undefined'
+                                            },
+                                            {
+                                                id: 'q-applicant-theme-not-found',
+                                                type: 'simple',
+                                                label: 'Enter your fav colour',
+                                                value: 'blue',
+                                                sectionId: 'p-applicant-theme-not-found',
+                                                theme: 'this-theme-is-not-found'
                                             }
                                         ]
                                     }
