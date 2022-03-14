@@ -52,6 +52,18 @@ function createQuestionnaire({
         return questionnaireDefinition.progress || [];
     }
 
+    function getProgressUntil(sectionId) {
+        const allProgress = getProgress();
+        const endIndex = allProgress.indexOf(sectionId);
+
+        if (endIndex > -1) {
+            const progressSubset = allProgress.slice(0, endIndex);
+            return progressSubset;
+        }
+
+        return allProgress;
+    }
+
     function transformDataAttribute(dataAttribute) {
         const {meta} = dataAttribute;
         const {sectionId} = meta;
@@ -81,14 +93,19 @@ function createQuestionnaire({
         return transformedData;
     }
 
-    function evaluateJsonExpression(value) {
+    function evaluateJsonExpression(value, sectionId) {
         const fnName = value[0];
 
         if (fnName === 'summary') {
+            // TODO: handle multiple summary pages e.g. summarise between last summary and this one
+            const progressSubset = getProgressUntil(sectionId);
             const summaryOptions = value[1];
-            // TODO: Look at removing circular function dependency
+
             // eslint-disable-next-line no-use-before-define
-            const dataAttributes = getDataAttributes(transformDataAttribute);
+            const dataAttributes = getDataAttributes({
+                progress: progressSubset,
+                dataAttributeTransformer: transformDataAttribute
+            });
             const summary = groupDataAttributesByTaxonomy({
                 dataAttributes,
                 taxonomy: getTaxonomy(summaryOptions.groupByTaxonomy)
@@ -104,14 +121,14 @@ function createQuestionnaire({
         return Array.isArray(value) && typeof value[0] === 'string';
     }
 
-    function resolveVars(sectionVars) {
+    function resolveVars(sectionId, sectionVars) {
         const resolvedVars = {};
 
         sectionVars.forEach(sectionVar => {
             const {name, value} = sectionVar;
 
             if (isJsonExpression(value)) {
-                resolvedVars[name] = evaluateJsonExpression(value);
+                resolvedVars[name] = evaluateJsonExpression(value, sectionId);
             } else {
                 resolvedVars[name] = value;
             }
@@ -166,7 +183,7 @@ function createQuestionnaire({
         let resolvedVars;
 
         if (sectionDefinitionVars !== undefined) {
-            resolvedVars = resolveVars(sectionDefinitionVars);
+            resolvedVars = resolveVars(sectionId, sectionDefinitionVars);
         }
 
         const replacer = getVarReferenceReplacer(resolvedVars, getAnswers());
@@ -176,8 +193,7 @@ function createQuestionnaire({
         return createSection({id: sectionId, sectionDefinition});
     }
 
-    function getDataAttributes(dataAttributeTransformer) {
-        const progress = getProgress();
+    function getDataAttributes({progress = getProgress(), dataAttributeTransformer} = {}) {
         const allDataAttributes = [];
 
         progress.forEach(sectionId => {

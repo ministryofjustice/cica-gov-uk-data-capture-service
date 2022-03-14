@@ -240,7 +240,8 @@ const questionnaireDefinition = {
         'p-applicant-british-citizen-or-eu-national',
         'p-applicant-theme-undefined',
         'p-applicant-theme-not-found',
-        'p--check-your-answers'
+        'p--check-your-answers',
+        'p-declaraton'
     ],
     answers: {
         'p-applicant-date-of-birth': {
@@ -263,7 +264,8 @@ const questionnaireDefinition = {
         },
         'p-applicant-theme-not-found': {
             'q-applicant-theme-not-found': 'blue'
-        }
+        },
+        'p--check-your-answers': {}
     }
 };
 
