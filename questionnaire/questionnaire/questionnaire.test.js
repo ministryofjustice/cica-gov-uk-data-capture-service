@@ -5,9 +5,31 @@ const createQuestionnaire = require('./questionnaire');
 const questionnaireDefinition = {
     taxonomies: {
         theme: {
+            l10n: {
+                vars: {
+                    lng: 'en',
+                    context: {
+                        $data:
+                            '/answers/p-applicant-who-are-you-applying-for/q-applicant-who-are-you-applying-for'
+                    },
+                    ns: 'theme'
+                },
+                translations: [
+                    {
+                        language: 'en',
+                        namespace: 'theme',
+                        resources: {
+                            applicant_details: {
+                                title: 'Your details',
+                                'title_someone-else': 'Victim details'
+                            }
+                        }
+                    }
+                ]
+            },
             taxa: {
                 'applicant-details': {
-                    title: 'Your details'
+                    title: 'l10nt:applicant_details.title{?lng,context,ns}'
                 },
                 'contact-details': {
                     title: 'Contact details'
@@ -73,12 +95,61 @@ const questionnaireDefinition = {
             }
         },
         'p-applicant-enter-your-name': {
+            l10n: {
+                vars: {
+                    lng: 'en',
+                    context: {
+                        $data:
+                            '/answers/p-applicant-who-are-you-applying-for/q-applicant-who-are-you-applying-for'
+                    },
+                    ns: 'p-applicant-enter-your-name'
+                },
+                translations: [
+                    {
+                        language: 'en',
+                        namespace: 'p-applicant-enter-your-name',
+                        resources: {
+                            title: 'Enter your name',
+                            'title_someone-else': "Enter the ||/answer/gsg|| child's name",
+                            'summary-title': 'Your name',
+                            'summary-title_someone-else': "Child's name",
+                            'q-applicant-title': {
+                                error: {
+                                    required: 'Enter your title',
+                                    'required_someone-else': "Enter the child's title"
+                                }
+                            },
+                            'q-applicant-first-name': {
+                                error: {
+                                    required: 'Enter your first name',
+                                    'required_someone-else': "Enter the child's first name"
+                                }
+                            },
+                            'q-applicant-last-name': {
+                                error: {
+                                    required: 'Enter your last name',
+                                    'required_someone-else': "Enter the child's last name"
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
             schema: {
                 $schema: 'http://json-schema.org/draft-07/schema#',
                 type: 'object',
                 allOf: [
                     {
-                        title: 'Enter your name',
+                        title: 'l10nt:title{?lng,context,ns}',
+                        meta: {
+                            compositeId: 'applicant-name',
+                            classifications: {
+                                theme: 'applicant-details'
+                            },
+                            summary: {
+                                title: 'l10nt:summary-title{?lng,context,ns}'
+                            }
+                        },
                         required: [
                             'q-applicant-title',
                             'q-applicant-first-name',
@@ -91,12 +162,6 @@ const questionnaireDefinition = {
                                 'q-applicant-last-name'
                             ]
                         },
-                        meta: {
-                            compositeId: 'q-fullname',
-                            classifications: {
-                                theme: 'applicant-details'
-                            }
-                        },
                         allOf: [
                             {
                                 properties: {
@@ -104,6 +169,9 @@ const questionnaireDefinition = {
                                         title: 'Title',
                                         type: 'string',
                                         maxLength: 6,
+                                        errorMessage: {
+                                            maxLength: 'Title must be 6 characters or less'
+                                        },
                                         meta: {
                                             classifications: {
                                                 theme: 'applicant-details'
@@ -118,6 +186,9 @@ const questionnaireDefinition = {
                                         title: 'First name',
                                         type: 'string',
                                         maxLength: 70,
+                                        errorMessage: {
+                                            maxLength: 'First name must be 70 characters or less'
+                                        },
                                         meta: {
                                             classifications: {
                                                 theme: 'applicant-details'
@@ -132,6 +203,9 @@ const questionnaireDefinition = {
                                         title: 'Last name',
                                         type: 'string',
                                         maxLength: 70,
+                                        errorMessage: {
+                                            maxLength: 'Last name must be 70 characters or less'
+                                        },
                                         meta: {
                                             classifications: {
                                                 theme: 'applicant-details'
@@ -231,11 +305,41 @@ const questionnaireDefinition = {
                     }
                 }
             }
+        },
+        'p-applicant-who-are-you-applying-for': {
+            schema: {
+                $schema: 'http://json-schema.org/draft-07/schema#',
+                type: 'object',
+                required: ['q-applicant-who-are-you-applying-for'],
+                additionalProperties: false,
+                properties: {
+                    'q-applicant-who-are-you-applying-for': {
+                        title: 'Who are you applying for?',
+                        type: 'string',
+                        oneOf: [
+                            {
+                                title: 'Myself',
+                                const: 'myself'
+                            },
+                            {
+                                title: 'Someone else',
+                                const: 'someone-else'
+                            }
+                        ],
+                        meta: {
+                            classifications: {
+                                theme: 'applicant-details'
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     progress: [
         'p-applicant-date-of-birth',
         'p-applicant-enter-your-email-address',
+        'p-applicant-who-are-you-applying-for',
         'p-applicant-enter-your-name',
         'p-applicant-british-citizen-or-eu-national',
         'p-applicant-theme-undefined',
@@ -250,6 +354,9 @@ const questionnaireDefinition = {
         'p-applicant-enter-your-email-address': {
             'q-applicant-enter-your-email-address':
                 'bar@9f7b855e-586b-49f0-ac7a-026919732b06.gov.uk'
+        },
+        'p-applicant-who-are-you-applying-for': {
+            'q-applicant-who-are-you-applying-for': 'myself'
         },
         'p-applicant-enter-your-name': {
             'q-applicant-title': 'Mr',
@@ -270,7 +377,7 @@ const questionnaireDefinition = {
 };
 
 describe('Questionnaire', () => {
-    it('should return a specified taxonomy', async () => {
+    it('should return a specified taxonomy', () => {
         const questionnaire = createQuestionnaire({questionnaireDefinition});
         const themeTaxonomy = questionnaire.getTaxonomy('theme');
 
@@ -278,8 +385,18 @@ describe('Questionnaire', () => {
         expect(themeTaxonomy.getTaxon('contact-details').title).toEqual('Contact details');
     });
 
+    describe('Given a taxonomy definition requiring contextualisation', () => {
+        it('should return a contextualised taxonomy', () => {
+            const questionnaire = createQuestionnaire({questionnaireDefinition});
+            const themeTaxonomy = questionnaire.getTaxonomy('theme');
+
+            expect(themeTaxonomy.getId()).toEqual('theme');
+            expect(themeTaxonomy.getTaxon('applicant-details').title).toEqual('Your details');
+        });
+    });
+
     describe('Given a section definition requiring data interpolation', () => {
-        it('should return an interpolated section', async () => {
+        it('should return an interpolated section', () => {
             const questionnaire = createQuestionnaire({questionnaireDefinition});
             const section = questionnaire.getSection('p-applicant-british-citizen-or-eu-national');
             const sectionSchema = section.getSchema();
@@ -312,8 +429,100 @@ describe('Questionnaire', () => {
         });
     });
 
+    describe('Given a section definition requiring contextualisation', () => {
+        it('should return a contextualised section', () => {
+            const questionnaire = createQuestionnaire({questionnaireDefinition});
+            const section = questionnaire.getSection('p-applicant-enter-your-name');
+            const sectionSchema = section.getSchema();
+
+            expect(sectionSchema).toEqual({
+                $schema: 'http://json-schema.org/draft-07/schema#',
+                type: 'object',
+                allOf: [
+                    {
+                        title: 'Enter your name',
+                        meta: {
+                            compositeId: 'applicant-name',
+                            classifications: {
+                                theme: 'applicant-details'
+                            },
+                            summary: {
+                                title: 'Your name'
+                            }
+                        },
+                        required: [
+                            'q-applicant-title',
+                            'q-applicant-first-name',
+                            'q-applicant-last-name'
+                        ],
+                        propertyNames: {
+                            enum: [
+                                'q-applicant-title',
+                                'q-applicant-first-name',
+                                'q-applicant-last-name'
+                            ]
+                        },
+                        allOf: [
+                            {
+                                properties: {
+                                    'q-applicant-title': {
+                                        title: 'Title',
+                                        type: 'string',
+                                        maxLength: 6,
+                                        errorMessage: {
+                                            maxLength: 'Title must be 6 characters or less'
+                                        },
+                                        meta: {
+                                            classifications: {
+                                                theme: 'applicant-details'
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            {
+                                properties: {
+                                    'q-applicant-first-name': {
+                                        title: 'First name',
+                                        type: 'string',
+                                        maxLength: 70,
+                                        errorMessage: {
+                                            maxLength: 'First name must be 70 characters or less'
+                                        },
+                                        meta: {
+                                            classifications: {
+                                                theme: 'applicant-details'
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            {
+                                properties: {
+                                    'q-applicant-last-name': {
+                                        title: 'Last name',
+                                        type: 'string',
+                                        maxLength: 70,
+                                        errorMessage: {
+                                            maxLength: 'Last name must be 70 characters or less'
+                                        },
+                                        meta: {
+                                            classifications: {
+                                                theme: 'applicant-details'
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                ]
+            });
+        });
+    });
+
     describe('Given a section definition requiring an answer summary', () => {
-        it('should return a section containing an answer summary', async () => {
+        it('should return a section containing an answer summary', () => {
             const questionnaire = createQuestionnaire({questionnaireDefinition});
             const section = questionnaire.getSection('p--check-your-answers');
             const sectionSchema = section.getSchema();
@@ -350,9 +559,18 @@ describe('Questionnaire', () => {
                                                 }
                                             },
                                             {
-                                                id: 'q-fullname',
+                                                id: 'q-applicant-who-are-you-applying-for',
+                                                type: 'simple',
+                                                label: 'Who are you applying for?',
+                                                sectionId: 'p-applicant-who-are-you-applying-for',
+                                                theme: 'applicant-details',
+                                                value: 'myself',
+                                                valueLabel: 'Myself'
+                                            },
+                                            {
+                                                id: 'applicant-name',
                                                 type: 'composite',
-                                                label: 'Enter your name',
+                                                label: 'Your name',
                                                 values: [
                                                     {
                                                         id: 'q-applicant-title',

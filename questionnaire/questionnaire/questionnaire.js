@@ -1,20 +1,26 @@
 'use strict';
 
 const defaults = {};
-defaults.createSection = require('../section/section');
+defaults.createSection = require('./section');
 defaults.createTaxonomy = require('./taxonomy/taxonomy');
 defaults.groupDataAttributesByTaxonomy = require('./utils/groupDataAttributesByTaxonomy');
-defaults.mutateValues = require('./utils/mutateValues');
-defaults.replaceJsonPointer = require('./utils/replaceJsonPointer');
+defaults.mutateObjectValues = require('./utils/mutateObjectValues');
+defaults.getValueInterpolator = require('./utils/getValueInterpolator');
+defaults.getValueContextualiser = require('./utils/getValueContextualiser');
 
 function createQuestionnaire({
     questionnaireDefinition,
     createSection = defaults.createSection,
     createTaxonomy = defaults.createTaxonomy,
     groupDataAttributesByTaxonomy = defaults.groupDataAttributesByTaxonomy,
-    mutateValues = defaults.mutateValues,
-    replaceJsonPointer = defaults.replaceJsonPointer
+    mutateObjectValues = defaults.mutateObjectValues,
+    getValueInterpolator = defaults.getValueInterpolator,
+    getValueContextualiser = defaults.getValueContextualiser
 }) {
+    function getAnswers() {
+        return questionnaireDefinition.answers;
+    }
+
     function getTaxonomies() {
         return questionnaireDefinition.taxonomies;
     }
@@ -23,6 +29,17 @@ function createQuestionnaire({
         const taxonomyDefinition = getTaxonomies()[taxonomyId];
 
         if (taxonomyDefinition !== undefined) {
+            if (taxonomyDefinition.l10n !== undefined) {
+                const allQuestionnaireAnswers = {answers: getAnswers()};
+                const valueContextualier = getValueContextualiser(
+                    taxonomyDefinition,
+                    allQuestionnaireAnswers
+                );
+
+                // TODO: DON'T MUTATE ORIGINAL!
+                mutateObjectValues(taxonomyDefinition, [valueContextualier]);
+            }
+
             return createTaxonomy({
                 id: taxonomyId,
                 definition: taxonomyDefinition
@@ -38,10 +55,6 @@ function createQuestionnaire({
 
     function getSectionDefinition(sectionId) {
         return getSectionDefinitions()[sectionId];
-    }
-
-    function getAnswers() {
-        return questionnaireDefinition.answers;
     }
 
     function getSectionAnswers(sectionId) {
@@ -121,7 +134,7 @@ function createQuestionnaire({
         return Array.isArray(value) && typeof value[0] === 'string';
     }
 
-    function resolveVars(sectionId, sectionVars) {
+    function getResolvedVars(sectionId, sectionVars = []) {
         const resolvedVars = {};
 
         sectionVars.forEach(sectionVar => {
@@ -161,16 +174,12 @@ function createQuestionnaire({
         return identifier.split(':')[1];
     }
 
-    function getVarReferenceReplacer(vars, answers) {
+    function getValueVarReplacer(vars) {
         return (key, value) => {
-            if (typeof value === 'string') {
-                if (value.startsWith('q.var:')) {
-                    const varName = getVarName(value);
+            if (typeof value === 'string' && value.startsWith('q.var:')) {
+                const varName = getVarName(value);
 
-                    return vars[varName];
-                }
-
-                return replaceJsonPointer(value, {answers});
+                return vars[varName];
             }
 
             return value;
@@ -180,15 +189,31 @@ function createQuestionnaire({
     function getSection(sectionId) {
         const sectionDefinition = getSectionDefinition(sectionId);
         const sectionDefinitionVars = getSectionDefinitionVars(sectionDefinition);
-        let resolvedVars;
+        const allQuestionnaireAnswers = {answers: getAnswers()};
+        const orderedValueTransformers = [];
+        const valueInterpolator = getValueInterpolator(allQuestionnaireAnswers);
 
-        if (sectionDefinitionVars !== undefined) {
-            resolvedVars = resolveVars(sectionId, sectionDefinitionVars);
+        if (sectionDefinition.l10n !== undefined) {
+            const valueContextualier = getValueContextualiser(
+                sectionDefinition,
+                allQuestionnaireAnswers
+            );
+
+            orderedValueTransformers.push(valueContextualier);
         }
 
-        const replacer = getVarReferenceReplacer(resolvedVars, getAnswers());
+        if (sectionDefinitionVars !== undefined) {
+            const resolvedVars = getResolvedVars(sectionId, sectionDefinitionVars);
+            const valueVarReplacer = getValueVarReplacer(resolvedVars);
 
-        mutateValues(sectionDefinition.schema, replacer);
+            orderedValueTransformers.push(valueVarReplacer);
+        }
+
+        orderedValueTransformers.push(valueInterpolator);
+
+        // TODO: DON'T MUTATE ORIGINAL!
+        // contextualise > replace vars > interpolate
+        mutateObjectValues(sectionDefinition.schema, orderedValueTransformers);
 
         return createSection({id: sectionId, sectionDefinition});
     }
