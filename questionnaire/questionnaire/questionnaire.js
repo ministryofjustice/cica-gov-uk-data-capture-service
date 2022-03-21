@@ -17,8 +17,36 @@ function createQuestionnaire({
     getValueInterpolator = defaults.getValueInterpolator,
     getValueContextualiser = defaults.getValueContextualiser
 }) {
+    function getProgress() {
+        return questionnaireDefinition.progress || [];
+    }
+
+    function getProgressUntil(sectionId) {
+        const allProgress = getProgress();
+        const endIndex = allProgress.indexOf(sectionId);
+
+        if (endIndex > -1) {
+            const progressSubset = allProgress.slice(0, endIndex);
+            return progressSubset;
+        }
+
+        return allProgress;
+    }
+
     function getAnswers() {
         return questionnaireDefinition.answers;
+    }
+
+    function getOrderedAnswers() {
+        const progress = getProgress();
+        const answers = getAnswers();
+        const orderedAnswers = {};
+
+        progress.forEach(sectionId => {
+            orderedAnswers[sectionId] = answers[sectionId];
+        });
+
+        return orderedAnswers;
     }
 
     function getTaxonomies() {
@@ -59,22 +87,6 @@ function createQuestionnaire({
 
     function getSectionAnswers(sectionId) {
         return getAnswers()[sectionId];
-    }
-
-    function getProgress() {
-        return questionnaireDefinition.progress || [];
-    }
-
-    function getProgressUntil(sectionId) {
-        const allProgress = getProgress();
-        const endIndex = allProgress.indexOf(sectionId);
-
-        if (endIndex > -1) {
-            const progressSubset = allProgress.slice(0, endIndex);
-            return progressSubset;
-        }
-
-        return allProgress;
     }
 
     function transformDataAttribute(dataAttribute) {
@@ -218,7 +230,11 @@ function createQuestionnaire({
         return createSection({id: sectionId, sectionDefinition});
     }
 
-    function getDataAttributes({progress = getProgress(), dataAttributeTransformer} = {}) {
+    function getDataAttributes({
+        progress = getProgress(),
+        dataAttributeTransformer,
+        includeMetadata = true
+    } = {}) {
         const allDataAttributes = [];
 
         progress.forEach(sectionId => {
@@ -228,7 +244,7 @@ function createQuestionnaire({
                 const section = getSection(sectionId);
                 const sectionDataAttributes = section.getAttributesByData({
                     data: sectionAnswers,
-                    includeMetadata: true,
+                    includeMetadata,
                     mapAttribute: dataAttributeTransformer
                 });
 
@@ -239,9 +255,38 @@ function createQuestionnaire({
         return allDataAttributes;
     }
 
+    function getMetadata(metadataId) {
+        const metadata = questionnaireDefinition.meta;
+
+        if (metadata !== undefined) {
+            if (metadataId !== undefined) {
+                return metadata[metadataId];
+            }
+
+            return metadata;
+        }
+
+        return undefined;
+    }
+
+    function getNormalisedDetailsForAttribute(attributeId) {
+        const normalisedAttributeDetails = getMetadata('attributes');
+
+        if (normalisedAttributeDetails !== undefined) {
+            const attributeDetails = normalisedAttributeDetails[attributeId];
+
+            return attributeDetails;
+        }
+
+        return undefined;
+    }
+
     return Object.freeze({
         getTaxonomy,
-        getSection
+        getSection,
+        getOrderedAnswers,
+        getDataAttributes,
+        getNormalisedDetailsForAttribute
     });
 }
 
