@@ -198,7 +198,7 @@ function createQuestionnaire({
         };
     }
 
-    function getSection(sectionId) {
+    function getSection(sectionId, allowSummary = true) {
         const sectionDefinition = getSectionDefinition(sectionId);
         const sectionDefinitionVars = getSectionDefinitionVars(sectionDefinition);
         const allQuestionnaireAnswers = {answers: getAnswers()};
@@ -214,7 +214,7 @@ function createQuestionnaire({
             orderedValueTransformers.push(valueContextualier);
         }
 
-        if (sectionDefinitionVars !== undefined) {
+        if (sectionDefinitionVars !== undefined && allowSummary === true) {
             const resolvedVars = getResolvedVars(sectionId, sectionDefinitionVars);
             const valueVarReplacer = getValueVarReplacer(resolvedVars);
 
@@ -241,7 +241,7 @@ function createQuestionnaire({
             const sectionAnswers = getSectionAnswers(sectionId);
 
             if (sectionAnswers !== undefined) {
-                const section = getSection(sectionId);
+                const section = getSection(sectionId, false);
                 const sectionDataAttributes = section.getAttributesByData({
                     data: sectionAnswers,
                     includeMetadata,
