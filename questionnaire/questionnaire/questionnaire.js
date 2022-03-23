@@ -230,14 +230,27 @@ function createQuestionnaire({
         return createSection({id: sectionId, sectionDefinition});
     }
 
+    // TODO: remove this and implement allOf / describedBy properly
+    function removeDeclarationSectionIds(sectionIds) {
+        const sectionIdBlacklist = [
+            'p-applicant-declaration',
+            'p-mainapplicant-declaration-under-12',
+            'p-mainapplicant-declaration-12-and-over'
+        ];
+
+        return sectionIds.filter(sectionId => sectionIdBlacklist.includes(sectionId) === false);
+    }
+
     function getDataAttributes({
         progress = getProgress(),
         dataAttributeTransformer,
         includeMetadata = true
     } = {}) {
         const allDataAttributes = [];
+        // TODO: remove this and implement allOf / describedBy properly
+        const sectionIds = removeDeclarationSectionIds(progress);
 
-        progress.forEach(sectionId => {
+        sectionIds.forEach(sectionId => {
             const sectionAnswers = getSectionAnswers(sectionId);
 
             if (sectionAnswers !== undefined) {
@@ -286,7 +299,9 @@ function createQuestionnaire({
         getSection,
         getOrderedAnswers,
         getDataAttributes,
-        getNormalisedDetailsForAttribute
+        getNormalisedDetailsForAttribute,
+        getProgress, // TODO: remove this when declaration is handled correctly
+        getAnswers // TODO: remove this when declaration is handled correctly
     });
 }
 
