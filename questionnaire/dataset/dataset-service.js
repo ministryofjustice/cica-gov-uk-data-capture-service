@@ -3,6 +3,7 @@
 const VError = require('verror');
 
 const defaults = {};
+// TODO: Use questionnaireService instead of directly using the DAL
 defaults.createQuestionnaireDAL = require('../questionnaire-dal');
 defaults.createQuestionnaireHelper = require('../questionnaire/questionnaire');
 
@@ -75,9 +76,41 @@ function createDatasetService({
         return Object.fromEntries(dataset);
     }
 
+    // TODO: remove this and implement allOf / describedBy properly
+    function addDeclarationAttributes(dataset, questionnaire) {
+        const progress = questionnaire.getProgress();
+        const declarationSectionAndQuestionIds = {
+            'p-applicant-declaration': 'q-applicant-declaration',
+            'p-mainapplicant-declaration-under-12': 'q-mainapplicant-declaration',
+            'p-mainapplicant-declaration-12-and-over': 'q-mainapplicant-declaration'
+        };
+        const declarationSectionIds = Object.keys(declarationSectionAndQuestionIds);
+        const declarationSectionId = progress.find(sectionId =>
+            declarationSectionIds.includes(sectionId)
+        );
+
+        if (declarationSectionId !== undefined) {
+            const section = questionnaire.getSection(declarationSectionId);
+            const sectionSchema = section.getSchema();
+            const sectionAnswers = questionnaire.getAnswers()[declarationSectionId];
+            const questionId = declarationSectionAndQuestionIds[declarationSectionId];
+            const descriptionId = questionId.replace('q-', '');
+            const {description} = sectionSchema.allOf[0].properties[descriptionId];
+            const value = sectionAnswers[questionId];
+            const valueLabel = sectionSchema.allOf[1].properties[questionId].title;
+
+            dataset.set(declarationSectionId, {
+                type: 'simple',
+                id: questionId,
+                label: description,
+                value,
+                valueLabel
+            });
+        }
+    }
+
     function getHierachicalDataView(questionnaire) {
         const dataset = new Map();
-
         const dataAttrs = questionnaire.getDataAttributes({includeMetadata: false});
 
         dataAttrs.forEach(attribute => {
@@ -91,6 +124,9 @@ function createDatasetService({
                 dataset.set(mutatedAttribute.id, mutatedAttribute);
             }
         });
+
+        // TODO: remove this and implement allOf / describedBy properly
+        addDeclarationAttributes(dataset, questionnaire);
 
         return Array.from(dataset.values());
     }
