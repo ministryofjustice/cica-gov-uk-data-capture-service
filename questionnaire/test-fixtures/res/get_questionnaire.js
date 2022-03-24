@@ -27,6 +27,14 @@ function populateQuestionnaireAnswersObject(questionaireInstance) {
         },
         system: {
             'case-reference': '21\\123456'
+        },
+        'p-applicant-enter-your-name': {
+            'q-applicant-title': 'Mr',
+            'q-applicant-first-name': 'Biz',
+            'q-applicant-last-name': 'Baz'
+        },
+        'p-applicant-declaration': {
+            'q-applicant-declaration': 'i-agree'
         }
     };
 
