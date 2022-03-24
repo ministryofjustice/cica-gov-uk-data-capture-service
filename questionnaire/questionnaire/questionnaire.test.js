@@ -110,7 +110,7 @@ const questionnaireDefinition = {
                         namespace: 'p-applicant-enter-your-name',
                         resources: {
                             title: 'Enter your name',
-                            'title_someone-else': "Enter the ||/answer/gsg|| child's name",
+                            'title_someone-else': "Enter the child's name",
                             'summary-title': 'Your name',
                             'summary-title_someone-else': "Child's name",
                             'q-applicant-title': {
