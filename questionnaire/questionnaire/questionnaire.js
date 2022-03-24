@@ -7,6 +7,7 @@ defaults.groupDataAttributesByTaxonomy = require('./utils/groupDataAttributesByT
 defaults.mutateObjectValues = require('./utils/mutateObjectValues');
 defaults.getValueInterpolator = require('./utils/getValueInterpolator');
 defaults.getValueContextualiser = require('./utils/getValueContextualiser');
+defaults.deepClone = require('./utils/deepCloneJsonDerivedObject');
 
 function createQuestionnaire({
     questionnaireDefinition,
@@ -15,7 +16,8 @@ function createQuestionnaire({
     groupDataAttributesByTaxonomy = defaults.groupDataAttributesByTaxonomy,
     mutateObjectValues = defaults.mutateObjectValues,
     getValueInterpolator = defaults.getValueInterpolator,
-    getValueContextualiser = defaults.getValueContextualiser
+    getValueContextualiser = defaults.getValueContextualiser,
+    deepClone = defaults.deepClone
 }) {
     function getProgress() {
         return questionnaireDefinition.progress || [];
@@ -82,7 +84,7 @@ function createQuestionnaire({
     }
 
     function getSectionDefinition(sectionId) {
-        return getSectionDefinitions()[sectionId];
+        return deepClone(getSectionDefinitions()[sectionId]);
     }
 
     function getSectionAnswers(sectionId) {
