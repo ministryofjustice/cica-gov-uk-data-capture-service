@@ -254,14 +254,19 @@ function createQuestionnaireService({
 
         try {
             // 1 - get questionnaire instance
-            const questionnaire = await getQuestionnaire(questionnaireId);
+            const questionnaireDefinition = await getQuestionnaire(questionnaireId);
 
             // 2 - is the section allowed to be posted to e.g. is it in their progress
-            const qRouter = createQRouter(questionnaire);
-            const section = getSection(sectionId, qRouter);
+            const qRouter = createQRouter(questionnaireDefinition);
+            const sectionDetails = getSection(sectionId, qRouter);
 
             // 3 - Section is available. Validate the answers against it
-            const sectionSchema = questionnaire.sections[section.id].schema;
+            const questionnaire = createQuestionnaireHelper({
+                questionnaireDefinition
+            });
+            const section = questionnaire.getSection(sectionDetails.id);
+            const sectionSchema = section.getSchema();
+
             const validate = ajv.compile(sectionSchema);
             // The AJV validate function coerces the answers and mutates the answers object
             const valid = validate(answers);
@@ -285,12 +290,12 @@ function createQuestionnaireService({
             // Pass the answers to the router which will update the context (questionnaire) with these answers.
             let answeredQuestionnaire;
 
-            if (section.id === 'system') {
+            if (sectionDetails.id === 'system') {
                 const currentSection = qRouter.current();
                 currentSection.context.answers.system = coercedAnswers;
                 answeredQuestionnaire = currentSection.context;
             } else {
-                const nextSection = qRouter.next(coercedAnswers, section.id);
+                const nextSection = qRouter.next(coercedAnswers, sectionDetails.id);
                 answeredQuestionnaire = nextSection.context;
             }
 
@@ -300,7 +305,7 @@ function createQuestionnaireService({
             answerResource = {
                 data: {
                     type: 'answers',
-                    id: section.id,
+                    id: sectionDetails.id,
                     attributes: coercedAnswers
                 }
             };
