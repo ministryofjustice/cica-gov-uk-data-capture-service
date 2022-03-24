@@ -7,14 +7,15 @@ const AjvErrors = require('ajv-errors');
 const VError = require('verror');
 const createQRouter = require('q-router');
 const uuidv4 = require('uuid/v4');
-const pointer = require('jsonpointer');
 const ajvFormatsMobileUk = require('ajv-formats-mobile-uk');
+const JsonTranslator = require('json-translator');
 const templates = require('./templates');
 const createMessageBusCaller = require('../services/message-bus');
 const createNotifyService = require('../services/notify');
 const createSlackService = require('../services/slack');
 const questionnaireResource = require('./resources/questionnaire-resource');
 const createQuestionnaireHelper = require('./questionnaire/questionnaire');
+const replaceJsonPointers = require('../services/replace-json-pointer/index');
 
 const defaults = {};
 defaults.createQuestionnaireDAL = require('./questionnaire-dal');
@@ -133,63 +134,49 @@ function createQuestionnaireService({
     }
 
     async function sendConfirmationNotification(questionnaireId) {
+        const sharedJsonTranslator = JsonTranslator();
+        const jsonTranslator = await sharedJsonTranslator;
         const questionnaire = await getQuestionnaire(questionnaireId);
-        let confirmationSent = false;
-        const onCompleteTasks =
-            questionnaire.meta &&
-            questionnaire.meta.onComplete &&
-            questionnaire.meta.onComplete.tasks;
-        onCompleteTasks.forEach(async task => {
-            if (confirmationSent === true) {
-                return;
-            }
-            try {
-                const notifyService = createNotifyService({logger});
-                if (task.type === 'sendEmail') {
-                    const emailAddress = pointer.get(
-                        questionnaire,
-                        task.templatePlaceholderMap.emailAddress
-                    );
-                    if (emailAddress !== undefined) {
-                        const transformedTaskOptions = {
-                            ...task,
-                            emailAddress,
-                            personalisation: {
-                                caseReference: pointer.get(
-                                    questionnaire,
-                                    task.templatePlaceholderMap.caseReference
-                                )
-                            }
-                        };
-                        await notifyService.sendEmail(transformedTaskOptions);
-                        confirmationSent = true;
-                    }
-                }
+        try {
+            const onCompleteTasks = questionnaire.meta.onComplete.tasks;
 
-                if (task.type === 'sendSms') {
-                    const phoneNumber = pointer.get(
-                        questionnaire,
-                        task.templatePlaceholderMap.phoneNumber
-                    );
-                    if (phoneNumber !== undefined) {
-                        const transformedTaskOptions = {
-                            ...task,
-                            phoneNumber,
-                            personalisation: {
-                                caseReference: pointer.get(
-                                    questionnaire,
-                                    task.templatePlaceholderMap.caseReference
-                                )
-                            }
-                        };
-                        await notifyService.sendSms(transformedTaskOptions);
-                        confirmationSent = true;
-                    }
-                }
-            } catch (err) {
-                logger.error({err}, 'NOTIFICATION SENDING FAILED');
+            Object.keys(onCompleteTasks).forEach(taskName => {
+                const confirmationNotificationConfig = onCompleteTasks[taskName];
+                const replacedJsonPointersConfig = JSON.parse(
+                    replaceJsonPointers(
+                        JSON.stringify(confirmationNotificationConfig),
+                        questionnaire
+                    )
+                );
+                onCompleteTasks[taskName].data = JSON.parse(
+                    jsonTranslator.translate(JSON.stringify(replacedJsonPointersConfig.data), {
+                        vars: replacedJsonPointersConfig.l10n.vars,
+                        translations: replacedJsonPointersConfig.l10n.translations,
+                        data: {
+                            answers: questionnaire.answers
+                        }
+                    })
+                );
+            });
+
+            if (
+                onCompleteTasks.sendEmail.data.emailAddress === '' &&
+                onCompleteTasks.sendSms.data.phoneNumber === ''
+            ) {
+                return false;
             }
-        });
+
+            const notifyService = createNotifyService({logger});
+            if (onCompleteTasks.sendEmail.data.emailAddress !== '') {
+                notifyService.sendEmail(onCompleteTasks.sendEmail.data);
+                return onCompleteTasks.sendEmail.data;
+            }
+            notifyService.sendSms(onCompleteTasks.sendSms.data);
+            return onCompleteTasks.sendSms.data;
+        } catch (err) {
+            logger.error({err}, 'NOTIFICATION SENDING FAILED');
+            return false;
+        }
     }
 
     async function getSubmissionResponseData(questionnaireId, isPostRequest = false) {

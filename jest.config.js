@@ -12,6 +12,7 @@ process.env.DCS_LOG_LEVEL = 'silent';
 process.env.NOTIFY_API_KEY = '123apiKey';
 process.env.WEBHOOK_DEV_REPORTER_SLACK = 'webhook-url';
 process.env.APP_ENV = 'test';
+process.env.MESSAGE_BUS_CREDENTIALS = 'some-credentials';
 
 config.coverageThreshold = {
     './!(db)/!(questionnaire-dal).js': {

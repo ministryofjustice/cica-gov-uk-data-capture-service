@@ -35,7 +35,7 @@ function createNotifyService(spec) {
                 options.phoneNumber,
                 {
                     personalisation: {
-                        case_reference: options.personalisation.caseReference
+                        caseReference: options.personalisation.caseReference
                     },
                     reference: null
                 }
@@ -62,7 +62,7 @@ function createNotifyService(spec) {
             templateId: options.templateId,
             emailAddress: options.emailAddress,
             personalisation: {
-                case_reference: options.personalisation.caseReference
+                caseReference: options.personalisation.caseReference
             },
             reference: null
         });
