@@ -4,7 +4,7 @@ const express = require('express');
 const cookieParser = require('cookie-parser');
 const helmet = require('helmet');
 const path = require('path');
-const {OpenApiValidator} = require('express-openapi-validator');
+const OpenApiValidator = require('express-openapi-validator');
 const pino = require('pino-http');
 const errorHandler = require('./middleware/error-handler');
 const docsRouter = require('./docs/routes');
@@ -87,9 +87,14 @@ app.use((req, res, next) => {
 app.use('/api/v1/submissions', submissionsRouter);
 
 // Install the OpenApiValidator onto express app
-new OpenApiValidator({
-    apiSpecPath: './openapi/openapi.json'
-}).install(app);
+app.use(
+    OpenApiValidator.middleware({
+        apiSpec: './openapi/openapi.json',
+        validateRequests: true,
+        validateResponses: false,
+        validateSecurity: false
+    })
+);
 
 app.use('/api/v1/questionnaires', questionnaireRouter);
 
