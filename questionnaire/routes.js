@@ -1,7 +1,7 @@
 'use strict';
 
 const express = require('express');
-const validateJWT = require('express-jwt');
+const {expressjwt: validateJWT} = require('express-jwt');
 
 const createQuestionnaireService = require('./questionnaire-service');
 const permissions = require('../middleware/route-permissions');
@@ -9,7 +9,6 @@ const datasetRouter = require('./dataset/dataset-routes.js');
 
 const router = express.Router();
 const rxTemplateName = /^[a-zA-Z0-9-]{1,30}$/;
-
 // Ensure JWT is valid
 router.use(validateJWT({secret: process.env.DCS_JWT_SECRET, algorithms: ['HS256']}));
 

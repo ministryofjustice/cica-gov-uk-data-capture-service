@@ -1,7 +1,7 @@
 'use strict';
 
 const express = require('express');
-const validateJWT = require('express-jwt');
+const {expressjwt: validateJWT} = require('express-jwt');
 
 const createSubmissionsService = require('./submissions-service');
 const permissions = require('../middleware/route-permissions');
