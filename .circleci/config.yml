@@ -17,6 +17,9 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Update npm to v8.8.0
+          command: sudo npm install -g npm@8.8.0
+      - run:
           name: npm audit
           command: npm audit --production --audit-level=moderate
       - persist_to_workspace:
