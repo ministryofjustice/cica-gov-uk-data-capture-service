@@ -278,7 +278,7 @@ describe('Notifications', () => {
             await questionnaireService.sendConfirmationNotification(noOnCompleteThrowsErrorQId);
             expect(mockSendSms).not.toHaveBeenCalled();
             expect(mockSendEmail).not.toHaveBeenCalled();
-            const err = new TypeError("Cannot read property 'tasks' of undefined");
+            const err = new TypeError("Cannot read properties of undefined (reading 'tasks')");
             expect(mockLogger.error).toHaveBeenCalledWith({err}, 'NOTIFICATION SENDING FAILED');
         });
         it('should throw an error if meta onComplete.tasks not defined  ', async () => {
@@ -300,7 +300,7 @@ describe('Notifications', () => {
             );
             expect(mockSendSms).not.toHaveBeenCalled();
             expect(mockSendEmail).not.toHaveBeenCalled();
-            const err = new TypeError("Cannot read property 'data' of undefined");
+            const err = new TypeError("Cannot read properties of undefined (reading 'data')");
             expect(mockLogger.error).toHaveBeenCalledWith({err}, 'NOTIFICATION SENDING FAILED');
         });
     });
