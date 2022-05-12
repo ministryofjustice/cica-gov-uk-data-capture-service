@@ -20,7 +20,8 @@ const config = {
         curly: ['error', 'all'],
         'jest/expect-expect': ['error'],
         // https://github.com/eslint/eslint/issues/8953#issuecomment-317697474
-        strict: ['error', 'safe']
+        strict: ['error', 'safe'],
+        'import/extensions': ['off']
     },
     plugins: ['prettier']
 };
