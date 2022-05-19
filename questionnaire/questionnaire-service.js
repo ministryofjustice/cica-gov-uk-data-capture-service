@@ -409,46 +409,38 @@ function createQuestionnaireService({
             let sectionId;
             let isQuestionnaireModified = true;
 
-            if (filter) {
-                if ('position' in filter) {
-                    if (filter.position === 'current') {
-                        // Calling current() doesn't change any state. No need to persist.
-                        isQuestionnaireModified = false;
-                        section = qRouter.current();
-                    } else if (filter.position === 'first') {
-                        // Calling first() doesn't change any state. No need to persist.
-                        isQuestionnaireModified = false;
-                        section = qRouter.first();
-                    }
-                }
-
-                if ('sectionId' in filter) {
-                    ({sectionId} = filter);
-                    section = qRouter.current(sectionId);
-                }
-            } else if (page) {
-                if ('before' in page) {
-                    // Find the previous sectionId
-                    try {
-                        sectionId = page.before;
-                        section = qRouter.previous(sectionId);
-                    } catch (err) {
-                        // The sectionId was found but it has no previous section e.g. the first progress entry
-                        // We'll return a pseudo progress-entry that references the "referrer"
-                        // TODO: "referrer" is now a reserved id by the DCS e.g. A questionnaire can't use "referrer" as a section id. Use a naming convention to convey this and to avoid naming collisions
-                        return {
-                            data: [
-                                {
-                                    type: 'progress-entries',
-                                    id: 'referrer',
-                                    attributes: {
-                                        sectionId: null,
-                                        url: questionnaire.routes.referrer
-                                    }
+            if (filter?.position === 'current') {
+                // Calling current() doesn't change any state. No need to persist.
+                isQuestionnaireModified = false;
+                section = qRouter.current();
+            } else if (filter?.position === 'first') {
+                // Calling first() doesn't change any state. No need to persist.
+                isQuestionnaireModified = false;
+                section = qRouter.first();
+            } else if (filter?.sectionId !== undefined) {
+                ({sectionId} = filter);
+                section = qRouter.current(sectionId);
+            } else if (page?.before !== undefined) {
+                // Find the previous sectionId
+                try {
+                    sectionId = page.before;
+                    section = qRouter.previous(sectionId);
+                } catch (err) {
+                    // The sectionId was found but it has no previous section e.g. the first progress entry
+                    // We'll return a pseudo progress-entry that references the "referrer"
+                    // TODO: "referrer" is now a reserved id by the DCS e.g. A questionnaire can't use "referrer" as a section id. Use a naming convention to convey this and to avoid naming collisions
+                    return {
+                        data: [
+                            {
+                                type: 'progress-entries',
+                                id: 'referrer',
+                                attributes: {
+                                    sectionId: null,
+                                    url: questionnaire.routes.referrer
                                 }
-                            ]
-                        };
-                    }
+                            }
+                        ]
+                    };
                 }
             }
 
