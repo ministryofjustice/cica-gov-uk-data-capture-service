@@ -1,6 +1,10 @@
 {
     "name": "data-capture-service",
     "version": "5.0.4",
+    "engines": {
+        "npm": ">=8.5.2",
+        "node": ">=16.0.0"
+    },
     "scripts": {
         "start": "node ./bin/www",
         "start:dev": "nodemon -L --inspect=0.0.0.0:9229 -e .js,.json,.njk,.yml --ignore openapi/openapi.json --exec npm run build:run",
@@ -24,7 +28,7 @@
         "express": "~4.16.0",
         "express-jwt": "^7.4.3",
         "express-jwt-authz": "^2.4.1",
-        "express-openapi-validator": "^1.6.2",
+        "express-openapi-validator": "^4.13.7",
         "got": "^9.6.0",
         "helmet": "^3.21.2",
         "json-translator": "github:CriminalInjuriesCompensationAuthority/json-translator",
@@ -34,7 +38,7 @@
         "moment-timezone": "^0.5.33",
         "morgan": "^1.9.1",
         "notifications-node-client": "^5.1.0",
-        "pg": "^7.11.0",
+        "pg": "^8.7.3",
         "pino-http": "^5.5.0",
         "q-router": "github:CriminalInjuriesCompensationAuthority/q-router#v2.6.0",
         "q-templates-application": "github:CriminalInjuriesCompensationAuthority/q-templates-application#v6.0.4",
@@ -43,8 +47,8 @@
         "verror": "^1.10.0"
     },
     "devDependencies": {
-        "eslint": "^6.8.0",
-        "eslint-config-airbnb-base": "^14.0.0",
+        "eslint": "^7.32.0",
+        "eslint-config-airbnb-base": "^14.2.1",
         "eslint-config-prettier": "^6.9.0",
         "eslint-plugin-import": "^2.19.1",
         "eslint-plugin-jest": "^23.3.0",
