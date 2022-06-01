@@ -40,7 +40,7 @@
         "notifications-node-client": "^5.1.0",
         "pg": "^8.7.3",
         "pino-http": "^5.5.0",
-        "q-router": "github:CriminalInjuriesCompensationAuthority/q-router#v2.6.0",
+        "q-router": "github:CriminalInjuriesCompensationAuthority/q-router#v3.0.0",
         "q-templates-application": "github:CriminalInjuriesCompensationAuthority/q-templates-application#v6.0.5",
         "swagger-ui-express": "^4.3.0",
         "uuid": "^3.3.2",
