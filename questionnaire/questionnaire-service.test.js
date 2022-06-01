@@ -247,15 +247,25 @@ describe('Questionnaire Service', () => {
                         }
                     );
 
-                    expect(savedQuestionnaireDefinition.answers).toEqual({
-                        'p-applicant-enter-your-name': {
-                            'q-applicant-first-name': 'Foo',
-                            'q-applicant-last-name': 'Bar',
-                            'q-applicant-title': 'Mr'
-                        },
-                        'p-applicant-who-are-you-applying-for': {
-                            'q-applicant-who-are-you-applying-for': 'someone-else'
-                        }
+                    expect(savedQuestionnaireDefinition.answers).toHaveProperty(
+                        'p-applicant-enter-your-name'
+                    );
+                    expect(savedQuestionnaireDefinition.answers).toHaveProperty(
+                        'p-applicant-who-are-you-applying-for'
+                    );
+
+                    expect(
+                        savedQuestionnaireDefinition.answers['p-applicant-enter-your-name']
+                    ).toEqual({
+                        'q-applicant-first-name': 'Foo',
+                        'q-applicant-last-name': 'Bar',
+                        'q-applicant-title': 'Mr'
+                    });
+
+                    expect(
+                        savedQuestionnaireDefinition.answers['p-applicant-who-are-you-applying-for']
+                    ).toEqual({
+                        'q-applicant-who-are-you-applying-for': 'someone-else'
                     });
                 });
 
