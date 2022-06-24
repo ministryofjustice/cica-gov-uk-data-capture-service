@@ -44,12 +44,6 @@ config.coverageThreshold = {
         branches: 60,
         functions: 0,
         lines: 15
-    },
-    './*/request/**/*.js': {
-        statements: 23,
-        branches: 60,
-        functions: 0,
-        lines: 23
     }
 };
 
