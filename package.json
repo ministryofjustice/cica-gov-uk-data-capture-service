@@ -29,7 +29,7 @@
         "express-jwt": "^7.4.3",
         "express-jwt-authz": "^2.4.1",
         "express-openapi-validator": "^4.13.7",
-        "got": "^9.6.0",
+        "got": "^11.8.5",
         "helmet": "^3.21.2",
         "json-translator": "github:CriminalInjuriesCompensationAuthority/json-translator",
         "json-translator-sync": "github:CriminalInjuriesCompensationAuthority/json-translator#sync",
