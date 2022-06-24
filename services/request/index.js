@@ -11,24 +11,23 @@ function createRequestService() {
                 accept: 'application/vnd.api+json',
                 'Content-Type': 'application/vnd.api+json'
             },
-            json: true,
-            body: options.body
+            responseType: 'json'
         };
         opts = merge(opts, options);
-        return got(options.url, opts);
+        return got(opts);
     }
 
     function get(options) {
         let opts = {
             method: 'GET',
             headers: {
-                accept: 'application/json',
-                'Content-Type': 'application/json'
+                accept: 'application/vnd.api+json',
+                'Content-Type': 'application/vnd.api+json'
             },
-            json: true
+            responseType: 'json'
         };
         opts = merge(opts, options);
-        return got(opts.url, opts);
+        return got(opts);
     }
 
     function patch(options) {
@@ -38,11 +37,10 @@ function createRequestService() {
                 accept: 'application/vnd.api+json',
                 'Content-Type': 'application/vnd.api+json'
             },
-            json: true,
-            body: options.body
+            responseType: 'json'
         };
         opts = merge(opts, options);
-        return got(options.url, opts);
+        return got(opts);
     }
 
     return Object.freeze({
