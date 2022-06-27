@@ -1,15 +1,17 @@
 'use strict';
 
+const merge = require('lodash.merge');
 const createRequestService = require('../request');
 
 function createMessageBusCaller(opts) {
     const {logger} = opts;
+    delete opts.logger;
     const requestService = createRequestService();
 
     async function post(queueName, payload) {
         const hrstart = process.hrtime();
 
-        const options = {
+        let options = {
             url: `${process.env.MESSAGE_BUS_URL}/api/message/?destination=queue://${queueName}`, // SubmissionQueue
             headers: {
                 Authorization: `Basic ${Buffer.from(process.env.MESSAGE_BUS_CREDENTIALS).toString(
@@ -18,9 +20,9 @@ function createMessageBusCaller(opts) {
                 accept: 'text/html', // the response at the moment is the string 'Message sent'.
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(payload)
+            json: JSON.stringify(payload)
         };
-
+        options = merge(options, opts);
         const response = await requestService.post(options);
 
         const hrend = process.hrtime(hrstart);
