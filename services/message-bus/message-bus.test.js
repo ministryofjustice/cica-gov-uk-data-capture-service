@@ -12,14 +12,13 @@ const simpleServer = http.createServer((req, res) => {
     }
 
     if (req.method === 'POST') {
-        let reqBody = '';
+        let body = [];
 
-        req.on('data', chunk => {
-            reqBody += chunk;
-        });
-
-        req.on('end', () => {
-            res.end(`{"post_test": ${reqBody}}`);
+        req.on('data', () => {
+            body.push(Buffer.from('Message sent', 'utf-8'));
+        }).on('end', () => {
+            body = Buffer.concat(body).toString();
+            res.end(body);
         });
     }
 });
@@ -38,7 +37,12 @@ describe('Message bus service', () => {
 
             const options = {
                 logger: mockLogger,
-                url: `http://127.0.0.1:8125/api/message/?destination=queue://mock-queue`
+                url: `http://127.0.0.1:8125/api/message/?destination=queue://mock-queue`,
+                headers: {
+                    accept: 'text/plain', // the response at the moment is the string 'Message sent'.
+                    'Content-Type': 'text/plain'
+                },
+                responseType: 'text'
             };
 
             const messageBusCaller = createMessageBusCaller(options);
@@ -47,9 +51,7 @@ describe('Message bus service', () => {
                 applicationId: '0ddd90e9-b2a7-449e-80a5-26a2f8c98fd0'
             });
 
-            expect(response.body).toEqual(
-                '{"post_test": "{"applicationId":"0ddd90e9-b2a7-449e-80a5-26a2f8c98fd0"}"}'
-            );
+            expect(response.body).toEqual('Message sent');
         });
     });
 });

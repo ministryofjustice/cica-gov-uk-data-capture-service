@@ -5,7 +5,6 @@ const createRequestService = require('../request');
 
 function createMessageBusCaller(opts) {
     const {logger} = opts;
-    delete opts.logger;
     const requestService = createRequestService();
 
     async function post(queueName, payload) {
