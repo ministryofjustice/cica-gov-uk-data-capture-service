@@ -18,7 +18,6 @@ function createMessageBusCaller(opts) {
                 accept: 'text/html', // the response at the moment is the string 'Message sent'.
                 'Content-Type': 'application/json'
             },
-            json: false,
             body: JSON.stringify(payload)
         };
 
