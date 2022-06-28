@@ -5,6 +5,9 @@ const createRequestService = require('../request');
 
 function createMessageBusCaller(opts) {
     const {logger} = opts;
+    delete opts.logger;
+    // removing the logger from the opts as its unnecessary we are passing in the opts here in order
+    // to test this functionality
     const requestService = createRequestService();
 
     async function post(queueName, payload) {
@@ -16,9 +19,10 @@ function createMessageBusCaller(opts) {
                 Authorization: `Basic ${Buffer.from(process.env.MESSAGE_BUS_CREDENTIALS).toString(
                     'base64'
                 )}`,
-                accept: 'text/html', // the response at the moment is the string 'Message sent'.
-                'Content-Type': 'application/json'
+                accept: 'text/plain', // the response at the moment is the string 'Message sent'.
+                'Content-Type': 'text/plain'
             },
+            responseType: 'text',
             json: JSON.stringify(payload)
         };
         options = merge(options, opts);

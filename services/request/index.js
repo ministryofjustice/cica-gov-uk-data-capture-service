@@ -13,6 +13,8 @@ function createRequestService() {
             },
             responseType: 'json'
         };
+        // allow externl overriding of the default internal opts
+        // for example to change responseType, or headers
         opts = merge(opts, options);
         return got(opts);
     }
@@ -26,6 +28,8 @@ function createRequestService() {
             },
             responseType: 'json'
         };
+        // allow externl overriding of the default internal opts
+        // for example to change responseType, or headers
         opts = merge(opts, options);
         return got(opts);
     }
@@ -39,6 +43,8 @@ function createRequestService() {
             },
             responseType: 'json'
         };
+        // allow externl overriding of the default internal opts
+        // for example to change responseType, or headers
         opts = merge(opts, options);
         return got(opts);
     }

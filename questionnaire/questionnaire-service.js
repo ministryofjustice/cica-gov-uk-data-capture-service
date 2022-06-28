@@ -129,6 +129,7 @@ function createQuestionnaireService({
                 });
             }
         } catch (err) {
+            logger.error({err}, 'MESSAGE SENDING FAILED');
             await updateQuestionnaireSubmissionStatus(questionnaireId, 'FAILED');
         }
     }

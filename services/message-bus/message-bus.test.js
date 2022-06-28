@@ -32,17 +32,12 @@ describe('Message bus service', () => {
         simpleServer.close();
     });
     describe('createMessageBusCaller', () => {
-        it('Should call message bus', async () => {
+        it('Should call successfully call the message bus', async () => {
             const mockLogger = {info: jest.fn()};
 
             const options = {
                 logger: mockLogger,
-                url: `http://127.0.0.1:8125/api/message/?destination=queue://mock-queue`,
-                headers: {
-                    accept: 'text/plain', // the response at the moment is the string 'Message sent'.
-                    'Content-Type': 'text/plain'
-                },
-                responseType: 'text'
+                url: `http://127.0.0.1:8125/api/message/?destination=queue://mock-queue`
             };
 
             const messageBusCaller = createMessageBusCaller(options);
@@ -51,6 +46,7 @@ describe('Message bus service', () => {
                 applicationId: '0ddd90e9-b2a7-449e-80a5-26a2f8c98fd0'
             });
 
+            expect(options.logger === undefined).toBe(true);
             expect(response.body).toEqual('Message sent');
         });
     });
