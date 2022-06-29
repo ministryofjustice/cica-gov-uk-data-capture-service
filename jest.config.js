@@ -32,18 +32,6 @@ config.coverageThreshold = {
         functions: 37,
         lines: 24,
         statements: 26
-    },
-    './*/!(message-bus|request)/**/*.js': {
-        statements: 54,
-        branches: 60,
-        functions: 50,
-        lines: 56
-    },
-    './*/message-bus/**/*.js': {
-        statements: 100,
-        branches: 100,
-        functions: 100,
-        lines: 100
     }
 };
 
