@@ -23,7 +23,7 @@ function createMessageBusCaller(opts) {
                 'Content-Type': 'application/json'
             },
             responseType: 'text',
-            json: JSON.stringify(payload)
+            body: JSON.stringify(payload)
         };
         options = merge(options, opts);
         const response = await requestService.post(options);
