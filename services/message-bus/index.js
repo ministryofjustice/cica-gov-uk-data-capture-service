@@ -20,7 +20,7 @@ function createMessageBusCaller(opts) {
                     'base64'
                 )}`,
                 accept: 'text/plain', // the response at the moment is the string 'Message sent'.
-                'Content-Type': 'text/plain'
+                'Content-Type': 'application/json'
             },
             responseType: 'text',
             json: JSON.stringify(payload)
