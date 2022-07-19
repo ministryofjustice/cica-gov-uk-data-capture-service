@@ -31,7 +31,6 @@
         "express-openapi-validator": "^4.13.7",
         "got": "^9.6.0",
         "helmet": "^3.21.2",
-        "json-rules": "github:CriminalInjuriesCompensationAuthority/json-rules#v1.0.0",
         "json-translator": "github:CriminalInjuriesCompensationAuthority/json-translator",
         "json-translator-sync": "github:CriminalInjuriesCompensationAuthority/json-translator#sync",
         "jsonpointer": "^5.0.0",
@@ -42,7 +41,7 @@
         "pg": "^8.7.3",
         "pino-http": "^5.5.0",
         "q-router": "github:CriminalInjuriesCompensationAuthority/q-router#v3.0.0",
-        "q-templates-application": "github:CriminalInjuriesCompensationAuthority/q-templates-application#v8.0.1",
+        "q-templates-application": "github:CriminalInjuriesCompensationAuthority/q-templates-application#has-legal-authority",
         "swagger-ui-express": "^4.3.0",
         "uuid": "^3.3.2",
         "verror": "^1.10.0"
