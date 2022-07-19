@@ -39,7 +39,7 @@ function createQuestionnaire({
 
     function getRoles() {
         // eslint-disable-next-line no-underscore-dangle
-        return questionnaireDefinition?.attributes?._roles || {};
+        return questionnaireDefinition?.attributes?.q__roles || {};
     }
 
     function getAnswers() {

@@ -44,7 +44,7 @@ const questionnaireDefinition = {
         }
     },
     attributes: {
-        _roles: {
+        q__roles: {
             mainapplicant: {
                 schema: {
                     title: 'Main Applicant role',
