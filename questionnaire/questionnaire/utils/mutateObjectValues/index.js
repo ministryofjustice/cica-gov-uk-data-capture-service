@@ -1,6 +1,8 @@
 'use strict';
 
-const isJsonExpression = require('../isJsonExpression');
+const qExpression = require('q-expressions');
+
+const {isJsonExpression} = qExpression;
 
 function isPlainObjectOrArray(value) {
     return value && typeof value === 'object' && isJsonExpression(value) === false;
