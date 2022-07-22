@@ -1,8 +1,7 @@
-apiVersion: networking.k8s.io/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   annotations:
-    kubernetes.io/ingress.class: nginx
     nginx.ingress.kubernetes.io/whitelist-source-range: 31.121.104.9/32,37.143.143.162/32,37.143.143.10/32
     external-dns.alpha.kubernetes.io/set-identifier: dcs-ingress-dev-claim-criminal-injuries-compensation-dev-green
     external-dns.alpha.kubernetes.io/aws-weight: '100'
@@ -15,18 +14,25 @@ spec:
     - hosts:
         - data-capture-service.dev.claim-criminal-injuries-compensation.service.justice.gov.uk
       secretName: data-capture-service-cert-secret-dev
+  ingressClassName: nginx
   rules:
     - host: data-capture-service.dev.claim-criminal-injuries-compensation.apps.live.cloud-platform.service.justice.gov.uk
       http:
         paths:
           - path: /
             backend:
-              serviceName: dcs-service-dev
-              servicePort: 80
+              service:
+                name: dcs-service-dev
+                port:
+                  number: 80
+            pathType: ImplementationSpecific
     - host: data-capture-service.dev.claim-criminal-injuries-compensation.service.justice.gov.uk
       http:
         paths:
           - path: /
             backend:
-              serviceName: dcs-service-dev
-              servicePort: 80
+              service:
+                name: dcs-service-dev
+                port:
+                  number: 80
+            pathType: ImplementationSpecific
