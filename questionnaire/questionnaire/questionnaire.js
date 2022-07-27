@@ -8,6 +8,8 @@ defaults.mutateObjectValues = require('./utils/mutateObjectValues');
 defaults.getValueInterpolator = require('./utils/getValueInterpolator');
 defaults.getValueContextualiser = require('./utils/getValueContextualiser');
 defaults.deepClone = require('./utils/deepCloneJsonDerivedObject');
+defaults.getJsonExpressionEvaluator = require('./utils/getJsonExpressionEvaluator');
+defaults.qExpression = require('q-expressions');
 
 function createQuestionnaire({
     questionnaireDefinition,
@@ -17,7 +19,9 @@ function createQuestionnaire({
     mutateObjectValues = defaults.mutateObjectValues,
     getValueInterpolator = defaults.getValueInterpolator,
     getValueContextualiser = defaults.getValueContextualiser,
-    deepClone = defaults.deepClone
+    deepClone = defaults.deepClone,
+    getJsonExpressionEvaluator = defaults.getJsonExpressionEvaluator,
+    qExpression = defaults.qExpression
 }) {
     function getProgress() {
         return questionnaireDefinition.progress || [];
@@ -33,6 +37,10 @@ function createQuestionnaire({
         }
 
         return allProgress;
+    }
+
+    function getRoles() {
+        return questionnaireDefinition?.attributes?.q__roles || {};
     }
 
     function getAnswers() {
@@ -60,14 +68,23 @@ function createQuestionnaire({
 
         if (taxonomyDefinition !== undefined) {
             if (taxonomyDefinition.l10n !== undefined) {
+                const orderedValueTransformers = [];
                 const allQuestionnaireAnswers = {answers: getAnswers()};
+                const jsonExpressionEvaluator = getJsonExpressionEvaluator({
+                    ...allQuestionnaireAnswers,
+                    attributes: {
+                        q__roles: getRoles()
+                    }
+                });
+
                 const valueContextualier = getValueContextualiser(
                     taxonomyDefinition,
                     allQuestionnaireAnswers
                 );
+                orderedValueTransformers.push(jsonExpressionEvaluator, valueContextualier);
 
                 // TODO: DON'T MUTATE ORIGINAL!
-                mutateObjectValues(taxonomyDefinition, [valueContextualier]);
+                mutateObjectValues(taxonomyDefinition, orderedValueTransformers);
             }
 
             return createTaxonomy({
@@ -208,12 +225,18 @@ function createQuestionnaire({
         const valueInterpolator = getValueInterpolator(allQuestionnaireAnswers);
 
         if (sectionDefinition.l10n !== undefined) {
+            const jsonExpressionEvaluator = getJsonExpressionEvaluator({
+                ...allQuestionnaireAnswers,
+                attributes: {
+                    q__roles: getRoles()
+                }
+            });
             const valueContextualier = getValueContextualiser(
                 sectionDefinition,
                 allQuestionnaireAnswers
             );
 
-            orderedValueTransformers.push(valueContextualier);
+            orderedValueTransformers.push(jsonExpressionEvaluator, valueContextualier);
         }
 
         if (sectionDefinitionVars !== undefined && allowSummary === true) {
@@ -237,7 +260,9 @@ function createQuestionnaire({
         const sectionIdBlacklist = [
             'p-applicant-declaration',
             'p-mainapplicant-declaration-under-12',
-            'p-mainapplicant-declaration-12-and-over'
+            'p-mainapplicant-declaration-12-and-over',
+            'p-rep-declaration-under-12',
+            'p-rep-declaration-12-and-over'
         ];
 
         return sectionIds.filter(sectionId => sectionIdBlacklist.includes(sectionId) === false);
@@ -296,6 +321,44 @@ function createQuestionnaire({
         return undefined;
     }
 
+    function getPermittedActions() {
+        const actions = questionnaireDefinition?.meta?.onComplete?.actions;
+
+        if (actions) {
+            const answersAndRoles = {
+                answers: getAnswers(),
+                attributes: {
+                    q__roles: getRoles()
+                }
+            };
+            const permittedActions = actions.filter(action => {
+                if ('cond' in action) {
+                    const isPermittedAction = qExpression.evaluate(action.cond, answersAndRoles);
+
+                    return isPermittedAction;
+                }
+
+                return true;
+            });
+            const valueInterpolator = getValueInterpolator(answersAndRoles);
+            const jsonExpressionEvaluator = getJsonExpressionEvaluator(answersAndRoles);
+            const resolvedActions = permittedActions.map(permittedAction => {
+                if ('data' in permittedAction) {
+                    mutateObjectValues(permittedAction.data, [
+                        jsonExpressionEvaluator,
+                        valueInterpolator
+                    ]);
+                }
+
+                return permittedAction;
+            });
+
+            return resolvedActions;
+        }
+
+        return [];
+    }
+
     return Object.freeze({
         getTaxonomy,
         getSection,
@@ -303,7 +366,8 @@ function createQuestionnaire({
         getDataAttributes,
         getNormalisedDetailsForAttribute,
         getProgress, // TODO: remove this when declaration is handled correctly
-        getAnswers // TODO: remove this when declaration is handled correctly
+        getAnswers, // TODO: remove this when declaration is handled correctly
+        getPermittedActions
     });
 }
 
