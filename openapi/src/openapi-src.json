@@ -22,7 +22,12 @@
             "bearerAuth": []
         }
     ],
-    "tags": [{"name": "Answers"}, {"name": "Questionnaires"}, {"name": "ProgressEntries"}],
+    "tags": [
+        {"name": "Answers"},
+        {"name": "Questionnaires"},
+        {"name": "ProgressEntries"},
+        {"name": "Sessions"}
+    ],
     "paths": {
         "/questionnaires": {
             "post": {
@@ -802,6 +807,82 @@
                     },
                     "401": {
                         "$ref": "#/components/responses/UnauthorizedError"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    }
+                }
+            }
+        },
+        "/questionnaires/{questionnaireId}/session/keep-alive": {
+            "get": {
+                "tags": ["Sessions"],
+                "summary": "Refresh session.",
+                "description": "Refresh the session related to a specific questionnaire id.",
+                "operationId": "RefreshSession  ",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/questionnaireId"
+                    }
+                ],
+                "x-scopes": ["update:questionnaires"],
+                "x-requests": {
+                    "400": {
+                        "parameters": [
+                            {
+                                "name": "questionnaireId",
+                                "example": "NOT-A-UUID"
+                            }
+                        ]
+                    },
+                    "401": {
+                        "auth": false
+                    },
+                    "403": {
+                        "x-scopes": ["create:dummy-resource"]
+                    },
+                    "404": {
+                        "parameters": [
+                            {
+                                "name": "questionnaireId",
+                                "example": "68653be7-877f-4106-b91e-4ba8dac883f4"
+                            }
+                        ]
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/vnd.api+json": {
+                                "schema": {
+                                    "$ref": "json-schemas/api/_questionnaires_{questionnaireId}_sessions/get/res/200.json"
+                                },
+                                "example": {
+                                    "data": [
+                                        {
+                                            "id": "285cb104-0c15-4a9c-9840-cb1007f098fb",
+                                            "type": "sessions",
+                                            "attributes": {
+                                                "alive": true,
+                                                "duration": 900000,
+                                                "created": 1660249595000,
+                                                "expires": 1660250495000
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/UnauthorizedError"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/Forbidden"
                     },
                     "404": {
                         "$ref": "#/components/responses/NotFound"

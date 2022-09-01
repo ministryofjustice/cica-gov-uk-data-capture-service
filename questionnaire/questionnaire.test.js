@@ -71,7 +71,20 @@ jest.doMock('./questionnaire-dal.js', () =>
         },
         updateQuestionnaireSubmissionStatus: () => undefined,
         createQuestionnaireSubmission: () => true,
-        retrieveCaseReferenceNumber: () => '12345678'
+        retrieveCaseReferenceNumber: () => '12345678',
+        getQuestionnaireModifiedDate: questionnaireId => {
+            if (questionnaireId === '285cb104-0c15-4a9c-9840-cb1007f098fb') {
+                return '2022-08-16T21:52:29Z';
+            }
+
+            throw new VError(
+                {
+                    name: 'ResourceNotFound'
+                },
+                `Questionnaire "${questionnaireId}" not found`
+            );
+        },
+        updateQuestionnaireModifiedDate: () => undefined
     }))
 );
 
@@ -2079,6 +2092,210 @@ describe('/questionnaires/{questionnaireId}/dataset', () => {
                 const res = await request(app)
                     .get('/api/v1/questionnaires/68653be7-877f-4106-b91e-4ba8dac883f4/dataset')
                     .set('Authorization', `Bearer ${tokens['read:questionnaires']}`);
+
+                expect(res.statusCode).toBe(404);
+                expect(res.type).toBe('application/vnd.api+json');
+                expect(res.body).toMatchSchema({
+                    $schema: 'http://json-schema.org/draft-07/schema#',
+                    type: 'object',
+                    required: ['errors'],
+                    properties: {
+                        errors: {
+                            type: 'array',
+                            items: {
+                                type: 'object',
+                                required: ['status', 'title', 'detail'],
+                                properties: {
+                                    status: {const: 404},
+                                    title: {const: '404 Not Found'},
+                                    detail: {type: 'string'}
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+        });
+    });
+});
+describe('/questionnaires/{questionnaireId}/session/keep-alive', () => {
+    describe('get', () => {
+        describe('200', () => {
+            it('should Success', async () => {
+                const res = await request(app)
+                    .get(
+                        '/api/v1/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/session/keep-alive'
+                    )
+                    .set('Authorization', `Bearer ${tokens['update:questionnaires']}`);
+
+                expect(res.statusCode).toBe(200);
+                expect(res.type).toBe('application/vnd.api+json');
+                expect(res.body).toMatchSchema({
+                    $schema: 'http://json-schema.org/draft-07/schema#',
+                    title: 'Sessions resource',
+                    allOf: [
+                        {
+                            $schema: 'http://json-schema.org/draft-07/schema#',
+                            title: 'Loosely describes the JSON:API document format',
+                            type: 'object',
+                            additionalProperties: false,
+                            required: ['data'],
+                            properties: {
+                                data: {anyOf: [{type: 'object'}, {type: 'array'}]},
+                                included: {type: 'array'},
+                                links: {type: 'object'},
+                                meta: {type: 'object'}
+                            }
+                        },
+                        {
+                            properties: {
+                                data: {
+                                    type: 'array',
+                                    items: {
+                                        $schema: 'http://json-schema.org/draft-07/schema#',
+                                        title: 'Session resource',
+                                        allOf: [
+                                            {
+                                                properties: {
+                                                    data: {
+                                                        type: 'array',
+                                                        items: {
+                                                            properties: {
+                                                                type: {const: 'sessions'},
+                                                                id: {
+                                                                    type: 'string',
+                                                                    pattern:
+                                                                        '^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$'
+                                                                },
+                                                                attributes: {
+                                                                    type: 'object',
+                                                                    additionalProperties: false,
+                                                                    required: [
+                                                                        'alive',
+                                                                        'duration',
+                                                                        'created',
+                                                                        'expires'
+                                                                    ],
+                                                                    properties: {
+                                                                        alive: {type: 'boolean'},
+                                                                        duration: {
+                                                                            type: 'integer',
+                                                                            minimum: 1
+                                                                        },
+                                                                        created: {type: 'integer'},
+                                                                        expires: {type: 'integer'}
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                });
+            });
+        });
+        describe('400', () => {
+            it('should There is an issue with the request', async () => {
+                const res = await request(app)
+                    .get('/api/v1/questionnaires/NOT-A-UUID/session/keep-alive')
+                    .set('Authorization', `Bearer ${tokens['update:questionnaires']}`);
+
+                expect(res.statusCode).toBe(400);
+                expect(res.type).toBe('application/vnd.api+json');
+                expect(res.body).toMatchSchema({
+                    $schema: 'http://json-schema.org/draft-07/schema#',
+                    type: 'object',
+                    required: ['errors'],
+                    properties: {
+                        errors: {
+                            type: 'array',
+                            items: {
+                                type: 'object',
+                                required: ['status', 'title', 'detail'],
+                                properties: {
+                                    status: {const: 400},
+                                    title: {const: '400 Bad Request'},
+                                    detail: {type: 'string'}
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+        });
+        describe('401', () => {
+            it('should Access token is missing or invalid', async () => {
+                const res = await request(app).get(
+                    '/api/v1/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/session/keep-alive'
+                );
+
+                expect(res.statusCode).toBe(401);
+                expect(res.type).toBe('application/vnd.api+json');
+                expect(res.body).toMatchSchema({
+                    $schema: 'http://json-schema.org/draft-07/schema#',
+                    type: 'object',
+                    required: ['errors'],
+                    properties: {
+                        errors: {
+                            type: 'array',
+                            items: {
+                                type: 'object',
+                                required: ['status', 'title', 'detail'],
+                                properties: {
+                                    status: {const: 401},
+                                    title: {const: '401 Unauthorized'},
+                                    detail: {type: 'string'}
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+        });
+        describe('403', () => {
+            it("should The JWT doesn't permit access to this endpoint", async () => {
+                const res = await request(app)
+                    .get(
+                        '/api/v1/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/session/keep-alive'
+                    )
+                    .set('Authorization', `Bearer ${tokens['create:dummy-resource']}`);
+
+                expect(res.statusCode).toBe(403);
+                expect(res.type).toBe('application/vnd.api+json');
+                expect(res.body).toMatchSchema({
+                    $schema: 'http://json-schema.org/draft-07/schema#',
+                    type: 'object',
+                    required: ['errors'],
+                    properties: {
+                        errors: {
+                            type: 'array',
+                            items: {
+                                type: 'object',
+                                required: ['status', 'title', 'detail'],
+                                properties: {
+                                    status: {const: 403},
+                                    title: {const: '403 Forbidden'},
+                                    detail: {type: 'string'}
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+        });
+        describe('404', () => {
+            it('should The specified resource was not found', async () => {
+                const res = await request(app)
+                    .get(
+                        '/api/v1/questionnaires/68653be7-877f-4106-b91e-4ba8dac883f4/session/keep-alive'
+                    )
+                    .set('Authorization', `Bearer ${tokens['update:questionnaires']}`);
 
                 expect(res.statusCode).toBe(404);
                 expect(res.type).toBe('application/vnd.api+json');
