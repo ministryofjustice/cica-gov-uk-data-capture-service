@@ -26,12 +26,6 @@ config.coverageThreshold = {
         functions: 0,
         lines: 35,
         statements: 35
-    },
-    './questionnaire/questionnaire-dal.js': {
-        branches: 20,
-        functions: 37,
-        lines: 24,
-        statements: 26
     }
 };
 

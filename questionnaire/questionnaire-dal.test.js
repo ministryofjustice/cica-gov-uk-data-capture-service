@@ -1,56 +1,183 @@
 'use strict';
 
+const DB_QUERY_ERROR_QUESTIONNAIRE_ID = 'acbfcd8e-1299-478a-a9f1-7005f4b713ed';
+const DB_QUERY_ERROR_SUBMISSION_STATUS_ID = 'FAIL_TEST';
+const DB_QUERY_ROW_COUNT_ZERO_QUESTIONNAIRE_ID = 'c9723b81-c50d-4050-805f-108995067913';
+const DB_QUERY_ROW_COUNT_ZERO_SUBMISSION_STATUS = 'ZERO_ROWS_SUBMISSION_STATUS';
+
 jest.doMock('../db/index.js', () => () => ({
     query: (query, parameters) => {
-        if (query === 'SELECT id FROM questionnaire WHERE submission_status = $1') {
-            if (parameters.includes('FAILED')) {
-                return {
-                    rowCount: 4,
-                    rows: [
-                        {
-                            id: '4ddb0208-f7da-4237-a244-34e7e58d2ddf'
-                        },
-                        {
-                            id: '95118e91-8ed9-4b41-a7a8-727a353f2d18'
-                        },
-                        {
-                            id: 'be567065-d11c-4ba1-8c3f-147290c7036f'
-                        },
-                        {
-                            id: '93259f6d-1826-4e97-ba39-53b4e232dd81'
-                        }
-                    ]
-                };
-            }
-            if (parameters.includes('FAILED2')) {
-                return {
-                    rowCount: 0
-                };
-            }
+        if (parameters.includes(DB_QUERY_ERROR_QUESTIONNAIRE_ID)) {
+            throw new Error('DB_QUERY_ERROR');
         }
-        return [];
+
+        if (parameters.includes(DB_QUERY_ERROR_SUBMISSION_STATUS_ID)) {
+            throw new Error('DB_QUERY_ERROR');
+        }
+
+        if (parameters.includes(DB_QUERY_ROW_COUNT_ZERO_QUESTIONNAIRE_ID)) {
+            return {
+                rows: [],
+                rowCount: 0
+            };
+        }
+
+        return {
+            rows: [],
+            rowCount: 0
+        };
     }
 }));
 
 const createQuestionnaireDAL = require('./questionnaire-dal');
 
 describe('questionnaire data access layer', () => {
-    describe('getQuestionnaireIdsBySubmissionStatus', () => {
-        it('should get an array of ids for failed submissions', async () => {
+    describe('createQuestionnaire', () => {
+        it('Should throw when a db connnectivity issue is encountered', async () => {
             const questionnaireDAL = createQuestionnaireDAL({logger: jest.fn()});
-            const result = await questionnaireDAL.getQuestionnaireIdsBySubmissionStatus('FAILED');
-            expect(result).toEqual([
-                '4ddb0208-f7da-4237-a244-34e7e58d2ddf',
-                '95118e91-8ed9-4b41-a7a8-727a353f2d18',
-                'be567065-d11c-4ba1-8c3f-147290c7036f',
-                '93259f6d-1826-4e97-ba39-53b4e232dd81'
-            ]);
+            await expect(
+                questionnaireDAL.createQuestionnaire(DB_QUERY_ERROR_QUESTIONNAIRE_ID, {})
+            ).rejects.toThrow('DB_QUERY_ERROR');
         });
-        it('should get an empty array for failed submissions', async () => {
+    });
+
+    describe('updateQuestionnaire', () => {
+        it('Should not successfully update the db', async () => {
             const questionnaireDAL = createQuestionnaireDAL({logger: jest.fn()});
-            const result = await questionnaireDAL.getQuestionnaireIdsBySubmissionStatus('FAILED2');
-            expect(result).toEqual([]);
-            expect(result.length).toBe(0);
+            await expect(
+                questionnaireDAL.updateQuestionnaire(DB_QUERY_ROW_COUNT_ZERO_QUESTIONNAIRE_ID, {})
+            ).rejects.toThrow(
+                `Questionnaire "${DB_QUERY_ROW_COUNT_ZERO_QUESTIONNAIRE_ID}" was not updated successfully`
+            );
+        });
+
+        it('Should throw when a db connnectivity issue is encountered', async () => {
+            const questionnaireDAL = createQuestionnaireDAL({logger: jest.fn()});
+            await expect(
+                questionnaireDAL.updateQuestionnaire(DB_QUERY_ERROR_QUESTIONNAIRE_ID, {})
+            ).rejects.toThrow('DB_QUERY_ERROR');
+        });
+    });
+
+    describe('getQuestionnaire', () => {
+        it('Should not successfully select from the db', async () => {
+            const questionnaireDAL = createQuestionnaireDAL({logger: jest.fn()});
+            await expect(
+                questionnaireDAL.getQuestionnaire(DB_QUERY_ROW_COUNT_ZERO_QUESTIONNAIRE_ID, {})
+            ).rejects.toThrow(
+                `Questionnaire "${DB_QUERY_ROW_COUNT_ZERO_QUESTIONNAIRE_ID}" not found`
+            );
+        });
+
+        it('Should throw when a db connnectivity issue is encountered', async () => {
+            const questionnaireDAL = createQuestionnaireDAL({logger: jest.fn()});
+            await expect(
+                questionnaireDAL.getQuestionnaire(DB_QUERY_ERROR_QUESTIONNAIRE_ID)
+            ).rejects.toThrow('DB_QUERY_ERROR');
+        });
+    });
+
+    describe('getQuestionnaireSubmissionStatus', () => {
+        it('Should not successfully select from the db', async () => {
+            const questionnaireDAL = createQuestionnaireDAL({logger: jest.fn()});
+            await expect(
+                questionnaireDAL.getQuestionnaireSubmissionStatus(
+                    DB_QUERY_ROW_COUNT_ZERO_QUESTIONNAIRE_ID,
+                    {}
+                )
+            ).rejects.toThrow(
+                `Questionnaire "${DB_QUERY_ROW_COUNT_ZERO_QUESTIONNAIRE_ID}" not found`
+            );
+        });
+
+        it('Should throw when a db connnectivity issue is encountered', async () => {
+            const questionnaireDAL = createQuestionnaireDAL({logger: jest.fn()});
+            await expect(
+                questionnaireDAL.getQuestionnaireSubmissionStatus(DB_QUERY_ERROR_QUESTIONNAIRE_ID)
+            ).rejects.toThrow('DB_QUERY_ERROR');
+        });
+    });
+
+    describe('updateQuestionnaireSubmissionStatus', () => {
+        it('Should not successfully update the db', async () => {
+            const questionnaireDAL = createQuestionnaireDAL({logger: jest.fn()});
+            await expect(
+                questionnaireDAL.updateQuestionnaireSubmissionStatus(
+                    DB_QUERY_ROW_COUNT_ZERO_QUESTIONNAIRE_ID,
+                    'COMPLETED'
+                )
+            ).rejects.toThrow(
+                `Questionnaire "${DB_QUERY_ROW_COUNT_ZERO_QUESTIONNAIRE_ID}" submission status not successfully updated to "COMPLETED"`
+            );
+        });
+
+        it('Should throw when a db connnectivity issue is encountered', async () => {
+            const questionnaireDAL = createQuestionnaireDAL({logger: jest.fn()});
+            await expect(
+                questionnaireDAL.updateQuestionnaireSubmissionStatus(
+                    DB_QUERY_ERROR_QUESTIONNAIRE_ID,
+                    'COMPLETED'
+                )
+            ).rejects.toThrow('DB_QUERY_ERROR');
+        });
+    });
+
+    describe('getQuestionnaireIdsBySubmissionStatus', () => {
+        it('Should not successfully select from the db', async () => {
+            const questionnaireDAL = createQuestionnaireDAL({logger: jest.fn()});
+            const response = await questionnaireDAL.getQuestionnaireIdsBySubmissionStatus(
+                DB_QUERY_ROW_COUNT_ZERO_SUBMISSION_STATUS
+            );
+            await expect(response).toEqual([]);
+        });
+
+        it('Should throw when a db connnectivity issue is encountered', async () => {
+            const questionnaireDAL = createQuestionnaireDAL({logger: jest.fn()});
+            await expect(
+                questionnaireDAL.getQuestionnaireIdsBySubmissionStatus(
+                    DB_QUERY_ERROR_SUBMISSION_STATUS_ID
+                )
+            ).rejects.toThrow('DB_QUERY_ERROR');
+        });
+    });
+
+    describe('getQuestionnaireModifiedDate', () => {
+        it('Should not successfully select from the db', async () => {
+            const questionnaireDAL = createQuestionnaireDAL({logger: jest.fn()});
+            await expect(
+                questionnaireDAL.getQuestionnaireModifiedDate(
+                    DB_QUERY_ROW_COUNT_ZERO_QUESTIONNAIRE_ID
+                )
+            ).rejects.toThrow(
+                `Questionnaire "${DB_QUERY_ROW_COUNT_ZERO_QUESTIONNAIRE_ID}" not found`
+            );
+        });
+
+        it('Should throw when a db connnectivity issue is encountered', async () => {
+            const questionnaireDAL = createQuestionnaireDAL({logger: jest.fn()});
+            await expect(
+                questionnaireDAL.getQuestionnaireModifiedDate(DB_QUERY_ERROR_QUESTIONNAIRE_ID)
+            ).rejects.toThrow('DB_QUERY_ERROR');
+        });
+    });
+
+    describe('updateQuestionnaireModifiedDate', () => {
+        it('Should not successfully update the db', async () => {
+            const questionnaireDAL = createQuestionnaireDAL({logger: jest.fn()});
+            await expect(
+                questionnaireDAL.updateQuestionnaireModifiedDate(
+                    DB_QUERY_ROW_COUNT_ZERO_QUESTIONNAIRE_ID
+                )
+            ).rejects.toThrow(
+                `Questionnaire "${DB_QUERY_ROW_COUNT_ZERO_QUESTIONNAIRE_ID}" modified date was not updated successfully`
+            );
+        });
+
+        it('Should throw when a db connnectivity issue is encountered', async () => {
+            const questionnaireDAL = createQuestionnaireDAL({logger: jest.fn()});
+            await expect(
+                questionnaireDAL.updateQuestionnaireModifiedDate(DB_QUERY_ERROR_QUESTIONNAIRE_ID)
+            ).rejects.toThrow('DB_QUERY_ERROR');
         });
     });
 });
