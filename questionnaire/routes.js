@@ -212,4 +212,18 @@ router
         }
     });
 
+router
+    .route('/:questionnaireId/session/keep-alive')
+    .get(permissions('update:questionnaires'), async (req, res, next) => {
+        try {
+            const {questionnaireId} = req.params;
+            const questionnaireService = createQuestionnaireService({logger: req.log});
+            await questionnaireService.updateQuestionnaireModifiedDate(questionnaireId);
+            const sessionResource = await questionnaireService.getSessionResource(questionnaireId);
+            res.status(200).json(sessionResource);
+        } catch (err) {
+            next(err);
+        }
+    });
+
 module.exports = router;

@@ -396,6 +396,54 @@ function createQuestionnaireService({
         return progressEntryResource;
     }
 
+    async function buildSessionInformationBlock(questionnaireId) {
+        const sessionCreateDateISO = await db.getQuestionnaireModifiedDate(questionnaireId);
+        const sessionCreatedDateMs = new Date(sessionCreateDateISO) * 1;
+        const sessionDuration = parseInt(process.env.DCS_SESSION_DURATION, 10);
+        const now = new Date() * 1;
+        const sessionExpiryDate = sessionCreatedDateMs + sessionDuration;
+        return {
+            alive: now < sessionExpiryDate,
+            duration: sessionDuration,
+            created: sessionCreatedDateMs,
+            expires: sessionExpiryDate
+        };
+    }
+
+    async function buildMetaBlock(questionnaire, sectionId) {
+        // TODO: move this meta on to the appropriate section resource
+        const sectionType = questionnaire.routes.states[sectionId].type;
+        const isFinalType = sectionType && sectionType === 'final';
+        return {
+            summary: questionnaire.routes.summary,
+            confirmation: questionnaire.routes.confirmation,
+            final: isFinalType
+        };
+    }
+
+    async function getSessionResource(questionnaireId) {
+        let sessionResource;
+        try {
+            sessionResource = {
+                data: [
+                    {
+                        id: questionnaireId,
+                        type: 'sessions',
+                        attributes: await buildSessionInformationBlock(questionnaireId)
+                    }
+                ]
+            };
+        } catch {
+            throw new VError(
+                {
+                    name: 'ResourceNotFound'
+                },
+                `Session associated with questionnaire id "${questionnaireId}" does not exist`
+            );
+        }
+        return sessionResource;
+    }
+
     async function getProgressEntries(questionnaireId, query) {
         // 1 - get questionnaire instance
         const questionnaire = await getQuestionnaire(questionnaireId);
@@ -493,15 +541,8 @@ function createQuestionnaireService({
                 compoundDocument.links = {
                     prev: previousProgressEntryLink
                 };
-                // TODO: move this meta on to the appropriate section resource
-                const sectionType = questionnaire.routes.states[sectionId].type;
-                const isFinalType = sectionType && sectionType === 'final';
 
-                compoundDocument.meta = {
-                    summary: questionnaire.routes.summary,
-                    confirmation: questionnaire.routes.confirmation,
-                    final: isFinalType
-                };
+                compoundDocument.meta = await buildMetaBlock(questionnaire, sectionId);
 
                 return compoundDocument;
             }
@@ -525,6 +566,10 @@ function createQuestionnaireService({
         };
     }
 
+    async function updateQuestionnaireModifiedDate(questionnaireId) {
+        await db.updateQuestionnaireModifiedDate(questionnaireId);
+    }
+
     return Object.freeze({
         createQuestionnaire,
         createAnswers,
@@ -535,7 +580,9 @@ function createQuestionnaireService({
         getAnswers,
         getProgressEntries,
         sendConfirmationNotification,
-        updateQuestionnaireSubmissionStatus
+        updateQuestionnaireSubmissionStatus,
+        updateQuestionnaireModifiedDate,
+        getSessionResource
     });
 }
 

@@ -132,13 +132,60 @@ function questionnaireDAL(spec) {
         return result.rowCount ? result.rows.map(x => x.id) : [];
     }
 
+    async function getQuestionnaireModifiedDate(questionnaireId) {
+        let result;
+        try {
+            result = await db.query('SELECT modified FROM questionnaire WHERE id = $1', [
+                questionnaireId
+            ]);
+
+            if (result.rowCount === 0) {
+                throw new VError(
+                    {
+                        name: 'ResourceNotFound'
+                    },
+                    `Questionnaire "${questionnaireId}" not found`
+                );
+            }
+        } catch (err) {
+            throw err;
+        }
+
+        return result.rows[0].modified;
+    }
+
+    async function updateQuestionnaireModifiedDate(questionnaireId) {
+        let result;
+
+        try {
+            result = await db.query(
+                'UPDATE questionnaire SET modified = current_timestamp WHERE id = $1',
+                [questionnaireId]
+            );
+            if (result.rowCount === 0) {
+                throw new VError(
+                    {
+                        name: 'UpdateNotSuccessful'
+                    },
+                    `Questionnaire "${questionnaireId}" modified date was not updated successfully`
+                );
+            }
+        } catch (err) {
+            throw err;
+        }
+
+        return result;
+    }
+
     return Object.freeze({
         createQuestionnaire,
         updateQuestionnaire,
         getQuestionnaire,
         getQuestionnaireSubmissionStatus,
         updateQuestionnaireSubmissionStatus,
-        getQuestionnaireIdsBySubmissionStatus
+        getQuestionnaireIdsBySubmissionStatus,
+        getQuestionnaireModifiedDate,
+        updateQuestionnaireModifiedDate
     });
 }
 

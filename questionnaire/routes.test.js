@@ -17,7 +17,8 @@ describe('/questionnaires/{questionnaireId}/progress-entries?filter[position]=cu
                 jest.doMock('./questionnaire-dal.js', () =>
                     // return a modified factory function, that returns an object with a method, that returns a valid created response
                     jest.fn(() => ({
-                        getQuestionnaire: () => mockResponse
+                        getQuestionnaire: () => mockResponse,
+                        getQuestionnaireModifiedDate: () => undefined
                     }))
                 );
 
@@ -103,7 +104,8 @@ describe('Answering and retrieving the next section', () => {
                     getQuestionnaire: () => mockQuestionnaire,
                     updateQuestionnaire: (id, updatedQuestionnaire) => {
                         mockQuestionnaire = updatedQuestionnaire;
-                    }
+                    },
+                    getQuestionnaireModifiedDate: () => undefined
                 }))
             );
 
@@ -162,7 +164,8 @@ describe('Issue: https://github.com/cdimascio/express-openapi-validator/issues/7
                 // return a modified factory function, that returns an object with a method, that returns a valid created response
                 jest.fn(() => ({
                     getQuestionnaire: () => mockResponse,
-                    updateQuestionnaire: () => undefined
+                    updateQuestionnaire: () => undefined,
+                    getQuestionnaireModifiedDate: () => undefined
                 }))
             );
 
@@ -179,7 +182,6 @@ describe('Issue: https://github.com/cdimascio/express-openapi-validator/issues/7
                     '/api/v1/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/progress-entries?page[before]=p--check-your-answers'
                 )
                 .set('Authorization', `Bearer ${tokens['read:progress-entries']}`);
-
             const previousSectionId = res.body.data[0].id;
 
             expect(previousSectionId).toEqual('p-applicant-enter-your-telephone-number');
