@@ -47,6 +47,8 @@ spec:
               value: https://data-capture-service.claim-criminal-injuries-compensation.service.justice.gov.uk
             - name: APP_ENV
               value: prod
+            - name: DCS_SESSION_DURATION
+              value: '1800000'
             - name: WEBHOOK_TEAM_REPORTER_SLACK
               valueFrom:
                 secretKeyRef:
