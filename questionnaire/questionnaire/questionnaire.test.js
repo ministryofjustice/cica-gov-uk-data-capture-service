@@ -43,6 +43,62 @@ const questionnaireDefinition = {
             }
         }
     },
+    attributes: {
+        q__roles: {
+            mainapplicant: {
+                schema: {
+                    title: 'Main Applicant role',
+                    type: 'boolean',
+                    // prettier-ignore
+                    const: ['or',
+                        ['==', '$.answers.p-mainapplicant-parent.q-mainapplicant-parent', true],
+                        ['==', '$.answers.p--has-legal-authority.q--has-legal-authority', true]
+                    ]
+                }
+            },
+            rep: {
+                schema: {
+                    title: 'Rep role',
+                    type: 'boolean',
+                    // prettier-ignore
+                    const: ['==', '$.answers.p--has-legal-authority.q--has-legal-authority', false]
+                }
+            },
+            child: {
+                schema: {
+                    title: 'Child applicant role',
+                    type: 'boolean',
+                    // prettier-ignore
+                    const: ['==',
+                        '$.answers.p-applicant-are-you-18-or-over.q-applicant-are-you-18-or-over',
+                        false
+                    ]
+                }
+            },
+            adult: {
+                schema: {
+                    title: 'Adult applicant role',
+                    type: 'boolean',
+                    // prettier-ignore
+                    const: ['==',
+                        '$.answers.p-applicant-are-you-18-or-over.q-applicant-are-you-18-or-over',
+                        true
+                    ]
+                }
+            },
+            proxy: {
+                schema: {
+                    title: 'A type of proxy for the applicant',
+                    type: 'boolean',
+                    // prettier-ignore
+                    const: ['==',
+                        '$.answers.p-applicant-who-are-you-applying-for.q-applicant-who-are-you-applying-for',
+                        'someone-else'
+                    ]
+                }
+            }
+        }
+    },
     sections: {
         'p-applicant-date-of-birth': {
             schema: {
@@ -219,6 +275,132 @@ const questionnaireDefinition = {
                 ]
             }
         },
+        'p-mainapplicant-name': {
+            l10n: {
+                vars: {
+                    lng: 'en',
+                    ns: 'p-mainapplicant-name'
+                },
+                translations: [
+                    {
+                        language: 'en',
+                        namespace: 'p-mainapplicant-name',
+                        resources: {
+                            title: {
+                                mainapplicant: 'Enter your name',
+                                rep: {
+                                    child:
+                                        'Enter the name of the person with parental responsibility for the victim',
+                                    adult:
+                                        'Enter the name of the person with legal authority for the victim'
+                                }
+                            },
+                            'summary-title': {
+                                mainapplicant: 'Your name',
+                                rep: {
+                                    child:
+                                        'Name of the person with parental responsibility for the victim',
+                                    adult: 'Name of the person with legal authority for the victim'
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            schema: {
+                $schema: 'http://json-schema.org/draft-07/schema#',
+                type: 'object',
+                allOf: [
+                    {
+                        // prettier-ignore
+                        title: ['|l10nt',
+                            ['|role.any', 'mainapplicant'], 'title.mainapplicant',
+                            ['|role.all', 'rep', 'adult'], 'title.rep.adult',
+                            ['|role.all', 'rep', 'child'], 'title.rep.child',
+                        ],
+                        meta: {
+                            compositeId: 'mainapplicant-name',
+                            classifications: {
+                                theme: 'mainapplicant-details'
+                            },
+                            summary: {
+                                // prettier-ignore
+                                title: ['|l10nt',
+                                    ['|role.any', 'mainapplicant'], 'summary-title.mainapplicant',
+                                    ['|role.all', 'rep', 'adult'], 'summary-title.rep.adult',
+                                    ['|role.all', 'rep', 'child'], 'summary-title.rep.child'
+                                ]
+                            }
+                        },
+                        required: [
+                            'q-mainapplicant-title',
+                            'q-mainapplicant-first-name',
+                            'q-mainapplicant-last-name'
+                        ],
+                        propertyNames: {
+                            enum: [
+                                'q-mainapplicant-title',
+                                'q-mainapplicant-first-name',
+                                'q-mainapplicant-last-name'
+                            ]
+                        },
+                        allOf: [
+                            {
+                                properties: {
+                                    'q-mainapplicant-title': {
+                                        title: 'Title',
+                                        type: 'string',
+                                        maxLength: 6,
+                                        errorMessage: {
+                                            maxLength: 'Title must be 6 characters or less'
+                                        },
+                                        meta: {
+                                            classifications: {
+                                                theme: 'mainapplicant-details'
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            {
+                                properties: {
+                                    'q-mainapplicant-first-name': {
+                                        title: 'First name',
+                                        type: 'string',
+                                        maxLength: 70,
+                                        errorMessage: {
+                                            maxLength: 'First name must be 70 characters or less'
+                                        },
+                                        meta: {
+                                            classifications: {
+                                                theme: 'mainapplicant-details'
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            {
+                                properties: {
+                                    'q-mainapplicant-last-name': {
+                                        title: 'Last name',
+                                        type: 'string',
+                                        maxLength: 70,
+                                        errorMessage: {
+                                            maxLength: 'Last name must be 70 characters or less'
+                                        },
+                                        meta: {
+                                            classifications: {
+                                                theme: 'mainapplicant-details'
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
         'p-applicant-british-citizen-or-eu-national': {
             schema: {
                 $schema: 'http://json-schema.org/draft-07/schema#',
@@ -372,6 +554,12 @@ const questionnaireDefinition = {
         'p-applicant-theme-not-found': {
             'q-applicant-theme-not-found': 'blue'
         },
+        'p--has-legal-authority': {
+            'q--has-legal-authority': false
+        },
+        'p-applicant-are-you-18-or-over': {
+            'q-applicant-are-you-18-or-over': false
+        },
         'p--check-your-answers': {}
     }
 };
@@ -509,6 +697,98 @@ describe('Questionnaire', () => {
                                         meta: {
                                             classifications: {
                                                 theme: 'applicant-details'
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                ]
+            });
+        });
+
+        it('should return a personalised section', () => {
+            const questionnaire = createQuestionnaire({questionnaireDefinition});
+            const section = questionnaire.getSection('p-mainapplicant-name');
+            const sectionSchema = section.getSchema();
+
+            expect(sectionSchema).toEqual({
+                $schema: 'http://json-schema.org/draft-07/schema#',
+                type: 'object',
+                allOf: [
+                    {
+                        title:
+                            'Enter the name of the person with parental responsibility for the victim',
+                        meta: {
+                            compositeId: 'mainapplicant-name',
+                            classifications: {
+                                theme: 'mainapplicant-details'
+                            },
+                            summary: {
+                                title:
+                                    'Name of the person with parental responsibility for the victim'
+                            }
+                        },
+                        required: [
+                            'q-mainapplicant-title',
+                            'q-mainapplicant-first-name',
+                            'q-mainapplicant-last-name'
+                        ],
+                        propertyNames: {
+                            enum: [
+                                'q-mainapplicant-title',
+                                'q-mainapplicant-first-name',
+                                'q-mainapplicant-last-name'
+                            ]
+                        },
+                        allOf: [
+                            {
+                                properties: {
+                                    'q-mainapplicant-title': {
+                                        title: 'Title',
+                                        type: 'string',
+                                        maxLength: 6,
+                                        errorMessage: {
+                                            maxLength: 'Title must be 6 characters or less'
+                                        },
+                                        meta: {
+                                            classifications: {
+                                                theme: 'mainapplicant-details'
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            {
+                                properties: {
+                                    'q-mainapplicant-first-name': {
+                                        title: 'First name',
+                                        type: 'string',
+                                        maxLength: 70,
+                                        errorMessage: {
+                                            maxLength: 'First name must be 70 characters or less'
+                                        },
+                                        meta: {
+                                            classifications: {
+                                                theme: 'mainapplicant-details'
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            {
+                                properties: {
+                                    'q-mainapplicant-last-name': {
+                                        title: 'Last name',
+                                        type: 'string',
+                                        maxLength: 70,
+                                        errorMessage: {
+                                            maxLength: 'Last name must be 70 characters or less'
+                                        },
+                                        meta: {
+                                            classifications: {
+                                                theme: 'mainapplicant-details'
                                             }
                                         }
                                     }
@@ -662,6 +942,140 @@ describe('Questionnaire', () => {
                         }
                     }
                 }
+            });
+        });
+    });
+
+    describe('Given an "onComplete" actions definition', () => {
+        it('should return all actions that pass their condition', () => {
+            const questionnaire = createQuestionnaire({
+                questionnaireDefinition: {
+                    meta: {
+                        onComplete: {
+                            actions: [
+                                {
+                                    cond: ['==', 1, 1],
+                                    type: 'actionA'
+                                },
+                                {
+                                    type: 'actionD'
+                                },
+                                {
+                                    cond: ['==', 3, 4],
+                                    type: 'actionC'
+                                },
+                                {
+                                    cond: ['==', 2, 2],
+                                    type: 'actionB'
+                                }
+                            ]
+                        }
+                    }
+                }
+            });
+            const actions = questionnaire.getPermittedActions();
+            const actionTypes = actions.map(action => action.type);
+
+            expect(actionTypes.length).toEqual(3);
+            expect(actionTypes).toEqual(['actionA', 'actionD', 'actionB']);
+        });
+
+        it('should allow action conditions to reference context', () => {
+            const questionnaire = createQuestionnaire({
+                questionnaireDefinition: {
+                    meta: {
+                        onComplete: {
+                            actions: [
+                                {
+                                    cond: ['==', '$.answers.p-page.q-question', 'foo'],
+                                    type: 'actionA'
+                                },
+                                {
+                                    cond: ['==', '$.answers.p-page.q-question', 'bar'],
+                                    type: 'actionB'
+                                },
+                                {
+                                    type: 'actionD'
+                                }
+                            ]
+                        }
+                    },
+                    answers: {
+                        'p-page': {
+                            'q-question': 'bar'
+                        }
+                    }
+                }
+            });
+
+            const actions = questionnaire.getPermittedActions();
+            const actionTypes = actions.map(action => action.type);
+
+            expect(actionTypes.length).toEqual(2);
+            expect(actionTypes).toEqual(['actionB', 'actionD']);
+        });
+
+        it('should allow action data to reference context', () => {
+            const questionnaire = createQuestionnaire({
+                questionnaireDefinition: {
+                    meta: {
+                        onComplete: {
+                            actions: [
+                                {
+                                    cond: ['==', 1, 1],
+                                    type: 'actionA',
+                                    data: {
+                                        foo: '||/answers/p-page/q-question||'
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    answers: {
+                        'p-page': {
+                            'q-question': 'bar'
+                        }
+                    }
+                }
+            });
+            const actions = questionnaire.getPermittedActions();
+
+            expect(actions[0].data).toEqual({
+                foo: 'bar'
+            });
+        });
+
+        it('should allow action data to contain JSON expressions', () => {
+            const questionnaire = createQuestionnaire({
+                questionnaireDefinition: {
+                    meta: {
+                        onComplete: {
+                            actions: [
+                                {
+                                    cond: ['==', 1, 1],
+                                    type: 'actionA',
+                                    data: {
+                                        // prettier-ignore
+                                        bar: ['|cond',
+                                            ['==', '$.answers.p-page.q-question', 'foo'], 'fooValue',
+                                            ['==', '$.answers.p-page.q-question', 'bar'], 'barValue'
+                                        ]
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    answers: {
+                        'p-page': {
+                            'q-question': 'bar'
+                        }
+                    }
+                }
+            });
+            const actions = questionnaire.getPermittedActions();
+
+            expect(actions[0].data).toEqual({
+                bar: 'barValue'
             });
         });
     });
