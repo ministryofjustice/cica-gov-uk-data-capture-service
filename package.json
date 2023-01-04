@@ -37,7 +37,7 @@
         "lodash.merge": "^4.6.2",
         "moment-timezone": "^0.5.33",
         "morgan": "^1.9.1",
-        "notifications-node-client": "^5.1.0",
+        "notifications-node-client": "^6.0.0",
         "pg": "^8.7.3",
         "pino-http": "^5.5.0",
         "q-expressions": "github:CriminalInjuriesCompensationAuthority/q-expressions",
