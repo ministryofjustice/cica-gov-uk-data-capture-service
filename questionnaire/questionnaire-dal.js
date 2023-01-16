@@ -177,6 +177,34 @@ function questionnaireDAL(spec) {
         return result;
     }
 
+    async function getQuestionnaireMetadata(query) {
+        let result;
+        try {
+            if (query?.filter?.userId) {
+                result = await db.query(
+                    `SELECT id, questionnaire -> 'meta' -> 'questionnaireDocumentVersion' AS "questionnaire-document-version", created, modified, submission_status, questionnaire -> 'answers' -> 'user' -> 'user-id' AS "user-id" FROM questionnaire WHERE questionnaire -> 'answers' -> 'user' ->> 'user-id' = $1`,
+                    [query.filter.userId]
+                );
+                if (result.rowCount === 0) {
+                    throw new VError(
+                        {
+                            name: 'ResourceNotFound'
+                        },
+                        `Metadata resource does not exist for user id "${query.filter.userId}"`
+                    );
+                }
+            } else {
+                result = await db.query(
+                    "SELECT id, questionnaire -> 'meta' -> 'questionnaireDocumentVersion' AS \"questionnaire-document-version\", created, modified, submission_status, questionnaire -> 'answers' -> 'user' -> 'user-id' AS \"user-id\" FROM questionnaire"
+                );
+            }
+        } catch (err) {
+            throw err;
+        }
+
+        return result.rowCount ? result.rows : [];
+    }
+
     return Object.freeze({
         createQuestionnaire,
         updateQuestionnaire,
@@ -185,7 +213,8 @@ function questionnaireDAL(spec) {
         updateQuestionnaireSubmissionStatus,
         getQuestionnaireIdsBySubmissionStatus,
         getQuestionnaireModifiedDate,
-        updateQuestionnaireModifiedDate
+        updateQuestionnaireModifiedDate,
+        getQuestionnaireMetadata
     });
 }
 

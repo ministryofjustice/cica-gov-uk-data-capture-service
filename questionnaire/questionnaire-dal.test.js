@@ -22,6 +22,13 @@ jest.doMock('../db/index.js', () => () => ({
             };
         }
 
+        if (parameters.includes('UNKNOWN_USER')) {
+            return {
+                rows: [],
+                rowCount: 0
+            };
+        }
+
         return {
             rows: [],
             rowCount: 0
@@ -178,6 +185,20 @@ describe('questionnaire data access layer', () => {
             await expect(
                 questionnaireDAL.updateQuestionnaireModifiedDate(DB_QUERY_ERROR_QUESTIONNAIRE_ID)
             ).rejects.toThrow('DB_QUERY_ERROR');
+        });
+    });
+
+    describe('getMetaData', () => {
+        it('Should not successfully select from the db', async () => {
+            const questionnaireDAL = createQuestionnaireDAL({logger: jest.fn()});
+            const query = {
+                filter: {
+                    userId: 'UNKNOWN_USER'
+                }
+            };
+            await expect(questionnaireDAL.getQuestionnaireMetadata(query)).rejects.toThrow(
+                `Metadata resource does not exist for user id "UNKNOWN_USER"`
+            );
         });
     });
 });

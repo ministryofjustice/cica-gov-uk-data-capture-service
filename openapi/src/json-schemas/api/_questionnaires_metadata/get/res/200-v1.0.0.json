@@ -1,0 +1,17 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Metadata document v1.0.0",
+    "allOf": [
+        {"$ref": "../../../json-api-base-document.json"},
+        {
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "../../../resources/metadata-resource-v1.0.0.json"
+                    }
+                }
+            }
+        }
+    ]
+}
