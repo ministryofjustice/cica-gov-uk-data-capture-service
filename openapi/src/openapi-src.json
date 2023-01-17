@@ -889,6 +889,70 @@
                     }
                 }
             }
+        },
+        "/questionnaire/meta": {
+            "get": {
+                "tags": ["Metadata"],
+                "summary": "Get the metadata associated with all questionnaires",
+                "description": "Gets questionnaire metadata",
+                "operationId": "getMetadata",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "Accept-Version",
+                        "description": "Specify the specific version of the resource (SemVer). Defaults to latest version.",
+                        "schema": {
+                            "type": "string",
+                            "enum": ["1.0.0"],
+                            "default": "1.0.0"
+                        },
+                        "example": "1.0.0"
+                    }
+                ],
+                "x-scopes": ["read:questionnaires"],
+                "x-requests": {
+                    "401": {
+                        "auth": false
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/vnd.api+json": {
+                                "schema": {
+                                    "anyOf": [
+                                        {
+                                            "$ref": "json-schemas/api/_questionnaire_meta/get/res/200-v1.0.0.json"
+                                        }
+                                    ]
+                                },
+                                "examples": {
+                                    "v1.0.0": {
+                                        "summary": "Request Header \"Accept-Version: 1.0.0\"",
+                                        "value": {
+                                            "data": [
+                                                {
+                                                    "type": "metadata",
+                                                    "id": "0",
+                                                    "attributes": {
+                                                        "created": "1999-01-08 04:05:06",
+                                                        "questionnaireId": "285cb104-0c15-4a9c-9840-cb1007f098fb",
+                                                        "questionnaireDocumentVersion": "4.1.0"
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/UnauthorizedError"
+                    }
+                }
+            }
         }
     },
     "components": {

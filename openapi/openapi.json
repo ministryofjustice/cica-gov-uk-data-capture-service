@@ -3362,6 +3362,229 @@
                     }
                 }
             }
+        },
+        "/questionnaire/meta": {
+            "get": {
+                "tags": ["Metadata"],
+                "summary": "Get the metadata associated with all questionnaires",
+                "description": "Gets questionnaire metadata",
+                "operationId": "getMetadata",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "Accept-Version",
+                        "description": "Specify the specific version of the resource (SemVer). Defaults to latest version.",
+                        "schema": {
+                            "type": "string",
+                            "enum": ["1.0.0"],
+                            "default": "1.0.0"
+                        },
+                        "example": "1.0.0"
+                    }
+                ],
+                "x-scopes": ["read:questionnaires"],
+                "x-requests": {
+                    "401": {
+                        "auth": false
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/vnd.api+json": {
+                                "schema": {
+                                    "anyOf": [
+                                        {
+                                            "title": "Metadata document v1.0.0",
+                                            "allOf": [
+                                                {
+                                                    "title": "Loosely describes the JSON:API document format",
+                                                    "type": "object",
+                                                    "additionalProperties": false,
+                                                    "required": ["data"],
+                                                    "properties": {
+                                                        "data": {
+                                                            "anyOf": [
+                                                                {
+                                                                    "type": "object"
+                                                                },
+                                                                {
+                                                                    "type": "array",
+                                                                    "items": {}
+                                                                }
+                                                            ]
+                                                        },
+                                                        "included": {
+                                                            "type": "array",
+                                                            "items": {}
+                                                        },
+                                                        "links": {
+                                                            "type": "object"
+                                                        },
+                                                        "meta": {
+                                                            "type": "object"
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    "properties": {
+                                                        "data": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "title": "Metadata resource v1.0.0",
+                                                                "allOf": [
+                                                                    {
+                                                                        "title": "Loosely describes the JSON:API resource format",
+                                                                        "type": "object",
+                                                                        "additionalProperties": false,
+                                                                        "required": [
+                                                                            "type",
+                                                                            "id",
+                                                                            "attributes"
+                                                                        ],
+                                                                        "properties": {
+                                                                            "type": {
+                                                                                "type": "string"
+                                                                            },
+                                                                            "id": {
+                                                                                "type": "string",
+                                                                                "anyOf": [
+                                                                                    {
+                                                                                        "title": "Section Id",
+                                                                                        "type": "string",
+                                                                                        "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer)$"
+                                                                                    },
+                                                                                    {
+                                                                                        "title": "UUID v4",
+                                                                                        "type": "string",
+                                                                                        "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+                                                                                    },
+                                                                                    {
+                                                                                        "description": "Used by dataset endpoint",
+                                                                                        "enum": [
+                                                                                            "0"
+                                                                                        ]
+                                                                                    }
+                                                                                ]
+                                                                            },
+                                                                            "attributes": {
+                                                                                "type": "object",
+                                                                                "title": "Any valid resource"
+                                                                            },
+                                                                            "relationships": {
+                                                                                "type": "object"
+                                                                            }
+                                                                        }
+                                                                    },
+                                                                    {
+                                                                        "properties": {
+                                                                            "type": {
+                                                                                "enum": ["metadata"]
+                                                                            },
+                                                                            "id": {
+                                                                                "enum": ["0"]
+                                                                            },
+                                                                            "attributes": {
+                                                                                "allOf": [
+                                                                                    {
+                                                                                        "required": [
+                                                                                            "questionnaireId",
+                                                                                            "questionnaireDocumentVersion"
+                                                                                        ],
+                                                                                        "properties": {
+                                                                                            "questionnaireId": {
+                                                                                                "title": "UUID v4",
+                                                                                                "type": "string",
+                                                                                                "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+                                                                                            },
+                                                                                            "questionnaireDocumentVersion": {
+                                                                                                "enum": [
+                                                                                                    "4.1.0"
+                                                                                                ]
+                                                                                            }
+                                                                                        }
+                                                                                    },
+                                                                                    {
+                                                                                        "title": "Metadata ID",
+                                                                                        "type": "string",
+                                                                                        "pattern": "^[a-z]{1,20}(?:-[a-z]{1,20}){0,10}$"
+                                                                                    }
+                                                                                ]
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                ]
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                "examples": {
+                                    "v1.0.0": {
+                                        "summary": "Request Header \"Accept-Version: 1.0.0\"",
+                                        "value": {
+                                            "data": [
+                                                {
+                                                    "type": "metadata",
+                                                    "id": "0",
+                                                    "attributes": {
+                                                        "created": "1999-01-08 04:05:06",
+                                                        "questionnaireId": "285cb104-0c15-4a9c-9840-cb1007f098fb",
+                                                        "questionnaireDocumentVersion": "4.1.0"
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Access token is missing or invalid",
+                        "content": {
+                            "application/vnd.api+json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": ["errors"],
+                                    "properties": {
+                                        "errors": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "required": ["status", "title", "detail"],
+                                                "properties": {
+                                                    "status": {
+                                                        "enum": [401]
+                                                    },
+                                                    "title": {
+                                                        "enum": ["401 Unauthorized"]
+                                                    },
+                                                    "detail": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "status": 401,
+                                            "detail": "No authorization token was found"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "components": {
