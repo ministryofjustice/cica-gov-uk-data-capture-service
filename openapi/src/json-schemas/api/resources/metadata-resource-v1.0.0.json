@@ -8,10 +8,21 @@
                 "type": {
                     "const": "metadata"
                 },
+                "id": {
+                    "const": "0"
+                },
                 "attributes": {
-                    "anyOf": [
+                    "allOf": [
                         {
-                            "type": "null"
+                            "required": ["questionnaireId", "questionnaireDocumentVersion"],
+                            "properties": {
+                                "questionnaireId": {
+                                    "$ref": "../../models/definitions/uuid-v4.json"
+                                },
+                                "questionnaireDocumentVersion": {
+                                    "enum": ["4.1.0"]
+                                }
+                            }
                         },
                         {
                             "$ref": "../../models/definitions/metadata-id.json"
