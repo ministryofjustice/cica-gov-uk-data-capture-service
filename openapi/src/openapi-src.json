@@ -240,17 +240,6 @@
                     },
                     {
                         "$ref": "#/components/parameters/sectionId"
-                    },
-                    {
-                        "in": "header",
-                        "name": "Accept-Version",
-                        "description": "Specify the specific version of the resource (SemVer). Defaults to latest version.",
-                        "schema": {
-                            "type": "string",
-                            "enum": ["1.0.0"],
-                            "default": "1.0.0"
-                        },
-                        "example": "1.0.0"
                     }
                 ],
                 "x-scopes": ["read:questionnaires"],
@@ -288,27 +277,18 @@
                         "content": {
                             "application/vnd.api+json": {
                                 "schema": {
-                                    "$ref": "json-schemas/api/_questionnaires_{questionnaireId}_sections_{sectionId}_answers/get/res/200-v1.0.0.json"
+                                    "$ref": "json-schemas/api/_questionnaires_{questionnaireId}_sections_{sectionId}_answers/get/res/200.json"
                                 },
                                 "example": {
-                                    "summary": "Request Header \"Accept-Version: 1.0.0\"",
-                                    "value": {
-                                        "data": [
-                                            {
-                                                "type": "answers",
-                                                "id": "p-applicant-british-citizen-or-eu-national",
-                                                "attributes": {
-                                                    "value": {
-                                                        "type": "simple",
-                                                        "id": "q-applicant-british-citizen-or-eu-national",
-                                                        "label": "Are you a British citizen or EU national?",
-                                                        "value": true,
-                                                        "valueLabel": "Yes"
-                                                    }
-                                                }
+                                    "data": [
+                                        {
+                                            "type": "answers",
+                                            "id": "p-applicant-british-citizen-or-eu-national",
+                                            "attributes": {
+                                                "q-applicant-british-citizen-or-eu-national": true
                                             }
-                                        ]
-                                    }
+                                        }
+                                    ]
                                 }
                             }
                         }
@@ -318,6 +298,9 @@
                     },
                     "401": {
                         "$ref": "#/components/responses/UnauthorizedError"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/Forbidden"
                     },
                     "404": {
                         "$ref": "#/components/responses/NotFound"
@@ -989,7 +972,7 @@
             "get": {
                 "tags": ["Metadata"],
                 "summary": "Get the metadata associated with all questionnaires",
-                "description": "Gets questionnaire metadata",
+                "description": "Gets questionnaire metadata. The results can be filtered.",
                 "operationId": "getMetadata",
                 "parameters": [
                     {
@@ -1002,12 +985,40 @@
                             "default": "1.0.0"
                         },
                         "example": "1.0.0"
+                    },
+                    {
+                        "$ref": "#/components/parameters/filter"
                     }
                 ],
                 "x-scopes": ["read:questionnaires"],
                 "x-requests": {
+                    "400": {
+                        "parameters": [
+                            {
+                                "name": "filter",
+                                "example": {
+                                    "NOT-A-VALID-FILTER": "FOO",
+                                    "position": "__DELETE__"
+                                }
+                            }
+                        ]
+                    },
                     "401": {
                         "auth": false
+                    },
+                    "403": {
+                        "x-scopes": ["create:dummy-resource"]
+                    },
+                    "404": {
+                        "parameters": [
+                            {
+                                "name": "filter",
+                                "example": {
+                                    "sectionId": "p--not-a-valid-section",
+                                    "position": "__DELETE__"
+                                }
+                            }
+                        ]
                     }
                 },
                 "responses": {
@@ -1043,8 +1054,17 @@
                             }
                         }
                     },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
                     "401": {
                         "$ref": "#/components/responses/UnauthorizedError"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/Forbidden"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
                     }
                 }
             }
