@@ -228,6 +228,101 @@
                         "$ref": "#/components/responses/NotFound"
                     }
                 }
+            },
+            "get": {
+                "tags": ["Answers"],
+                "summary": "Get answer(s) for a specified section",
+                "description": "Gets the answer(s) to a supplied section",
+                "operationId": "getAnswer",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/questionnaireId"
+                    },
+                    {
+                        "$ref": "#/components/parameters/sectionId"
+                    },
+                    {
+                        "in": "header",
+                        "name": "Accept-Version",
+                        "description": "Specify the specific version of the resource (SemVer). Defaults to latest version.",
+                        "schema": {
+                            "type": "string",
+                            "enum": ["1.0.0"],
+                            "default": "1.0.0"
+                        },
+                        "example": "1.0.0"
+                    }
+                ],
+                "x-scopes": ["read:questionnaires"],
+                "x-requests": {
+                    "400": {
+                        "parameters": [
+                            {
+                                "name": "questionnaireId",
+                                "example": "NOT-A-UUID"
+                            },
+                            {
+                                "name": "section-id",
+                                "example": "NOT-A-SECTION-ID"
+                            }
+                        ]
+                    },
+                    "401": {
+                        "auth": false
+                    },
+                    "403": {
+                        "x-scopes": ["create:dummy-resource"]
+                    },
+                    "404": {
+                        "parameters": [
+                            {
+                                "name": "questionnaireId",
+                                "example": "68653be7-877f-4106-b91e-4ba8dac883f4"
+                            }
+                        ]
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/vnd.api+json": {
+                                "schema": {
+                                    "$ref": "json-schemas/api/_questionnaires_{questionnaireId}_sections_{sectionId}_answers/get/res/200-v1.0.0.json"
+                                },
+                                "example": {
+                                    "summary": "Request Header \"Accept-Version: 1.0.0\"",
+                                    "value": {
+                                        "data": [
+                                            {
+                                                "type": "answers",
+                                                "id": "p-applicant-british-citizen-or-eu-national",
+                                                "attributes": {
+                                                    "value": {
+                                                        "type": "simple",
+                                                        "id": "q-applicant-british-citizen-or-eu-national",
+                                                        "label": "Are you a British citizen or EU national?",
+                                                        "value": true,
+                                                        "valueLabel": "Yes"
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/UnauthorizedError"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    }
+                }
             }
         },
         "/questionnaires/{questionnaireId}/sections/answers": {
