@@ -14,9 +14,9 @@
                 "attributes": {
                     "allOf": [
                         {
-                            "required": ["questionnaireId", "questionnaireDocumentVersion"],
+                            "required": ["questionnaire-document-version"],
                             "properties": {
-                                "questionnaireDocumentVersion": {
+                                "questionnaire-document-version": {
                                     "enum": ["4.1.0"]
                                 }
                             }
