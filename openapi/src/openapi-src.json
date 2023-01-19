@@ -561,7 +561,7 @@
                         "$ref": "#/components/parameters/questionnaireId"
                     },
                     {
-                        "$ref": "#/components/parameters/filter"
+                        "$ref": "#/components/parameters/filter-progress-entries"
                     },
                     {
                         "$ref": "#/components/parameters/page"
@@ -988,7 +988,7 @@
                         "example": "1.0.0"
                     },
                     {
-                        "$ref": "#/components/parameters/filter"
+                        "$ref": "#/components/parameters/filter-metadata"
                     }
                 ],
                 "x-scopes": ["read:questionnaires"],
@@ -1103,17 +1103,30 @@
                 },
                 "example": "system"
             },
-            "filter": {
+            "filter-progress-entries": {
                 "in": "query",
                 "name": "filter",
-                "description": "Filter progress entries",
+                "description": "Filter progress entry results",
                 "schema": {
-                    "$ref": "./json-schemas/api/parameters/filter.json"
+                    "$ref": "./json-schemas/api/parameters/filter-progress-entries.json"
                 },
                 "style": "deepObject",
                 "explode": true,
                 "example": {
                     "position": "current"
+                }
+            },
+            "filter-metadata": {
+                "in": "query",
+                "name": "filter",
+                "description": "Filter metadata results",
+                "schema": {
+                    "$ref": "./json-schemas/api/parameters/filter-metadata.json"
+                },
+                "style": "deepObject",
+                "explode": true,
+                "example": {
+                    "user-id": "some ID"
                 }
             },
             "page": {
