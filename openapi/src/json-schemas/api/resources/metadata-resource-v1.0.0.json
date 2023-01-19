@@ -14,10 +14,31 @@
                 "attributes": {
                     "allOf": [
                         {
-                            "required": ["questionnaire-document-version"],
+                            "required": [
+                                "questionnaire-document-version",
+                                "questionnaire-id",
+                                "created",
+                                ",modified",
+                                "state"
+                            ],
                             "properties": {
                                 "questionnaire-document-version": {
                                     "enum": ["4.1.0"]
+                                },
+                                "questionnaire-id": {
+                                    "$ref": "../../models/definitions/uuid-v4.json"
+                                },
+                                "created": {
+                                    "$ref": "../../models/definitions/timestamp.json"
+                                },
+                                "modified": {
+                                    "$ref": "../../models/definitions/timestamp.json"
+                                },
+                                "state": {
+                                    "enum": ["NOT_STARTED", "IN_PROGRESS", "COMPLETED", "FAILED"]
+                                },
+                                "user-id": {
+                                    "type": "string"
                                 }
                             }
                         },

@@ -26,7 +26,8 @@
         {"name": "Answers"},
         {"name": "Questionnaires"},
         {"name": "ProgressEntries"},
-        {"name": "Sessions"}
+        {"name": "Sessions"},
+        {"name": "Metadata"}
     ],
     "paths": {
         "/questionnaires": {
@@ -1040,11 +1041,14 @@
                                             "data": [
                                                 {
                                                     "type": "metadata",
-                                                    "id": "0",
+                                                    "id": "285cb104-0c15-4a9c-9840-cb1007f098fb",
                                                     "attributes": {
-                                                        "created": "1999-01-08 04:05:06",
-                                                        "questionnaireId": "285cb104-0c15-4a9c-9840-cb1007f098fb",
-                                                        "questionnaireDocumentVersion": "4.1.0"
+                                                        "questionnaire-id": "285cb104-0c15-4a9c-9840-cb1007f098fb",
+                                                        "questionnaire-document-version": "4.1.0",
+                                                        "created": "2022-01-18 04:05:06+01",
+                                                        "modified": "2022-01-18 05:05:06+01",
+                                                        "state": "IN_PROGRESS",
+                                                        "user-id": "I_AM_AN_ID"
                                                     }
                                                 }
                                             ]
