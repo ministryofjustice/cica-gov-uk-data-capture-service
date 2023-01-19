@@ -3700,7 +3700,7 @@
                 }
             }
         },
-        "/questionnaire/meta": {
+        "/questionnaires/meta": {
             "get": {
                 "tags": ["Metadata"],
                 "summary": "Get the metadata associated with all questionnaires",
