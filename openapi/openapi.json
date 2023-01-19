@@ -34,6 +34,9 @@
         },
         {
             "name": "Sessions"
+        },
+        {
+            "name": "Metadata"
         }
     ],
     "paths": {
@@ -2018,7 +2021,7 @@
                     {
                         "in": "query",
                         "name": "filter",
-                        "description": "Filter progress entries",
+                        "description": "Filter progress entry results",
                         "schema": {
                             "type": "object",
                             "additionalProperties": false,
@@ -3718,25 +3721,20 @@
                     {
                         "in": "query",
                         "name": "filter",
-                        "description": "Filter progress entries",
+                        "description": "Filter metadata results",
                         "schema": {
                             "type": "object",
                             "additionalProperties": false,
-                            "properties": {
-                                "position": {
-                                    "enum": ["current", "first"]
-                                },
-                                "sectionId": {
-                                    "title": "Section Id",
-                                    "type": "string",
-                                    "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer)$"
+                            "x-patternProperties": {
+                                "^[a-z]{1,20}(?:-[a-z]{1,20}){0,10}$": {
+                                    "type": "string"
                                 }
                             }
                         },
                         "style": "deepObject",
                         "explode": true,
                         "example": {
-                            "position": "current"
+                            "user-id": "some ID"
                         }
                     }
                 ],
@@ -3874,13 +3872,43 @@
                                                                                 "allOf": [
                                                                                     {
                                                                                         "required": [
-                                                                                            "questionnaire-document-version"
+                                                                                            "questionnaire-document-version",
+                                                                                            "questionnaire-id",
+                                                                                            "created",
+                                                                                            ",modified",
+                                                                                            "state"
                                                                                         ],
                                                                                         "properties": {
                                                                                             "questionnaire-document-version": {
                                                                                                 "enum": [
                                                                                                     "4.1.0"
                                                                                                 ]
+                                                                                            },
+                                                                                            "questionnaire-id": {
+                                                                                                "title": "UUID v4",
+                                                                                                "type": "string",
+                                                                                                "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+                                                                                            },
+                                                                                            "created": {
+                                                                                                "title": "Timestamp",
+                                                                                                "type": "string",
+                                                                                                "pattern": "^[0-9]{1,4}/[0-9]{1,2}/[0-9]{1,2} [0-9]{1,2}:[0-9]{1,2}:[0-9]{1,2}[+-][0-9]{1,2}$"
+                                                                                            },
+                                                                                            "modified": {
+                                                                                                "title": "Timestamp",
+                                                                                                "type": "string",
+                                                                                                "pattern": "^[0-9]{1,4}/[0-9]{1,2}/[0-9]{1,2} [0-9]{1,2}:[0-9]{1,2}:[0-9]{1,2}[+-][0-9]{1,2}$"
+                                                                                            },
+                                                                                            "state": {
+                                                                                                "enum": [
+                                                                                                    "NOT_STARTED",
+                                                                                                    "IN_PROGRESS",
+                                                                                                    "COMPLETED",
+                                                                                                    "FAILED"
+                                                                                                ]
+                                                                                            },
+                                                                                            "user-id": {
+                                                                                                "type": "string"
                                                                                             }
                                                                                         }
                                                                                     },
@@ -3909,11 +3937,14 @@
                                             "data": [
                                                 {
                                                     "type": "metadata",
-                                                    "id": "0",
+                                                    "id": "285cb104-0c15-4a9c-9840-cb1007f098fb",
                                                     "attributes": {
-                                                        "created": "1999-01-08 04:05:06",
-                                                        "questionnaireId": "285cb104-0c15-4a9c-9840-cb1007f098fb",
-                                                        "questionnaireDocumentVersion": "4.1.0"
+                                                        "questionnaire-id": "285cb104-0c15-4a9c-9840-cb1007f098fb",
+                                                        "questionnaire-document-version": "4.1.0",
+                                                        "created": "2022-01-18 04:05:06+01",
+                                                        "modified": "2022-01-18 05:05:06+01",
+                                                        "state": "IN_PROGRESS",
+                                                        "user-id": "I_AM_AN_ID"
                                                     }
                                                 }
                                             ]
@@ -4119,10 +4150,10 @@
                 },
                 "example": "system"
             },
-            "filter": {
+            "filter-progress-entries": {
                 "in": "query",
                 "name": "filter",
-                "description": "Filter progress entries",
+                "description": "Filter progress entry results",
                 "schema": {
                     "type": "object",
                     "additionalProperties": false,
@@ -4141,6 +4172,25 @@
                 "explode": true,
                 "example": {
                     "position": "current"
+                }
+            },
+            "filter-metadata": {
+                "in": "query",
+                "name": "filter",
+                "description": "Filter metadata results",
+                "schema": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "x-patternProperties": {
+                        "^[a-z]{1,20}(?:-[a-z]{1,20}){0,10}$": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "style": "deepObject",
+                "explode": true,
+                "example": {
+                    "user-id": "some ID"
                 }
             },
             "page": {
