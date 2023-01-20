@@ -18,7 +18,7 @@
                                 "questionnaire-document-version",
                                 "questionnaire-id",
                                 "created",
-                                ",modified",
+                                "modified",
                                 "state"
                             ],
                             "properties": {
