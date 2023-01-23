@@ -547,6 +547,50 @@ function createQuestionnaireService({
         return actionResults;
     }
 
+    async function getAnswersBySectionId(questionnaireId, sectionId) {
+        const questionnaire = await getQuestionnaire(questionnaireId);
+
+        if (questionnaire.progress.includes(sectionId)) {
+            return buildAnswerResource(sectionId, questionnaire);
+        }
+        throw new VError(
+            {
+                name: 'ResourceNotFound'
+            },
+            `Answer resource "${sectionId}" does not exist for ${questionnaireId}`
+        );
+    }
+
+    async function getMetadata(query = {}) {
+        const results = await db.getQuestionnaireMetadata(query);
+
+        // Add expiry time & map
+        const meta = results.rows.map(data => ({
+            type: 'metadata',
+            id: data.id,
+            attributes: {
+                'questionnaire-id': data.id,
+                'questionnaire-document-version': data['questionnaire-version'],
+                created: data.created,
+                modified: data.modified,
+                state: data.submission_status,
+                'user-id': data['user-id'],
+                expires: new Date(
+                    new Date(new Date().setDate(new Date(data.created).getDate() + 31)).setHours(
+                        0,
+                        0,
+                        0,
+                        0
+                    )
+                ).toISOString()
+            }
+        }));
+
+        return {
+            data: meta
+        };
+    }
+
     return Object.freeze({
         createQuestionnaire,
         createAnswers,
@@ -559,7 +603,9 @@ function createQuestionnaireService({
         updateQuestionnaireSubmissionStatus,
         updateQuestionnaireModifiedDate,
         getSessionResource,
-        runOnCompleteActions
+        runOnCompleteActions,
+        getAnswersBySectionId,
+        getMetadata
     });
 }
 
