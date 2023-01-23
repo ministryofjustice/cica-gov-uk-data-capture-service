@@ -105,6 +105,18 @@ router
         } catch (err) {
             next(err);
         }
+    })
+    .get(permissions('read:questionnaires'), async (req, res, next) => {
+        try {
+            const questionnaireService = createQuestionnaireService({logger: req.log});
+            const response = await questionnaireService.getAnswersBySectionId(
+                req.params.questionnaireId,
+                req.params.sectionId
+            );
+            res.status(200).json(response);
+        } catch (err) {
+            next(err);
+        }
     });
 
 router
@@ -231,5 +243,15 @@ router
             next(err);
         }
     });
+
+router.route('/meta').get(permissions('read:questionnaires'), async (req, res, next) => {
+    try {
+        const questionnaireService = createQuestionnaireService({logger: req.log});
+        const metaData = await questionnaireService.getMetadata(req.query);
+        res.status(200).json(metaData);
+    } catch (err) {
+        next(err);
+    }
+});
 
 module.exports = router;

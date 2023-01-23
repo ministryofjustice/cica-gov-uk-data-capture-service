@@ -1045,10 +1045,11 @@
                                                     "attributes": {
                                                         "questionnaire-id": "285cb104-0c15-4a9c-9840-cb1007f098fb",
                                                         "questionnaire-document-version": "4.1.0",
-                                                        "created": "2022-01-18 04:05:06+01",
-                                                        "modified": "2022-01-18 05:05:06+01",
+                                                        "created": "2022-01-18T04:05:06Z",
+                                                        "modified": "2022-01-18T05:05:06Z",
                                                         "state": "IN_PROGRESS",
-                                                        "user-id": "I_AM_AN_ID"
+                                                        "user-id": "I_AM_AN_ID",
+                                                        "expires": "2023-01-24T05:05:06Z"
                                                     }
                                                 }
                                             ]

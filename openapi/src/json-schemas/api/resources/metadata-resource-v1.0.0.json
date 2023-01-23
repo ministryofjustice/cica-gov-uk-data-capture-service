@@ -19,7 +19,8 @@
                                 "questionnaire-id",
                                 "created",
                                 "modified",
-                                "state"
+                                "state",
+                                "expires"
                             ],
                             "properties": {
                                 "questionnaire-document-version": {
@@ -39,6 +40,9 @@
                                 },
                                 "user-id": {
                                     "type": "string"
+                                },
+                                "expires": {
+                                    "$ref": "../../models/definitions/timestamp.json"
                                 }
                             }
                         },
