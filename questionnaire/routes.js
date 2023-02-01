@@ -6,6 +6,7 @@ const {expressjwt: validateJWT} = require('express-jwt');
 const createQuestionnaireService = require('./questionnaire-service');
 const permissions = require('../middleware/route-permissions');
 const datasetRouter = require('./dataset/dataset-routes.js');
+const metadataRouter = require('./metadata/metadata-routes.js');
 
 const router = express.Router();
 const rxTemplateName = /^[a-zA-Z0-9-]{1,30}$/;
@@ -39,6 +40,7 @@ router.route('/').post(permissions('create:questionnaires'), async (req, res, ne
 });
 
 router.use(datasetRouter);
+router.use(metadataRouter);
 
 router
     .route('/:questionnaireId/sections/answers')
@@ -243,15 +245,5 @@ router
             next(err);
         }
     });
-
-router.route('/meta').get(permissions('read:questionnaires'), async (req, res, next) => {
-    try {
-        const questionnaireService = createQuestionnaireService({logger: req.log});
-        const metaData = await questionnaireService.getMetadata(req.query);
-        res.status(200).json(metaData);
-    } catch (err) {
-        next(err);
-    }
-});
 
 module.exports = router;
