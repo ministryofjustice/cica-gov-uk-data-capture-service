@@ -16,7 +16,7 @@ function createSqsService(opts) {
     async function post(payload) {
         let sqs;
         const msgParams = {
-            QueueUrl: process.env.AWS_QUEUE_ID,
+            QueueUrl: process.env.AWS_SQS_ID,
             MessageBody: JSON.stringify(payload)
         };
 
