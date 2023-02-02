@@ -40,16 +40,16 @@ jest.doMock('../services/slack', () => {
     }));
 });
 
-const messageBusPost = jest.fn(async (queueName, payload) => {
+const sqsSend = jest.fn(async payload => {
     if (payload.applicationId === '4ddb0208-f7da-4237-a244-34e7e58d2ddf') {
         throw new Error('some error');
     }
     return {body: 'Message sent'};
 });
 
-jest.doMock('../services/message-bus/index.js', () => {
+jest.doMock('../services/sqs/index.js', () => {
     return jest.fn(() => ({
-        post: messageBusPost
+        send: sqsSend
     }));
 });
 

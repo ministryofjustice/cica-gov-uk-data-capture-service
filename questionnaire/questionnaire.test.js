@@ -37,7 +37,7 @@ const tokens = {
 };
 
 const getQuestionnaireResponse = require('./test-fixtures/res/get_questionnaire.js');
-const postSubmissionQueueResponse = require('./test-fixtures/res/post_submissionQueue.json');
+const sendSqsResponse = require('./test-fixtures/res/post_submissionQueue.json');
 
 // mock the DAL db integration
 jest.doMock('./questionnaire-dal.js', () =>
@@ -88,9 +88,15 @@ jest.doMock('./questionnaire-dal.js', () =>
     }))
 );
 
-jest.doMock('../services/message-bus/index.js', () =>
+jest.doMock('../services/sqs/index.js', () =>
     jest.fn(() => ({
-        post: () => postSubmissionQueueResponse
+        send: () => sendSqsResponse
+    }))
+);
+
+jest.doMock('../services/slack/index.js', () =>
+    jest.fn(() => ({
+        sendMessage: jest.fn()
     }))
 );
 
@@ -116,7 +122,10 @@ describe('/questionnaires', () => {
                     .set('Authorization', `Bearer ${tokens['create:questionnaires']}`)
                     .set('Content-Type', 'application/vnd.api+json')
                     .send({
-                        data: {type: 'questionnaires', attributes: {templateName: 'sexual-assault'}}
+                        data: {
+                            type: 'questionnaires',
+                            attributes: {templateName: 'sexual-assault'}
+                        }
                     });
 
                 expect(res.statusCode).toBe(201);
@@ -253,7 +262,9 @@ describe('/questionnaires', () => {
                         data: {
                             type: 'questionnaires',
                             attributes: {templateName: 'sexual-assault'},
-                            'THIS-IS-NOT-A-VALID-PROPERTY-NAME': {templateName: 'sexual-assault'}
+                            'THIS-IS-NOT-A-VALID-PROPERTY-NAME': {
+                                templateName: 'sexual-assault'
+                            }
                         }
                     });
 
@@ -286,7 +297,10 @@ describe('/questionnaires', () => {
                     .post('/api/v1/questionnaires')
                     .set('Content-Type', 'application/vnd.api+json')
                     .send({
-                        data: {type: 'questionnaires', attributes: {templateName: 'sexual-assault'}}
+                        data: {
+                            type: 'questionnaires',
+                            attributes: {templateName: 'sexual-assault'}
+                        }
                     });
 
                 expect(res.statusCode).toBe(401);
@@ -319,7 +333,10 @@ describe('/questionnaires', () => {
                     .set('Authorization', `Bearer ${tokens['create:dummy-resource']}`)
                     .set('Content-Type', 'application/vnd.api+json')
                     .send({
-                        data: {type: 'questionnaires', attributes: {templateName: 'sexual-assault'}}
+                        data: {
+                            type: 'questionnaires',
+                            attributes: {templateName: 'sexual-assault'}
+                        }
                     });
 
                 expect(res.statusCode).toBe(403);
@@ -393,7 +410,9 @@ describe('/questionnaires/{questionnaireId}/sections/{sectionId}/answers', () =>
                     )
                     .set('Authorization', `Bearer ${tokens['create:system-answers']}`)
                     .set('Content-Type', 'application/vnd.api+json')
-                    .send({data: {type: 'answers', attributes: {'case-reference': '11\\111111'}}});
+                    .send({
+                        data: {type: 'answers', attributes: {'case-reference': '11\\111111'}}
+                    });
 
                 expect(res.statusCode).toBe(201);
                 expect(res.type).toBe('application/vnd.api+json');
@@ -516,7 +535,9 @@ describe('/questionnaires/{questionnaireId}/sections/{sectionId}/answers', () =>
                         '/api/v1/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/sections/system/answers'
                     )
                     .set('Content-Type', 'application/vnd.api+json')
-                    .send({data: {type: 'answers', attributes: {'case-reference': '11\\111111'}}});
+                    .send({
+                        data: {type: 'answers', attributes: {'case-reference': '11\\111111'}}
+                    });
 
                 expect(res.statusCode).toBe(401);
                 expect(res.type).toBe('application/vnd.api+json');
@@ -549,7 +570,9 @@ describe('/questionnaires/{questionnaireId}/sections/{sectionId}/answers', () =>
                     )
                     .set('Authorization', `Bearer ${tokens['create:dummy-resource']}`)
                     .set('Content-Type', 'application/vnd.api+json')
-                    .send({data: {type: 'answers', attributes: {'case-reference': '11\\111111'}}});
+                    .send({
+                        data: {type: 'answers', attributes: {'case-reference': '11\\111111'}}
+                    });
 
                 expect(res.statusCode).toBe(403);
                 expect(res.type).toBe('application/vnd.api+json');
@@ -582,7 +605,9 @@ describe('/questionnaires/{questionnaireId}/sections/{sectionId}/answers', () =>
                     )
                     .set('Authorization', `Bearer ${tokens['create:system-answers']}`)
                     .set('Content-Type', 'application/vnd.api+json')
-                    .send({data: {type: 'answers', attributes: {'case-reference': '11\\111111'}}});
+                    .send({
+                        data: {type: 'answers', attributes: {'case-reference': '11\\111111'}}
+                    });
 
                 expect(res.statusCode).toBe(404);
                 expect(res.type).toBe('application/vnd.api+json');
@@ -951,7 +976,9 @@ describe('/questionnaires/{questionnaireId}/submissions', () => {
                     .send({
                         data: {
                             type: 'submissions',
-                            attributes: {questionnaireId: '285cb104-0c15-4a9c-9840-cb1007f098fb'}
+                            attributes: {
+                                questionnaireId: '285cb104-0c15-4a9c-9840-cb1007f098fb'
+                            }
                         }
                     });
 
@@ -1020,7 +1047,9 @@ describe('/questionnaires/{questionnaireId}/submissions', () => {
                     .send({
                         data: {
                             type: 'submissions',
-                            attributes: {questionnaireId: '285cb104-0c15-4a9c-9840-cb1007f098fb'},
+                            attributes: {
+                                questionnaireId: '285cb104-0c15-4a9c-9840-cb1007f098fb'
+                            },
                             'THIS-IS-NOT-A-VALID-PROPERTY-NAME': 'submissions'
                         }
                     });
@@ -1056,7 +1085,9 @@ describe('/questionnaires/{questionnaireId}/submissions', () => {
                     .send({
                         data: {
                             type: 'submissions',
-                            attributes: {questionnaireId: '285cb104-0c15-4a9c-9840-cb1007f098fb'}
+                            attributes: {
+                                questionnaireId: '285cb104-0c15-4a9c-9840-cb1007f098fb'
+                            }
                         }
                     });
 
@@ -1092,7 +1123,9 @@ describe('/questionnaires/{questionnaireId}/submissions', () => {
                     .send({
                         data: {
                             type: 'submissions',
-                            attributes: {questionnaireId: '285cb104-0c15-4a9c-9840-cb1007f098fb'}
+                            attributes: {
+                                questionnaireId: '285cb104-0c15-4a9c-9840-cb1007f098fb'
+                            }
                         }
                     });
 
@@ -1128,7 +1161,9 @@ describe('/questionnaires/{questionnaireId}/submissions', () => {
                     .send({
                         data: {
                             type: 'submissions',
-                            attributes: {questionnaireId: '285cb104-0c15-4a9c-9840-cb1007f098fb'}
+                            attributes: {
+                                questionnaireId: '285cb104-0c15-4a9c-9840-cb1007f098fb'
+                            }
                         }
                     });
 
@@ -1274,7 +1309,9 @@ describe('/questionnaires/{questionnaireId}/progress-entries', () => {
                                                                         additionalProperties: false,
                                                                         required: ['type', 'id'],
                                                                         properties: {
-                                                                            type: {type: 'string'},
+                                                                            type: {
+                                                                                type: 'string'
+                                                                            },
                                                                             id: {
                                                                                 $schema:
                                                                                     'http://json-schema.org/draft-07/schema#',
@@ -2177,13 +2214,19 @@ describe('/questionnaires/{questionnaireId}/session/keep-alive', () => {
                                                                         'expires'
                                                                     ],
                                                                     properties: {
-                                                                        alive: {type: 'boolean'},
+                                                                        alive: {
+                                                                            type: 'boolean'
+                                                                        },
                                                                         duration: {
                                                                             type: 'integer',
                                                                             minimum: 1
                                                                         },
-                                                                        created: {type: 'integer'},
-                                                                        expires: {type: 'integer'}
+                                                                        created: {
+                                                                            type: 'integer'
+                                                                        },
+                                                                        expires: {
+                                                                            type: 'integer'
+                                                                        }
                                                                     }
                                                                 }
                                                             }

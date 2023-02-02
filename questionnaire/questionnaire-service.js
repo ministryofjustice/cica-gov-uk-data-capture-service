@@ -9,8 +9,8 @@ const createQRouter = require('q-router');
 const uuidv4 = require('uuid/v4');
 const ajvFormatsMobileUk = require('ajv-formats-mobile-uk');
 const templates = require('./templates');
-const createMessageBusCaller = require('../services/message-bus');
-const createNotifyService = require('../services/notify');
+const createSqsService = require('../services/sqs');
+const createLegacyNotifyService = require('../services/sqs/legacy-sms-message-bus');
 const createSlackService = require('../services/slack');
 const questionnaireResource = require('./resources/questionnaire-resource');
 const createQuestionnaireHelper = require('./questionnaire/questionnaire');
@@ -107,15 +107,17 @@ function createQuestionnaireService({
     async function startSubmission(questionnaireId) {
         try {
             await updateQuestionnaireSubmissionStatus(questionnaireId, 'IN_PROGRESS');
-            const messageBus = createMessageBusCaller({logger});
-            const submissionResponse = await messageBus.post('SubmissionQueue', {
-                applicationId: questionnaireId
-            });
-            if (
-                !submissionResponse ||
-                !submissionResponse.body ||
-                submissionResponse.body !== 'Message sent'
-            ) {
+
+            const sqsService = createSqsService({logger});
+            const submissionResponse = await sqsService.send(
+                {
+                    applicationId: questionnaireId
+                },
+                process.env.AWS_SQS_ID
+            );
+
+            logger.info(submissionResponse);
+            if (!submissionResponse || !submissionResponse.MessageId) {
                 await updateQuestionnaireSubmissionStatus(questionnaireId, 'FAILED');
                 const slackService = createSlackService();
                 slackService.sendMessage({
@@ -530,15 +532,31 @@ function createQuestionnaireService({
         const permittedActions = questionnaire.getPermittedActions();
         const actionResults = permittedActions.map(action => {
             if (action.type === 'sendEmail') {
-                const notifyService = createNotifyService({logger});
+                const sqsService = createSqsService({logger});
 
-                return notifyService.sendEmail(action.data);
+                const payload = {
+                    templateId: action.data.templateId,
+                    emailAddress: action.data.emailAddress,
+                    personalisation: {
+                        caseReference: action.data.personalisation.caseReference
+                    },
+                    reference: null
+                };
+                return sqsService.send(payload, process.env.NOTIFY_AWS_SQS_ID);
             }
 
             if (action.type === 'sendSms') {
-                const notifyService = createNotifyService({logger});
+                const legacyNotifyService = createLegacyNotifyService({logger});
 
-                return notifyService.sendSms(action.data);
+                const payload = {
+                    templateId: action.data.templateId,
+                    phoneNumber: action.data.phoneNumber,
+                    personalisation: {
+                        caseReference: action.data.personalisation.caseReference
+                    },
+                    reference: null
+                };
+                return legacyNotifyService.sendSms(payload);
             }
 
             return Promise.reject(Error(`Action type "${action.type}" is not supported`));

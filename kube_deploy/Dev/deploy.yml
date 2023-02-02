@@ -28,6 +28,36 @@ spec:
                   key: database_url_with_credentials
             - name: DCS_LOG_LEVEL
               value: info
+            - name: DCS_SQS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: dcs-sqs-secret
+                  key: access_key_id
+            - name: DCS_SQS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: dcs-sqs-secret
+                  key: secret_access_key
+            - name: AWS_SQS_ARN
+              valueFrom:
+                secretKeyRef:
+                  name: application-sqs
+                  key: sqs_arn
+            - name: AWS_SQS_ID
+              valueFrom:
+                secretKeyRef:
+                  name: application-sqs
+                  key: sqs_id
+            - name: AWS_SQS_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: application-sqs
+                  key: sqs_name
+            - name: NOTIFY_AWS_SQS_ID
+              valueFrom:
+                secretKeyRef:
+                  name: notify-sqs
+                  key: sqs_id
             - name: MESSAGE_BUS_URL
               valueFrom:
                 secretKeyRef:

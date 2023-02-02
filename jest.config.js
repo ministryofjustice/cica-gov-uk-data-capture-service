@@ -13,6 +13,10 @@ process.env.NOTIFY_API_KEY = '123apiKey';
 process.env.WEBHOOK_DEV_REPORTER_SLACK = 'webhook-url';
 process.env.APP_ENV = 'test';
 process.env.MESSAGE_BUS_CREDENTIALS = 'some-credentials';
+process.env.DCS_SQS_ACCESS_KEY_ID = 'dummy_access_key';
+process.env.DCS_SQS_SECRET_ACCESS_KEY = 'dummy_secret_key';
+process.env.AWS_SQS_ID = 'dummy_queue';
+process.env.NOTIFY_AWS_SQS_ID = 'dummy_notify_queue';
 
 config.coverageThreshold = {
     './!(db)/!(questionnaire-dal).js': {

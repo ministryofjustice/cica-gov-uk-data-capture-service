@@ -1,7 +1,6 @@
 'use strict';
 
 const notificationNodeClient = require('notifications-node-client');
-const createMessageBusCaller = require('../message-bus');
 
 const {NotifyClient} = notificationNodeClient;
 const apiKey = process.env.NOTIFY_API_KEY;
@@ -56,26 +55,8 @@ function createNotifyService(spec) {
         return undefined;
     }
 
-    async function sendEmail(options) {
-        try {
-            const messageBus = createMessageBusCaller(spec);
-
-            await messageBus.post('NotificationQueue', {
-                templateId: options.templateId,
-                emailAddress: options.emailAddress,
-                personalisation: {
-                    caseReference: options.personalisation.caseReference
-                },
-                reference: null
-            });
-        } catch (err) {
-            logger.error({code: err.code}, 'EMAIL SEND FAILURE');
-        }
-    }
-
     return Object.freeze({
-        sendSms,
-        sendEmail
+        sendSms
     });
 }
 

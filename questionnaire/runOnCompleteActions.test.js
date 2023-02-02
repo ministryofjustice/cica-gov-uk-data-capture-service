@@ -1,21 +1,31 @@
 'use strict';
 
+const notifySQS = 'dummy_notify_queue';
+
 // TODO: These should live in q-router
 
-jest.doMock('../services/notify', () => {
+jest.doMock('../services/sqs', () => {
     const notifyServiceMock = {
-        sendEmail: jest.fn().mockResolvedValue({
-            some: 'email response'
-        }),
-        sendSms: jest.fn().mockResolvedValue({
-            some: 'sms response'
+        send: jest.fn().mockResolvedValue({
+            some: 'response'
         })
     };
 
     return () => notifyServiceMock;
 });
 
-const mockedNotifyService = require('../services/notify')();
+jest.doMock('../services/sqs/legacy-sms-message-bus', () => {
+    const notifyServiceMock = {
+        sendSms: jest.fn().mockResolvedValue({
+            some: 'response'
+        })
+    };
+
+    return () => notifyServiceMock;
+});
+
+const mockedSqsService = require('../services/sqs')();
+const mockedLegacyMessageBusService = require('../services/sqs/legacy-sms-message-bus')();
 const createQuestionnaireService = require('./questionnaire-service');
 
 describe('runOnCompleteActions', () => {
@@ -26,7 +36,14 @@ describe('runOnCompleteActions', () => {
     describe('Given a send email action', () => {
         it('should call the send email function with defined data', async () => {
             const questionnaireService = createQuestionnaireService();
-            const actionData = {some: 'action data 47c7fc59-e657-4d10-b57e-2b3a59bd9bdf'};
+            const actionData = {
+                templateId: '47c7fc59-e657-4d10-b57e-2b3a59bd9bdf',
+                emailAddress: 'foo@bar.com',
+                personalisation: {
+                    caseReference: '11/111111'
+                },
+                reference: null
+            };
             const actionResults = await Promise.allSettled(
                 await questionnaireService.runOnCompleteActions({
                     meta: {
@@ -42,16 +59,23 @@ describe('runOnCompleteActions', () => {
                 })
             );
 
-            expect(actionResults).toEqual([{status: 'fulfilled', value: {some: 'email response'}}]);
-            expect(mockedNotifyService.sendEmail).toHaveBeenCalledTimes(1);
-            expect(mockedNotifyService.sendEmail).toHaveBeenCalledWith(actionData);
+            expect(actionResults).toEqual([{status: 'fulfilled', value: {some: 'response'}}]);
+            expect(mockedSqsService.send).toHaveBeenCalledTimes(1);
+            expect(mockedSqsService.send).toHaveBeenCalledWith(actionData, notifySQS);
         });
     });
 
     describe('Given a send sms action', () => {
         it('should call the send sms function with defined data', async () => {
             const questionnaireService = createQuestionnaireService();
-            const actionData = {some: 'action data 790edce0-4f90-4d3d-8fe5-52889c2caa00'};
+            const actionData = {
+                templateId: '47c7fc59-e657-4d10-b57e-2b3a59bd9bdf',
+                phoneNumber: '07777777777',
+                personalisation: {
+                    caseReference: '11/111111'
+                },
+                reference: null
+            };
             const actionResults = await Promise.allSettled(
                 await questionnaireService.runOnCompleteActions({
                     meta: {
@@ -67,18 +91,39 @@ describe('runOnCompleteActions', () => {
                 })
             );
 
-            expect(actionResults).toEqual([{status: 'fulfilled', value: {some: 'sms response'}}]);
-            expect(mockedNotifyService.sendSms).toHaveBeenCalledTimes(1);
-            expect(mockedNotifyService.sendSms).toHaveBeenCalledWith(actionData);
+            expect(actionResults).toEqual([{status: 'fulfilled', value: {some: 'response'}}]);
+            expect(mockedLegacyMessageBusService.sendSms).toHaveBeenCalledTimes(1);
+            expect(mockedLegacyMessageBusService.sendSms).toHaveBeenCalledWith(actionData);
         });
     });
 
     describe('Given multiple actions', () => {
         it('should run each action in parallel', async () => {
             const questionnaireService = createQuestionnaireService();
-            const smsActionData = {some: 'action data ff10551c-9928-410a-a7be-5ba21297a132'};
-            const emailActionData1 = {some: 'action data 0bdb9b24-5d1f-4c46-b706-bd7edcf3c87b'};
-            const emailActionData2 = {some: 'action data 83a376f2-6329-474a-a055-7510c0b7befd'};
+            const smsActionData = {
+                templateId: 'ff10551c-9928-410a-a7be-5ba21297a132',
+                phoneNumber: '07777777777',
+                personalisation: {
+                    caseReference: '11/111111'
+                },
+                reference: null
+            };
+            const emailActionData1 = {
+                templateId: '0bdb9b24-5d1f-4c46-b706-bd7edcf3c87b',
+                emailAddress: 'foo@bar.com',
+                personalisation: {
+                    caseReference: '11/111111'
+                },
+                reference: null
+            };
+            const emailActionData2 = {
+                templateId: '83a376f2-6329-474a-a055-7510c0b7befd',
+                emailAddress: 'foo@bar.com',
+                personalisation: {
+                    caseReference: '11/111111'
+                },
+                reference: null
+            };
             const actionResults = await Promise.allSettled(
                 await questionnaireService.runOnCompleteActions({
                     meta: {
@@ -103,27 +148,48 @@ describe('runOnCompleteActions', () => {
             );
 
             expect(actionResults).toEqual([
-                {status: 'fulfilled', value: {some: 'sms response'}},
-                {status: 'fulfilled', value: {some: 'email response'}},
-                {status: 'fulfilled', value: {some: 'email response'}}
+                {status: 'fulfilled', value: {some: 'response'}},
+                {status: 'fulfilled', value: {some: 'response'}},
+                {status: 'fulfilled', value: {some: 'response'}}
             ]);
-            expect(mockedNotifyService.sendSms).toHaveBeenCalledTimes(1);
-            expect(mockedNotifyService.sendSms).toHaveBeenCalledWith(smsActionData);
-            expect(mockedNotifyService.sendEmail).toHaveBeenCalledTimes(2);
-            expect(mockedNotifyService.sendEmail).toHaveBeenNthCalledWith(1, emailActionData1);
-            expect(mockedNotifyService.sendEmail).toHaveBeenNthCalledWith(2, emailActionData2);
+            expect(mockedSqsService.send).toHaveBeenCalledTimes(2);
+            expect(mockedLegacyMessageBusService.sendSms).toHaveBeenCalledTimes(1);
+            expect(mockedSqsService.send).toHaveBeenNthCalledWith(1, emailActionData1, notifySQS);
+            expect(mockedSqsService.send).toHaveBeenNthCalledWith(2, emailActionData2, notifySQS);
+            expect(mockedLegacyMessageBusService.sendSms).toHaveBeenCalledWith(smsActionData);
         });
     });
 
     describe('Given multiple actions where one or more fail', () => {
         it('should return rejected promises', async () => {
             const questionnaireService = createQuestionnaireService();
-            const smsActionData = {some: 'action data 83787b54-8d41-4516-af1b-75e1ae2feec7'};
-            const emailActionData1 = {some: 'action data 90aa74f3-dcd8-4e10-becb-fe5dbd2c67c6'};
-            const emailActionData2 = {some: 'action data 4f8267d9-08fb-483a-940c-2431f2c4d143'};
+            const smsActionData = {
+                templateId: 'ff10551c-9928-410a-a7be-5ba21297a132',
+                phoneNumber: '07777777777',
+                personalisation: {
+                    caseReference: '11/111111'
+                },
+                reference: null
+            };
+            const emailActionData1 = {
+                templateId: '0bdb9b24-5d1f-4c46-b706-bd7edcf3c87b',
+                emailAddress: 'foo@bar.com',
+                personalisation: {
+                    caseReference: '11/111111'
+                },
+                reference: null
+            };
+            const emailActionData2 = {
+                templateId: '83a376f2-6329-474a-a055-7510c0b7befd',
+                emailAddress: 'foo@bar.com',
+                personalisation: {
+                    caseReference: '11/111111'
+                },
+                reference: null
+            };
 
-            mockedNotifyService.sendSms.mockRejectedValueOnce({
-                some: 'sms error'
+            mockedSqsService.send.mockRejectedValueOnce({
+                some: 'error'
             });
 
             const actionResults = await Promise.allSettled(
@@ -150,15 +216,15 @@ describe('runOnCompleteActions', () => {
             );
 
             expect(actionResults).toEqual([
-                {status: 'rejected', reason: {some: 'sms error'}},
-                {status: 'fulfilled', value: {some: 'email response'}},
-                {status: 'fulfilled', value: {some: 'email response'}}
+                {status: 'fulfilled', value: {some: 'response'}},
+                {status: 'rejected', reason: {some: 'error'}},
+                {status: 'fulfilled', value: {some: 'response'}}
             ]);
-            expect(mockedNotifyService.sendSms).toHaveBeenCalledTimes(1);
-            expect(mockedNotifyService.sendSms).toHaveBeenCalledWith(smsActionData);
-            expect(mockedNotifyService.sendEmail).toHaveBeenCalledTimes(2);
-            expect(mockedNotifyService.sendEmail).toHaveBeenNthCalledWith(1, emailActionData1);
-            expect(mockedNotifyService.sendEmail).toHaveBeenNthCalledWith(2, emailActionData2);
+            expect(mockedLegacyMessageBusService.sendSms).toHaveBeenCalledTimes(1);
+            expect(mockedSqsService.send).toHaveBeenCalledTimes(2);
+            expect(mockedLegacyMessageBusService.sendSms).toHaveBeenCalledWith(smsActionData);
+            expect(mockedSqsService.send).toHaveBeenNthCalledWith(1, emailActionData1, notifySQS);
+            expect(mockedSqsService.send).toHaveBeenNthCalledWith(2, emailActionData2, notifySQS);
         });
     });
 });
@@ -320,10 +386,13 @@ describe('template', () => {
                     };
 
                     expect(actionResults).toEqual([
-                        {status: 'fulfilled', value: {some: 'email response'}}
+                        {status: 'fulfilled', value: {some: 'response'}}
                     ]);
-                    expect(mockedNotifyService.sendEmail).toHaveBeenCalledTimes(1);
-                    expect(mockedNotifyService.sendEmail).toHaveBeenCalledWith(expectedActionData);
+                    expect(mockedSqsService.send).toHaveBeenCalledTimes(1);
+                    expect(mockedSqsService.send).toHaveBeenCalledWith(
+                        expectedActionData,
+                        notifySQS
+                    );
                 });
             });
 
@@ -366,13 +435,14 @@ describe('template', () => {
                         reference: null
                     };
 
-                    expect(mockedNotifyService.sendEmail).toHaveBeenNthCalledWith(
+                    expect(mockedSqsService.send).toHaveBeenNthCalledWith(
                         1,
-                        expectedActionData
+                        expectedActionData,
+                        notifySQS
                     );
-                    expect(mockedNotifyService.sendEmail).toHaveBeenCalledTimes(1);
+                    expect(mockedSqsService.send).toHaveBeenCalledTimes(1);
                     expect(actionResults).toEqual([
-                        {status: 'fulfilled', value: {some: 'email response'}}
+                        {status: 'fulfilled', value: {some: 'response'}}
                     ]);
                 });
             });
@@ -424,13 +494,14 @@ describe('template', () => {
                         reference: null
                     };
 
-                    expect(mockedNotifyService.sendEmail).toHaveBeenNthCalledWith(
+                    expect(mockedSqsService.send).toHaveBeenNthCalledWith(
                         1,
-                        expectedActionData
+                        expectedActionData,
+                        notifySQS
                     );
-                    expect(mockedNotifyService.sendEmail).toHaveBeenCalledTimes(1);
+                    expect(mockedSqsService.send).toHaveBeenCalledTimes(1);
                     expect(actionResults).toEqual([
-                        {status: 'fulfilled', value: {some: 'email response'}}
+                        {status: 'fulfilled', value: {some: 'response'}}
                     ]);
                 });
             });
@@ -467,10 +538,12 @@ describe('template', () => {
                     };
 
                     expect(actionResults).toEqual([
-                        {status: 'fulfilled', value: {some: 'sms response'}}
+                        {status: 'fulfilled', value: {some: 'response'}}
                     ]);
-                    expect(mockedNotifyService.sendSms).toHaveBeenCalledTimes(1);
-                    expect(mockedNotifyService.sendSms).toHaveBeenCalledWith(expectedActionData);
+                    expect(mockedLegacyMessageBusService.sendSms).toHaveBeenCalledTimes(1);
+                    expect(mockedLegacyMessageBusService.sendSms).toHaveBeenCalledWith(
+                        expectedActionData
+                    );
                 });
             });
 
@@ -513,13 +586,13 @@ describe('template', () => {
                         reference: null
                     };
 
-                    expect(mockedNotifyService.sendSms).toHaveBeenNthCalledWith(
+                    expect(mockedLegacyMessageBusService.sendSms).toHaveBeenNthCalledWith(
                         1,
                         expectedActionData
                     );
-                    expect(mockedNotifyService.sendSms).toHaveBeenCalledTimes(1);
+                    expect(mockedLegacyMessageBusService.sendSms).toHaveBeenCalledTimes(1);
                     expect(actionResults).toEqual([
-                        {status: 'fulfilled', value: {some: 'sms response'}}
+                        {status: 'fulfilled', value: {some: 'response'}}
                     ]);
                 });
             });
@@ -571,13 +644,13 @@ describe('template', () => {
                         reference: null
                     };
 
-                    expect(mockedNotifyService.sendSms).toHaveBeenNthCalledWith(
+                    expect(mockedLegacyMessageBusService.sendSms).toHaveBeenNthCalledWith(
                         1,
                         expectedActionData
                     );
-                    expect(mockedNotifyService.sendSms).toHaveBeenCalledTimes(1);
+                    expect(mockedLegacyMessageBusService.sendSms).toHaveBeenCalledTimes(1);
                     expect(actionResults).toEqual([
-                        {status: 'fulfilled', value: {some: 'sms response'}}
+                        {status: 'fulfilled', value: {some: 'response'}}
                     ]);
                 });
             });
