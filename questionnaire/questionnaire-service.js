@@ -9,7 +9,8 @@ const createQRouter = require('q-router');
 const uuidv4 = require('uuid/v4');
 const ajvFormatsMobileUk = require('ajv-formats-mobile-uk');
 const templates = require('./templates');
-const createMessageBusCaller = require('../services/message-bus');
+// const createMessageBusCaller = require('../services/messaging/message-bus');
+const createSqsService = require('../services/messaging/sqs');
 const createNotifyService = require('../services/notify');
 const createSlackService = require('../services/slack');
 const questionnaireResource = require('./resources/questionnaire-resource');
@@ -107,15 +108,21 @@ function createQuestionnaireService({
     async function startSubmission(questionnaireId) {
         try {
             await updateQuestionnaireSubmissionStatus(questionnaireId, 'IN_PROGRESS');
-            const messageBus = createMessageBusCaller({logger});
-            const submissionResponse = await messageBus.post('SubmissionQueue', {
+
+            // Message bus implementation
+            // const messageBus = createMessageBusCaller({logger});
+            // const submissionResponse = await messageBus.post('SubmissionQueue', {
+            //     applicationId: questionnaireId
+            // });
+
+            // SQS implementation
+
+            const sqsQueue = createSqsService({logger});
+            const submissionResponse = await sqsQueue.post({
                 applicationId: questionnaireId
             });
-            if (
-                !submissionResponse ||
-                !submissionResponse.body ||
-                submissionResponse.body !== 'Message sent'
-            ) {
+            console.log(submissionResponse);
+            if (!submissionResponse || !submissionResponse.MessageId) {
                 await updateQuestionnaireSubmissionStatus(questionnaireId, 'FAILED');
                 const slackService = createSlackService();
                 slackService.sendMessage({
@@ -559,7 +566,8 @@ function createQuestionnaireService({
         updateQuestionnaireSubmissionStatus,
         updateQuestionnaireModifiedDate,
         getSessionResource,
-        runOnCompleteActions
+        runOnCompleteActions,
+        startSubmission
     });
 }
 

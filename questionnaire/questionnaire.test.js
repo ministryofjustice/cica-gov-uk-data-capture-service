@@ -88,7 +88,7 @@ jest.doMock('./questionnaire-dal.js', () =>
     }))
 );
 
-jest.doMock('../services/message-bus/index.js', () =>
+jest.doMock('../services/messaging/message-bus/index.js', () =>
     jest.fn(() => ({
         post: () => postSubmissionQueueResponse
     }))
