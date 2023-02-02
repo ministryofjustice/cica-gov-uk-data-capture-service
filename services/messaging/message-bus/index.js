@@ -1,7 +1,7 @@
 'use strict';
 
 const merge = require('lodash.merge');
-const createRequestService = require('../request');
+const createRequestService = require('../../request');
 
 function createMessageBusCaller(opts) {
     const {logger} = opts;

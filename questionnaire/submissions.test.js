@@ -47,7 +47,7 @@ const messageBusPost = jest.fn(async (queueName, payload) => {
     return {body: 'Message sent'};
 });
 
-jest.doMock('../services/message-bus/index.js', () => {
+jest.doMock('../services/messaging/message-bus/index.js', () => {
     return jest.fn(() => ({
         post: messageBusPost
     }));

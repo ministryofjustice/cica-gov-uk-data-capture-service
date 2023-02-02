@@ -1,7 +1,7 @@
 'use strict';
 
 const notificationNodeClient = require('notifications-node-client');
-const createMessageBusCaller = require('../message-bus');
+const createMessageBusCaller = require('../messaging/message-bus');
 
 const {NotifyClient} = notificationNodeClient;
 const apiKey = process.env.NOTIFY_API_KEY;

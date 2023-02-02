@@ -1,6 +1,6 @@
 'use strict';
 
-const createMessageBusCaller = require('../services/message-bus');
+const createMessageBusCaller = require('../services/messaging/message-bus');
 const createQuestionnaireDAL = require('./questionnaire-dal');
 
 function createSubmissionService({logger}) {
