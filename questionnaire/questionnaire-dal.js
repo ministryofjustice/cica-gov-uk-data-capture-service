@@ -202,7 +202,7 @@ function questionnaireDAL(spec) {
             throw err;
         }
 
-        return result;
+        return result.rowCount ? result.rows : [];
     }
 
     return Object.freeze({
