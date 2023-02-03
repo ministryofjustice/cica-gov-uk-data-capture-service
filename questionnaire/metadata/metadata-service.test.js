@@ -9,18 +9,16 @@ describe('Questionnaire Service', () => {
                 logger: () => 'Logged from dataset test',
                 createQuestionnaireDAL: () => ({
                     getQuestionnaireMetadata: () => {
-                        return {
-                            rows: [
-                                {
-                                    id: '6fbc0958-e70c-4e37-ab65-12b96e8d37c1',
-                                    'questionnaire-version': '4.2.0',
-                                    created: '2023-01-01T10:42:24.016Z',
-                                    modified: '2023-01-01T10:42:49.604Z',
-                                    submission_status: 'NOT_STARTED',
-                                    'user-id': 'abc123'
-                                }
-                            ]
-                        };
+                        return [
+                            {
+                                id: '6fbc0958-e70c-4e37-ab65-12b96e8d37c1',
+                                'questionnaire-version': '4.2.0',
+                                created: '2023-01-01T10:42:24.016Z',
+                                modified: '2023-01-01T10:42:49.604Z',
+                                submission_status: 'NOT_STARTED',
+                                'user-id': 'abc123'
+                            }
+                        ];
                     }
                 })
             });

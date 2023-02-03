@@ -13,7 +13,7 @@ function createMetadataService({
         const results = await db.getQuestionnaireMetadata(query);
 
         // Add expiry time & map
-        const meta = results.rows.map(data => ({
+        const meta = results.map(data => ({
             type: 'metadata',
             id: data.id,
             attributes: {
