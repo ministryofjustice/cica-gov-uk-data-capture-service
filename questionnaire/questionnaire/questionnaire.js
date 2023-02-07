@@ -9,6 +9,7 @@ defaults.getValueInterpolator = require('./utils/getValueInterpolator');
 defaults.getValueContextualiser = require('./utils/getValueContextualiser');
 defaults.deepClone = require('./utils/deepCloneJsonDerivedObject');
 defaults.getJsonExpressionEvaluator = require('./utils/getJsonExpressionEvaluator');
+defaults.createQuestionnaireDAL = require('../questionnaire-dal');
 defaults.qExpression = require('q-expressions');
 
 function createQuestionnaire({
@@ -21,7 +22,8 @@ function createQuestionnaire({
     getValueContextualiser = defaults.getValueContextualiser,
     deepClone = defaults.deepClone,
     getJsonExpressionEvaluator = defaults.getJsonExpressionEvaluator,
-    qExpression = defaults.qExpression
+    qExpression = defaults.qExpression,
+    createQuestionnaireDAL = defaults.createQuestionnaireDAL
 }) {
     function getProgress() {
         return questionnaireDefinition.progress || [];
@@ -295,22 +297,39 @@ function createQuestionnaire({
         return allDataAttributes;
     }
 
-    function getMetadata(metadataId) {
+    async function getMetadata({query = {}, metadataId, logger}) {
+        const db = createQuestionnaireDAL({logger});
+        const results = await db.getQuestionnaireMetadata(query);
         const metadata = questionnaireDefinition.meta;
 
-        if (metadata !== undefined) {
+        if (results.length) {
+            const meta = results.map(data => ({
+                'questionnaire-id': data.id,
+                created: data.created,
+                modified: data.modified,
+                state: data.submission_status,
+                'user-id': data['user-id'],
+                expires: new Date(
+                    new Date(
+                        new Date(data.created).setUTCDate(new Date(data.created).getUTCDate() + 31)
+                    ).setUTCHours(0, 0, 0, 0)
+                ).toISOString()
+            }));
+
+            const allMetadata = {...meta, ...metadata};
+
             if (metadataId !== undefined) {
-                return metadata[metadataId];
+                return allMetadata[metadataId];
             }
 
-            return metadata;
+            return allMetadata;
         }
 
         return undefined;
     }
 
     function getNormalisedDetailsForAttribute(attributeId) {
-        const normalisedAttributeDetails = getMetadata('attributes');
+        const normalisedAttributeDetails = getMetadata({metadataId: 'attributes'});
 
         if (normalisedAttributeDetails !== undefined) {
             const attributeDetails = normalisedAttributeDetails[attributeId];
@@ -367,7 +386,8 @@ function createQuestionnaire({
         getNormalisedDetailsForAttribute,
         getProgress, // TODO: remove this when declaration is handled correctly
         getAnswers, // TODO: remove this when declaration is handled correctly
-        getPermittedActions
+        getPermittedActions,
+        getMetadata
     });
 }
 

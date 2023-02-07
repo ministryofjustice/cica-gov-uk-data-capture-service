@@ -551,7 +551,9 @@ function createQuestionnaireService({
         const questionnaire = await getQuestionnaire(questionnaireId);
 
         if (questionnaire.progress.includes(sectionId)) {
-            return buildAnswerResource(sectionId, questionnaire);
+            return {
+                data: buildAnswerResource(sectionId, questionnaire)
+            };
         }
         throw new VError(
             {

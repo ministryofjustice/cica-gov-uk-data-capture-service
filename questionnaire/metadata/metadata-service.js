@@ -1,38 +1,28 @@
 'use strict';
 
-const defaults = {};
-defaults.createQuestionnaireDAL = require('../questionnaire-dal');
+const createQuestionnaireHelper = require('../questionnaire/questionnaire');
+const questionnaireDefinition = require('../templates');
 
-function createMetadataService({
-    logger,
-    createQuestionnaireDAL = defaults.createQuestionnaireDAL
-} = {}) {
-    const db = createQuestionnaireDAL({logger});
-
+function createMetadataService({logger} = {}) {
     async function getMetadata(query = {}) {
-        const results = await db.getQuestionnaireMetadata(query);
+        const questionnaire = createQuestionnaireHelper({
+            questionnaireDefinition
+        });
 
-        // Add expiry time & map
-        const meta = results.map(data => ({
-            type: 'metadata',
-            id: data.id,
-            attributes: {
-                'questionnaire-id': data.id,
-                'questionnaire-document-version': data['questionnaire-version'],
-                created: data.created,
-                modified: data.modified,
-                state: data.submission_status,
-                'user-id': data['user-id'],
-                expires: new Date(
-                    new Date(
-                        new Date(data.created).setUTCDate(new Date(data.created).getUTCDate() + 31)
-                    ).setUTCHours(0, 0, 0, 0)
-                ).toISOString()
-            }
-        }));
+        const results = questionnaire.getMetadata({query, logger});
 
         return {
-            data: meta
+            type: 'metadata',
+            id: results.id,
+            attributes: {
+                'questionnaire-id': results.id,
+                'questionnaire-document-version': results.questionnaireDocumentVersion,
+                created: results.created,
+                modified: results.modified,
+                state: results.submission_status,
+                'user-id': results['user-id'],
+                expires: results.expires
+            }
         };
     }
 
