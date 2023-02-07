@@ -28,12 +28,12 @@ spec:
                   key: database_url_with_credentials
             - name: DCS_LOG_LEVEL
               value: info
-            - name: AWS_ACCESS_KEY_ID
+            - name: DCS_SQS_ACCESS_KEY_ID
               valueFrom:
                 secretKeyRef:
                   name: dsc-sqs-secret
                   key: access_key_id
-            - name: AWS_SECRET_ACCESS_KEY
+            - name: DCS_SQS_SECRET_ACCESS_KEY
               valueFrom:
                 secretKeyRef:
                   name: dsc-sqs-secret
