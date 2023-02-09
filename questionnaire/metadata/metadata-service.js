@@ -18,7 +18,7 @@ function createMetadataService({
             id: data.id,
             attributes: {
                 'questionnaire-id': data.id,
-                'questionnaire-document-version': data['questionnaire-version'],
+                'questionnaire-document-version': data['questionnaire-document-version'],
                 created: data.created,
                 modified: data.modified,
                 'submission-status': data.submission_status,

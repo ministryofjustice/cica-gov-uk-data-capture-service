@@ -182,7 +182,7 @@ function questionnaireDAL(spec) {
         try {
             if (query?.filter?.userId) {
                 result = await db.query(
-                    `SELECT id, questionnaire -> 'meta' -> 'questionnaireDocumentVersion' AS "questionnaire-version", created, modified, submission_status, questionnaire -> 'answers' -> 'user' -> 'user-id' AS "user-id" FROM questionnaire WHERE questionnaire -> 'answers' -> 'user' ->> 'user-id' = $1`,
+                    `SELECT id, questionnaire -> 'meta' -> 'questionnaireDocumentVersion' AS "questionnaire-document-version", created, modified, submission_status, questionnaire -> 'answers' -> 'user' -> 'user-id' AS "user-id" FROM questionnaire WHERE questionnaire -> 'answers' -> 'user' ->> 'user-id' = $1`,
                     [query.filter.userId]
                 );
                 if (result.rowCount === 0) {
@@ -195,7 +195,7 @@ function questionnaireDAL(spec) {
                 }
             } else {
                 result = await db.query(
-                    "SELECT id, questionnaire -> 'meta' -> 'questionnaireDocumentVersion' AS \"questionnaire-version\", created, modified, submission_status, questionnaire -> 'answers' -> 'user' -> 'user-id' AS \"user-id\" FROM questionnaire"
+                    "SELECT id, questionnaire -> 'meta' -> 'questionnaireDocumentVersion' AS \"questionnaire-document-version\", created, modified, submission_status, questionnaire -> 'answers' -> 'user' -> 'user-id' AS \"user-id\" FROM questionnaire"
                 );
             }
         } catch (err) {
