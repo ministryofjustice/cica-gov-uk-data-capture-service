@@ -2,7 +2,7 @@
 
 const createMetadataService = require('./metadata-service');
 
-describe('Questionnaire Service', () => {
+describe('Metadata Service', () => {
     describe('getMetadata', () => {
         it('should return metadata to match the api contract', async () => {
             const metadataService = createMetadataService({
@@ -35,7 +35,7 @@ describe('Questionnaire Service', () => {
                             'questionnaire-document-version': '4.2.0',
                             created: '2023-01-01T10:42:24.016Z',
                             modified: '2023-01-01T10:42:49.604Z',
-                            state: 'NOT_STARTED',
+                            'submission-status': 'NOT_STARTED',
                             'user-id': 'abc123',
                             expires: '2023-02-01T00:00:00.000Z'
                         }

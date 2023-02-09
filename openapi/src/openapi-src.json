@@ -969,7 +969,7 @@
                 }
             }
         },
-        "/questionnaires/meta": {
+        "/questionnaires/metadata": {
             "get": {
                 "tags": ["Metadata"],
                 "summary": "Get the metadata associated with all questionnaires",
@@ -1030,7 +1030,7 @@
                                 "schema": {
                                     "anyOf": [
                                         {
-                                            "$ref": "json-schemas/api/_questionnaires_meta/get/res/200-v1.0.0.json"
+                                            "$ref": "json-schemas/api/_questionnaires_metadata/get/res/200-v1.0.0.json"
                                         }
                                     ]
                                 },

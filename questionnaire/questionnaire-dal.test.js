@@ -197,7 +197,7 @@ describe('questionnaire data access layer', () => {
                 }
             };
             await expect(questionnaireDAL.getQuestionnaireMetadata(query)).rejects.toThrow(
-                `User "UNKNOWN_USER" not found`
+                `Metadata resource does not exist for user id "UNKNOWN_USER"`
             );
         });
     });

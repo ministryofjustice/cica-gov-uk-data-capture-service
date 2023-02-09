@@ -21,10 +21,10 @@ jest.doMock('./metadata-service.js', () =>
 // the mock so that it references the mocked version
 const app = require('../../app');
 
-describe('/questionnaires/meta', () => {
+describe('/questionnaires/metadata', () => {
     it('should return metadata', async () => {
         const res = await request(app)
-            .get('/api/v1/questionnaires/meta')
+            .get('/api/v1/questionnaires/metadata')
             .set('Authorization', `Bearer ${tokens['read:questionnaires']}`);
 
         const expected = {foo: 'bar'};
