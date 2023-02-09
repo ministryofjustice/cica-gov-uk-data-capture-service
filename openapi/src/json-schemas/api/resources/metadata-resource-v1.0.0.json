@@ -19,7 +19,7 @@
                                 "questionnaire-id",
                                 "created",
                                 "modified",
-                                "state",
+                                "submission-status",
                                 "expires"
                             ],
                             "properties": {
@@ -35,7 +35,7 @@
                                 "modified": {
                                     "$ref": "../../models/definitions/timestamp.json"
                                 },
-                                "state": {
+                                "submission-status": {
                                     "enum": ["NOT_STARTED", "IN_PROGRESS", "COMPLETED", "FAILED"]
                                 },
                                 "user-id": {

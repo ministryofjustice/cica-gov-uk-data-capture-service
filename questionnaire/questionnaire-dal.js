@@ -190,7 +190,7 @@ function questionnaireDAL(spec) {
                         {
                             name: 'ResourceNotFound'
                         },
-                        `User "${query.filter.userId}" not found`
+                        `Metadata resource does not exist for user id "${query.filter.userId}"`
                     );
                 }
             } else {

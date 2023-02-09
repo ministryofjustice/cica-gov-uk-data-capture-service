@@ -13,7 +13,7 @@ function createMetadataService({
         const results = await db.getQuestionnaireMetadata(query);
 
         // Add expiry time & map
-        const meta = results.map(data => ({
+        const metadata = results.map(data => ({
             type: 'metadata',
             id: data.id,
             attributes: {
@@ -21,7 +21,7 @@ function createMetadataService({
                 'questionnaire-document-version': data['questionnaire-version'],
                 created: data.created,
                 modified: data.modified,
-                state: data.submission_status,
+                'submission-status': data.submission_status,
                 'user-id': data['user-id'],
                 expires: new Date(
                     new Date(
@@ -32,7 +32,7 @@ function createMetadataService({
         }));
 
         return {
-            data: meta
+            data: metadata
         };
     }
 
