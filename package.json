@@ -2,8 +2,8 @@
     "name": "data-capture-service",
     "version": "6.2.10",
     "engines": {
-        "npm": ">=8.5.2",
-        "node": ">=16.0.0"
+        "npm": ">=9.5.0",
+        "node": ">=18.0.0"
     },
     "scripts": {
         "start": "node ./bin/www",
