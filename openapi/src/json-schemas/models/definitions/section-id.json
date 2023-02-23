@@ -2,5 +2,5 @@
     "$schema": "http://json-schema.org/draft-07/schema#",
     "title": "Section Id",
     "type": "string",
-    "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer|user)$"
+    "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|user)$"
 }

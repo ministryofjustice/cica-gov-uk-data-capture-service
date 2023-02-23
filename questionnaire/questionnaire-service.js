@@ -469,7 +469,7 @@ function createQuestionnaireService({
                 // Create the progress entry compound document
                 const previousProgressEntryLink =
                     section.id === section.context.routes.initial
-                        ? questionnaire.routes.referrer
+                        ? null
                         : `${process.env.DCS_URL}/api/v1/questionnaires/${
                               questionnaire.id
                           }/progress-entries?filter[sectionId]=${qRouter.previous(sectionId).id}`;

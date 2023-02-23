@@ -102,7 +102,6 @@
                 "type": "final"
             }
         },
-        "referrer": "https://www.gov.uk/claim-compensation-criminal-injury/make-claim",
         "confirmation": "p--confirmation",
         "initial": "p-applicant-fatal-claim",
         "summary": "p-applicant-declaration"
