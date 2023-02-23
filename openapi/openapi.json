@@ -190,7 +190,7 @@
                                                                         {
                                                                             "title": "Section Id",
                                                                             "type": "string",
-                                                                            "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer|user)$"
+                                                                            "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|user)$"
                                                                         },
                                                                         {
                                                                             "title": "UUID v4",
@@ -249,7 +249,7 @@
                                                                                 "initial": {
                                                                                     "title": "Section Id",
                                                                                     "type": "string",
-                                                                                    "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer|user)$"
+                                                                                    "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|user)$"
                                                                                 }
                                                                             }
                                                                         }
@@ -465,7 +465,7 @@
                         "schema": {
                             "title": "Section Id",
                             "type": "string",
-                            "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer|user)$"
+                            "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|user)$"
                         },
                         "example": "system"
                     }
@@ -600,7 +600,7 @@
                                                                         {
                                                                             "title": "Section Id",
                                                                             "type": "string",
-                                                                            "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer|user)$"
+                                                                            "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|user)$"
                                                                         },
                                                                         {
                                                                             "title": "UUID v4",
@@ -1248,7 +1248,7 @@
                                                                             {
                                                                                 "title": "Section Id",
                                                                                 "type": "string",
-                                                                                "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer|user)$"
+                                                                                "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|user)$"
                                                                             },
                                                                             {
                                                                                 "title": "UUID v4",
@@ -2032,7 +2032,7 @@
                                 "sectionId": {
                                     "title": "Section Id",
                                     "type": "string",
-                                    "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer|user)$"
+                                    "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|user)$"
                                 }
                             }
                         },
@@ -2053,7 +2053,7 @@
                                 "before": {
                                     "title": "Section Id",
                                     "type": "string",
-                                    "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer|user)$"
+                                    "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|user)$"
                                 }
                             }
                         },
@@ -2158,7 +2158,7 @@
                                                                             {
                                                                                 "title": "Section Id",
                                                                                 "type": "string",
-                                                                                "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer|user)$"
+                                                                                "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|user)$"
                                                                             },
                                                                             {
                                                                                 "title": "UUID v4",
@@ -2201,7 +2201,7 @@
                                                                                     {
                                                                                         "title": "Section Id",
                                                                                         "type": "string",
-                                                                                        "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer|user)$"
+                                                                                        "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|user)$"
                                                                                     }
                                                                                 ]
                                                                             },
@@ -2236,7 +2236,7 @@
                                                                                             "id": {
                                                                                                 "title": "Section Id",
                                                                                                 "type": "string",
-                                                                                                "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer|user)$"
+                                                                                                "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|user)$"
                                                                                             }
                                                                                         }
                                                                                     }
@@ -2274,7 +2274,7 @@
                                                                                     {
                                                                                         "title": "Section Id",
                                                                                         "type": "string",
-                                                                                        "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer|user)$"
+                                                                                        "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|user)$"
                                                                                     },
                                                                                     {
                                                                                         "title": "UUID v4",
@@ -2343,7 +2343,7 @@
                                                                                     {
                                                                                         "title": "Section Id",
                                                                                         "type": "string",
-                                                                                        "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer|user)$"
+                                                                                        "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|user)$"
                                                                                     },
                                                                                     {
                                                                                         "title": "UUID v4",
@@ -2718,7 +2718,7 @@
                                                                                     {
                                                                                         "title": "Section Id",
                                                                                         "type": "string",
-                                                                                        "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer|user)$"
+                                                                                        "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|user)$"
                                                                                     },
                                                                                     {
                                                                                         "title": "UUID v4",
@@ -2832,7 +2832,7 @@
                                                                                     {
                                                                                         "title": "Section Id",
                                                                                         "type": "string",
-                                                                                        "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer|user)$"
+                                                                                        "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|user)$"
                                                                                     },
                                                                                     {
                                                                                         "title": "UUID v4",
@@ -4153,7 +4153,7 @@
                 "schema": {
                     "title": "Section Id",
                     "type": "string",
-                    "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer|user)$"
+                    "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|user)$"
                 },
                 "example": "system"
             },
@@ -4171,7 +4171,7 @@
                         "sectionId": {
                             "title": "Section Id",
                             "type": "string",
-                            "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer|user)$"
+                            "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|user)$"
                         }
                     }
                 },
@@ -4211,7 +4211,7 @@
                         "before": {
                             "title": "Section Id",
                             "type": "string",
-                            "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer|user)$"
+                            "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|user)$"
                         }
                     }
                 },

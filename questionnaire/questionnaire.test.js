@@ -162,7 +162,7 @@ describe('/questionnaires', () => {
                                                             title: 'Section Id',
                                                             type: 'string',
                                                             pattern:
-                                                                '^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer)$'
+                                                                '^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system)$'
                                                         },
                                                         {
                                                             $schema:
@@ -227,7 +227,7 @@ describe('/questionnaires', () => {
                                                                     title: 'Section Id',
                                                                     type: 'string',
                                                                     pattern:
-                                                                        '^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer)$'
+                                                                        '^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system)$'
                                                                 }
                                                             }
                                                         }
@@ -438,7 +438,7 @@ describe('/questionnaires/{questionnaireId}/sections/{sectionId}/answers', () =>
                                                             title: 'Section Id',
                                                             type: 'string',
                                                             pattern:
-                                                                '^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer)$'
+                                                                '^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system)$'
                                                         },
                                                         {
                                                             $schema:
@@ -664,7 +664,7 @@ describe('/questionnaires/{questionnaireId}/sections/answers', () => {
                                                                 title: 'Section Id',
                                                                 type: 'string',
                                                                 pattern:
-                                                                    '^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer)$'
+                                                                    '^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system)$'
                                                             },
                                                             {
                                                                 $schema:
@@ -1212,7 +1212,7 @@ describe('/questionnaires/{questionnaireId}/progress-entries', () => {
                                                                 title: 'Section Id',
                                                                 type: 'string',
                                                                 pattern:
-                                                                    '^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer)$'
+                                                                    '^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system)$'
                                                             },
                                                             {
                                                                 $schema:
@@ -1253,7 +1253,7 @@ describe('/questionnaires/{questionnaireId}/progress-entries', () => {
                                                                         title: 'Section Id',
                                                                         type: 'string',
                                                                         pattern:
-                                                                            '^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer)$'
+                                                                            '^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system)$'
                                                                     }
                                                                 ]
                                                             },
@@ -1281,7 +1281,7 @@ describe('/questionnaires/{questionnaireId}/progress-entries', () => {
                                                                                 title: 'Section Id',
                                                                                 type: 'string',
                                                                                 pattern:
-                                                                                    '^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer)$'
+                                                                                    '^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system)$'
                                                                             }
                                                                         }
                                                                     }
@@ -1320,7 +1320,7 @@ describe('/questionnaires/{questionnaireId}/progress-entries', () => {
                                                                         title: 'Section Id',
                                                                         type: 'string',
                                                                         pattern:
-                                                                            '^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer)$'
+                                                                            '^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system)$'
                                                                     },
                                                                     {
                                                                         $schema:
@@ -1388,7 +1388,7 @@ describe('/questionnaires/{questionnaireId}/progress-entries', () => {
                                                                         title: 'Section Id',
                                                                         type: 'string',
                                                                         pattern:
-                                                                            '^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer)$'
+                                                                            '^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system)$'
                                                                     },
                                                                     {
                                                                         $schema:
@@ -1604,7 +1604,7 @@ describe('/questionnaires/{questionnaireId}/dataset', () => {
                                                                         title: 'Section Id',
                                                                         type: 'string',
                                                                         pattern:
-                                                                            '^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer)$'
+                                                                            '^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system)$'
                                                                     },
                                                                     {
                                                                         $schema:
@@ -1699,7 +1699,7 @@ describe('/questionnaires/{questionnaireId}/dataset', () => {
                                                                         title: 'Section Id',
                                                                         type: 'string',
                                                                         pattern:
-                                                                            '^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer)$'
+                                                                            '^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system)$'
                                                                     },
                                                                     {
                                                                         $schema:
