@@ -80,6 +80,14 @@ function createQuestionnaireService({
                 // Get the context (questionnaire) from the current section
                 context: currentSection.context
             };
+        } else if (sectionId === 'user') {
+            const currentSection = qRouter.current();
+
+            section = {
+                id: 'user',
+                // Get the context (questionnaire) from the current section
+                context: currentSection.context
+            };
         } else {
             // Ensure the requested sectionId is available
             section = qRouter.current(sectionId);
@@ -233,6 +241,10 @@ function createQuestionnaireService({
             if (sectionDetails.id === 'system') {
                 const currentSection = qRouter.current();
                 currentSection.context.answers.system = coercedAnswers;
+                answeredQuestionnaire = currentSection.context;
+            } else if (sectionDetails.id === 'user') {
+                const currentSection = qRouter.current();
+                currentSection.context.answers.user = coercedAnswers;
                 answeredQuestionnaire = currentSection.context;
             } else {
                 const nextSection = qRouter.next(coercedAnswers, sectionDetails.id);
