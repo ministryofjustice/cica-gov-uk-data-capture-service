@@ -1,7 +1,7 @@
 'use strict';
 
 const notificationNodeClient = require('notifications-node-client');
-const createMessageBusCaller = require('../messaging/message-bus');
+const createSqsNotifyService = require('../sqs');
 
 const {NotifyClient} = notificationNodeClient;
 const apiKey = process.env.NOTIFY_API_KEY;
@@ -58,9 +58,13 @@ function createNotifyService(spec) {
 
     async function sendEmail(options) {
         try {
-            const messageBus = createMessageBusCaller(spec);
+            // message bus service
+            // const messageBus = createMessageBusCaller(spec);
 
-            await messageBus.post('NotificationQueue', {
+            // sqs service
+            const sqsNotifyQueue = createSqsNotifyService(spec);
+
+            await sqsNotifyQueue.post({
                 templateId: options.templateId,
                 emailAddress: options.emailAddress,
                 personalisation: {

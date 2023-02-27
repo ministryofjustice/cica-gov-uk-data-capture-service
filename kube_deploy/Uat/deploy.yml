@@ -53,6 +53,21 @@ spec:
                 secretKeyRef:
                   name: application-sqs
                   key: sqs_name
+            - name: NOTIFY_AWS_SQS_ID
+              valueFrom:
+                secretKeyRef:
+                  name: notify_sqs
+                  key: notify_queue_url
+            - name: NOTIFY_SQS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: notify_sqs
+                  key: access_key
+            - name: NOTIFY_SQS_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: notify_sqs
+                  key: secret_key
             - name: MESSAGE_BUS_URL
               valueFrom:
                 secretKeyRef:

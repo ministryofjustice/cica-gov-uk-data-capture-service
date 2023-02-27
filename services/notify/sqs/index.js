@@ -5,19 +5,20 @@ const AWS = require('aws-sdk');
 AWS.config = new AWS.Config();
 AWS.config.update({
     region: 'eu-west-2',
-    accessKeyId: process.env.DCS_SQS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.DCS_SQS_SECRET_ACCESS_KEY
+    accessKeyId: process.env.NOTIFY_SQS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.NOTIFY_SQS_SECRET_KEY
 });
 
-function createSqsService(opts) {
+function createSqsNotifyService(opts) {
     const {logger} = opts;
     delete opts.logger;
 
     async function post(payload) {
-        let sqs;
         try {
+            let sqs;
+
             const msgParams = {
-                QueueUrl: process.env.AWS_SQS_ID,
+                QueueUrl: process.env.NOTIFY_AWS_SQS_ID,
                 MessageBody: JSON.stringify(payload)
             };
 
@@ -26,10 +27,10 @@ function createSqsService(opts) {
             }
 
             const response = await sqs.sendMessage(msgParams).promise();
-            logger.info(response, 'APPLICATION QUEUE CALLED');
+            logger.info(response, 'NOTIFICATION SQS SERVICE CALLED');
             return response;
         } catch (err) {
-            logger.error({code: err.code}, 'MESSAGE FAILED TO SEND');
+            logger.error({code: err.code}, 'EMAIL SEND FAILURE');
             return null;
         }
     }
@@ -39,4 +40,4 @@ function createSqsService(opts) {
     });
 }
 
-module.exports = createSqsService;
+module.exports = createSqsNotifyService;
