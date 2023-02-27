@@ -24,11 +24,11 @@ const simpleServer = http.createServer((req, res) => {
 });
 
 describe('Message bus service', () => {
-    beforeAll(() => {
+    beforeEach(() => {
         simpleServer.listen(8125);
     });
 
-    afterAll(() => {
+    afterEach(() => {
         simpleServer.close();
     });
     describe('createMessageBusCaller', () => {
