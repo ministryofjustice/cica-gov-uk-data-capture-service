@@ -2,7 +2,7 @@
 
 // TODO: These should live in q-router
 
-jest.doMock('../services/notify', () => {
+jest.doMock('../services/notify/message-bus', () => {
     const notifyServiceMock = {
         sendEmail: jest.fn().mockResolvedValue({
             some: 'email response'
@@ -15,7 +15,7 @@ jest.doMock('../services/notify', () => {
     return () => notifyServiceMock;
 });
 
-const mockedNotifyService = require('../services/notify')();
+const mockedNotifyService = require('../services/notify/message-bus')();
 const createQuestionnaireService = require('./questionnaire-service');
 
 describe('runOnCompleteActions', () => {
