@@ -12,7 +12,7 @@ const templates = require('./templates');
 // const createMessageBusCaller = require('../services/messaging/message-bus');
 const createSqsService = require('../services/messaging/sqs');
 const createNotifyService = require('../services/notify/message-bus');
-const createSlackService = require('../services/slack');
+// const createSlackService = require('../services/slack');
 const questionnaireResource = require('./resources/questionnaire-resource');
 const createQuestionnaireHelper = require('./questionnaire/questionnaire');
 
@@ -124,14 +124,14 @@ function createQuestionnaireService({
             console.log(submissionResponse);
             if (!submissionResponse || !submissionResponse.MessageId) {
                 await updateQuestionnaireSubmissionStatus(questionnaireId, 'FAILED');
-                const slackService = createSlackService();
+                /* const slackService = createSlackService();
                 slackService.sendMessage({
                     appReference: `${process.env.APP_ENV || 'dev'}.reporter.webhook`,
                     messageBodyId: 'message-bus-down',
                     templateParameters: {
                         timeStamp: new Date().getTime()
                     }
-                });
+                }); */
             }
         } catch (err) {
             logger.error({err}, 'MESSAGE SENDING FAILED');
