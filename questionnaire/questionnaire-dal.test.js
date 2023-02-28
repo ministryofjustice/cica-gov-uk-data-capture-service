@@ -193,7 +193,7 @@ describe('questionnaire data access layer', () => {
             const questionnaireDAL = createQuestionnaireDAL({logger: jest.fn()});
             const query = {
                 filter: {
-                    userId: 'UNKNOWN_USER'
+                    'user-id': 'UNKNOWN_USER'
                 }
             };
             await expect(questionnaireDAL.getQuestionnaireMetadata(query)).rejects.toThrow(

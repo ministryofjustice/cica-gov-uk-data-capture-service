@@ -180,17 +180,17 @@ function questionnaireDAL(spec) {
     async function getQuestionnaireMetadata(query) {
         let result;
         try {
-            if (query?.filter?.userId) {
+            if ('filter' in query && 'user-id' in query.filter) {
                 result = await db.query(
                     `SELECT id, questionnaire -> 'meta' -> 'questionnaireDocumentVersion' AS "questionnaire-document-version", created, modified, submission_status, questionnaire -> 'answers' -> 'user' -> 'user-id' AS "user-id" FROM questionnaire WHERE questionnaire -> 'answers' -> 'user' ->> 'user-id' = $1`,
-                    [query.filter.userId]
+                    [query.filter['user-id']]
                 );
                 if (result.rowCount === 0) {
                     throw new VError(
                         {
                             name: 'ResourceNotFound'
                         },
-                        `Metadata resource does not exist for user id "${query.filter.userId}"`
+                        `Metadata resource does not exist for user id "${query.filter['user-id']}"`
                     );
                 }
             } else {

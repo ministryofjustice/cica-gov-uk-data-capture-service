@@ -16,7 +16,7 @@ describe('Metadata Service', () => {
                                 created: '2023-01-01T10:42:24.016Z',
                                 modified: '2023-01-01T10:42:49.604Z',
                                 submission_status: 'NOT_STARTED',
-                                'user-id': 'abc123'
+                                userId: 'abc123'
                             }
                         ];
                     }
