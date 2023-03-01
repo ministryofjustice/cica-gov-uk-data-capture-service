@@ -57,17 +57,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: notify-sqs
-                  key: notify_queue_url
-            - name: NOTIFY_SQS_ACCESS_KEY_ID
-              valueFrom:
-                secretKeyRef:
-                  name: notify-sqs
-                  key: access_key
-            - name: NOTIFY_SQS_SECRET_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: notify-sqs
-                  key: secret_key
+                  key: sqs_id
             - name: MESSAGE_BUS_URL
               valueFrom:
                 secretKeyRef:
