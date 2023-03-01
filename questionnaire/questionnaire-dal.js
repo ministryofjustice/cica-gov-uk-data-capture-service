@@ -177,32 +177,41 @@ function questionnaireDAL(spec) {
         return result;
     }
 
-    async function getQuestionnaireMetadata(query) {
+    async function getQuestionnairesMetadataCollection() {
         let result;
+
         try {
-            if ('filter' in query && 'user-id' in query.filter) {
-                result = await db.query(
-                    `SELECT id, questionnaire -> 'meta' -> 'questionnaireDocumentVersion' AS "questionnaire-document-version", created, modified, submission_status, questionnaire -> 'answers' -> 'user' -> 'user-id' AS "user-id" FROM questionnaire WHERE questionnaire -> 'answers' -> 'user' ->> 'user-id' = $1`,
-                    [query.filter['user-id']]
-                );
-                if (result.rowCount === 0) {
-                    throw new VError(
-                        {
-                            name: 'ResourceNotFound'
-                        },
-                        `Metadata resource does not exist for user id "${query.filter['user-id']}"`
-                    );
-                }
-            } else {
-                result = await db.query(
-                    "SELECT id, questionnaire -> 'meta' -> 'questionnaireDocumentVersion' AS \"questionnaire-document-version\", created, modified, submission_status, questionnaire -> 'answers' -> 'user' -> 'user-id' AS \"user-id\" FROM questionnaire"
+            result = await db.query(
+                "SELECT id, questionnaire -> 'meta' -> 'questionnaireDocumentVersion', created, modified, submission_status AS \"submissionStatus\", questionnaire -> 'answers' -> 'user' -> 'user-id' AS \"userId\" FROM questionnaire"
+            );
+        } catch (err) {
+            throw err;
+        }
+
+        return result.rowCount ? result.rows : [];
+    }
+
+    async function getQuestionnaireMetadataByUserId(userId) {
+        let result;
+
+        try {
+            result = await db.query(
+                "SELECT id, questionnaire -> 'meta' -> 'questionnaireDocumentVersion', created, modified, submission_status AS \"submissionStatus\", questionnaire -> 'answers' -> 'user' -> 'user-id' AS \"userId\" FROM questionnaire WHERE questionnaire -> 'answers' -> 'user' ->> 'user-id' = $1",
+                [userId]
+            );
+            if (result.rowCount === 0) {
+                throw new VError(
+                    {
+                        name: 'ResourceNotFound'
+                    },
+                    `Metadata resource does not exist for user id "${userId}"`
                 );
             }
         } catch (err) {
             throw err;
         }
 
-        return result.rowCount ? result.rows : [];
+        return result.rows;
     }
 
     return Object.freeze({
@@ -214,7 +223,8 @@ function questionnaireDAL(spec) {
         getQuestionnaireIdsBySubmissionStatus,
         getQuestionnaireModifiedDate,
         updateQuestionnaireModifiedDate,
-        getQuestionnaireMetadata
+        getQuestionnairesMetadataCollection,
+        getQuestionnaireMetadataByUserId
     });
 }
 
