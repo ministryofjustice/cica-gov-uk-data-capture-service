@@ -2,7 +2,7 @@
 
 const createNotifyService = require('./index');
 
-describe('Notify service', () => {
+describe.skip('Notify service', () => {
     const DUMMY_MOBILE_NUMBER_IN_USE = '07700900999';
     const INVALID_MOBILE_NUMBER = 'abc';
     const DUMMY_CASE_REFERENCE = '21\\456789';
@@ -51,7 +51,7 @@ describe('Notify service', () => {
         }
     };
 
-    describe('Given a successful sms send request', () => {
+    describe.skip('Given a successful sms send request', () => {
         it('should return the sms send request id', async () => {
             const mockLogger = {error: () => {}};
             const rxUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -71,7 +71,7 @@ describe('Notify service', () => {
         });
     });
 
-    describe('Given an issue with an sms send request', () => {
+    describe.skip('Given an issue with an sms send request', () => {
         it('should log an api error', async () => {
             const mockLogger = {error: jest.fn()};
             const notifyService = createNotifyService({

@@ -15,7 +15,21 @@ jest.doMock('../services/notify/message-bus', () => {
     return () => notifyServiceMock;
 });
 
-const mockedNotifyService = require('../services/notify/message-bus')();
+jest.doMock('../services/notify/sqs', () => {
+    const notifyServiceMock = {
+        sendEmail: jest.fn().mockResolvedValue({
+            some: 'email response'
+        }),
+        sendSms: jest.fn().mockResolvedValue({
+            some: 'sms response'
+        })
+    };
+
+    return () => notifyServiceMock;
+});
+
+// const mockedNotifyService = require('../services/notify/message-bus')();
+const mockedNotifyService = require('../services/notify/sqs')();
 const createQuestionnaireService = require('./questionnaire-service');
 
 describe('runOnCompleteActions', () => {

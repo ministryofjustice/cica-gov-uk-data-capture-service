@@ -31,12 +31,12 @@ spec:
             - name: DCS_SQS_ACCESS_KEY_ID
               valueFrom:
                 secretKeyRef:
-                  name: dsc-sqs-secret
+                  name: dcs-sqs-secret
                   key: access_key_id
             - name: DCS_SQS_SECRET_ACCESS_KEY
               valueFrom:
                 secretKeyRef:
-                  name: dsc-sqs-secret
+                  name: dcs-sqs-secret
                   key: secret_access_key
             - name: AWS_SQS_ARN
               valueFrom:

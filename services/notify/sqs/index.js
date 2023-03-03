@@ -16,7 +16,6 @@ function createSqsNotifyService(opts) {
     async function post(payload) {
         try {
             let sqs;
-
             const msgParams = {
                 QueueUrl: process.env.NOTIFY_AWS_SQS_ID,
                 MessageBody: JSON.stringify(payload)
@@ -30,13 +29,53 @@ function createSqsNotifyService(opts) {
             logger.info(response, 'NOTIFICATION SQS SERVICE CALLED');
             return response;
         } catch (err) {
-            logger.error({code: err.code}, 'EMAIL SEND FAILURE');
+            logger.error({code: err.code}, 'NOTIFY SEND FAILURE');
             return null;
         }
     }
 
+    async function sendSms(options) {
+        let response;
+        try {
+            response = await post({
+                templateId: options.templateId,
+                phoneNumber: options.phoneNumber,
+                personalisation: {
+                    caseReference: options.personalisation.caseReference
+                },
+                reference: null
+            });
+            logger.info({response}, 'SEND NOTIFY SUCCESS');
+        } catch (err) {
+            logger.error(err, 'SMS SEND FAILURE');
+            logger.info(response);
+        }
+        return response;
+    }
+
+    async function sendEmail(options) {
+        let response;
+        try {
+            response = await post({
+                templateId: options.templateId,
+                emailAddress: options.emailAddress,
+                personalisation: {
+                    caseReference: options.personalisation.caseReference
+                },
+                reference: null
+            });
+            logger.info({response}, 'SEND NOTIFY SUCCESS');
+        } catch (err) {
+            logger.error({code: err.code}, 'EMAIL SEND FAILURE');
+            logger.info(response);
+        }
+        return response;
+    }
+
     return Object.freeze({
-        post
+        post,
+        sendSms,
+        sendEmail
     });
 }
 
