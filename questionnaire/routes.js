@@ -58,7 +58,7 @@ router
 
 router
     .route('/:questionnaireId/sections/system/answers')
-    .post(permissions('create:system-answers'), async (req, res, next) => {
+    .post(permissions('create:questionnaires'), async (req, res, next) => {
         try {
             // There can only every be one "answers" block per section
             // TODO: handle multiple attempts to "create" answers

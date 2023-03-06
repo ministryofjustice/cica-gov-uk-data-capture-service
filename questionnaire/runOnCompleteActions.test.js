@@ -15,7 +15,7 @@ jest.doMock('../services/notify', () => {
     return () => notifyServiceMock;
 });
 
-const mockedNotifyService = require('../services/notify')();
+const mockedNotifyService = require('../services/notify/message-bus')();
 const createQuestionnaireService = require('./questionnaire-service');
 
 describe('runOnCompleteActions', () => {
