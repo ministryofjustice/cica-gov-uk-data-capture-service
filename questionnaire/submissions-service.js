@@ -1,7 +1,8 @@
 'use strict';
 
-const createMessageBusCaller = require('../services/messaging/message-bus');
+// const createMessageBusCaller = require('../services/messaging/message-bus');
 const createQuestionnaireDAL = require('./questionnaire-dal');
+const createSqsService = require('../services/messaging/sqs');
 
 function createSubmissionService({logger}) {
     const db = createQuestionnaireDAL({logger});
@@ -16,11 +17,21 @@ function createSubmissionService({logger}) {
 
     async function postFailedSubmissions() {
         const questionnaireIds = await getQuestionnaireIdsBySubmissionStatus('FAILED');
-        const messageBusCaller = createMessageBusCaller({logger});
+
+        // AMQ implementation
+        // const messageBusCaller = createMessageBusCaller({logger});
+
+        // SQS implementation
+        const sqsService = createSqsService({logger});
+
         const promises = questionnaireIds.map(async id => {
             await updateQuestionnaireSubmissionStatus(id, 'IN_PROGRESS');
             try {
-                await messageBusCaller.post('SubmissionQueue', {
+                // await messageBusCaller.post('SubmissionQueue', {
+                //     applicationId: id
+                // });
+
+                await sqsService.post({
                     applicationId: id
                 });
                 return {id, resubmitted: true};
