@@ -93,6 +93,12 @@ jest.doMock('../services/messaging/message-bus/index.js', () =>
         post: () => postSubmissionQueueResponse
     }))
 );
+jest.doMock('../services/notify/sqs/index.js', () =>
+    jest.fn(() => ({
+        sendEmail: () => 'ok',
+        sendSms: () => 'ok'
+    }))
+);
 
 // app has an indirect dependency on questionnaire-dal.js, require it after
 // the mock so that it references the mocked version
