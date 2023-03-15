@@ -133,8 +133,8 @@ function createDatasetService({
         return Array.from(dataset.values());
     }
 
-    async function getResource(questionnaireId, resourceVersion = '1.0.0') {
-        const questionnaireDefinition = await db.getQuestionnaire(questionnaireId);
+    async function getResource(questionnaireId, userId, resourceVersion = '1.0.0') {
+        const questionnaireDefinition = await db.getQuestionnaire(questionnaireId, userId);
         const questionnaire = createQuestionnaireHelper({questionnaireDefinition});
 
         if (resourceVersion === '1.0.0') {

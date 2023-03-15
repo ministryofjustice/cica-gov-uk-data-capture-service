@@ -17,6 +17,7 @@ router
 
             const resourceCollection = await datasetService.getResource(
                 questionnaireId,
+                req.header('On-behalf-of'),
                 resourceVersion
             );
 

@@ -10,7 +10,7 @@ const router = express.Router();
 router.route('/metadata').get(permissions('read:questionnaires'), async (req, res, next) => {
     try {
         const metadataService = createMetadataService({logger: req.log});
-        const metaData = await metadataService.getMetadata(req.query);
+        const metaData = await metadataService.getMetadata(req.header('On-behalf-of'), req.query);
         res.status(200).json(metaData);
     } catch (err) {
         next(err);

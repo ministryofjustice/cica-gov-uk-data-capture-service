@@ -9,8 +9,8 @@ function createMetadataService({
 } = {}) {
     const db = createQuestionnaireDAL({logger});
 
-    async function getMetadata(query = {}) {
-        const results = await db.getQuestionnaireMetadata(query);
+    async function getMetadata(userId, query = {}) {
+        const results = await db.getQuestionnaireMetadata(query, userId);
 
         // Add expiry time & map
         const metadata = results.map(data => {

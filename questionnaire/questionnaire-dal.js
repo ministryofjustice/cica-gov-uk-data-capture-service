@@ -46,13 +46,13 @@ function questionnaireDAL(spec) {
         return result;
     }
 
-    async function getQuestionnaire(questionnaireId) {
+    async function getQuestionnaire(questionnaireId, userId) {
         let questionnaire;
 
         try {
             questionnaire = await db.query(
-                'SELECT questionnaire FROM questionnaire WHERE id = $1',
-                [questionnaireId]
+                "SELECT questionnaire FROM questionnaire WHERE id = $1 AND questionnaire -> 'answers' -> 'user' ->> 'user-id' = $2",
+                [questionnaireId, userId]
             );
 
             if (questionnaire.rowCount === 0) {
@@ -177,10 +177,10 @@ function questionnaireDAL(spec) {
         return result;
     }
 
-    async function getQuestionnaireMetadata(query) {
+    async function getQuestionnaireMetadata(query, userId) {
         let result;
         try {
-            if ('filter' in query && 'user-id' in query.filter) {
+            /* if ('filter' in query && 'user-id' in query.filter) {
                 result = await db.query(
                     `SELECT id, questionnaire -> 'meta' -> 'questionnaireDocumentVersion' AS "questionnaire-document-version", created, modified, submission_status, questionnaire -> 'answers' -> 'user' -> 'user-id' AS "user-id" FROM questionnaire WHERE questionnaire -> 'answers' -> 'user' ->> 'user-id' = $1`,
                     [query.filter['user-id']]
@@ -193,11 +193,12 @@ function questionnaireDAL(spec) {
                         `Metadata resource does not exist for user id "${query.filter['user-id']}"`
                     );
                 }
-            } else {
-                result = await db.query(
-                    "SELECT id, questionnaire -> 'meta' -> 'questionnaireDocumentVersion' AS \"questionnaire-document-version\", created, modified, submission_status, questionnaire -> 'answers' -> 'user' -> 'user-id' AS \"user-id\" FROM questionnaire"
-                );
-            }
+            } else { */
+            result = await db.query(
+                `SELECT id, questionnaire -> 'meta' -> 'questionnaireDocumentVersion' AS "questionnaire-document-version", created, modified, submission_status, questionnaire -> 'answers' -> 'user' -> 'user-id' AS "user-id" FROM questionnaire WHERE questionnaire -> 'answers' -> 'user' ->> 'user-id' = $1`,
+                [userId]
+            );
+            // }
         } catch (err) {
             throw err;
         }

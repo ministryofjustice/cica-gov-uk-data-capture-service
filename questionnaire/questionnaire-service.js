@@ -34,7 +34,7 @@ function createQuestionnaireService({
 
     ajv.addFormat('mobile-uk', ajvFormatsMobileUk);
 
-    async function createQuestionnaire(templateName) {
+    async function createQuestionnaire(templateName, userId) {
         if (!(templateName in templates)) {
             throw new VError(
                 {
@@ -47,15 +47,17 @@ function createQuestionnaireService({
         const uuidV4 = uuidv4();
         const questionnaire = templates[templateName](uuidV4);
 
-        await db.createQuestionnaire(uuidV4, questionnaire);
+        questionnaire.answers.user = {'user-id': userId};
+
+        await db.createQuestionnaire(uuidV4, questionnaire, userId);
 
         return {
             data: questionnaireResource({questionnaire})
         };
     }
 
-    async function getQuestionnaire(questionnaireId) {
-        const questionnaire = await db.getQuestionnaire(questionnaireId);
+    async function getQuestionnaire(questionnaireId, userId) {
+        const questionnaire = await db.getQuestionnaire(questionnaireId, userId);
         return questionnaire;
     }
 
@@ -100,8 +102,8 @@ function createQuestionnaireService({
         return section;
     }
 
-    async function retrieveCaseReferenceNumber(questionnaireId) {
-        const questionnaire = await getQuestionnaire(questionnaireId);
+    async function retrieveCaseReferenceNumber(questionnaireId, userId) {
+        const questionnaire = await getQuestionnaire(questionnaireId, userId);
         const caseReference =
             questionnaire.answers &&
             questionnaire.answers.system &&
@@ -140,7 +142,7 @@ function createQuestionnaireService({
         }
     }
 
-    async function getSubmissionResponseData(questionnaireId, isPostRequest = false) {
+    async function getSubmissionResponseData(questionnaireId, userId, isPostRequest = false) {
         let submissionStatus = await getQuestionnaireSubmissionStatus(questionnaireId);
 
         // kick things off if it is a POST request and it is not yet started.
@@ -152,7 +154,7 @@ function createQuestionnaireService({
         }
 
         const status = await getQuestionnaireSubmissionStatus(questionnaireId);
-        const caseReferenceNumber = await retrieveCaseReferenceNumber(questionnaireId);
+        const caseReferenceNumber = await retrieveCaseReferenceNumber(questionnaireId, userId);
         const submitted = !!caseReferenceNumber;
 
         const response = {
@@ -181,8 +183,8 @@ function createQuestionnaireService({
         return answerResource;
     }
 
-    async function getAnswers(questionnaireId) {
-        const questionnaire = await getQuestionnaire(questionnaireId);
+    async function getAnswers(questionnaireId, userId) {
+        const questionnaire = await getQuestionnaire(questionnaireId, userId);
         const resourceCollection = questionnaire.progress.reduce((acc, sectionAnswersId) => {
             // Does this section have answers
             if (questionnaire.answers[sectionAnswersId]) {
@@ -195,14 +197,14 @@ function createQuestionnaireService({
         return resourceCollection;
     }
 
-    async function createAnswers(questionnaireId, sectionId, answers) {
+    async function createAnswers(questionnaireId, sectionId, answers, userId) {
         // Make a copy of the supplied answers. These will be returned if they fail validation
         const rawAnswers = JSON.parse(JSON.stringify(answers));
         let answerResource;
 
         try {
             // 1 - get questionnaire instance
-            const questionnaireDefinition = await getQuestionnaire(questionnaireId);
+            const questionnaireDefinition = await getQuestionnaire(questionnaireId, userId);
 
             // 2 - is the section allowed to be posted to e.g. is it in their progress
             const qRouter = createQRouter(questionnaireDefinition);
@@ -270,8 +272,8 @@ function createQuestionnaireService({
         return answerResource;
     }
 
-    async function validateAllAnswers(questionnaireId) {
-        const questionnaire = await getQuestionnaire(questionnaireId);
+    async function validateAllAnswers(questionnaireId, userId) {
+        const questionnaire = await getQuestionnaire(questionnaireId, userId);
 
         // get the section names from the progress array.
         // these are the only sections that we need to validate
@@ -298,7 +300,7 @@ function createQuestionnaireService({
             const validationError = new VError({
                 name: 'JSONSchemaValidationErrors',
                 info: {
-                    submissions: await getSubmissionResponseData(questionnaireId),
+                    submissions: await getSubmissionResponseData(questionnaireId, userId),
                     schemaErrors: validationErrors
                 }
             });
@@ -408,9 +410,9 @@ function createQuestionnaireService({
         return sessionResource;
     }
 
-    async function getProgressEntries(questionnaireId, query) {
+    async function getProgressEntries(questionnaireId, query, userId) {
         // 1 - get questionnaire instance
-        const questionnaire = await getQuestionnaire(questionnaireId);
+        const questionnaire = await getQuestionnaire(questionnaireId, userId);
         // 2 - get router
         const qRouter = createQRouter(questionnaire);
         // 3 - filter or paginate progress entries if required
@@ -559,8 +561,8 @@ function createQuestionnaireService({
         return actionResults;
     }
 
-    async function getAnswersBySectionId(questionnaireId, sectionId) {
-        const questionnaire = await getQuestionnaire(questionnaireId);
+    async function getAnswersBySectionId(questionnaireId, sectionId, userId) {
+        const questionnaire = await getQuestionnaire(questionnaireId, userId);
 
         if (questionnaire.progress.includes(sectionId)) {
             return {

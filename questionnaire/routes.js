@@ -31,7 +31,10 @@ router.route('/').post(permissions('create:questionnaires'), async (req, res, ne
         const {templateName} = req.body.data.attributes;
 
         const questionnaireService = createQuestionnaireService({logger: req.log});
-        const response = await questionnaireService.createQuestionnaire(templateName);
+        const response = await questionnaireService.createQuestionnaire(
+            templateName,
+            req.header('On-behalf-of')
+        );
 
         res.status(201).json(response);
     } catch (err) {
@@ -48,7 +51,10 @@ router
         try {
             const {questionnaireId} = req.params;
             const questionnaireService = createQuestionnaireService({logger: req.log});
-            const resourceCollection = await questionnaireService.getAnswers(questionnaireId);
+            const resourceCollection = await questionnaireService.getAnswers(
+                questionnaireId,
+                req.header('On-behalf-of')
+            );
 
             res.status(200).json({
                 data: resourceCollection
@@ -69,7 +75,8 @@ router
             const response = await questionnaireService.createAnswers(
                 req.params.questionnaireId,
                 'system',
-                answers
+                answers,
+                req.header('On-behalf-of')
             );
 
             await questionnaireService.updateQuestionnaireSubmissionStatus(
@@ -78,7 +85,8 @@ router
             );
 
             const questionnireDefinition = await questionnaireService.getQuestionnaire(
-                req.params.questionnaireId
+                req.params.questionnaireId,
+                req.header('On-behalf-of')
             );
 
             // Currently, fire and forget. No await required
@@ -101,7 +109,8 @@ router
             const response = await questionnaireService.createAnswers(
                 req.params.questionnaireId,
                 req.params.sectionId,
-                answers
+                answers,
+                req.header('On-behalf-of')
             );
             res.status(201).json(response);
         } catch (err) {
@@ -113,7 +122,8 @@ router
             const questionnaireService = createQuestionnaireService({logger: req.log});
             const response = await questionnaireService.getAnswersBySectionId(
                 req.params.questionnaireId,
-                req.params.sectionId
+                req.params.sectionId,
+                req.header('On-behalf-of')
             );
             res.status(200).json(response);
         } catch (err) {
@@ -142,7 +152,10 @@ router
                 throw err;
             }
 
-            const response = await questionnaireService.getSubmissionResponseData(questionnaireId);
+            const response = await questionnaireService.getSubmissionResponseData(
+                questionnaireId,
+                req.header('On-behalf-of')
+            );
 
             res.status(200).json(response);
         } catch (err) {
@@ -153,7 +166,10 @@ router
         try {
             const {questionnaireId} = req.params;
             const questionnaireService = createQuestionnaireService({logger: req.log});
-            const questionnaire = await questionnaireService.getQuestionnaire(questionnaireId);
+            const questionnaire = await questionnaireService.getQuestionnaire(
+                questionnaireId,
+                req.header('On-behalf-of')
+            );
 
             if (!questionnaire) {
                 const err = Error(
@@ -201,12 +217,15 @@ router
             }
 
             // check all answers are correct.
-            await questionnaireService.validateAllAnswers(questionnaireId);
+            await questionnaireService.validateAllAnswers(
+                questionnaireId,
+                req.header('On-behalf-of')
+            );
 
             // TODO: refactor `getSubmissionResponseData` to be more intuitive.
             const response = await questionnaireService.getSubmissionResponseData(
                 questionnaireId,
-                true
+                req.header('On-behalf-of')
             );
 
             res.status(201).json(response);
@@ -223,7 +242,8 @@ router
             const questionnaireService = createQuestionnaireService({logger: req.log});
             const progressEntries = await questionnaireService.getProgressEntries(
                 questionnaireId,
-                req.query
+                req.query,
+                req.header('On-behalf-of')
             );
 
             res.status(200).json(progressEntries);
