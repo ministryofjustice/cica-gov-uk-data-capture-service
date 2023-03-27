@@ -24,13 +24,7 @@ function createMetadataService({
                     modified: data.modified,
                     'submission-status': data.submission_status,
                     'user-id': data.userId,
-                    expires: new Date(
-                        new Date(
-                            new Date(data.created).setUTCDate(
-                                new Date(data.created).getUTCDate() + 31
-                            )
-                        ).setUTCHours(0, 0, 0, 0)
-                    ).toISOString()
+                    expires: data.expires
                 }
             };
         });

@@ -36,6 +36,11 @@
                 "summary": "Create a new questionnaire from a specified template",
                 "description": "Create a questionnaire",
                 "operationId": "createQuestionnaires",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/owner-id"
+                    }
+                ],
                 "x-scopes": ["create:questionnaires"],
                 "x-requests": {
                     "400": {
@@ -142,6 +147,9 @@
                     },
                     {
                         "$ref": "#/components/parameters/sectionId"
+                    },
+                    {
+                        "$ref": "#/components/parameters/owner-id"
                     }
                 ],
                 "x-scopes": ["create:system-answers", "update:questionnaires"],
@@ -241,6 +249,9 @@
                     },
                     {
                         "$ref": "#/components/parameters/sectionId"
+                    },
+                    {
+                        "$ref": "#/components/parameters/owner-id"
                     }
                 ],
                 "x-scopes": ["read:questionnaires"],
@@ -318,6 +329,9 @@
                 "parameters": [
                     {
                         "$ref": "#/components/parameters/questionnaireId"
+                    },
+                    {
+                        "$ref": "#/components/parameters/owner-id"
                     }
                 ],
                 "x-scopes": ["read:questionnaires"],
@@ -458,6 +472,9 @@
                 "parameters": [
                     {
                         "$ref": "#/components/parameters/questionnaireId"
+                    },
+                    {
+                        "$ref": "#/components/parameters/owner-id"
                     }
                 ],
                 "x-scopes": ["update:questionnaires"],
@@ -565,6 +582,9 @@
                     },
                     {
                         "$ref": "#/components/parameters/page"
+                    },
+                    {
+                        "$ref": "#/components/parameters/owner-id"
                     }
                 ],
                 "x-scopes": ["read:progress-entries"],
@@ -989,6 +1009,9 @@
                     },
                     {
                         "$ref": "#/components/parameters/filter-metadata"
+                    },
+                    {
+                        "$ref": "#/components/parameters/owner-id"
                     }
                 ],
                 "x-scopes": ["read:questionnaires"],
@@ -1142,6 +1165,15 @@
                 "example": {
                     "before": "p-applicant-declaration"
                 }
+            },
+            "owner-id": {
+                "in": "header",
+                "name": "on-behalf-of",
+                "description": "Specify the owner of the resource.",
+                "schema": {
+                    "type": "string"
+                },
+                "example": "urn:fdc:gov.uk:2022:abcde12345ABCDE12345ABCDE12345abcde12345/=_-"
             }
         },
         "responses": {
