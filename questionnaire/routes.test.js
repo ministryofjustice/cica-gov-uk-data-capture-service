@@ -188,3 +188,39 @@ describe('Issue: https://github.com/cdimascio/express-openapi-validator/issues/7
         });
     });
 });
+
+describe('Requests made on resources with an owner MUST include "on-behalf-of" header', () => {
+    describe('POST /questionnaires', () => {
+        it('should fail validation if no "on-behalf-of" header is included', async () => {
+            // mock the DAL db integration
+            jest.doMock('./questionnaire-dal.js', () =>
+                jest.fn(() => ({
+                    createQuestionnaire: () => undefined
+                }))
+            );
+            // eslint-disable-next-line global-require
+            const app = require('../app');
+            const tokens = {
+                'create:questionnaires': '*** CREATE ME ***'
+            };
+
+            const response = await request(app)
+                .post('/api/v1/questionnaires')
+                .set('Authorization', `Bearer ${tokens['create:questionnaires']}`)
+                .set('Content-Type', 'application/vnd.api+json')
+                .send({
+                    data: {
+                        type: 'questionnaires',
+                        attributes: {
+                            templateName: 'sexual-assault'
+                        }
+                    }
+                });
+            expect(response.body).toHaveProperty('errors');
+            expect(response.body.errors[0].status).toEqual(400);
+            expect(response.body.errors[0].detail).toEqual(
+                "should have required property 'on-behalf-of'"
+            );
+        });
+    });
+});
