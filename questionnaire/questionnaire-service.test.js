@@ -339,4 +339,41 @@ describe('Questionnaire Service', () => {
             });
         });
     });
+
+    describe('createQuestionnaire', () => {
+        const questionnaireService = createQuestionnaireService({
+            logger: () => 'Logged from createQuestionnaire test',
+            createQuestionnaireDAL: () => ({
+                createQuestionnaire: () => {
+                    return 'ok!';
+                }
+            })
+        });
+
+        it('Should create a questionnaire', async () => {
+            const templatename = 'sexual-assault';
+            const owner = {
+                id: 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6',
+                isAuthenticated: true
+            };
+
+            const actual = await questionnaireService.createQuestionnaire(templatename, owner);
+
+            expect(actual.data).toHaveProperty('id');
+            expect(actual.data).toHaveProperty('type');
+            expect(actual.data).toHaveProperty('attributes');
+        });
+
+        it('Should error if templateName not found', async () => {
+            const templatename = 'not-a-template';
+            const owner = {
+                id: 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6',
+                isAuthenticated: true
+            };
+
+            await expect(
+                questionnaireService.createQuestionnaire(templatename, owner)
+            ).rejects.toThrow('Template "not-a-template" does not exist');
+        });
+    });
 });

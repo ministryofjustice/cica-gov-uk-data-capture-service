@@ -85,7 +85,7 @@ describe('Answering and retrieving the next section', () => {
             });
             const coercedType = typeof submitAnswerRes.body.data.attributes[
                 'q-applicant-fatal-claim'
-                ];
+            ];
 
             expect(submitAnswerRes.statusCode).toBe(201);
             expect(coercedType).toEqual('boolean');

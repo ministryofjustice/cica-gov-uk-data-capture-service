@@ -9,11 +9,11 @@ function questionnaireDAL(spec) {
     const {logger} = spec;
     const db = createDBQuery({logger});
 
-    async function createQuestionnaire(uuidV4, questionnaire) {
+    async function createQuestionnaire(uuidV4, questionnaire, expires = null) {
         try {
             await db.query(
-                'INSERT INTO questionnaire (id, questionnaire, created, modified) VALUES($1, $2, current_timestamp, current_timestamp)',
-                [uuidV4, questionnaire]
+                'INSERT INTO questionnaire (id, questionnaire, created, modified, expires) VALUES($1, $2, current_timestamp, current_timestamp, $3)',
+                [uuidV4, questionnaire, expires]
             );
         } catch (err) {
             throw err;

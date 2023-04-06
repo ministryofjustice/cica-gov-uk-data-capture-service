@@ -34,7 +34,7 @@ function createQuestionnaireService({
 
     ajv.addFormat('mobile-uk', ajvFormatsMobileUk);
 
-    async function createQuestionnaire(templateName) {
+    async function createQuestionnaire(templateName, owner) {
         if (!(templateName in templates)) {
             throw new VError(
                 {
@@ -46,6 +46,11 @@ function createQuestionnaireService({
 
         const uuidV4 = uuidv4();
         const questionnaire = templates[templateName](uuidV4);
+
+        questionnaire.answers.owner = {
+            'owner-id': owner.id,
+            isAuthenticated: owner.isAuthenticated
+        };
 
         await db.createQuestionnaire(uuidV4, questionnaire);
 
