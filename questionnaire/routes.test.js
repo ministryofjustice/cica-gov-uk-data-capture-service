@@ -9,26 +9,6 @@ beforeEach(() => {
 });
 
 describe('POST /questionnaires', () => {
-    // mock the questionnaire service
-    jest.doMock('./questionnaire-service.js', () =>
-        jest.fn(() => ({
-            createQuestionnaire: () => {
-                return {
-                    type: 'questionnaires',
-                    id: '285cb104-0c15-4a9c-9840-cb1007f098fb',
-                    attributes: {
-                        id: '285cb104-0c15-4a9c-9840-cb1007f098fb',
-                        type: 'questionnaire',
-                        version: '0.0.0',
-                        routes: {
-                            initial: 'a route'
-                        }
-                    }
-                };
-            }
-        }))
-    );
-    const app = require('../app');
     const token =
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJkYXRhLWNhcHR1cmUtc2VydmljZSIsImlzcyI6IiQuYXVkIiwianRpIjoiYWE3Nzk1ZmItNDg2Yy00NWEwLWJkNGMtZTMwNjFlNmNjNDk2Iiwic3ViIjoiY2ljYS13ZWIiLCJzY29wZSI6ImNyZWF0ZTpxdWVzdGlvbm5haXJlcyByZWFkOnF1ZXN0aW9ubmFpcmVzIHVwZGF0ZTpxdWVzdGlvbm5haXJlcyBkZWxldGU6cXVlc3Rpb25uYWlyZXMgcmVhZDpwcm9ncmVzcy1lbnRyaWVzIHJlYWQ6YW5zd2VycyIsImlhdCI6MTY4MDcwNTI3N30.OFXEk5CjaMZJVmS8Ioke2l2AlffayMCvIWZ2DwJCu2o';
 
@@ -50,7 +30,6 @@ describe('POST /questionnaires', () => {
                     }
                 }
             });
-        console.log(response.body);
         expect(response.body).toHaveProperty('errors');
         expect(response.body.errors[0].status).toEqual(401);
         expect(response.body.errors[0].detail).toEqual('jwt malformed');
