@@ -26,7 +26,7 @@
                             "required": ["id", "isAuthenticated"],
                             "properties": {
                                 "id": {
-                                    "type": "string"
+                                    "$ref": "../../../../models/definitions/owner-id.json"
                                 },
                                 "isAuthenticated": {
                                     "type": "boolean"

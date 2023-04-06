@@ -43,18 +43,6 @@
                 "summary": "Create a new questionnaire from a specified template",
                 "description": "Create a questionnaire",
                 "operationId": "createQuestionnaires",
-                "parameters": [
-                    {
-                        "in": "header",
-                        "name": "on-behalf-of",
-                        "required": true,
-                        "description": "Specify the owner of the resource.",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "example": "urn:fdc:gov.uk:2022:abcde12345ABCDE12345ABCDE12345abcde12345/=_-"
-                    }
-                ],
                 "x-scopes": ["create:questionnaires"],
                 "x-requests": {
                     "400": {
@@ -136,7 +124,10 @@
                                                         "required": ["id", "isAuthenticated"],
                                                         "properties": {
                                                             "id": {
-                                                                "type": "string"
+                                                                "title": "Owner Id",
+                                                                "type": "string",
+                                                                "format": "uri",
+                                                                "pattern": "^urn:(uuid|fdc:gov.uk:2022):"
                                                             },
                                                             "isAuthenticated": {
                                                                 "type": "boolean"
@@ -155,7 +146,7 @@
                                     "attributes": {
                                         "templateName": "sexual-assault",
                                         "owner": {
-                                            "id": "an-owner-id",
+                                            "id": "urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6",
                                             "isAuthenticated": true
                                         }
                                     }
@@ -3480,15 +3471,17 @@
                     "before": "p-applicant-declaration"
                 }
             },
-            "owner-id": {
+            "onBehalfOf": {
                 "in": "header",
                 "name": "on-behalf-of",
                 "required": true,
                 "description": "Specify the owner of the resource.",
                 "schema": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "uri",
+                    "pattern": "^urn:(uuid|fdc:gov.uk:2022):"
                 },
-                "example": "urn:fdc:gov.uk:2022:abcde12345ABCDE12345ABCDE12345abcde12345/=_-"
+                "example": "urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
             }
         },
         "responses": {
