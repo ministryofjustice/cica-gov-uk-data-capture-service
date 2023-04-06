@@ -15,9 +15,23 @@
                 "attributes": {
                     "type": "object",
                     "additionalProperties": false,
+                    "required": ["templateName", "owner"],
                     "properties": {
                         "templateName": {
                             "$ref": "../../../../models/definitions/questionnaire-template-name.json"
+                        },
+                        "owner": {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "required": ["id", "isAuthenticated"],
+                            "properties": {
+                                "id": {
+                                    "type": "string"
+                                },
+                                "isAuthenticated": {
+                                    "type": "boolean"
+                                }
+                            }
                         }
                     }
                 }

@@ -43,6 +43,18 @@
                 "summary": "Create a new questionnaire from a specified template",
                 "description": "Create a questionnaire",
                 "operationId": "createQuestionnaires",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "on-behalf-of",
+                        "required": true,
+                        "description": "Specify the owner of the resource.",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "urn:fdc:gov.uk:2022:abcde12345ABCDE12345ABCDE12345abcde12345/=_-"
+                    }
+                ],
                 "x-scopes": ["create:questionnaires"],
                 "x-requests": {
                     "400": {
@@ -52,7 +64,11 @@
                                     "example": {
                                         "data": {
                                             "THIS-IS-NOT-A-VALID-PROPERTY-NAME": {
-                                                "templateName": "sexual-assault"
+                                                "templateName": "sexual-assault",
+                                                "owner": {
+                                                    "id": "an-owner-id",
+                                                    "isAuthenticated": true
+                                                }
                                             }
                                         }
                                     }
@@ -73,7 +89,11 @@
                                     "example": {
                                         "data": {
                                             "attributes": {
-                                                "templateName": "this-does-not-exist"
+                                                "templateName": "this-does-not-exist",
+                                                "owner": {
+                                                    "id": "an-owner-id",
+                                                    "isAuthenticated": true
+                                                }
                                             }
                                         }
                                     }
@@ -103,11 +123,25 @@
                                             "attributes": {
                                                 "type": "object",
                                                 "additionalProperties": false,
+                                                "required": ["templateName", "owner"],
                                                 "properties": {
                                                     "templateName": {
                                                         "title": "Questionnaire template name",
                                                         "type": "string",
                                                         "pattern": "^[a-z]{1,20}(?:-[a-z]{1,20}){0,10}$"
+                                                    },
+                                                    "owner": {
+                                                        "type": "object",
+                                                        "additionalProperties": false,
+                                                        "required": ["id", "isAuthenticated"],
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "string"
+                                                            },
+                                                            "isAuthenticated": {
+                                                                "type": "boolean"
+                                                            }
+                                                        }
                                                     }
                                                 }
                                             }
@@ -119,7 +153,11 @@
                                 "data": {
                                     "type": "questionnaires",
                                     "attributes": {
-                                        "templateName": "sexual-assault"
+                                        "templateName": "sexual-assault",
+                                        "owner": {
+                                            "id": "an-owner-id",
+                                            "isAuthenticated": true
+                                        }
                                     }
                                 }
                             }
@@ -3441,6 +3479,16 @@
                 "example": {
                     "before": "p-applicant-declaration"
                 }
+            },
+            "owner-id": {
+                "in": "header",
+                "name": "on-behalf-of",
+                "required": true,
+                "description": "Specify the owner of the resource.",
+                "schema": {
+                    "type": "string"
+                },
+                "example": "urn:fdc:gov.uk:2022:abcde12345ABCDE12345ABCDE12345abcde12345/=_-"
             }
         },
         "responses": {

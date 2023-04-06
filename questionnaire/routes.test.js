@@ -188,3 +188,102 @@ describe('Issue: https://github.com/cdimascio/express-openapi-validator/issues/7
         });
     });
 });
+
+describe('POST /questionnaires', () => {
+    // mock the DAL db integration
+    jest.doMock('./questionnaire-dal.js', () =>
+        jest.fn(() => ({
+            createQuestionnaire: () => undefined
+        }))
+    );
+    // eslint-disable-next-line global-require
+    const app = require('../app');
+    const token =
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJkYXRhLWNhcHR1cmUtc2VydmljZSIsImlzcyI6IiQuYXVkIiwianRpIjoiYWE3Nzk1ZmItNDg2Yy00NWEwLWJkNGMtZTMwNjFlNmNjNDk2Iiwic3ViIjoiY2ljYS13ZWIiLCJzY29wZSI6ImNyZWF0ZTpxdWVzdGlvbm5haXJlcyByZWFkOnF1ZXN0aW9ubmFpcmVzIHVwZGF0ZTpxdWVzdGlvbm5haXJlcyBkZWxldGU6cXVlc3Rpb25uYWlyZXMgcmVhZDpwcm9ncmVzcy1lbnRyaWVzIHJlYWQ6YW5zd2VycyIsImlhdCI6MTY4MDcwNTI3N30.OFXEk5CjaMZJVmS8Ioke2l2AlffayMCvIWZ2DwJCu2o';
+
+    describe('Requests made on resources with an owner MUST include "on-behalf-of" header', () => {
+        it('should fail validation if "on-behalf-of" header is NOT included', async () => {
+            const response = await request(app)
+                .post('/api/v1/questionnaires')
+                .set('Authorization', `Bearer ${token}`)
+                .set('Content-Type', 'application/vnd.api+json')
+                .send({
+                    data: {
+                        type: 'questionnaires',
+                        attributes: {
+                            templateName: 'sexual-assault'
+                        }
+                    }
+                });
+            expect(response.body).toHaveProperty('errors');
+            expect(response.body.errors[0].status).toEqual(400);
+            expect(response.body.errors[0].detail).toEqual(
+                "should have required property 'on-behalf-of'"
+            );
+        });
+
+        it('should return status code 201 if "on-behalf-of" header is included', async () => {
+            const response = await request(app)
+                .post('/api/v1/questionnaires')
+                .set('Authorization', `Bearer ${token}`)
+                .set('on-behalf-of', `a-valid-owner-id`)
+                .set('Content-Type', 'application/vnd.api+json')
+                .send({
+                    data: {
+                        type: 'questionnaires',
+                        attributes: {
+                            templateName: 'sexual-assault',
+                            owner: {
+                                id: 'a-valid-owner-id',
+                                isAuthenticated: true
+                            }
+                        }
+                    }
+                });
+            expect(response.statusCode).toEqual(201);
+        });
+    });
+
+    describe('Requests made MUST include owner data', () => {
+        it('should fail validation if owner data is NOT included in the request body', async () => {
+            const response = await request(app)
+                .post('/api/v1/questionnaires')
+                .set('Authorization', `Bearer ${token}`)
+                .set('on-behalf-of', `a-valid-owner-id`)
+                .set('Content-Type', 'application/vnd.api+json')
+                .send({
+                    data: {
+                        type: 'questionnaires',
+                        attributes: {
+                            templateName: 'sexual-assault'
+                        }
+                    }
+                });
+            console.log(response.body.errors[0].detail);
+            expect(response.body).toHaveProperty('errors');
+            expect(response.body.errors[0].status).toEqual(400);
+            expect(response.body.errors[0].detail).toEqual("should have required property 'owner'");
+        });
+
+        it('should return status code 201 if owner data is included in the request body', async () => {
+            const response = await request(app)
+                .post('/api/v1/questionnaires')
+                .set('Authorization', `Bearer ${token}`)
+                .set('on-behalf-of', `a-valid-owner-id`)
+                .set('Content-Type', 'application/vnd.api+json')
+                .send({
+                    data: {
+                        type: 'questionnaires',
+                        attributes: {
+                            templateName: 'sexual-assault',
+                            owner: {
+                                id: 'a-valid-owner-id',
+                                isAuthenticated: true
+                            }
+                        }
+                    }
+                });
+            expect(response.statusCode).toEqual(201);
+        });
+    });
+});
