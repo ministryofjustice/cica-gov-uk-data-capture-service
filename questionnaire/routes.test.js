@@ -190,10 +190,23 @@ describe('Issue: https://github.com/cdimascio/express-openapi-validator/issues/7
 });
 
 describe('POST /questionnaires', () => {
-    // mock the DAL db integration
-    jest.doMock('./questionnaire-dal.js', () =>
+    // mock the questionnaire service
+    jest.doMock('./questionnaire-service.js', () =>
         jest.fn(() => ({
-            createQuestionnaire: () => undefined
+            createQuestionnaire: () => {
+                return {
+                    type: 'questionnaires',
+                    id: '285cb104-0c15-4a9c-9840-cb1007f098fb',
+                    attributes: {
+                        id: '285cb104-0c15-4a9c-9840-cb1007f098fb',
+                        type: 'questionnaire',
+                        version: '0.0.0',
+                        routes: {
+                            initial: 'a route'
+                        }
+                    }
+                };
+            }
         }))
     );
     // eslint-disable-next-line global-require
@@ -259,7 +272,6 @@ describe('POST /questionnaires', () => {
                         }
                     }
                 });
-            console.log(response.body.errors[0].detail);
             expect(response.body).toHaveProperty('errors');
             expect(response.body.errors[0].status).toEqual(400);
             expect(response.body.errors[0].detail).toEqual("should have required property 'owner'");
