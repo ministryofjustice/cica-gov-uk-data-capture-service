@@ -1,3 +1,5 @@
+/* eslint-disable global-require */
+
 'use strict';
 
 const request = require('supertest');
@@ -10,7 +12,6 @@ describe('/questionnaires/{questionnaireId}/progress-entries?filter[position]=cu
     describe('get', () => {
         describe('200', () => {
             it('should replace JSON Pointers with the value they reference', async () => {
-                // eslint-disable-next-line global-require
                 const mockResponse = require('./test-fixtures/res/questionnaireCompleteWithCRN.json');
 
                 // mock the DAL db integration
@@ -28,7 +29,6 @@ describe('/questionnaires/{questionnaireId}/progress-entries?filter[position]=cu
                 };
                 // app has an indirect dependency on questionnaire-dal.js, require it after
                 // the mock so that it references the mocked version
-                // eslint-disable-next-line global-require
                 const app = require('../app');
                 const res = await request(app)
                     .get(
@@ -50,7 +50,6 @@ describe('/questionnaires/{questionnaireId}/progress-entries?filter[position]=cu
 describe('Answering and retrieving the next section', () => {
     describe('Given a valid answer', () => {
         it('should coerce answer values', async () => {
-            // eslint-disable-next-line global-require
             const mockQuestionnaire = require('./test-fixtures/res/transition-check.json');
 
             // mock the DAL db integration
@@ -68,7 +67,6 @@ describe('Answering and retrieving the next section', () => {
             };
             // app has an indirect dependency on questionnaire-dal.js, require it after
             // the mock so that it references the mocked version
-            // eslint-disable-next-line global-require
             const app = require('../app');
 
             function submitSectionAnswer(answer) {
@@ -94,7 +92,6 @@ describe('Answering and retrieving the next section', () => {
         });
 
         it('should return the next section', async () => {
-            // eslint-disable-next-line global-require
             let mockQuestionnaire = require('./test-fixtures/res/transition-check.json');
 
             // mock the DAL db integration
@@ -117,7 +114,6 @@ describe('Answering and retrieving the next section', () => {
             };
             // app has an indirect dependency on questionnaire-dal.js, require it after
             // the mock so that it references the mocked version
-            // eslint-disable-next-line global-require
             const app = require('../app');
 
             async function getCurrentSectionId() {
@@ -156,7 +152,6 @@ describe('Answering and retrieving the next section', () => {
 describe('Issue: https://github.com/cdimascio/express-openapi-validator/issues/734', () => {
     describe('Back link should work with broken implementation', () => {
         it('should return the previous section', async () => {
-            // eslint-disable-next-line global-require
             const mockResponse = require('./test-fixtures/res/questionnaireCompleteWithCRN.json');
 
             // mock the DAL db integration
@@ -175,7 +170,6 @@ describe('Issue: https://github.com/cdimascio/express-openapi-validator/issues/7
             };
             // app has an indirect dependency on questionnaire-dal.js, require it after
             // the mock so that it references the mocked version
-            // eslint-disable-next-line global-require
             const app = require('../app');
             const res = await request(app)
                 .get(
@@ -185,6 +179,147 @@ describe('Issue: https://github.com/cdimascio/express-openapi-validator/issues/7
             const previousSectionId = res.body.data[0].id;
 
             expect(previousSectionId).toEqual('p-applicant-enter-your-telephone-number');
+        });
+    });
+});
+
+describe('POST /questionnaires', () => {
+    const token =
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJkYXRhLWNhcHR1cmUtc2VydmljZSIsImlzcyI6IiQuYXVkIiwianRpIjoiYWE3Nzk1ZmItNDg2Yy00NWEwLWJkNGMtZTMwNjFlNmNjNDk2Iiwic3ViIjoiY2ljYS13ZWIiLCJzY29wZSI6ImNyZWF0ZTpxdWVzdGlvbm5haXJlcyByZWFkOnF1ZXN0aW9ubmFpcmVzIHVwZGF0ZTpxdWVzdGlvbm5haXJlcyBkZWxldGU6cXVlc3Rpb25uYWlyZXMgcmVhZDpwcm9ncmVzcy1lbnRyaWVzIHJlYWQ6YW5zd2VycyIsImlhdCI6MTY4MDcwNTI3N30.OFXEk5CjaMZJVmS8Ioke2l2AlffayMCvIWZ2DwJCu2o';
+
+    describe('Requests made MUST include owner data', () => {
+        it('should return status code 400 if owner data is NOT included in the request body', async () => {
+            const app = require('../app');
+            const response = await request(app)
+                .post('/api/v1/questionnaires')
+                .set('Authorization', `Bearer ${token}`)
+                .set('Content-Type', 'application/vnd.api+json')
+                .send({
+                    data: {
+                        type: 'questionnaires',
+                        attributes: {
+                            templateName: 'sexual-assault'
+                        }
+                    }
+                });
+            expect(response.body).toHaveProperty('errors');
+            expect(response.body.errors[0].status).toEqual(400);
+            expect(response.body.errors[0].detail).toEqual("should have required property 'owner'");
+        });
+
+        it('should return status code 401 if bearer token is NOT valid', async () => {
+            const app = require('../app');
+            const response = await request(app)
+                .post('/api/v1/questionnaires')
+                .set('Authorization', `Bearer I-AM-INVALID`)
+                .set('Content-Type', 'application/vnd.api+json')
+                .send({
+                    data: {
+                        type: 'questionnaires',
+                        attributes: {
+                            templateName: 'sexual-assault',
+                            owner: {
+                                id: 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6',
+                                isAuthenticated: true
+                            }
+                        }
+                    }
+                });
+            expect(response.body).toHaveProperty('errors');
+            expect(response.body.errors[0].status).toEqual(401);
+            expect(response.body.errors[0].detail).toEqual('jwt malformed');
+        });
+
+        it('should return status code 403 if the bearer token has insufficient scope', async () => {
+            // THIS IS A TOKEN WITH A DUMMY SCOPE
+            const dummyToken =
+                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJkYXRhLWNhcHR1cmUtc2VydmljZSIsImlzcyI6IiQuYXVkIiwianRpIjoiNTFhODljYWUtM2Q1MC00ZDc1LTliMmEtMjU2NzliODgwMTkxIiwic3ViIjoiY2ljYS13ZWIiLCJzY29wZSI6ImNyZWF0ZTpub3RoaW5nIiwiaWF0IjoxNjgwNzk4NDU5fQ.97LgtlW_dcAV0Xno6BsbVmuyhLtq4gCoVWGQ56_VmEk';
+            const app = require('../app');
+            const response = await request(app)
+                .post('/api/v1/questionnaires')
+                .set('Authorization', `Bearer ${dummyToken}`)
+                .set('Content-Type', 'application/vnd.api+json')
+                .send({
+                    data: {
+                        type: 'questionnaires',
+                        attributes: {
+                            templateName: 'sexual-assault',
+                            owner: {
+                                id: 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6',
+                                isAuthenticated: true
+                            }
+                        }
+                    }
+                });
+            expect(response.body).toHaveProperty('errors');
+            expect(response.body.errors[0].status).toEqual(403);
+            expect(response.body.errors[0].detail).toEqual('Insufficient scope');
+        });
+
+        it('should return status code 404 if the request body contains incorrect data', async () => {
+            const app = require('../app');
+            const response = await request(app)
+                .post('/api/v1/questionnaires')
+                .set('Authorization', `Bearer ${token}`)
+                .set('Content-Type', 'application/vnd.api+json')
+                .send({
+                    data: {
+                        type: 'questionnaires',
+                        attributes: {
+                            templateName: 'this-does-not-exist',
+                            owner: {
+                                id: 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6',
+                                isAuthenticated: true
+                            }
+                        }
+                    }
+                });
+            expect(response.body).toHaveProperty('errors');
+            expect(response.body.errors[0].status).toEqual(404);
+            expect(response.body.errors[0].detail).toEqual(
+                'Template "this-does-not-exist" does not exist'
+            );
+        });
+
+        it('should return status code 201 if owner data is included in the request body', async () => {
+            jest.doMock('./questionnaire-service.js', () =>
+                jest.fn(() => ({
+                    createQuestionnaire: () => {
+                        return {
+                            type: 'questionnaires',
+                            id: '285cb104-0c15-4a9c-9840-cb1007f098fb',
+                            attributes: {
+                                id: '285cb104-0c15-4a9c-9840-cb1007f098fb',
+                                type: 'questionnaire',
+                                version: '0.0.0',
+                                routes: {
+                                    initial: 'a route'
+                                }
+                            }
+                        };
+                    }
+                }))
+            );
+            // app has an indirect dependency on questionnaire-service.js, require it after
+            // the mock so that it references the mocked version
+            const app = require('../app');
+            const response = await request(app)
+                .post('/api/v1/questionnaires')
+                .set('Authorization', `Bearer ${token}`)
+                .set('Content-Type', 'application/vnd.api+json')
+                .send({
+                    data: {
+                        type: 'questionnaires',
+                        attributes: {
+                            templateName: 'sexual-assault',
+                            owner: {
+                                id: 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6',
+                                isAuthenticated: true
+                            }
+                        }
+                    }
+                });
+            expect(response.statusCode).toEqual(201);
         });
     });
 });
