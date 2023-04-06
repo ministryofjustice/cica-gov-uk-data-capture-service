@@ -106,6 +106,83 @@ describe('POST /questionnaires', () => {
             expect(response.body.errors[0].detail).toEqual("should have required property 'owner'");
         });
 
+        it('should fail authorisation if bearer token is NOT valid', async () => {
+            // eslint-disable-next-line global-require
+            const app = require('../app');
+            const response = await request(app)
+                .post('/api/v1/questionnaires')
+                .set('Authorization', `Bearer I-AM-INVALID`)
+                .set('Content-Type', 'application/vnd.api+json')
+                .send({
+                    data: {
+                        type: 'questionnaires',
+                        attributes: {
+                            templateName: 'sexual-assault',
+                            owner: {
+                                id: 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6',
+                                isAuthenticated: true
+                            }
+                        }
+                    }
+                });
+            expect(response.body).toHaveProperty('errors');
+            expect(response.body.errors[0].status).toEqual(401);
+            expect(response.body.errors[0].detail).toEqual('jwt malformed');
+        });
+
+        it('should return status code 403 if the bearer token has insufficient scope', async () => {
+            // THIS IS A TOKEN WITH A DUMMY SCOPE
+            const dummyToken =
+                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJkYXRhLWNhcHR1cmUtc2VydmljZSIsImlzcyI6IiQuYXVkIiwianRpIjoiNTFhODljYWUtM2Q1MC00ZDc1LTliMmEtMjU2NzliODgwMTkxIiwic3ViIjoiY2ljYS13ZWIiLCJzY29wZSI6ImNyZWF0ZTpub3RoaW5nIiwiaWF0IjoxNjgwNzk4NDU5fQ.97LgtlW_dcAV0Xno6BsbVmuyhLtq4gCoVWGQ56_VmEk';
+            // eslint-disable-next-line global-require
+            const app = require('../app');
+            const response = await request(app)
+                .post('/api/v1/questionnaires')
+                .set('Authorization', `Bearer ${dummyToken}`)
+                .set('Content-Type', 'application/vnd.api+json')
+                .send({
+                    data: {
+                        type: 'questionnaires',
+                        attributes: {
+                            templateName: 'sexual-assault',
+                            owner: {
+                                id: 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6',
+                                isAuthenticated: true
+                            }
+                        }
+                    }
+                });
+            expect(response.body).toHaveProperty('errors');
+            expect(response.body.errors[0].status).toEqual(403);
+            expect(response.body.errors[0].detail).toEqual('Insufficient scope');
+        });
+
+        it('should return status code 404 if the request body contains incorrect data', async () => {
+            // eslint-disable-next-line global-require
+            const app = require('../app');
+            const response = await request(app)
+                .post('/api/v1/questionnaires')
+                .set('Authorization', `Bearer ${token}`)
+                .set('Content-Type', 'application/vnd.api+json')
+                .send({
+                    data: {
+                        type: 'questionnaires',
+                        attributes: {
+                            templateName: 'this-does-not-exist',
+                            owner: {
+                                id: 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6',
+                                isAuthenticated: true
+                            }
+                        }
+                    }
+                });
+            expect(response.body).toHaveProperty('errors');
+            expect(response.body.errors[0].status).toEqual(404);
+            expect(response.body.errors[0].detail).toEqual(
+                'Template "this-does-not-exist" does not exist'
+            );
+        });
+
         it('should return status code 201 if owner data is included in the request body', async () => {
             jest.isolateModules(() => {
                 jest.doMock('./questionnaire-service.js', () =>
