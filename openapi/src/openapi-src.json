@@ -44,7 +44,11 @@
                                     "example": {
                                         "data": {
                                             "THIS-IS-NOT-A-VALID-PROPERTY-NAME": {
-                                                "templateName": "sexual-assault"
+                                                "templateName": "sexual-assault",
+                                                "owner": {
+                                                    "id": "urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6",
+                                                    "isAuthenticated": true
+                                                }
                                             }
                                         }
                                     }
@@ -65,7 +69,11 @@
                                     "example": {
                                         "data": {
                                             "attributes": {
-                                                "templateName": "this-does-not-exist"
+                                                "templateName": "this-does-not-exist",
+                                                "owner": {
+                                                    "id": "urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6",
+                                                    "isAuthenticated": true
+                                                }
                                             }
                                         }
                                     }
@@ -86,7 +94,11 @@
                                 "data": {
                                     "type": "questionnaires",
                                     "attributes": {
-                                        "templateName": "sexual-assault"
+                                        "templateName": "sexual-assault",
+                                        "owner": {
+                                            "id": "urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6",
+                                            "isAuthenticated": true
+                                        }
                                     }
                                 }
                             }
