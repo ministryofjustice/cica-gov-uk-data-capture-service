@@ -9,6 +9,7 @@ const createQRouter = require('q-router');
 const uuidv4 = require('uuid/v4');
 const ajvFormatsMobileUk = require('ajv-formats-mobile-uk');
 const templates = require('./templates');
+// TO-DO - Remove deprecated import for old message bus system
 // const createMessageBusCaller = require('../services/messaging/message-bus');
 const createSqsService = require('../services/messaging/sqs');
 const createNotifyService = require('../services/notify/sqs');
@@ -109,7 +110,7 @@ function createQuestionnaireService({
         try {
             await updateQuestionnaireSubmissionStatus(questionnaireId, 'IN_PROGRESS');
 
-            // Message bus implementation
+            // TO-DO remove old message bus implementation
             // const messageBus = createMessageBusCaller({logger});
             // const submissionResponse = await messageBus.post('SubmissionQueue', {
             //     applicationId: questionnaireId
@@ -121,7 +122,8 @@ function createQuestionnaireService({
             const submissionResponse = await sqsQueue.post({
                 applicationId: questionnaireId
             });
-            console.log(submissionResponse);
+
+            logger.info(submissionResponse);
             if (!submissionResponse || !submissionResponse.MessageId) {
                 await updateQuestionnaireSubmissionStatus(questionnaireId, 'FAILED');
                 /* const slackService = createSlackService();

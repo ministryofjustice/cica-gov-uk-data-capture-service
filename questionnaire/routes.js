@@ -79,7 +79,6 @@ router
                 req.params.questionnaireId
             );
 
-            // Currently, fire and forget. No await required
             await questionnaireService.runOnCompleteActions(questionnireDefinition);
 
             res.status(201).json(response);

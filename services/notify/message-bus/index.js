@@ -1,16 +1,14 @@
 'use strict';
 
-// const notificationNodeClient = require('notifications-node-client');
+const notificationNodeClient = require('notifications-node-client');
 const createSqsNotifyService = require('../sqs');
 
-// const {NotifyClient} = notificationNodeClient;
-// const apiKey = process.env.NOTIFY_API_KEY;
-// const sharedNotifyClient = new NotifyClient(apiKey);
+const {NotifyClient} = notificationNodeClient;
+const apiKey = process.env.NOTIFY_API_KEY;
+const sharedNotifyClient = new NotifyClient(apiKey);
 
 function createNotifyService(spec) {
-    // const {logger, notifyClient = sharedNotifyClient} = spec;
-    const {logger} = spec;
-
+    const {logger, notifyClient = sharedNotifyClient} = spec;
     // https://github.com/axios/axios/issues/4080
     /*  function normaliseSmsSendRequestError(error) {
         const isApiResponseError = error.response !== undefined;
@@ -32,7 +30,7 @@ function createNotifyService(spec) {
     async function sendSms(options) {
         let response;
         try {
-            /* const smsSendRequest = await notifyClient.sendSms(
+            const smsSendRequest = await notifyClient.sendSms(
                 options.templateId,
                 options.phoneNumber,
                 {
@@ -41,27 +39,29 @@ function createNotifyService(spec) {
                     },
                     reference: null
                 }
-            ); */
-
-            // sqs service
-            const sqsNotifyQueue = createSqsNotifyService(spec);
-
-            response = await sqsNotifyQueue.post({
-                templateId: options.templateId,
-                phoneNumber: options.phoneNumber,
-                personalisation: {
-                    caseReference: options.personalisation.caseReference
-                },
-                reference: null
-            });
-            logger.info({response}, 'SEND NOTIFY SUCCESS');
+            );
 
             // This DOES NOT indicate that the sms was successfully delivered,
             // only that the request to send the sms was successful. In future, the id
             // could be used to further query the status of the request.
-            /* return {
+            return {
                 id: smsSendRequest.data.id
-            }; */
+            };
+
+            // TO-DO implement SMS messaging with the SQS queue.
+            // SMS messages can be sent to the queue but the notify gateway is not configured to poll such messages
+
+            // const sqsNotifyQueue = createSqsNotifyService(spec);
+
+            // response = await sqsNotifyQueue.post({
+            //     templateId: options.templateId,
+            //     phoneNumber: options.phoneNumber,
+            //     personalisation: {
+            //         caseReference: options.personalisation.caseReference
+            //     },
+            //     reference: null
+            // });
+            // logger.info({response}, 'SEND NOTIFY SUCCESS');
         } catch (err) {
             /* const normalisedError = normaliseSmsSendRequestError(err);
 
