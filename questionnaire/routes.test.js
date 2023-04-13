@@ -106,7 +106,7 @@ describe('POST /questionnaires', () => {
             expect(response.body.errors[0].detail).toEqual("should have required property 'owner'");
         });
 
-        it('should fail authorisation if bearer token is NOT valid', async () => {
+        it('should return status code 401 if bearer token is NOT valid', async () => {
             // eslint-disable-next-line global-require
             const app = require('../app');
             const response = await request(app)
