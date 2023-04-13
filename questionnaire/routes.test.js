@@ -194,7 +194,7 @@ describe('POST /questionnaires', () => {
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJkYXRhLWNhcHR1cmUtc2VydmljZSIsImlzcyI6IiQuYXVkIiwianRpIjoiYWE3Nzk1ZmItNDg2Yy00NWEwLWJkNGMtZTMwNjFlNmNjNDk2Iiwic3ViIjoiY2ljYS13ZWIiLCJzY29wZSI6ImNyZWF0ZTpxdWVzdGlvbm5haXJlcyByZWFkOnF1ZXN0aW9ubmFpcmVzIHVwZGF0ZTpxdWVzdGlvbm5haXJlcyBkZWxldGU6cXVlc3Rpb25uYWlyZXMgcmVhZDpwcm9ncmVzcy1lbnRyaWVzIHJlYWQ6YW5zd2VycyIsImlhdCI6MTY4MDcwNTI3N30.OFXEk5CjaMZJVmS8Ioke2l2AlffayMCvIWZ2DwJCu2o';
 
     describe('Requests made MUST include owner data', () => {
-        it('should fail validation if owner data is NOT included in the request body', async () => {
+        it('should return status code 400 if owner data is NOT included in the request body', async () => {
             // eslint-disable-next-line global-require
             const app = require('../app');
             const response = await request(app)
@@ -214,7 +214,7 @@ describe('POST /questionnaires', () => {
             expect(response.body.errors[0].detail).toEqual("should have required property 'owner'");
         });
 
-        it('should fail authorisation if bearer token is NOT valid', async () => {
+        it('should return status code 401 if bearer token is NOT valid', async () => {
             // eslint-disable-next-line global-require
             const app = require('../app');
             const response = await request(app)
@@ -317,7 +317,6 @@ describe('POST /questionnaires', () => {
             const response = await request(app)
                 .post('/api/v1/questionnaires')
                 .set('Authorization', `Bearer ${token}`)
-                .set('on-behalf-of', `a-valid-owner-id`)
                 .set('Content-Type', 'application/vnd.api+json')
                 .send({
                     data: {
