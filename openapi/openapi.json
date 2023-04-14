@@ -2030,6 +2030,18 @@
                         "example": {
                             "before": "p-applicant-declaration"
                         }
+                    },
+                    {
+                        "in": "header",
+                        "name": "on-behalf-of",
+                        "required": true,
+                        "description": "Specify the owner of the resource.",
+                        "schema": {
+                            "type": "string",
+                            "format": "uri",
+                            "pattern": "^urn:(uuid|fdc:gov.uk:2022):"
+                        },
+                        "example": "urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
                     }
                 ],
                 "x-scopes": [

@@ -208,7 +208,8 @@ router
             const questionnaireService = createQuestionnaireService({logger: req.log});
             const progressEntries = await questionnaireService.getProgressEntries(
                 questionnaireId,
-                req.query
+                req.query,
+                req.header('on-behalf-of')
             );
 
             res.status(200).json(progressEntries);

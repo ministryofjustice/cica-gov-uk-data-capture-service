@@ -54,8 +54,8 @@ function createQuestionnaireService({
         };
     }
 
-    async function getQuestionnaire(questionnaireId) {
-        const questionnaire = await db.getQuestionnaire(questionnaireId);
+    async function getQuestionnaire(questionnaireId, ownerId) {
+        const questionnaire = await db.getQuestionnaire(questionnaireId, ownerId);
         return questionnaire;
     }
 
@@ -398,9 +398,17 @@ function createQuestionnaireService({
         return sessionResource;
     }
 
-    async function getProgressEntries(questionnaireId, query) {
+    async function getProgressEntries(questionnaireId, query, ownerId) {
+        if (!ownerId) {
+            throw new VError(
+                {
+                    name: 'OwnerIdNotFound'
+                },
+                `OwnerId "${ownerId}" not found`
+            );
+        }
         // 1 - get questionnaire instance
-        const questionnaire = await getQuestionnaire(questionnaireId);
+        const questionnaire = await getQuestionnaire(questionnaireId, ownerId);
         // 2 - get router
         const qRouter = createQRouter(questionnaire);
         // 3 - filter or paginate progress entries if required
@@ -451,7 +459,7 @@ function createQuestionnaireService({
             if (section) {
                 if (isQuestionnaireModified) {
                     // Store the updated questionnaire object
-                    await db.updateQuestionnaire(questionnaireId, section.context);
+                    await db.updateQuestionnaire(questionnaireId, section.context, ownerId);
                 }
 
                 sectionId = section.id;

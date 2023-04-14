@@ -20,13 +20,13 @@ function questionnaireDAL(spec) {
         }
     }
 
-    async function updateQuestionnaire(questionnaireId, questionnaire) {
+    async function updateQuestionnaire(questionnaireId, questionnaire, ownerId) {
         let result;
 
         try {
             result = await db.query(
-                'UPDATE questionnaire SET questionnaire = $1, modified = current_timestamp WHERE id = $2',
-                [questionnaire, questionnaireId]
+                "UPDATE questionnaire SET questionnaire = $1, modified = current_timestamp WHERE id = $2  AND questionnaire -> 'answers' -> 'owner' ->> 'owner-id' = $3",
+                [questionnaire, questionnaireId, ownerId]
                 // Currently replacing the whole questionnaire object. The following commented query/params could be used to update only the answers object:
                 // 'UPDATE questionnaire SET questionnaire = jsonb_set(questionnaire, $1, $2, TRUE), modified = current_timestamp WHERE id = $3',
                 // [`{answers,${sectionId}}`, answers, questionnaireId]
@@ -46,13 +46,13 @@ function questionnaireDAL(spec) {
         return result;
     }
 
-    async function getQuestionnaire(questionnaireId) {
+    async function getQuestionnaire(questionnaireId, ownerId) {
         let questionnaire;
 
         try {
             questionnaire = await db.query(
-                'SELECT questionnaire FROM questionnaire WHERE id = $1',
-                [questionnaireId]
+                "SELECT questionnaire FROM questionnaire WHERE id = $1 AND questionnaire -> 'answers' -> 'owner' ->> 'owner-id' = $2",
+                [questionnaireId, ownerId]
             );
 
             if (questionnaire.rowCount === 0) {
