@@ -63,6 +63,30 @@ describe('POST /questionnaires', () => {
     const token =
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJkYXRhLWNhcHR1cmUtc2VydmljZSIsImlzcyI6IiQuYXVkIiwianRpIjoiYWE3Nzk1ZmItNDg2Yy00NWEwLWJkNGMtZTMwNjFlNmNjNDk2Iiwic3ViIjoiY2ljYS13ZWIiLCJzY29wZSI6ImNyZWF0ZTpxdWVzdGlvbm5haXJlcyByZWFkOnF1ZXN0aW9ubmFpcmVzIHVwZGF0ZTpxdWVzdGlvbm5haXJlcyBkZWxldGU6cXVlc3Rpb25uYWlyZXMgcmVhZDpwcm9ncmVzcy1lbnRyaWVzIHJlYWQ6YW5zd2VycyIsImlhdCI6MTY4MDcwNTI3N30.OFXEk5CjaMZJVmS8Ioke2l2AlffayMCvIWZ2DwJCu2o';
 
+    it('should return status code 400 if the template name is a bad format', async () => {
+        const response = await request(app)
+            .post('/api/v1/questionnaires')
+            .set('Authorization', `Bearer ${token}`)
+            .set('Content-Type', 'application/vnd.api+json')
+            .send({
+                data: {
+                    type: 'questionnaires',
+                    attributes: {
+                        templateName: '!!!not-a-valid-format!!!',
+                        owner: {
+                            id: 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6',
+                            isAuthenticated: true
+                        }
+                    }
+                }
+            });
+        expect(response.body).toHaveProperty('errors');
+        expect(response.body.errors[0].status).toEqual(400);
+        expect(response.body.errors[0].detail).toEqual(
+            'should match pattern "^[a-z]{1,20}(?:-[a-z]{1,20}){0,10}$"'
+        );
+    });
+
     it('should return status code 401 if bearer token is NOT valid', async () => {
         const response = await request(app)
             .post('/api/v1/questionnaires')
