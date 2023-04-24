@@ -153,6 +153,9 @@
                     },
                     {
                         "$ref": "#/components/parameters/sectionId"
+                    },
+                    {
+                        "$ref": "#/components/parameters/onBehalfOf"
                     }
                 ],
                 "x-scopes": ["create:system-answers", "update:questionnaires"],
