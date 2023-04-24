@@ -1,4 +1,5 @@
 /* eslint-disable global-require */
+
 'use strict';
 
 const request = require('supertest');
@@ -8,12 +9,61 @@ beforeEach(() => {
     jest.resetModules();
 });
 
+jest.doMock('./questionnaire-service.js', () =>
+    jest.fn(() => ({
+        createQuestionnaire: templateName => {
+            if (templateName === 'this-does-not-exist') {
+                throw new VError(
+                    {
+                        name: 'ResourceNotFound'
+                    },
+                    `Template "${templateName}" does not exist`
+                );
+            }
+
+            return {
+                type: 'questionnaires',
+                id: '285cb104-0c15-4a9c-9840-cb1007f098fb',
+                attributes: {
+                    id: '285cb104-0c15-4a9c-9840-cb1007f098fb',
+                    type: 'questionnaire',
+                    version: '0.0.0',
+                    routes: {
+                        initial: 'a route'
+                    }
+                }
+            };
+        },
+        getProgressEntries: (id, query) => {
+            if (query.filter.sectionId === 'p--not-a-valid-section') {
+                throw new VError(
+                    {
+                        name: 'ResourceNotFound'
+                    },
+                    `ProgressEntry "${query.filter.sectionId}" does not exist`
+                );
+            }
+            return {
+                type: 'progress-entries',
+                id: '285cb104-0c15-4a9c-9840-cb1007f098fb',
+                attributes: {
+                    sectionId: 'p--some-section',
+                    url: 'questionnaire'
+                }
+            };
+        }
+    }))
+);
+
+// app has an indirect dependency on questionnaire-service.js, require it after
+// the mock so that it references the mocked version
+const app = require('../app');
+
 describe('POST /questionnaires', () => {
     const token =
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJkYXRhLWNhcHR1cmUtc2VydmljZSIsImlzcyI6IiQuYXVkIiwianRpIjoiYWE3Nzk1ZmItNDg2Yy00NWEwLWJkNGMtZTMwNjFlNmNjNDk2Iiwic3ViIjoiY2ljYS13ZWIiLCJzY29wZSI6ImNyZWF0ZTpxdWVzdGlvbm5haXJlcyByZWFkOnF1ZXN0aW9ubmFpcmVzIHVwZGF0ZTpxdWVzdGlvbm5haXJlcyBkZWxldGU6cXVlc3Rpb25uYWlyZXMgcmVhZDpwcm9ncmVzcy1lbnRyaWVzIHJlYWQ6YW5zd2VycyIsImlhdCI6MTY4MDcwNTI3N30.OFXEk5CjaMZJVmS8Ioke2l2AlffayMCvIWZ2DwJCu2o';
 
     it('should return status code 401 if bearer token is NOT valid', async () => {
-        const app = require('../app');
         const response = await request(app)
             .post('/api/v1/questionnaires')
             .set('Authorization', `Bearer I-AM-INVALID`)
@@ -39,7 +89,6 @@ describe('POST /questionnaires', () => {
         // THIS IS A TOKEN WITH A DUMMY SCOPE
         const dummyToken =
             'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJkYXRhLWNhcHR1cmUtc2VydmljZSIsImlzcyI6IiQuYXVkIiwianRpIjoiNTFhODljYWUtM2Q1MC00ZDc1LTliMmEtMjU2NzliODgwMTkxIiwic3ViIjoiY2ljYS13ZWIiLCJzY29wZSI6ImNyZWF0ZTpub3RoaW5nIiwiaWF0IjoxNjgwNzk4NDU5fQ.97LgtlW_dcAV0Xno6BsbVmuyhLtq4gCoVWGQ56_VmEk';
-        const app = require('../app');
         const response = await request(app)
             .post('/api/v1/questionnaires')
             .set('Authorization', `Bearer ${dummyToken}`)
@@ -62,7 +111,6 @@ describe('POST /questionnaires', () => {
     });
 
     it('should return status code 404 if the request body contains incorrect data', async () => {
-        const app = require('../app');
         const response = await request(app)
             .post('/api/v1/questionnaires')
             .set('Authorization', `Bearer ${token}`)
@@ -88,7 +136,6 @@ describe('POST /questionnaires', () => {
 
     describe('Requests made MUST include owner data', () => {
         it('should return status code 400 if owner data is NOT included in the request body', async () => {
-            const app = require('../app');
             const response = await request(app)
                 .post('/api/v1/questionnaires')
                 .set('Authorization', `Bearer ${token}`)
@@ -107,30 +154,6 @@ describe('POST /questionnaires', () => {
         });
 
         it('should return status code 201 if owner data is included in the request body', async () => {
-            jest.isolateModules(() => {
-                jest.doMock('./questionnaire-service.js', () =>
-                    jest.fn(() => ({
-                        createQuestionnaire: () => {
-                            return {
-                                type: 'questionnaires',
-                                id: '285cb104-0c15-4a9c-9840-cb1007f098fb',
-                                attributes: {
-                                    id: '285cb104-0c15-4a9c-9840-cb1007f098fb',
-                                    type: 'questionnaire',
-                                    version: '0.0.0',
-                                    routes: {
-                                        initial: 'a route'
-                                    }
-                                }
-                            };
-                        }
-                    }))
-                );
-            });
-
-            // app has an indirect dependency on questionnaire-service.js, require it after
-            // the mock so that it references the mocked version
-            const app = require('../app');
             const response = await request(app)
                 .post('/api/v1/questionnaires')
                 .set('Authorization', `Bearer ${token}`)
@@ -157,7 +180,6 @@ describe('GET /questionnaires/:questionnaireId/progress-entries', () => {
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJkYXRhLWNhcHR1cmUtc2VydmljZSIsImlzcyI6IiQuYXVkIiwianRpIjoiYWE3Nzk1ZmItNDg2Yy00NWEwLWJkNGMtZTMwNjFlNmNjNDk2Iiwic3ViIjoiY2ljYS13ZWIiLCJzY29wZSI6ImNyZWF0ZTpxdWVzdGlvbm5haXJlcyByZWFkOnF1ZXN0aW9ubmFpcmVzIHVwZGF0ZTpxdWVzdGlvbm5haXJlcyBkZWxldGU6cXVlc3Rpb25uYWlyZXMgcmVhZDpwcm9ncmVzcy1lbnRyaWVzIHJlYWQ6YW5zd2VycyIsImlhdCI6MTY4MDcwNTI3N30.OFXEk5CjaMZJVmS8Ioke2l2AlffayMCvIWZ2DwJCu2o';
 
     it('should return status code 401 if bearer token is NOT valid', async () => {
-        const app = require('../app');
         const response = await request(app)
             .get('/api/v1/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/progress-entries')
             .set('Authorization', `Bearer I-AM-INVALID`)
@@ -172,7 +194,6 @@ describe('GET /questionnaires/:questionnaireId/progress-entries', () => {
         // THIS IS A TOKEN WITH A DUMMY SCOPE
         const dummyToken =
             'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJkYXRhLWNhcHR1cmUtc2VydmljZSIsImlzcyI6IiQuYXVkIiwianRpIjoiNTFhODljYWUtM2Q1MC00ZDc1LTliMmEtMjU2NzliODgwMTkxIiwic3ViIjoiY2ljYS13ZWIiLCJzY29wZSI6ImNyZWF0ZTpub3RoaW5nIiwiaWF0IjoxNjgwNzk4NDU5fQ.97LgtlW_dcAV0Xno6BsbVmuyhLtq4gCoVWGQ56_VmEk';
-        const app = require('../app');
         const response = await request(app)
             .get('/api/v1/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/progress-entries')
             .set('Authorization', `Bearer ${dummyToken}`)
@@ -184,19 +205,6 @@ describe('GET /questionnaires/:questionnaireId/progress-entries', () => {
     });
 
     it('should return status code 404 if the query string contains incorrect data', async () => {
-        jest.doMock('./questionnaire-service.js', () =>
-            jest.fn(() => ({
-                getProgressEntries: (id, query) => {
-                    throw new VError(
-                        {
-                            name: 'ResourceNotFound'
-                        },
-                        `ProgressEntry "${query.filter.sectionId}" does not exist`
-                    );
-                }
-            }))
-        );
-        const app = require('../app');
         const response = await request(app)
             .get(
                 '/api/v1/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/progress-entries?filter[sectionId]=p--not-a-valid-section'
@@ -213,7 +221,6 @@ describe('GET /questionnaires/:questionnaireId/progress-entries', () => {
 
     describe('Requests made MUST include owner data', () => {
         it('should return status code 400 if owner data is NOT included in the request body', async () => {
-            const app = require('../app');
             const response = await request(app)
                 .get('/api/v1/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/progress-entries')
                 .set('Authorization', `Bearer ${token}`)
@@ -226,23 +233,6 @@ describe('GET /questionnaires/:questionnaireId/progress-entries', () => {
         });
 
         it('should return status code 200 if owner data is included in the header', async () => {
-            jest.doMock('./questionnaire-service.js', () =>
-                jest.fn(() => ({
-                    getProgressEntries: () => {
-                        return {
-                            type: 'progress-entries',
-                            id: '285cb104-0c15-4a9c-9840-cb1007f098fb',
-                            attributes: {
-                                sectionId: 'p--some-section',
-                                url: 'questionnaire'
-                            }
-                        };
-                    }
-                }))
-            );
-            // app has an indirect dependency on questionnaire-service.js, require it after
-            // the mock so that it references the mocked version
-            const app = require('../app');
             const response = await request(app)
                 .get('/api/v1/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/progress-entries')
                 .set('Authorization', `Bearer ${token}`)
