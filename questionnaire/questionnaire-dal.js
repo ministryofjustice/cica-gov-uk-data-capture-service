@@ -12,7 +12,7 @@ function questionnaireDAL(spec) {
     async function createQuestionnaire(uuidV4, questionnaire) {
         try {
             await db.query(
-                'INSERT INTO questionnaire (id, questionnaire, created, modified) VALUES($1, $2, current_timestamp, current_timestamp)',
+                "INSERT INTO questionnaire (id, questionnaire, created, modified, expires) VALUES($1, $2, current_timestamp, current_timestamp, current_timestamp + INTERVAL '30 minutes')",
                 [uuidV4, questionnaire]
             );
         } catch (err) {
@@ -25,7 +25,7 @@ function questionnaireDAL(spec) {
 
         try {
             result = await db.query(
-                'UPDATE questionnaire SET questionnaire = $1, modified = current_timestamp WHERE id = $2',
+                "UPDATE questionnaire SET questionnaire = $1, modified = current_timestamp, expires = current_timestamp + INTERVAL '30 minutes' WHERE id = $2",
                 [questionnaire, questionnaireId]
                 // Currently replacing the whole questionnaire object. The following commented query/params could be used to update only the answers object:
                 // 'UPDATE questionnaire SET questionnaire = jsonb_set(questionnaire, $1, $2, TRUE), modified = current_timestamp WHERE id = $3',
@@ -99,7 +99,7 @@ function questionnaireDAL(spec) {
 
         try {
             result = await db.query(
-                'UPDATE questionnaire SET submission_status = $1, modified = current_timestamp WHERE id = $2',
+                "UPDATE questionnaire SET submission_status = $1, modified = current_timestamp, expires = current_timestamp + INTERVAL '30 minutes' WHERE id = $2",
                 [submissionStatus, questionnaireId]
             );
 
@@ -177,6 +177,29 @@ function questionnaireDAL(spec) {
         return result;
     }
 
+    async function updateQuestionnaireExpiresDate(questionnaireId) {
+        let result;
+
+        try {
+            result = await db.query(
+                "UPDATE questionnaire SET expires = current_timestamp + INTERVAL '30 minutes' WHERE id = $1",
+                [questionnaireId]
+            );
+            if (result.rowCount === 0) {
+                throw new VError(
+                    {
+                        name: 'UpdateNotSuccessful'
+                    },
+                    `Questionnaire "${questionnaireId}" expires date was not updated successfully`
+                );
+            }
+        } catch (err) {
+            throw err;
+        }
+
+        return result;
+    }
+
     return Object.freeze({
         createQuestionnaire,
         updateQuestionnaire,
@@ -185,7 +208,8 @@ function questionnaireDAL(spec) {
         updateQuestionnaireSubmissionStatus,
         getQuestionnaireIdsBySubmissionStatus,
         getQuestionnaireModifiedDate,
-        updateQuestionnaireModifiedDate
+        updateQuestionnaireModifiedDate,
+        updateQuestionnaireExpiresDate
     });
 }
 
