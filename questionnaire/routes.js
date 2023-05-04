@@ -29,7 +29,10 @@ router.route('/').post(permissions('create:questionnaires'), async (req, res, ne
 
         const {templateName} = req.body.data.attributes;
 
-        const questionnaireService = createQuestionnaireService({logger: req.log});
+        const questionnaireService = createQuestionnaireService({
+            logger: req.log,
+            owner: req.body.data.attributes.owner
+        });
         const response = await questionnaireService.createQuestionnaire(templateName);
 
         res.status(201).json(response);

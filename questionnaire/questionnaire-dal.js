@@ -6,7 +6,7 @@ const VError = require('verror');
 const createDBQuery = require('../db');
 
 function questionnaireDAL(spec) {
-    const {logger} = spec;
+    const {logger, owner} = spec;
     const db = createDBQuery({logger});
 
     async function createQuestionnaire(uuidV4, questionnaire) {
@@ -177,6 +177,29 @@ function questionnaireDAL(spec) {
         return result;
     }
 
+    async function insertOwner(questionnaireId) {
+        let result;
+
+        try {
+            result = await db.query(
+                `UPDATE questionnaire SET questionnaire = jsonb_set(questionnaire,  '{answers}' , questionnaire -> 'answers' || json_build_object('owner', json_build_object('owner-id', $2::text, 'isAuthenticated', $3::boolean))::jsonb, true) WHERE id = $1`,
+                [questionnaireId, owner.id, owner.isAuthenticated]
+            );
+            if (result.rowCount === 0) {
+                throw new VError(
+                    {
+                        name: 'UpdateNotSuccessful'
+                    },
+                    `Questionnaire "${questionnaireId}" owner was not updated successfully`
+                );
+            }
+        } catch (err) {
+            throw err;
+        }
+
+        return result;
+    }
+
     return Object.freeze({
         createQuestionnaire,
         updateQuestionnaire,
@@ -185,7 +208,8 @@ function questionnaireDAL(spec) {
         updateQuestionnaireSubmissionStatus,
         getQuestionnaireIdsBySubmissionStatus,
         getQuestionnaireModifiedDate,
-        updateQuestionnaireModifiedDate
+        updateQuestionnaireModifiedDate,
+        insertOwner
     });
 }
 
