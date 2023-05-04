@@ -12,7 +12,7 @@ function questionnaireDAL(spec) {
     async function createQuestionnaire(uuidV4, questionnaire) {
         try {
             await db.query(
-                'INSERT INTO questionnaire (id, questionnaire, created, modified) VALUES($1, $2, current_timestamp, current_timestamp)',
+                "INSERT INTO questionnaire (id, questionnaire, created, modified, expires) VALUES($1, $2, current_timestamp, current_timestamp, current_timestamp + INTERVAL '30 minutes')",
                 [uuidV4, questionnaire]
             );
         } catch (err) {

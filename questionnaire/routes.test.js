@@ -365,6 +365,32 @@ describe('V2 openapi validation', () => {
                 );
             });
 
+            it('should return status code 400 if "Dcs-Api-Version" is malformed', async () => {
+                const app = require('../app');
+                const response = await request(app)
+                    .post('/api/questionnaires')
+                    .set('Authorization', `Bearer ${token}`)
+                    .set('Content-Type', 'application/vnd.api+json')
+                    .set('Dcs-Api-Version', 'not-a-version')
+                    .send({
+                        data: {
+                            type: 'questionnaires',
+                            attributes: {
+                                templateName: 'sexual-assault',
+                                owner: {
+                                    id: 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6',
+                                    isAuthenticated: true
+                                }
+                            }
+                        }
+                    });
+                expect(response.body).toHaveProperty('errors');
+                expect(response.body.errors[0].status).toEqual(400);
+                expect(response.body.errors[0].detail).toEqual(
+                    'should be equal to one of the allowed values: 2023-05-17'
+                );
+            });
+
             it('should return status code 201 if "Dcs-Api-Version" is included in the header', async () => {
                 jest.doMock('./questionnaire-service.js', () =>
                     jest.fn(() => ({

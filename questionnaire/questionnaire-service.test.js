@@ -1,6 +1,26 @@
+/* eslint-disable no-shadow */
+
 'use strict';
 
 const VError = require('verror');
+
+beforeEach(() => {
+    jest.clearAllMocks();
+    jest.resetModules();
+});
+
+// Mock the default DAL
+jest.doMock('./questionnaire-dal', () => {
+    const dalServiceMock = {
+        createQuestionnaire: jest.fn(() => {
+            return 'ok!';
+        })
+    };
+
+    return () => dalServiceMock;
+});
+
+const mockDalService = require('./questionnaire-dal')();
 
 const createQuestionnaireService = require('./questionnaire-service');
 
@@ -192,26 +212,25 @@ function getQuestionnaireDefinition() {
     };
 }
 
-const questionnaireService2 = createQuestionnaireService({
-    logger: () => 'Logged from dataset test',
-    createQuestionnaireDAL: () => ({
-        getQuestionnaire: questionnaireId => {
-            if (questionnaireId === '01fa0d1e-000a-404c-8efe-7223c24a4fa7') {
-                return getQuestionnaireDefinition();
-            }
-
-            throw new VError(
-                {
-                    name: 'ResourceNotFound'
-                },
-                `Questionnaire "${questionnaireId}" not found`
-            );
-        }
-    })
-});
-
 describe('Questionnaire Service', () => {
     describe('Answering a section', () => {
+        const questionnaireService2 = createQuestionnaireService({
+            logger: () => 'Logged from dataset test',
+            createQuestionnaireDAL: () => ({
+                getQuestionnaire: questionnaireId => {
+                    if (questionnaireId === '01fa0d1e-000a-404c-8efe-7223c24a4fa7') {
+                        return getQuestionnaireDefinition();
+                    }
+
+                    throw new VError(
+                        {
+                            name: 'ResourceNotFound'
+                        },
+                        `Questionnaire "${questionnaireId}" not found`
+                    );
+                }
+            })
+        });
         describe('Given a section definition requiring contextualisation', () => {
             describe('And there are no errors with the supplied answers', () => {
                 it('should save the answers', async () => {
@@ -336,6 +355,110 @@ describe('Questionnaire Service', () => {
                     expect(contextualisedTitle).toEqual("Enter the child's name");
                     expect(contextualisedError).toEqual("The child's title must be a string");
                 });
+            });
+        });
+    });
+
+    describe('DCS API Version 1', () => {
+        const questionnaireService = createQuestionnaireService({
+            logger: () => 'Logged from createQuestionnaire test',
+            apiVersion: undefined, // Undefined should only occur for DCS API v1
+            ownerId: undefined // Undefined should only occur for DCS API v1
+        });
+        describe('createQuestionnaire', () => {
+            it('Should create a questionnaire', async () => {
+                const templatename = 'sexual-assault';
+
+                const actual = await questionnaireService.createQuestionnaire(templatename);
+
+                expect(actual.data).toMatchObject({
+                    id: expect.any(String),
+                    type: 'questionnaires',
+                    attributes: expect.any(Object)
+                });
+            });
+
+            it('Should error if templateName not found', async () => {
+                const templatename = 'not-a-template';
+
+                await expect(
+                    questionnaireService.createQuestionnaire(templatename)
+                ).rejects.toThrow('Template "not-a-template" does not exist');
+            });
+        });
+    });
+
+    describe('DCS API Version 2023-05-17', () => {
+        const questionnaireService = createQuestionnaireService({
+            logger: () => 'Logged from createQuestionnaire test',
+            apiVersion: '2023-05-17'
+        });
+        describe('createQuestionnaire', () => {
+            it('Should create a questionnaire', async () => {
+                const templatename = 'sexual-assault';
+                const ownerData = {
+                    id: 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6',
+                    isAuthenticated: true
+                };
+
+                const actual = await questionnaireService.createQuestionnaire(
+                    templatename,
+                    ownerData
+                );
+
+                expect(actual.data).toMatchObject({
+                    id: expect.any(String),
+                    type: 'questionnaires',
+                    attributes: expect.any(Object)
+                });
+            });
+
+            it('Should error if templateName not found', async () => {
+                const templatename = 'not-a-template';
+                const ownerData = {
+                    id: 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6',
+                    isAuthenticated: true
+                };
+
+                await expect(
+                    questionnaireService.createQuestionnaire(templatename, ownerData)
+                ).rejects.toThrow('Template "not-a-template" does not exist');
+            });
+
+            it('Should set owner data in the answers', async () => {
+                const templatename = 'sexual-assault';
+                const ownerData = {
+                    id: 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6',
+                    isAuthenticated: true
+                };
+
+                await questionnaireService.createQuestionnaire(templatename, ownerData);
+
+                expect(mockDalService.createQuestionnaire).toHaveBeenCalledTimes(1);
+                expect(mockDalService.createQuestionnaire).toHaveBeenCalledWith(
+                    expect.any(String),
+                    expect.objectContaining({
+                        answers: {
+                            owner: {
+                                ownerId: 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6',
+                                isAuthenticated: true
+                            }
+                        }
+                    })
+                );
+            });
+
+            it('Should error if owner data is undefined', async () => {
+                const questionnaireService = createQuestionnaireService({
+                    logger: () => 'Logged from createQuestionnaire test',
+                    apiVersion: '2023-05-17'
+                });
+                const templatename = 'sexual-assault';
+                const ownerData = undefined;
+
+                await expect(
+                    questionnaireService.createQuestionnaire(templatename, ownerData)
+                ).rejects.toThrow('Owner data must be defined');
             });
         });
     });

@@ -20,6 +20,7 @@ defaults.createQuestionnaireDAL = require('./questionnaire-dal');
 
 function createQuestionnaireService({
     logger,
+    apiVersion,
     createQuestionnaireDAL = defaults.createQuestionnaireDAL
 } = {}) {
     const db = createQuestionnaireDAL({logger});
@@ -34,7 +35,7 @@ function createQuestionnaireService({
 
     ajv.addFormat('mobile-uk', ajvFormatsMobileUk);
 
-    async function createQuestionnaire(templateName) {
+    async function createQuestionnaire(templateName, ownerData) {
         if (!(templateName in templates)) {
             throw new VError(
                 {
@@ -46,6 +47,24 @@ function createQuestionnaireService({
 
         const uuidV4 = uuidv4();
         const questionnaire = templates[templateName](uuidV4);
+
+        if (apiVersion === '2023-05-17') {
+            if (!ownerData) {
+                throw new VError(
+                    {
+                        name: 'OwnerNotFound'
+                    },
+                    `Owner data must be defined`
+                );
+            }
+
+            questionnaire.answers = {
+                owner: {
+                    ownerId: ownerData.id,
+                    isAuthenticated: ownerData.isAuthenticated
+                }
+            };
+        }
 
         await db.createQuestionnaire(uuidV4, questionnaire);
 
