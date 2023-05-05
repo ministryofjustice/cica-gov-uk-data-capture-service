@@ -6,7 +6,7 @@ const VError = require('verror');
 const createDBQuery = require('../db');
 
 function questionnaireDAL(spec) {
-    const {logger} = spec;
+    const {logger, owner} = spec;
     const db = createDBQuery({logger});
 
     async function createQuestionnaire(uuidV4, questionnaire) {
@@ -25,8 +25,8 @@ function questionnaireDAL(spec) {
 
         try {
             result = await db.query(
-                'UPDATE questionnaire SET questionnaire = $1, modified = current_timestamp WHERE id = $2',
-                [questionnaire, questionnaireId]
+                "UPDATE questionnaire SET questionnaire = $1, modified = current_timestamp WHERE id = $2 AND questionnaire -> 'answers' -> 'owner' ->> 'owner-id' = $3",
+                [questionnaire, questionnaireId, owner.id]
                 // Currently replacing the whole questionnaire object. The following commented query/params could be used to update only the answers object:
                 // 'UPDATE questionnaire SET questionnaire = jsonb_set(questionnaire, $1, $2, TRUE), modified = current_timestamp WHERE id = $3',
                 // [`{answers,${sectionId}}`, answers, questionnaireId]
@@ -51,8 +51,8 @@ function questionnaireDAL(spec) {
 
         try {
             questionnaire = await db.query(
-                'SELECT questionnaire FROM questionnaire WHERE id = $1',
-                [questionnaireId]
+                "SELECT questionnaire FROM questionnaire WHERE id = $1 AND questionnaire -> 'answers' -> 'owner' ->> 'owner-id' = $2",
+                [questionnaireId, owner.id]
             );
 
             if (questionnaire.rowCount === 0) {

@@ -20,9 +20,10 @@ defaults.createQuestionnaireDAL = require('./questionnaire-dal');
 
 function createQuestionnaireService({
     logger,
+    owner = undefined,
     createQuestionnaireDAL = defaults.createQuestionnaireDAL
 } = {}) {
-    const db = createQuestionnaireDAL({logger});
+    const db = createQuestionnaireDAL({logger, owner});
     const ajv = new Ajv({
         allErrors: true,
         jsonPointers: true,

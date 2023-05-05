@@ -205,7 +205,10 @@ router
     .get(permissions('read:progress-entries'), async (req, res, next) => {
         try {
             const {questionnaireId} = req.params;
-            const questionnaireService = createQuestionnaireService({logger: req.log});
+            const questionnaireService = createQuestionnaireService({
+                logger: req.log,
+                owner: req.header('on-behalf-of')
+            });
             const progressEntries = await questionnaireService.getProgressEntries(
                 questionnaireId,
                 req.query
