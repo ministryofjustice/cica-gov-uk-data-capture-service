@@ -7,6 +7,8 @@ const config = {
 };
 /*! m0-end */
 
+config.testRegex = 'questionnaire/questionnaire/questionnaire.test.js';
+
 process.env.DCS_JWT_SECRET = '123';
 process.env.DCS_LOG_LEVEL = 'silent';
 process.env.NOTIFY_API_KEY = '123apiKey';

@@ -801,8 +801,43 @@ describe('Questionnaire', () => {
         });
     });
 
-    describe('Given a section definition requiring an answer summary', () => {
-        it('should return a section containing an answer summary', () => {
+    describe.only('Given a section definition requiring an answer summary', () => {
+        it.only('should return a section containing an answer summary', () => {
+
+
+
+
+            const fs = require("fs");
+            const path = require('path');
+
+            const completedQuestionnaireDocumentsFolderPath = path.join(__dirname, 'journey-application-json');
+            const themesJsonFolderPath = path.join(__dirname, 'themes-json');
+
+            fs.readdirSync(completedQuestionnaireDocumentsFolderPath).forEach(filename => {
+                //Print file name
+                console.log('file: ', typeof file);
+                const questionnaireDefinition = require(path.join(completedQuestionnaireDocumentsFolderPath, filename));
+
+                const questionnaire = createQuestionnaire({questionnaireDefinition});
+                const section = questionnaire.getSection('p--check-your-answers');
+                const sectionSchema = section.getSchema();
+
+
+                const content = sectionSchema.properties['p-check-your-answers'].properties.summaryInfo.summaryStructure;
+                fs.writeFileSync(path.join(themesJsonFolderPath, filename), JSON.stringify(content, null, 4));
+
+                /*
+                Run this to print the file contents
+                console.log(readFileSync(".levels/" + file, {encoding: "utf8"}))
+                */
+            })
+
+            // console.log('>>>>>>>>>>>>>>>>>>>>>>: ', process.cwd(), ' >>>>>>>>> ', __dirname);
+            // console.log('>>>>>>>>>>>>>>>>>>>>>>: ', path.join(__dirname, 'journey-application-json'));
+
+
+
+
             const questionnaire = createQuestionnaire({questionnaireDefinition});
             const section = questionnaire.getSection('p--check-your-answers');
             const sectionSchema = section.getSchema();

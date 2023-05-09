@@ -1,0 +1,846 @@
+[
+    {
+        "type": "theme",
+        "id": "about-application",
+        "title": "About your application",
+        "values": [
+            {
+                "id": "q--new-or-existing-application",
+                "type": "simple",
+                "label": "What would you like to do?",
+                "value": "new",
+                "valueLabel": "Start a new application",
+                "sectionId": "p--new-or-existing-application",
+                "theme": "about-application"
+            },
+            {
+                "id": "q-applicant-fatal-claim",
+                "type": "simple",
+                "label": "Are you applying because someone died?",
+                "value": false,
+                "valueLabel": "No",
+                "sectionId": "p-applicant-fatal-claim",
+                "theme": "about-application"
+            },
+            {
+                "id": "q--was-the-crime-reported-to-police",
+                "type": "simple",
+                "label": "Was the crime reported to the police?",
+                "value": true,
+                "valueLabel": "Yes",
+                "sectionId": "p--was-the-crime-reported-to-police",
+                "theme": "about-application"
+            },
+            {
+                "id": "q-applicant-has-crime-reference-number",
+                "type": "simple",
+                "label": "Do you have a crime reference number?",
+                "value": true,
+                "valueLabel": "Yes",
+                "sectionId": "p-applicant-has-crime-reference-number",
+                "theme": "about-application"
+            },
+            {
+                "id": "q-applicant-who-are-you-applying-for",
+                "type": "simple",
+                "label": "Who are you applying for?",
+                "value": "someone-else",
+                "valueLabel": "Someone else",
+                "sectionId": "p-applicant-who-are-you-applying-for",
+                "theme": "about-application"
+            },
+            {
+                "id": "q-applicant-are-you-18-or-over",
+                "type": "simple",
+                "label": "Is the victim 18 or over?",
+                "value": false,
+                "valueLabel": "No",
+                "sectionId": "p-applicant-are-you-18-or-over",
+                "theme": "about-application"
+            },
+            {
+                "id": "q-applicant-british-citizen-or-eu-national",
+                "type": "simple",
+                "label": "Are they a British citizen or EU national?",
+                "value": true,
+                "valueLabel": "Yes",
+                "sectionId": "p-applicant-british-citizen-or-eu-national",
+                "theme": "about-application"
+            },
+            {
+                "id": "q-mainapplicant-parent",
+                "type": "simple",
+                "label": "Are you the victim's parent?",
+                "value": true,
+                "valueLabel": "Yes",
+                "sectionId": "p-mainapplicant-parent",
+                "theme": "about-application"
+            }
+        ]
+    },
+    {
+        "type": "theme",
+        "id": "applicant-details",
+        "title": "Victim details",
+        "values": [
+            {
+                "id": "applicant-name",
+                "type": "composite",
+                "label": "The victim's name",
+                "values": [
+                    {
+                        "id": "q-applicant-title",
+                        "type": "simple",
+                        "label": "Title",
+                        "value": "Miss",
+                        "sectionId": "p-applicant-enter-your-name",
+                        "theme": "applicant-details"
+                    },
+                    {
+                        "id": "q-applicant-first-name",
+                        "type": "simple",
+                        "label": "First name",
+                        "value": "Test",
+                        "sectionId": "p-applicant-enter-your-name",
+                        "theme": "applicant-details"
+                    },
+                    {
+                        "id": "q-applicant-last-name",
+                        "type": "simple",
+                        "label": "Last name",
+                        "value": "Testcase",
+                        "sectionId": "p-applicant-enter-your-name",
+                        "theme": "applicant-details"
+                    }
+                ],
+                "sectionId": "p-applicant-enter-your-name",
+                "theme": "applicant-details"
+            },
+            {
+                "id": "q-applicant-have-you-been-known-by-any-other-names",
+                "type": "simple",
+                "label": "Have they been known by another name?",
+                "value": false,
+                "valueLabel": "No",
+                "sectionId": "p-applicant-have-you-been-known-by-any-other-names",
+                "theme": "applicant-details"
+            },
+            {
+                "id": "q-applicant-enter-your-date-of-birth",
+                "type": "simple",
+                "label": "Date of birth",
+                "value": "2009-03-31T00:00:00.000Z",
+                "sectionId": "p-applicant-enter-your-date-of-birth",
+                "theme": "applicant-details",
+                "format": {
+                    "value": "date-time",
+                    "precision": "YYYY-MM-DD"
+                }
+            },
+            {
+                "id": "applicant-address",
+                "type": "composite",
+                "label": "The victim's address",
+                "values": [
+                    {
+                        "id": "q-applicant-building-and-street",
+                        "type": "simple",
+                        "label": "Building and street",
+                        "value": "10 Bank St",
+                        "sectionId": "p-applicant-enter-your-address",
+                        "theme": "applicant-details"
+                    },
+                    {
+                        "id": "q-applicant-town-or-city",
+                        "type": "simple",
+                        "label": "Town or city",
+                        "value": "Glasgow",
+                        "sectionId": "p-applicant-enter-your-address",
+                        "theme": "applicant-details"
+                    },
+                    {
+                        "id": "q-applicant-postcode",
+                        "type": "simple",
+                        "label": "Postcode (optional)",
+                        "value": "MA1",
+                        "sectionId": "p-applicant-enter-your-address",
+                        "theme": "applicant-details"
+                    }
+                ],
+                "sectionId": "p-applicant-enter-your-address",
+                "theme": "applicant-details"
+            }
+        ]
+    },
+    {
+        "type": "theme",
+        "id": "main-applicant-details",
+        "title": "Your details",
+        "values": [
+            {
+                "id": "q-mainapplicant-confirmation-method",
+                "type": "simple",
+                "label": "Confirmation method",
+                "value": "email",
+                "valueLabel": "Email",
+                "sectionId": "p-mainapplicant-confirmation-method",
+                "theme": "main-applicant-details"
+            },
+            {
+                "id": "q-mainapplicant-enter-your-email-address",
+                "type": "simple",
+                "label": "Email address",
+                "value": "neil.mcgonigle@digital.justice.gov.uk",
+                "sectionId": "p-mainapplicant-confirmation-method",
+                "theme": "main-applicant-details",
+                "format": {
+                    "value": "email"
+                }
+            },
+            {
+                "id": "mainapplicant-name",
+                "type": "composite",
+                "label": "Your name",
+                "values": [
+                    {
+                        "id": "q-mainapplicant-title",
+                        "type": "simple",
+                        "label": "Title",
+                        "value": "Mr",
+                        "sectionId": "p-mainapplicant-enter-your-name",
+                        "theme": "main-applicant-details"
+                    },
+                    {
+                        "id": "q-mainapplicant-first-name",
+                        "type": "simple",
+                        "label": "First name",
+                        "value": "Main",
+                        "sectionId": "p-mainapplicant-enter-your-name",
+                        "theme": "main-applicant-details"
+                    },
+                    {
+                        "id": "q-mainapplicant-last-name",
+                        "type": "simple",
+                        "label": "Last name",
+                        "value": "Applicant",
+                        "sectionId": "p-mainapplicant-enter-your-name",
+                        "theme": "main-applicant-details"
+                    }
+                ],
+                "sectionId": "p-mainapplicant-enter-your-name",
+                "theme": "main-applicant-details"
+            },
+            {
+                "id": "mainapplicant-address",
+                "type": "composite",
+                "label": "Your address",
+                "values": [
+                    {
+                        "id": "q-mainapplicant-building-and-street",
+                        "type": "simple",
+                        "label": "Building and street",
+                        "value": "10 Main Street",
+                        "sectionId": "p-mainapplicant-enter-your-address",
+                        "theme": "main-applicant-details"
+                    },
+                    {
+                        "id": "q-mainapplicant-town-or-city",
+                        "type": "simple",
+                        "label": "Town or city",
+                        "value": "Glasgow",
+                        "sectionId": "p-mainapplicant-enter-your-address",
+                        "theme": "main-applicant-details"
+                    },
+                    {
+                        "id": "q-mainapplicant-postcode",
+                        "type": "simple",
+                        "label": "Postcode (optional)",
+                        "value": "MA1",
+                        "sectionId": "p-mainapplicant-enter-your-address",
+                        "theme": "main-applicant-details"
+                    }
+                ],
+                "sectionId": "p-mainapplicant-enter-your-address",
+                "theme": "main-applicant-details"
+            },
+            {
+                "id": "q-mainapplicant-enter-your-telephone-number",
+                "type": "simple",
+                "label": "Enter your telephone number",
+                "value": "07712312344",
+                "sectionId": "p-mainapplicant-enter-your-telephone-number",
+                "theme": "main-applicant-details"
+            },
+            {
+                "id": "q-mainapplicant-relationship",
+                "type": "simple",
+                "label": "What is your relationship to the victim?",
+                "value": "father",
+                "sectionId": "p-mainapplicant-relationship",
+                "theme": "main-applicant-details"
+            },
+            {
+                "id": "q-mainapplicant-shared-responsibility",
+                "type": "simple",
+                "label": "Do you share parental responsibility?",
+                "value": false,
+                "valueLabel": "No",
+                "sectionId": "p-mainapplicant-shared-responsibility",
+                "theme": "main-applicant-details"
+            },
+            {
+                "id": "q-mainapplicant-care-order",
+                "type": "simple",
+                "label": "Is there a care, supervision or other local authority order in place for the victim?",
+                "value": false,
+                "valueLabel": "No",
+                "sectionId": "p-mainapplicant-care-order",
+                "theme": "main-applicant-details"
+            }
+        ]
+    },
+    {
+        "type": "theme",
+        "id": "crime",
+        "title": "About the crime",
+        "values": [
+            {
+                "id": "q-applicant-incident-type",
+                "type": "simple",
+                "label": "What led to the victim's injuries?",
+                "value": "ASST",
+                "valueLabel": "Physical assault",
+                "sectionId": "p-applicant-incident-type",
+                "theme": "crime"
+            },
+            {
+                "id": "q-applicant-did-the-crime-happen-once-or-over-time",
+                "type": "simple",
+                "label": "Did the crime happen once or over a period of time?",
+                "value": "once",
+                "valueLabel": "Once",
+                "sectionId": "p-applicant-did-the-crime-happen-once-or-over-time",
+                "theme": "crime"
+            },
+            {
+                "id": "q-applicant-when-did-the-crime-happen",
+                "type": "simple",
+                "label": "When did the crime happen?",
+                "value": "2022-04-28T00:00:00.000Z",
+                "sectionId": "p-applicant-when-did-the-crime-happen",
+                "theme": "crime",
+                "format": {
+                    "value": "date-time",
+                    "precision": "YYYY-MM-DD"
+                }
+            },
+            {
+                "id": "q-applicant-where-did-the-crime-happen",
+                "type": "simple",
+                "label": "Where did the crime happen?",
+                "value": "scotland",
+                "valueLabel": "Scotland",
+                "sectionId": "p-applicant-where-did-the-crime-happen",
+                "theme": "crime"
+            },
+            {
+                "id": "crime-location-scotland",
+                "type": "composite",
+                "label": "Where in Scotland did it happen?",
+                "values": [
+                    {
+                        "id": "q-applicant-scottish-town-or-city",
+                        "type": "simple",
+                        "label": "Town or city",
+                        "value": "Glasgow",
+                        "sectionId": "p-applicant-where-in-scotland-did-it-happen",
+                        "theme": "crime"
+                    },
+                    {
+                        "id": "q-applicant-scottish-location",
+                        "type": "simple",
+                        "label": "Location",
+                        "value": "Central",
+                        "sectionId": "p-applicant-where-in-scotland-did-it-happen",
+                        "theme": "crime"
+                    }
+                ],
+                "sectionId": "p-applicant-where-in-scotland-did-it-happen",
+                "theme": "crime"
+            },
+            {
+                "id": "q--when-was-the-crime-reported-to-police",
+                "type": "simple",
+                "label": "When was the crime reported?",
+                "value": "2022-04-28T00:00:00.000Z",
+                "sectionId": "p--when-was-the-crime-reported-to-police",
+                "theme": "crime",
+                "format": {
+                    "value": "date-time",
+                    "precision": "YYYY-MM-DD"
+                }
+            },
+            {
+                "id": "q-police-force-id",
+                "type": "simple",
+                "label": "Which police force is investigating the crime?",
+                "value": 10000140,
+                "valueLabel": "Greater Manchester Police",
+                "sectionId": "p--which-police-force-is-investigating-the-crime",
+                "theme": "crime"
+            },
+            {
+                "id": "q--whats-the-crime-reference-number",
+                "type": "simple",
+                "label": "What's the crime reference number?",
+                "value": "CR123456",
+                "sectionId": "p--whats-the-crime-reference-number",
+                "theme": "crime"
+            },
+            {
+                "id": "q-applicant-describe-incident",
+                "type": "simple",
+                "label": "Do you want to describe the crime?",
+                "value": false,
+                "valueLabel": "No",
+                "sectionId": "p-applicant-describe-incident",
+                "theme": "crime"
+            }
+        ]
+    },
+    {
+        "type": "theme",
+        "id": "offender",
+        "title": "About the offender",
+        "values": [
+            {
+                "id": "q-offender-do-you-know-the-name-of-the-offender",
+                "type": "simple",
+                "label": "Do you know the offender's name?",
+                "value": false,
+                "valueLabel": "No",
+                "sectionId": "p-offender-do-you-know-the-name-of-the-offender",
+                "theme": "offender"
+            }
+        ]
+    },
+    {
+        "type": "theme",
+        "id": "injuries",
+        "title": "The victim's injuries",
+        "values": [
+            {
+                "id": "q-applicant-are-you-claiming-for-physical-injuries",
+                "type": "simple",
+                "label": "Do they have physical injuries?",
+                "value": true,
+                "valueLabel": "Yes",
+                "sectionId": "p-applicant-are-you-claiming-for-physical-injuries",
+                "theme": "injuries"
+            },
+            {
+                "id": "q-applicant-physical-injury",
+                "type": "simple",
+                "label": "What was injured?",
+                "value": [
+                    "upper"
+                ],
+                "valueLabel": [
+                    "Head, face or neck"
+                ],
+                "sectionId": "p-applicant-physical-injury",
+                "theme": "injuries"
+            },
+            {
+                "id": "q-applicant-physical-injury-upper",
+                "type": "simple",
+                "label": "Head, face or neck injuries",
+                "value": [
+                    "head"
+                ],
+                "valueLabel": [
+                    "Head or brain"
+                ],
+                "sectionId": "p-applicant-physical-injury-upper",
+                "theme": "injuries"
+            },
+            {
+                "id": "q-applicant-physical-injuries",
+                "type": "simple",
+                "label": "Head injuries",
+                "value": [
+                    "phyinj-146"
+                ],
+                "valueLabel": [
+                    "Head injury causing concussion, headaches or loss of balance"
+                ],
+                "sectionId": "p-applicant-physical-injury-upper-head",
+                "theme": "injuries"
+            },
+            {
+                "id": "q-applicant-infections",
+                "type": "simple",
+                "label": "Did they get any infections?",
+                "value": "no",
+                "valueLabel": "No",
+                "sectionId": "p-applicant-infections",
+                "theme": "injuries"
+            }
+        ]
+    },
+    {
+        "type": "theme",
+        "id": "pregnancy",
+        "title": "Pregnancy",
+        "values": [
+            {
+                "id": "q-applicant-pregnancy-loss",
+                "type": "simple",
+                "label": "Did they lose a pregnancy?",
+                "value": "no",
+                "valueLabel": "No",
+                "sectionId": "p-applicant-pregnancy-loss",
+                "theme": "pregnancy"
+            }
+        ]
+    },
+    {
+        "type": "theme",
+        "id": "mental-health",
+        "title": "The victim's mental health",
+        "values": [
+            {
+                "id": "q-applicant-do-you-have-disabling-mental-injury",
+                "type": "simple",
+                "label": "Do they have a disabling mental injury?",
+                "value": false,
+                "valueLabel": "No",
+                "sectionId": "p-applicant-do-you-have-disabling-mental-injury",
+                "theme": "mental-health"
+            }
+        ]
+    },
+    {
+        "type": "theme",
+        "id": "impact",
+        "title": "The impact the injuries have had",
+        "values": [
+            {
+                "id": "q-applicant-over-16",
+                "type": "simple",
+                "label": "Was the victim 16 or over at the time of the crime?",
+                "value": true,
+                "valueLabel": "Yes",
+                "sectionId": "p-applicant-over-16",
+                "theme": "impact"
+            },
+            {
+                "id": "q-applicant-job-when-crime-happened",
+                "type": "simple",
+                "label": "Did the victim have a job when the crime happened?",
+                "value": false,
+                "valueLabel": "No",
+                "sectionId": "p-applicant-job-when-crime-happened",
+                "theme": "impact"
+            },
+            {
+                "id": "q-applicant-work-details-option",
+                "type": "simple",
+                "label": "Reason for not having a job",
+                "value": [
+                    "education"
+                ],
+                "valueLabel": [
+                    "At school, college or university"
+                ],
+                "sectionId": "p-applicant-work-details-option",
+                "theme": "impact"
+            },
+            {
+                "id": "q-applicant-affected-daily-capacity",
+                "type": "simple",
+                "label": "Is their capacity for day-to-day activities affected?",
+                "value": false,
+                "valueLabel": "No",
+                "sectionId": "p-applicant-affected-daily-capacity",
+                "theme": "impact"
+            },
+            {
+                "id": "q-applicant-future-work",
+                "type": "simple",
+                "label": "Is their ability to work in future affected?",
+                "value": "no",
+                "valueLabel": "No",
+                "sectionId": "p-applicant-future-work",
+                "theme": "impact"
+            },
+            {
+                "id": "q-applicant-affect-on-daily-life-dmi",
+                "type": "simple",
+                "label": "How their injuries have affected their daily life",
+                "value": "How the injuries have affected",
+                "sectionId": "p-applicant-affect-on-daily-life-dmi",
+                "theme": "impact"
+            }
+        ]
+    },
+    {
+        "type": "theme",
+        "id": "special-expenses",
+        "title": "Special expenses",
+        "values": [
+            {
+                "id": "q-applicant-se-treatment",
+                "type": "simple",
+                "label": "NHS or other state health service treatment",
+                "value": false,
+                "valueLabel": "No",
+                "sectionId": "p-applicant-se-treatment",
+                "theme": "special-expenses"
+            },
+            {
+                "id": "q-applicant-se-home-care",
+                "type": "simple",
+                "label": "Care or supervision",
+                "value": false,
+                "valueLabel": "No",
+                "sectionId": "p-applicant-se-home-care",
+                "theme": "special-expenses"
+            },
+            {
+                "id": "q-applicant-se-home-changes",
+                "type": "simple",
+                "label": "Changes to the home",
+                "value": false,
+                "valueLabel": "No",
+                "sectionId": "p-applicant-se-home-changes",
+                "theme": "special-expenses"
+            },
+            {
+                "id": "q-applicant-se-equipment",
+                "type": "simple",
+                "label": "Special equipment",
+                "value": false,
+                "valueLabel": "No",
+                "sectionId": "p-applicant-se-equipment",
+                "theme": "special-expenses"
+            },
+            {
+                "id": "q-applicant-se-aids",
+                "type": "simple",
+                "label": "Physical aids",
+                "value": false,
+                "valueLabel": "No",
+                "sectionId": "p-applicant-se-aids",
+                "theme": "special-expenses"
+            },
+            {
+                "id": "q-applicant-se-other",
+                "type": "simple",
+                "label": "Any other expenses or future expenses",
+                "value": false,
+                "valueLabel": "No",
+                "sectionId": "p-applicant-se-other",
+                "theme": "special-expenses"
+            }
+        ]
+    },
+    {
+        "type": "theme",
+        "id": "treatment",
+        "title": "The victim's treatment",
+        "values": [
+            {
+                "id": "q-applicant-treatment-for-physical-injuries",
+                "type": "simple",
+                "label": "Treatment for physical injuries",
+                "value": "The treatment I am receiving for my physical injuries",
+                "sectionId": "p-applicant-treatment-for-physical-injuries",
+                "theme": "treatment"
+            },
+            {
+                "id": "q-applicant-has-your-treatment-finished-dmi",
+                "type": "simple",
+                "label": "Have they finished their treatment?",
+                "value": true,
+                "valueLabel": "Yes",
+                "sectionId": "p-applicant-has-your-treatment-finished-dmi",
+                "theme": "treatment"
+            },
+            {
+                "id": "q-applicant-are-you-registered-with-gp",
+                "type": "simple",
+                "label": "Are they registered with a GP practice?",
+                "value": true,
+                "valueLabel": "Yes",
+                "sectionId": "p-applicant-are-you-registered-with-gp",
+                "theme": "treatment"
+            },
+            {
+                "id": "q-applicant-have-you-seen-a-gp",
+                "type": "simple",
+                "label": "Have they seen a GP?",
+                "value": true,
+                "valueLabel": "Yes",
+                "sectionId": "p-applicant-have-you-seen-a-gp",
+                "theme": "treatment"
+            },
+            {
+                "id": "applicant-gp-address",
+                "type": "composite",
+                "label": "What is the GP's address?",
+                "values": [
+                    {
+                        "id": "q-gp-organisation-name",
+                        "type": "simple",
+                        "label": "Practice name",
+                        "value": "GP Practice",
+                        "sectionId": "p-gp-enter-your-address",
+                        "theme": "treatment"
+                    },
+                    {
+                        "id": "q-gp-building-and-street",
+                        "type": "simple",
+                        "label": "Building and street",
+                        "value": "GP Building",
+                        "sectionId": "p-gp-enter-your-address",
+                        "theme": "treatment"
+                    },
+                    {
+                        "id": "q-gp-town-or-city",
+                        "type": "simple",
+                        "label": "Town or city",
+                        "value": "GP Town",
+                        "sectionId": "p-gp-enter-your-address",
+                        "theme": "treatment"
+                    },
+                    {
+                        "id": "q-gp-county",
+                        "type": "simple",
+                        "label": "County (optional)",
+                        "value": "GP County",
+                        "sectionId": "p-gp-enter-your-address",
+                        "theme": "treatment"
+                    },
+                    {
+                        "id": "q-gp-postcode",
+                        "type": "simple",
+                        "label": "Postcode (optional)",
+                        "value": "GP1 1GP",
+                        "sectionId": "p-gp-enter-your-address",
+                        "theme": "treatment"
+                    }
+                ],
+                "sectionId": "p-gp-enter-your-address",
+                "theme": "treatment"
+            },
+            {
+                "id": "q-applicant-dentist-visited",
+                "type": "simple",
+                "label": "Have they seen a dentist?",
+                "value": true,
+                "valueLabel": "Yes",
+                "sectionId": "p-applicant-dentist-visited",
+                "theme": "treatment"
+            },
+            {
+                "id": "applicant-dentist-address",
+                "type": "composite",
+                "label": "What is the dentist's address?",
+                "values": [
+                    {
+                        "id": "q-applicant-dentist-organisation-name",
+                        "type": "simple",
+                        "label": "Practice name",
+                        "value": "Dentist Practice",
+                        "sectionId": "p-applicant-dentist-address",
+                        "theme": "treatment"
+                    },
+                    {
+                        "id": "q-applicant-dentist-address-building-and-street",
+                        "type": "simple",
+                        "label": "Building and street",
+                        "value": "Dentist Building",
+                        "sectionId": "p-applicant-dentist-address",
+                        "theme": "treatment"
+                    },
+                    {
+                        "id": "q-applicant-dentist-address-town-or-city",
+                        "type": "simple",
+                        "label": "Town or city",
+                        "value": "Dentist Town",
+                        "sectionId": "p-applicant-dentist-address",
+                        "theme": "treatment"
+                    },
+                    {
+                        "id": "q-applicant-dentist-address-county",
+                        "type": "simple",
+                        "label": "County (optional)",
+                        "value": "Dentist County",
+                        "sectionId": "p-applicant-dentist-address",
+                        "theme": "treatment"
+                    },
+                    {
+                        "id": "q-applicant-dentist-address-postcode",
+                        "type": "simple",
+                        "label": "Postcode (optional)",
+                        "value": "DP1 1DP",
+                        "sectionId": "p-applicant-dentist-address",
+                        "theme": "treatment"
+                    }
+                ],
+                "sectionId": "p-applicant-dentist-address",
+                "theme": "treatment"
+            }
+        ]
+    },
+    {
+        "type": "theme",
+        "id": "other-compensation",
+        "title": "Other compensation",
+        "values": [
+            {
+                "id": "q-applicant-have-you-applied-to-us-before",
+                "type": "simple",
+                "label": "Has anyone applied to us before on behalf of the victim?",
+                "value": false,
+                "valueLabel": "No",
+                "sectionId": "p-applicant-have-you-applied-to-us-before",
+                "theme": "other-compensation"
+            },
+            {
+                "id": "q-applicant-have-you-applied-for-or-received-any-other-compensation",
+                "type": "simple",
+                "label": "Has anyone applied for other compensation?",
+                "value": false,
+                "valueLabel": "No",
+                "sectionId": "p-applicant-have-you-applied-for-or-received-any-other-compensation",
+                "theme": "other-compensation"
+            },
+            {
+                "id": "q-applicant-applied-for-other-compensation-briefly-explain-why-not",
+                "type": "simple",
+                "label": "Reasons for not applying for other compensation",
+                "value": "Did not apply for other forms of compensation",
+                "sectionId": "p-applicant-applied-for-other-compensation-briefly-explain-why-not",
+                "theme": "other-compensation"
+            }
+        ]
+    },
+    {
+        "type": "theme",
+        "id": "additional-info",
+        "title": "Additional information",
+        "values": [
+            {
+                "id": "q-applicant-provide-additional-information",
+                "type": "simple",
+                "label": "Would you like to add any information?",
+                "value": false,
+                "valueLabel": "No",
+                "sectionId": "p-applicant-provide-additional-information",
+                "theme": "additional-info"
+            }
+        ]
+    }
+]
