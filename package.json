@@ -7,8 +7,10 @@
     },
     "scripts": {
         "start": "node ./bin/www",
-        "start:dev": "nodemon -L -e .js,.json,.njk,.yml --ignore openapi/openapi.json --exec npm run build:run:dev",
-        "openapi:build": "speccy lint openapi/src/openapi-src.json -j && speccy resolve ./openapi/src/openapi-src.json -j | yaml2json --pretty --indentation 4 --save - > ./openapi/openapi.json && node ./openapi/src/dereference-openapi.js",
+        "start:dev": "nodemon -L -e .js,.json,.njk,.yml --ignore openapi/openapi.json --ignore openapi/openapi-v2.json --exec npm run build:run:dev",
+        "openapi:build1": "speccy lint openapi/src/openapi-src.json -j && speccy resolve ./openapi/src/openapi-src.json -j | yaml2json --pretty --indentation 4 --save - > ./openapi/openapi.json && node ./openapi/src/dereference-openapi.js",
+        "openapi:build2": "speccy lint openapi/src/openapi-src-v2.json -j && speccy resolve ./openapi/src/openapi-src-v2.json -j | yaml2json --pretty --indentation 4 --save - > ./openapi/openapi-v2.json && node ./openapi/src/dereference-openapi-v2.js",
+        "openapi:build": "npm run openapi:build1 && npm run openapi:build2",
         "build:run:dev": "npm run openapi:build && node --inspect=0.0.0.0:9229 ./bin/www",
         "pretestx": "eslint .",
         "test": "jest",
