@@ -13,6 +13,7 @@ router.use('/openapi-v2.json', express.static(path.join(__dirname, '../openapi/o
 const swaggerUiOptions = {
     explorer: true,
     swaggerOptions: {
+        validatorUrl: null,
         urls: [
             {
                 url: '/docs/openapi.json',
