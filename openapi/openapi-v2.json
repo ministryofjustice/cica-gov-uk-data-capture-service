@@ -1,0 +1,26 @@
+{
+    "openapi": "3.0.2",
+    "info": {
+        "title": "Data Capture Service API",
+        "description": "Manage a questionnaire lifecycle",
+        "version": "2.0.0",
+        "license": {
+            "name": "MIT"
+        },
+        "contact": {
+            "name": "API Support",
+            "email": "api@cica.gov.uk"
+        }
+    },
+    "servers": [
+        {
+            "url": "/api"
+        }
+    ],
+    "tags": [
+        {
+            "name": "Questionnaires"
+        }
+    ],
+    "paths": {}
+}
