@@ -2,6 +2,7 @@
 
 const express = require('express');
 const swaggerUi = require('swagger-ui-express');
+const path = require('path');
 
 const swaggerDocument = require('../openapi/openapi.json');
 
@@ -12,16 +13,22 @@ const options = {
     swaggerOptions: {
         urls: [
             {
-                url: 'http://localhost:3100/openapi.json',
+                url: '/docs/openapi.json',
                 name: 'Spec1'
             },
             {
-                url: 'http://localhost:3100/openapi2.json',
+                url: '/docs/openapi-v2.json',
                 name: 'Spec2'
             }
         ]
     }
 };
+
+// console.log('>>>>>>>>>>>>>>>>>: ', path.join(__dirname, '/openapi/openapi.json'));
+
+router.use('/openapi.json', express.static(path.join(__dirname, '../openapi/openapi.json')));
+router.use('/openapi-v2.json', express.static(path.join(__dirname, '../openapi/openapi-v2.json')));
+
 
 // Ensure JWT is valid
 // router.use(validateJWT({secret: process.env.SECRET}));
