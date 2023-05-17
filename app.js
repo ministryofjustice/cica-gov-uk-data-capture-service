@@ -88,16 +88,26 @@ app.use('/api/v1/submissions', submissionsRouter);
 
 // Install the OpenApiValidator onto express app
 app.use(
+    '/api/v1/questionnaires',
     OpenApiValidator.middleware({
         apiSpec: './openapi/openapi.json',
         validateRequests: true,
         validateResponses: false,
         validateSecurity: false
-    })
+    }),
+    questionnaireRouter
 );
 
-app.use('/api/v1/questionnaires', questionnaireRouter);
-
+app.use(
+    '/api/questionnaires',
+    OpenApiValidator.middleware({
+        apiSpec: './openapi/openapi-v2.json',
+        validateRequests: true,
+        validateResponses: false,
+        validateSecurity: false
+    }),
+    questionnaireRouter
+);
 // Express doesn't treat 404s as errors. If the following handler has been reached then nothing else matched e.g. a 404
 // https://expressjs.com/en/starter/faq.html#how-do-i-handle-404-responses
 app.use(req => {
