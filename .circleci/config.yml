@@ -188,49 +188,49 @@ jobs:
 
 workflows:
   version: 2
-    build-test-push-deploydev-deploytouatapproval-deployuat-deploytoprodapproval-deployprod:
+  build-test-push-deploydev-deploytouatapproval-deployuat-deploytoprodapproval-deployprod:
       jobs:
         - build-for-test
         - test:
             requires:
-             - build-for-test
+              - build-for-test
         - lint:
            requires:
-            - build-for-test
+              - build-for-test
         - build:
            requires:
-            - test
-            - lint
+              - test
+              - lint
         - publish_latest:
            requires:
-            - build
+              - build
         - push_image:
            requires:
-            - publish_latest
+              - publish_latest
         - deploy_to_dev:
             requires:
-             - push_image
-          filters:
-            branches:
-              only: dcs-deploy
+               - push_image
+            filters:
+              branches:
+                only: dcs-deploy
         - deploy_to_uat_approval:
-           type: approval
-             requires:
+            type: approval
+            requires:
              - push_image
             filters:
               branches:
                only: dcs-deploy
         - deploy_to_uat:
           #          type: approval
-           requires:
+            requires:
              - push_image
              - deploy_to_uat_approval
             filters:
              branches:
               only: dcs-deploy
         - deploy_to_prod_approval:
-           type: approval
-             requires:
+            type: approval
+            requires:
                - push_image
                - deploy_to_uat
             filters:
@@ -242,26 +242,43 @@ workflows:
             filters:
               branches:
                only: dcs-deploy
-    deploytouatapproval-deployuat-deploytoprodapproval-deployprod:
+  deploytouatapproval-deployuat-deploytoprodapproval-deployprod:
       jobs:
+        - build-for-test
+        - test:
+            requires:
+              - build-for-test
+        - lint:
+           requires:
+              - build-for-test
+        - build:
+           requires:
+              - test
+              - lint
+        - publish_latest:
+           requires:
+              - build
+        - push_image:
+           requires:
+              - publish_latest
         - deploy_to_uat_approval:
-           type: approval
-             requires:
+            type: approval
+            requires:
              - push_image
             filters:
               branches:
                only: dcs-deploy-to-uat
         - deploy_to_uat:
           #          type: approval
-           requires:
-             - push_image
-             - deploy_to_uat_approval
+            requires:
+              - push_image
+              - deploy_to_uat_approval
             filters:
              branches:
               only: dcs-deploy-to-uat
         - deploy_to_prod_approval:
-           type: approval
-             requires:
+            type: approval
+            requires:
                - push_image
                - deploy_to_uat
             filters:
