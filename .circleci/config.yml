@@ -187,8 +187,7 @@ jobs:
                 -f kube_deploy/Prod/ingress.yml
 
 workflows:
-  full-workflow
-    version: 2
+  version: 2
     build-test-push-deploydev-deploytouatapproval-deployuat-deploytoprodapproval-deployprod:
       jobs:
         - build-for-test
@@ -243,11 +242,9 @@ workflows:
             filters:
               branches:
                only: dcs-deploy
-  uat-workflow
-    version: 2
     deploytouatapproval-deployuat-deploytoprodapproval-deployprod:
       jobs:
-      - deploy_to_uat_approval:
+        - deploy_to_uat_approval:
            type: approval
              requires:
              - push_image
