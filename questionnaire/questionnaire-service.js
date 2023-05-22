@@ -10,7 +10,7 @@ const uuidv4 = require('uuid/v4');
 const ajvFormatsMobileUk = require('ajv-formats-mobile-uk');
 const templates = require('./templates');
 const createSqsService = require('../services/sqs');
-const createLegacyNotifyService = require('../services/sqs/legacy-sms-message-bus');
+// const createLegacyNotifyService = require('../services/sqs/legacy-sms-message-bus');
 const createSlackService = require('../services/slack');
 const questionnaireResource = require('./resources/questionnaire-resource');
 const createQuestionnaireHelper = require('./questionnaire/questionnaire');
@@ -545,19 +545,19 @@ function createQuestionnaireService({
                 return sqsService.send(payload, process.env.NOTIFY_AWS_SQS_ID);
             }
 
-            if (action.type === 'sendSms') {
-                const legacyNotifyService = createLegacyNotifyService({logger});
+            // if (action.type === 'sendSms') {
+            //     const legacyNotifyService = createLegacyNotifyService({logger});
 
-                const payload = {
-                    templateId: action.data.templateId,
-                    phoneNumber: action.data.phoneNumber,
-                    personalisation: {
-                        caseReference: action.data.personalisation.caseReference
-                    },
-                    reference: null
-                };
-                return legacyNotifyService.sendSms(payload);
-            }
+            //     const payload = {
+            //         templateId: action.data.templateId,
+            //         phoneNumber: action.data.phoneNumber,
+            //         personalisation: {
+            //             caseReference: action.data.personalisation.caseReference
+            //         },
+            //         reference: null
+            //     };
+            //     return legacyNotifyService.sendSms(payload);
+            // }
 
             return Promise.reject(Error(`Action type "${action.type}" is not supported`));
         });

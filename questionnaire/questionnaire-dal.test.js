@@ -4,6 +4,8 @@ const DB_QUERY_ERROR_QUESTIONNAIRE_ID = 'acbfcd8e-1299-478a-a9f1-7005f4b713ed';
 const DB_QUERY_ERROR_SUBMISSION_STATUS_ID = 'FAIL_TEST';
 const DB_QUERY_ROW_COUNT_ZERO_QUESTIONNAIRE_ID = 'c9723b81-c50d-4050-805f-108995067913';
 const DB_QUERY_ROW_COUNT_ZERO_SUBMISSION_STATUS = 'ZERO_ROWS_SUBMISSION_STATUS';
+const DB_QUERY_YEAR = '2019';
+const DB_QUERY_ERROR_CLAIMTYPE = '7';
 
 jest.doMock('../db/index.js', () => () => ({
     query: (query, parameters) => {
@@ -12,6 +14,10 @@ jest.doMock('../db/index.js', () => () => ({
         }
 
         if (parameters.includes(DB_QUERY_ERROR_SUBMISSION_STATUS_ID)) {
+            throw new Error('DB_QUERY_ERROR');
+        }
+
+        if (parameters.includes(DB_QUERY_ERROR_CLAIMTYPE)) {
             throw new Error('DB_QUERY_ERROR');
         }
 
@@ -136,6 +142,27 @@ describe('questionnaire data access layer', () => {
             await expect(
                 questionnaireDAL.getQuestionnaireIdsBySubmissionStatus(
                     DB_QUERY_ERROR_SUBMISSION_STATUS_ID
+                )
+            ).rejects.toThrow('DB_QUERY_ERROR');
+        });
+    });
+
+    describe('getMostRecentClaimByYearAndType', () => {
+        it('Should not successfully select from the db', async () => {
+            const questionnaireDAL = createQuestionnaireDAL({logger: jest.fn()});
+            const response = await questionnaireDAL.getMostRecentClaimByYearAndType(
+                DB_QUERY_YEAR,
+                '8'
+            );
+            await expect(response).toEqual([]);
+        });
+
+        it('Should throw when a db connnectivity issue is encountered', async () => {
+            const questionnaireDAL = createQuestionnaireDAL({logger: jest.fn()});
+            await expect(
+                questionnaireDAL.getMostRecentClaimByYearAndType(
+                    DB_QUERY_YEAR,
+                    DB_QUERY_ERROR_CLAIMTYPE
                 )
             ).rejects.toThrow('DB_QUERY_ERROR');
         });
