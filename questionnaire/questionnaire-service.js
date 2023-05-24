@@ -370,6 +370,18 @@ function createQuestionnaireService({
     }
 
     async function buildSessionInformationBlock(questionnaireId) {
+        const submissionStatus = await getQuestionnaireSubmissionStatus(questionnaireId);
+
+        if (submissionStatus !== 'NOT_STARTED') {
+            const resourceCreationDate = Date.now();
+            return {
+                alive: false,
+                duration: 0,
+                created: resourceCreationDate,
+                expires: resourceCreationDate
+            };
+        }
+
         const sessionCreateDateISO = await db.getQuestionnaireModifiedDate(questionnaireId);
         const sessionCreatedDateMs = new Date(sessionCreateDateISO) * 1;
         const sessionDuration = parseInt(process.env.DCS_SESSION_DURATION, 10);
