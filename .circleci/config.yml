@@ -234,7 +234,7 @@ workflows:
                only: dcs-deploy
       - deploy_to_dev:
           requires:
-            - push_image
+            - deploy_to_dev_approval
           filters:
             branches:
               only: dcs-deploy
