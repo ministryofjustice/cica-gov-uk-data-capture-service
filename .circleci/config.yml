@@ -241,7 +241,6 @@ workflows:
       - deploy_to_prod_approval:
           type: approval
           requires:
-            - push_image
             - deploy_to_dev
           filters:
             branches:
