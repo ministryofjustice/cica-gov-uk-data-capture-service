@@ -239,8 +239,8 @@ workflows:
           requires:
             - deploy_to_dev
           filters:
-          branches:
-            only: bp-dcs-deploy
+            branches:
+              only: bp-dcs-deploy
       - deploy_to_prod:
           requires:
             - deploy_to_prod_approval
