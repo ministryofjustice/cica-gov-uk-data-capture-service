@@ -118,6 +118,29 @@ function questionnaireDAL(spec) {
         return result;
     }
 
+    async function submitApplication(questionnaireId, isFatal, submissionStatus) {
+        let result;
+        try {
+            result = await db.query(
+                'UPDATE questionnaire SET reference = get_reference($1), modified = current_timestamp, submitted = current_timestamp, submission_status = $3 WHERE id = $2',
+                [isFatal, questionnaireId, submissionStatus]
+            );
+
+            if (result.rowCount === 0) {
+                throw new VError(
+                    {
+                        name: 'UpdateNotSuccessful'
+                    },
+                    `Questionnaire "${questionnaireId}" reference and status not successfully updated`
+                );
+            }
+        } catch (err) {
+            throw err;
+        }
+
+        return result;
+    }
+
     async function getQuestionnaireIdsBySubmissionStatus(submissionStatus) {
         let result;
 
@@ -154,6 +177,28 @@ function questionnaireDAL(spec) {
         return result.rows[0].modified;
     }
 
+    async function getCaseReferenceNumber(questionnaireId) {
+        let result;
+        try {
+            result = await db.query('SELECT reference FROM questionnaire WHERE id = $1', [
+                questionnaireId
+            ]);
+
+            if (result.rowCount === 0) {
+                throw new VError(
+                    {
+                        name: 'ResourceNotFound'
+                    },
+                    `Questionnaire "${questionnaireId}" not found`
+                );
+            }
+        } catch (err) {
+            throw err;
+        }
+
+        return result.rows[0].reference;
+    }
+
     async function updateQuestionnaireModifiedDate(questionnaireId) {
         let result;
 
@@ -180,8 +225,10 @@ function questionnaireDAL(spec) {
     return Object.freeze({
         createQuestionnaire,
         updateQuestionnaire,
+        getCaseReferenceNumber,
         getQuestionnaire,
         getQuestionnaireSubmissionStatus,
+        submitApplication,
         updateQuestionnaireSubmissionStatus,
         getQuestionnaireIdsBySubmissionStatus,
         getQuestionnaireModifiedDate,

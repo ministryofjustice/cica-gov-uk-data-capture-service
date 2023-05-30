@@ -10,10 +10,11 @@ const uuidv4 = require('uuid/v4');
 const ajvFormatsMobileUk = require('ajv-formats-mobile-uk');
 const templates = require('./templates');
 const createSqsService = require('../services/sqs');
-// const createLegacyNotifyService = require('../services/sqs/legacy-sms-message-bus');
+const createLegacyNotifyService = require('../services/sqs/legacy-sms-message-bus');
 const createSlackService = require('../services/slack');
 const questionnaireResource = require('./resources/questionnaire-resource');
 const createQuestionnaireHelper = require('./questionnaire/questionnaire');
+const createReferenceService = require('../services/reference');
 
 const defaults = {};
 defaults.createQuestionnaireDAL = require('./questionnaire-dal');
@@ -69,6 +70,14 @@ function createQuestionnaireService({
         await db.updateQuestionnaireSubmissionStatus(questionnaireId, submissionStatus);
     }
 
+    async function submitApplication(questionnaireId, isFatal, submissionStatus) {
+        await db.submitApplication(questionnaireId, isFatal, submissionStatus);
+    }
+
+    async function getCaseReferenceNumber(questionnaireId) {
+        await db.getCaseReferenceNumber(questionnaireId);
+    }
+
     function getSection(sectionId, qRouter) {
         let section;
 
@@ -92,21 +101,14 @@ function createQuestionnaireService({
         return section;
     }
 
-    async function retrieveCaseReferenceNumber(questionnaireId) {
-        const questionnaire = await getQuestionnaire(questionnaireId);
-        const caseReference =
-            questionnaire.answers &&
-            questionnaire.answers.system &&
-            questionnaire.answers.system['case-reference'];
-        if (caseReference) {
-            return caseReference;
-        }
-
-        return null;
-    }
     async function startSubmission(questionnaireId) {
         try {
-            await updateQuestionnaireSubmissionStatus(questionnaireId, 'IN_PROGRESS');
+            const questionnaire = await getQuestionnaire(questionnaireId);
+
+            const referenceService = createReferenceService();
+            const isFatal = referenceService.checkClaimType(questionnaire);
+            console.log('isFatal', isFatal);
+            await submitApplication(questionnaireId, isFatal, 'IN_PROGRESS');
 
             const sqsService = createSqsService({logger});
             const submissionResponse = await sqsService.send(
@@ -146,7 +148,7 @@ function createQuestionnaireService({
         }
 
         const status = await getQuestionnaireSubmissionStatus(questionnaireId);
-        const caseReferenceNumber = await retrieveCaseReferenceNumber(questionnaireId);
+        const caseReferenceNumber = await getCaseReferenceNumber(questionnaireId);
         const submitted = !!caseReferenceNumber;
 
         const response = {
@@ -545,19 +547,19 @@ function createQuestionnaireService({
                 return sqsService.send(payload, process.env.NOTIFY_AWS_SQS_ID);
             }
 
-            // if (action.type === 'sendSms') {
-            //     const legacyNotifyService = createLegacyNotifyService({logger});
+            if (action.type === 'sendSms') {
+                const legacyNotifyService = createLegacyNotifyService({logger});
 
-            //     const payload = {
-            //         templateId: action.data.templateId,
-            //         phoneNumber: action.data.phoneNumber,
-            //         personalisation: {
-            //             caseReference: action.data.personalisation.caseReference
-            //         },
-            //         reference: null
-            //     };
-            //     return legacyNotifyService.sendSms(payload);
-            // }
+                const payload = {
+                    templateId: action.data.templateId,
+                    phoneNumber: action.data.phoneNumber,
+                    personalisation: {
+                        caseReference: action.data.personalisation.caseReference
+                    },
+                    reference: null
+                };
+                return legacyNotifyService.sendSms(payload);
+            }
 
             return Promise.reject(Error(`Action type "${action.type}" is not supported`));
         });
