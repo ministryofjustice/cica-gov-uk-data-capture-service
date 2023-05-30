@@ -192,57 +192,57 @@ workflows:
     jobs:
       - build-for-test
       - test:
-        requires:
-          - build-for-test
+          requires:
+            - build-for-test
       - lint:
-        requires:
-          - build-for-test
+          requires:
+            - build-for-test
       - build:
-        requires:
-          - test
-          - lint
+          requires:
+            - test
+            - lint
       - publish_latest:
-        requires:
-          - build
+          requires:
+            - build
       - push_image:
-        requires:
-          - publish_latest
+          requires:
+            - publish_latest
       - deploy_to_dev_approval:
-        type: approval
-        requires:
-          - push_image
-        filters:
-          branches:
-            only: bp-dcs-deploy
+          type: approval
+          requires:
+            - push_image
+          filters:
+            branches:
+              only: bp-dcs-deploy
       - deploy_to_dev:
-        requires: deploy_to_dev_approval
-        filters:
-          branches:
-            only: bp-dcs-deploy
+          requires: deploy_to_dev_approval
+          filters:
+            branches:
+              only: bp-dcs-deploy
       - deploy_to_uat_approval:
-        type: approval
-        requires:
-          - push_image
-        filters:
-          branches:
-            only: bp-dcs-deploy-to-uat
+          type: approval
+          requires:
+            - push_image
+          filters:
+            branches:
+              only: bp-dcs-deploy-to-uat
       - deploy_to_uat:
-        requires:
-          - push_image
-          - deploy_to_uat_approval
-        filters:
-          branches:
-            only: bp-dcs-deploy-to-uat
+          requires:
+            - push_image
+            - deploy_to_uat_approval
+          filters:
+            branches:
+              only: bp-dcs-deploy-to-uat
       - deploy_to_prod_approval:
-        type: approval
-        requires:
-          - deploy_to_dev
-        filters:
-        branches:
-          only: bp-dcs-deploy
-      - deploy_to_prod:
-        requires:
-          - deploy_to_prod_approval
-        filters:
+          type: approval
+          requires:
+            - deploy_to_dev
+          filters:
           branches:
             only: bp-dcs-deploy
+      - deploy_to_prod:
+          requires:
+            - deploy_to_prod_approval
+          filters:
+            branches:
+              only: bp-dcs-deploy
