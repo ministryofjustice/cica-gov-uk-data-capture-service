@@ -21,9 +21,10 @@ defaults.createQuestionnaireDAL = require('./questionnaire-dal');
 function createQuestionnaireService({
     logger,
     apiVersion,
+    ownerId,
     createQuestionnaireDAL = defaults.createQuestionnaireDAL
 } = {}) {
-    const db = createQuestionnaireDAL({logger});
+    const db = createQuestionnaireDAL({logger, ownerId});
     const ajv = new Ajv({
         allErrors: true,
         jsonPointers: true,
@@ -74,8 +75,9 @@ function createQuestionnaireService({
     }
 
     async function getQuestionnaire(questionnaireId) {
-        const questionnaire = await db.getQuestionnaire(questionnaireId);
-        return questionnaire;
+        return apiVersion === '2023-05-17'
+            ? db.getQuestionnaireByOwner(questionnaireId)
+            : db.getQuestionnaire(questionnaireId);
     }
 
     async function getQuestionnaireSubmissionStatus(questionnaireId) {
@@ -482,7 +484,11 @@ function createQuestionnaireService({
             if (section) {
                 if (isQuestionnaireModified) {
                     // Store the updated questionnaire object
-                    await db.updateQuestionnaire(questionnaireId, section.context);
+                    if (apiVersion === '2023-05-17') {
+                        await db.updateQuestionnaireByOwner(questionnaireId, section.context);
+                    } else {
+                        await db.updateQuestionnaire(questionnaireId, section.context);
+                    }
                 }
 
                 sectionId = section.id;

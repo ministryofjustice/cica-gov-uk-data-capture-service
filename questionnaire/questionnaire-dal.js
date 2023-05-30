@@ -6,7 +6,7 @@ const VError = require('verror');
 const createDBQuery = require('../db');
 
 function questionnaireDAL(spec) {
-    const {logger} = spec;
+    const {logger, ownerId} = spec;
     const db = createDBQuery({logger});
 
     async function createQuestionnaire(uuidV4, questionnaire) {
@@ -177,6 +177,55 @@ function questionnaireDAL(spec) {
         return result;
     }
 
+    async function updateQuestionnaireByOwner(questionnaireId, questionnaire) {
+        let result;
+
+        try {
+            result = await db.query(
+                "UPDATE questionnaire SET questionnaire = $1, modified = current_timestamp WHERE id = $2  AND questionnaire -> 'answers' -> 'owner' ->> 'owner-id' = $3",
+                [questionnaire, questionnaireId, ownerId]
+                // Currently replacing the whole questionnaire object. The following commented query/params could be used to update only the answers object:
+                // 'UPDATE questionnaire SET questionnaire = jsonb_set(questionnaire, $1, $2, TRUE), modified = current_timestamp WHERE id = $3',
+                // [`{answers,${sectionId}}`, answers, questionnaireId]
+            );
+            if (result.rowCount === 0) {
+                throw new VError(
+                    {
+                        name: 'UpdateNotSuccessful'
+                    },
+                    `Questionnaire "${questionnaireId}" was not updated successfully`
+                );
+            }
+        } catch (err) {
+            throw err;
+        }
+        return result;
+    }
+
+    async function getQuestionnaireByOwner(questionnaireId) {
+        let questionnaire;
+
+        try {
+            questionnaire = await db.query(
+                "SELECT questionnaire FROM questionnaire WHERE id = $1 AND questionnaire -> 'answers' -> 'owner' ->> 'owner-id' = $2",
+                [questionnaireId, ownerId]
+            );
+
+            if (questionnaire.rowCount === 0) {
+                // No instance was found
+                throw new VError(
+                    {
+                        name: 'ResourceNotFound'
+                    },
+                    `Questionnaire "${questionnaireId}" not found`
+                );
+            }
+        } catch (err) {
+            throw err;
+        }
+        return questionnaire.rows[0].questionnaire;
+    }
+
     return Object.freeze({
         createQuestionnaire,
         updateQuestionnaire,
@@ -185,7 +234,9 @@ function questionnaireDAL(spec) {
         updateQuestionnaireSubmissionStatus,
         getQuestionnaireIdsBySubmissionStatus,
         getQuestionnaireModifiedDate,
-        updateQuestionnaireModifiedDate
+        updateQuestionnaireModifiedDate,
+        updateQuestionnaireByOwner,
+        getQuestionnaireByOwner
     });
 }
 

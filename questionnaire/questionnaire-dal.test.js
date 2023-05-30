@@ -4,30 +4,44 @@ const DB_QUERY_ERROR_QUESTIONNAIRE_ID = 'acbfcd8e-1299-478a-a9f1-7005f4b713ed';
 const DB_QUERY_ERROR_SUBMISSION_STATUS_ID = 'FAIL_TEST';
 const DB_QUERY_ROW_COUNT_ZERO_QUESTIONNAIRE_ID = 'c9723b81-c50d-4050-805f-108995067913';
 const DB_QUERY_ROW_COUNT_ZERO_SUBMISSION_STATUS = 'ZERO_ROWS_SUBMISSION_STATUS';
+const DB_QUERY_SUCCESS_QUESTIONNAIRE_ID = '12345678-c50d-4050-805f-108995067913';
 
-jest.doMock('../db/index.js', () => () => ({
-    query: (query, parameters) => {
-        if (parameters.includes(DB_QUERY_ERROR_QUESTIONNAIRE_ID)) {
-            throw new Error('DB_QUERY_ERROR');
-        }
+beforeEach(() => {
+    jest.clearAllMocks();
+    jest.resetModules();
+});
 
-        if (parameters.includes(DB_QUERY_ERROR_SUBMISSION_STATUS_ID)) {
-            throw new Error('DB_QUERY_ERROR');
-        }
+jest.doMock('../db/index.js', () => {
+    const dbServiceMock = {
+        query: jest.fn((query, parameters) => {
+            if (parameters.includes(DB_QUERY_ERROR_QUESTIONNAIRE_ID)) {
+                throw new Error('DB_QUERY_ERROR');
+            }
 
-        if (parameters.includes(DB_QUERY_ROW_COUNT_ZERO_QUESTIONNAIRE_ID)) {
+            if (parameters.includes(DB_QUERY_ERROR_SUBMISSION_STATUS_ID)) {
+                throw new Error('DB_QUERY_ERROR');
+            }
+
+            if (parameters.includes(DB_QUERY_ROW_COUNT_ZERO_QUESTIONNAIRE_ID)) {
+                return {
+                    rows: [],
+                    rowCount: 0
+                };
+            }
+
             return {
-                rows: [],
-                rowCount: 0
+                rows: [{status: 'ok'}],
+                rowCount: 1
             };
-        }
+        })
+    };
 
-        return {
-            rows: [],
-            rowCount: 0
-        };
-    }
-}));
+    return () => dbServiceMock;
+});
+
+const mockedDbService = require('../db/index.js')({
+    logger: () => 'Logged from DAL test'
+});
 
 const createQuestionnaireDAL = require('./questionnaire-dal');
 
@@ -178,6 +192,72 @@ describe('questionnaire data access layer', () => {
             await expect(
                 questionnaireDAL.updateQuestionnaireModifiedDate(DB_QUERY_ERROR_QUESTIONNAIRE_ID)
             ).rejects.toThrow('DB_QUERY_ERROR');
+        });
+    });
+
+    describe('updateQuestionnaireByOwner', () => {
+        const query =
+            "UPDATE questionnaire SET questionnaire = $1, modified = current_timestamp WHERE id = $2  AND questionnaire -> 'answers' -> 'owner' ->> 'owner-id' = $3";
+        it('Should run an update questionnaire query and filter by owner', async () => {
+            const questionnaire = {answers: {}};
+            const questionnaireId = DB_QUERY_SUCCESS_QUESTIONNAIRE_ID;
+            const ownerId = 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6';
+            const questionnaireDAL = createQuestionnaireDAL({logger: jest.fn(), ownerId});
+            await questionnaireDAL.updateQuestionnaireByOwner(questionnaire, questionnaireId);
+
+            expect(mockedDbService.query).toHaveBeenCalledTimes(1);
+            expect(mockedDbService.query).toHaveBeenCalledWith(query, [
+                questionnaireId,
+                questionnaire,
+                ownerId
+            ]);
+        });
+
+        it('Should error gracefully if no rows are updated', async () => {
+            const questionnaire = {answers: {}};
+            const questionnaireId = DB_QUERY_ROW_COUNT_ZERO_QUESTIONNAIRE_ID;
+            const ownerId = 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6';
+            const questionnaireDAL = createQuestionnaireDAL({logger: jest.fn(), ownerId});
+            await expect(
+                questionnaireDAL.updateQuestionnaireByOwner(questionnaireId, questionnaire)
+            ).rejects.toThrow(
+                'Questionnaire "c9723b81-c50d-4050-805f-108995067913" was not updated successfully'
+            );
+        });
+
+        it('Should handle errors gracefully', async () => {
+            const questionnaire = {answers: {}};
+            const questionnaireId = DB_QUERY_ERROR_QUESTIONNAIRE_ID;
+            const ownerId = 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6';
+            const questionnaireDAL = createQuestionnaireDAL({logger: jest.fn(), ownerId});
+
+            await expect(
+                questionnaireDAL.updateQuestionnaireByOwner(questionnaire, questionnaireId)
+            ).rejects.toThrow('DB_QUERY_ERROR');
+        });
+    });
+
+    describe('getQuestionnaireByOwner', () => {
+        const query =
+            "SELECT questionnaire FROM questionnaire WHERE id = $1 AND questionnaire -> 'answers' -> 'owner' ->> 'owner-id' = $2";
+        it('Should run a get questionnaire query', async () => {
+            const questionnaireId = DB_QUERY_SUCCESS_QUESTIONNAIRE_ID;
+            const ownerId = 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6';
+            const questionnaireDAL = createQuestionnaireDAL({logger: jest.fn(), ownerId});
+            await questionnaireDAL.getQuestionnaireByOwner(questionnaireId);
+
+            expect(mockedDbService.query).toHaveBeenCalledTimes(1);
+            expect(mockedDbService.query).toHaveBeenCalledWith(query, [questionnaireId, ownerId]);
+        });
+
+        it('Should handle errors gracefully', async () => {
+            const questionnaireId = DB_QUERY_ERROR_QUESTIONNAIRE_ID;
+            const ownerId = 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6';
+            const questionnaireDAL = createQuestionnaireDAL({logger: jest.fn(), ownerId});
+
+            await expect(questionnaireDAL.getQuestionnaireByOwner(questionnaireId)).rejects.toThrow(
+                'DB_QUERY_ERROR'
+            );
         });
     });
 });
