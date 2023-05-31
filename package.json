@@ -1,14 +1,16 @@
 {
     "name": "data-capture-service",
-    "version": "7.1.0",
+    "version": "7.3.0",
     "engines": {
         "npm": ">=9.5.0",
         "node": ">=18.0.0"
     },
     "scripts": {
         "start": "node ./bin/www",
-        "start:dev": "nodemon -L -e .js,.json,.njk,.yml --ignore openapi/openapi.json --exec npm run build:run:dev",
-        "openapi:build": "speccy lint openapi/src/openapi-src.json -j && speccy resolve ./openapi/src/openapi-src.json -j | yaml2json --pretty --indentation 4 --save - > ./openapi/openapi.json && node ./openapi/src/dereference-openapi.js",
+        "start:dev": "nodemon -L -e .js,.json,.njk,.yml --ignore openapi/openapi.json --ignore openapi/openapi-v2.json --exec npm run build:run:dev",
+        "openapi:build-v1": "speccy lint openapi/src/openapi-src.json -j && speccy resolve ./openapi/src/openapi-src.json -j | yaml2json --pretty --indentation 4 --save - > ./openapi/openapi.json && node ./openapi/src/dereference-openapi.js",
+        "openapi:build-v2": "speccy lint openapi/src/openapi-src-v2.json -j && speccy resolve ./openapi/src/openapi-src-v2.json -j | yaml2json --pretty --indentation 4 --save - > ./openapi/openapi-v2.json && node ./openapi/src/dereference-openapi-v2.js",
+        "openapi:build": "npm run openapi:build-v1 && npm run openapi:build-v2",
         "build:run:dev": "npm run openapi:build && node --inspect=0.0.0.0:9229 ./bin/www",
         "pretestx": "eslint .",
         "test": "jest",
@@ -45,7 +47,7 @@
         "q-expressions": "github:CriminalInjuriesCompensationAuthority/q-expressions",
         "q-router": "github:CriminalInjuriesCompensationAuthority/q-router#v3.0.2",
         "q-templates-application": "github:CriminalInjuriesCompensationAuthority/q-templates-application#v10.0.3",
-        "swagger-ui-express": "^4.3.0",
+        "swagger-ui-express": "^4.6.3",
         "uuid": "^3.3.2",
         "verror": "^1.10.0"
     },

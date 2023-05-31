@@ -8,7 +8,7 @@ const prettier = require('prettier');
 const conf = require('../../.prettierrc.js');
 
 (async () => {
-    const dereferencedContract = await $RefParser.dereference('openapi/openapi.json');
+    const dereferencedContract = await $RefParser.dereference('openapi/openapi-v2.json');
     const contractJson = JSON.stringify(dereferencedContract, null, 4);
     const formattedContractJson = prettier.format(contractJson, {
         ...conf,
@@ -16,7 +16,7 @@ const conf = require('../../.prettierrc.js');
         endOfLine: 'crlf'
     });
 
-    fs.writeFile('openapi/openapi.json', formattedContractJson, err => {
+    fs.writeFile('openapi/openapi-v2.json', formattedContractJson, err => {
         // throws an error, you could also catch it here
         if (err) {
             throw err;
@@ -24,6 +24,6 @@ const conf = require('../../.prettierrc.js');
 
         // success case, the file was saved
         // eslint-disable-next-line
-        console.log('dereferenced contract saved');
+        console.log('V2 dereferenced contract saved');
     });
 })();

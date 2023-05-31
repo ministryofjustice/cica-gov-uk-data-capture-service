@@ -2,14 +2,32 @@
 
 const express = require('express');
 const swaggerUi = require('swagger-ui-express');
-
-const swaggerDocument = require('../openapi/openapi.json');
+const path = require('path');
 
 const router = express.Router();
 
-// Ensure JWT is valid
-// router.use(validateJWT({secret: process.env.SECRET}));
+// Server OpenAPI specs to allow Swagger UI to switch between definitions
+router.use('/openapi.json', express.static(path.join(__dirname, '../openapi/openapi.json')));
+router.use('/openapi-v2.json', express.static(path.join(__dirname, '../openapi/openapi-v2.json')));
+
+const swaggerUiOptions = {
+    explorer: true,
+    swaggerOptions: {
+        validatorUrl: null,
+        urls: [
+            {
+                url: '/docs/openapi.json',
+                name: 'Spec V1'
+            },
+            {
+                url: '/docs/openapi-v2.json',
+                name: 'Spec V2'
+            }
+        ]
+    }
+};
+
 router.use('/', swaggerUi.serve);
-router.get('/', swaggerUi.setup(swaggerDocument));
+router.get('/', swaggerUi.setup(null, swaggerUiOptions));
 
 module.exports = router;

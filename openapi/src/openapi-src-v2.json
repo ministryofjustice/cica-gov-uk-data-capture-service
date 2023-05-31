@@ -1,0 +1,196 @@
+{
+    "openapi": "3.0.2",
+    "info": {
+        "title": "Data Capture Service API",
+        "description": "Manage a questionnaire lifecycle",
+        "version": "2.0.0",
+        "license": {
+            "name": "MIT"
+        },
+        "contact": {
+            "name": "API Support",
+            "email": "api@cica.gov.uk"
+        }
+    },
+    "servers": [
+        {
+            "url": "/api"
+        }
+    ],
+    "security": [
+        {
+            "bearerAuth": []
+        }
+    ],
+    "tags": [{"name": "Questionnaires"}],
+    "paths": {
+        "/questionnaires": {
+            "post": {
+                "tags": ["Questionnaires"],
+                "summary": "Create a new questionnaire from a specified template",
+                "description": "Create a questionnaire",
+                "operationId": "createQuestionnaires",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/apiVersion"
+                    }
+                ],
+                "requestBody": {
+                    "description": "Questionnaire template id",
+                    "required": true,
+                    "content": {
+                        "application/vnd.api+json": {
+                            "schema": {
+                                "$ref": "./json-schemas/api/v2_questionnaires/post/req/201.json"
+                            },
+                            "example": {
+                                "data": {
+                                    "type": "questionnaires",
+                                    "attributes": {
+                                        "templateName": "sexual-assault",
+                                        "owner": {
+                                            "id": "urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6",
+                                            "isAuthenticated": true
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "application/vnd.api+json": {
+                                "schema": {
+                                    "$ref": "./json-schemas/api/_questionnaires/post/res/201.json"
+                                },
+                                "example": {
+                                    "data": {
+                                        "type": "questionnaires",
+                                        "id": "todo-p-some-id",
+                                        "attributes": {
+                                            "sections": {},
+                                            "routes": {}
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/UnauthorizedError"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/Forbidden"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
+            }
+        },
+        "parameters": {
+            "apiVersion": {
+                "name": "Dcs-Api-Version",
+                "in": "header",
+                "required": true,
+                "description": "The date based version of the requested API",
+                "schema": {
+                    "$ref": "./json-schemas/models/definitions/api-version.json"
+                },
+                "example": "2023-05-17"
+            }
+        },
+        "responses": {
+            "BadRequest": {
+                "description": "There is an issue with the request",
+                "content": {
+                    "application/vnd.api+json": {
+                        "schema": {
+                            "$ref": "./json-schemas/api/responses/400.json"
+                        },
+                        "example": {
+                            "errors": [
+                                {
+                                    "status": 400,
+                                    "title": "400 Bad Request",
+                                    "detail": "Request JSON is malformed"
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "UnauthorizedError": {
+                "description": "Access token is missing or invalid",
+                "content": {
+                    "application/vnd.api+json": {
+                        "schema": {
+                            "$ref": "./json-schemas/api/responses/401.json"
+                        },
+                        "example": {
+                            "errors": [
+                                {
+                                    "status": 401,
+                                    "detail": "No authorization token was found"
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "Forbidden": {
+                "description": "The JWT doesn't permit access to this endpoint",
+                "content": {
+                    "application/vnd.api+json": {
+                        "schema": {
+                            "$ref": "./json-schemas/api/responses/403.json"
+                        },
+                        "example": {
+                            "errors": [
+                                {
+                                    "status": 403,
+                                    "title": "403 Forbidden",
+                                    "detail": "Insufficient scope"
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "NotFound": {
+                "description": "The specified resource was not found",
+                "content": {
+                    "application/vnd.api+json": {
+                        "schema": {
+                            "$ref": "./json-schemas/api/responses/404.json"
+                        },
+                        "example": {
+                            "errors": [
+                                {
+                                    "status": 404,
+                                    "title": "404 Not Found",
+                                    "detail": "Resource /api/v1/questionnaires/2d7caf89-2c72-469f-b19d-17f2a22270b6/sections/answers does not exist"
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
