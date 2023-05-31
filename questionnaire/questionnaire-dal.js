@@ -122,7 +122,7 @@ function questionnaireDAL(spec) {
         let result;
         try {
             result = await db.query(
-                "SET reference = CASE WHEN reference IS NULL OR reference = '' THEN get_reference($1) ELSE reference END, modified = current_timestamp, submitted = current_timestamp, submission_status = $3 WHERE id = $2;",
+                "UPDATE questionnaire SET reference = CASE WHEN reference IS NULL OR reference = '' THEN get_reference($1) ELSE reference END, modified = current_timestamp, submitted = current_timestamp, submission_status = $3 WHERE id = $2;",
                 [isFatal, questionnaireId, submissionStatus]
             );
 
