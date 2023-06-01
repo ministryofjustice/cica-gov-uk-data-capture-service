@@ -22,7 +22,14 @@
             "bearerAuth": []
         }
     ],
-    "tags": [{"name": "Questionnaires"}],
+    "tags": [
+        {
+            "name": "Questionnaires"
+        },
+        {
+            "name": "ProgressEntries"
+        }
+    ],
     "paths": {
         "/questionnaires": {
             "post": {
@@ -93,6 +100,107 @@
                     }
                 }
             }
+        },
+        "/questionnaires/{questionnaireId}/progress-entries": {
+            "get": {
+                "tags": ["ProgressEntries"],
+                "summary": "Get progress entries for a questionnaire.",
+                "description": "Gets all progress entries for a questionnaire. The results can be filtered.",
+                "operationId": "getProgressEntries",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/questionnaireId"
+                    },
+                    {
+                        "$ref": "#/components/parameters/filter"
+                    },
+                    {
+                        "$ref": "#/components/parameters/page"
+                    },
+                    {
+                        "$ref": "#/components/parameters/onBehalfOf"
+                    },
+                    {
+                        "$ref": "#/components/parameters/apiVersion"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/vnd.api+json": {
+                                "schema": {
+                                    "$ref": "json-schemas/api/_questionnaires_{questionnaireId}_progress-entries/get/res/200.json"
+                                },
+                                "example": {
+                                    "data": [
+                                        {
+                                            "type": "progress-entries",
+                                            "id": "08dbd0d2-6cee-49e5-a55f-35b31ac4aa9e",
+                                            "attributes": {
+                                                "sectionId": "p-applicant-declaration"
+                                            },
+                                            "relationships": {
+                                                "section": {
+                                                    "data": {
+                                                        "type": "sections",
+                                                        "id": "p-applicant-declaration"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    ],
+                                    "links": {
+                                        "prev": "questionnaires/{questionnaireId}/progress-entries?page[before]=p-applicant-declaration"
+                                    },
+                                    "included": [
+                                        {
+                                            "type": "sections",
+                                            "id": "p-applicant-declaration",
+                                            "attributes": {
+                                                "$schema": "http://json-schema.org/draft-07/schema#",
+                                                "type": "object",
+                                                "title": "Declaration",
+                                                "additionalProperties": false,
+                                                "properties": {
+                                                    "applicant-declaration": {
+                                                        "description": "\n                <p class=\"g-body\">By continuing you confirm that the information you will give is true as far as you know.</p>\n                {{ govukWarningText({\n                    text: \"If you deliberately give false or misleading information, you may get less compensation or be prosecuted.\",\n                    iconFallbackText: \"Warning\"\n                }) }}\n            "
+                                                    }
+                                                }
+                                            },
+                                            "relationships": {
+                                                "answer": {
+                                                    "data": {
+                                                        "type": "answers",
+                                                        "id": "p-applicant-declaration"
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "type": "answers",
+                                            "id": "p-applicant-declaration",
+                                            "attributes": {}
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/UnauthorizedError"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/Forbidden"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    }
+                }
+            }
         }
     },
     "components": {
@@ -113,6 +221,52 @@
                     "$ref": "./json-schemas/models/definitions/api-version.json"
                 },
                 "example": "2023-05-17"
+            },
+            "questionnaireId": {
+                "name": "questionnaireId",
+                "in": "path",
+                "required": true,
+                "description": "The id of the specific questionnaire instance. Format UUIDv4.",
+                "schema": {
+                    "$ref": "./json-schemas/models/definitions/uuid-v4.json"
+                },
+                "example": "285cb104-0c15-4a9c-9840-cb1007f098fb"
+            },
+            "filter": {
+                "in": "query",
+                "name": "filter",
+                "description": "Filter progress entries",
+                "schema": {
+                    "$ref": "./json-schemas/api/parameters/filter.json"
+                },
+                "style": "deepObject",
+                "explode": true,
+                "example": {
+                    "position": "current"
+                }
+            },
+            "page": {
+                "in": "query",
+                "name": "page",
+                "description": "Paginate progress entries",
+                "schema": {
+                    "$ref": "./json-schemas/api/parameters/page.json"
+                },
+                "style": "deepObject",
+                "explode": true,
+                "example": {
+                    "before": "p-applicant-declaration"
+                }
+            },
+            "onBehalfOf": {
+                "in": "header",
+                "name": "On-Behalf-Of",
+                "required": true,
+                "description": "Specify the owner of the resource.",
+                "schema": {
+                    "$ref": "./json-schemas/models/definitions/owner-id.json"
+                },
+                "example": "urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
             }
         },
         "responses": {

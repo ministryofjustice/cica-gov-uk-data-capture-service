@@ -25,6 +25,9 @@
     "tags": [
         {
             "name": "Questionnaires"
+        },
+        {
+            "name": "ProgressEntries"
         }
     ],
     "paths": {
@@ -175,7 +178,7 @@
                                                                         {
                                                                             "title": "Section Id",
                                                                             "type": "string",
-                                                                            "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer)$"
+                                                                            "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer|owner)$"
                                                                         },
                                                                         {
                                                                             "title": "UUID v4",
@@ -234,7 +237,7 @@
                                                                                 "initial": {
                                                                                     "title": "Section Id",
                                                                                     "type": "string",
-                                                                                    "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer)$"
+                                                                                    "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer|owner)$"
                                                                                 }
                                                                             }
                                                                         }
@@ -422,6 +425,602 @@
                     }
                 }
             }
+        },
+        "/questionnaires/{questionnaireId}/progress-entries": {
+            "get": {
+                "tags": ["ProgressEntries"],
+                "summary": "Get progress entries for a questionnaire.",
+                "description": "Gets all progress entries for a questionnaire. The results can be filtered.",
+                "operationId": "getProgressEntries",
+                "parameters": [
+                    {
+                        "name": "questionnaireId",
+                        "in": "path",
+                        "required": true,
+                        "description": "The id of the specific questionnaire instance. Format UUIDv4.",
+                        "schema": {
+                            "title": "UUID v4",
+                            "type": "string",
+                            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+                        },
+                        "example": "285cb104-0c15-4a9c-9840-cb1007f098fb"
+                    },
+                    {
+                        "in": "query",
+                        "name": "filter",
+                        "description": "Filter progress entries",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "properties": {
+                                "position": {
+                                    "enum": ["current", "first"]
+                                },
+                                "sectionId": {
+                                    "title": "Section Id",
+                                    "type": "string",
+                                    "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer|owner)$"
+                                }
+                            }
+                        },
+                        "style": "deepObject",
+                        "explode": true,
+                        "example": {
+                            "position": "current"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "page",
+                        "description": "Paginate progress entries",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "properties": {
+                                "before": {
+                                    "title": "Section Id",
+                                    "type": "string",
+                                    "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer|owner)$"
+                                }
+                            }
+                        },
+                        "style": "deepObject",
+                        "explode": true,
+                        "example": {
+                            "before": "p-applicant-declaration"
+                        }
+                    },
+                    {
+                        "in": "header",
+                        "name": "On-Behalf-Of",
+                        "required": true,
+                        "description": "Specify the owner of the resource.",
+                        "schema": {
+                            "title": "Owner Id",
+                            "type": "string",
+                            "format": "uri",
+                            "maxLength": 64,
+                            "pattern": "^urn:(uuid|fdc:gov.uk:2022):"
+                        },
+                        "example": "urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+                    },
+                    {
+                        "name": "Dcs-Api-Version",
+                        "in": "header",
+                        "required": true,
+                        "description": "The date based version of the requested API",
+                        "schema": {
+                            "title": "Dcs-Api-Version",
+                            "type": "string",
+                            "enum": ["2023-05-17"]
+                        },
+                        "example": "2023-05-17"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/vnd.api+json": {
+                                "schema": {
+                                    "title": "Progress entries document",
+                                    "allOf": [
+                                        {
+                                            "title": "Loosely describes the JSON:API document format",
+                                            "type": "object",
+                                            "additionalProperties": false,
+                                            "required": ["data"],
+                                            "properties": {
+                                                "data": {
+                                                    "anyOf": [
+                                                        {
+                                                            "type": "object"
+                                                        },
+                                                        {
+                                                            "type": "array",
+                                                            "items": {}
+                                                        }
+                                                    ]
+                                                },
+                                                "included": {
+                                                    "type": "array",
+                                                    "items": {}
+                                                },
+                                                "links": {
+                                                    "type": "object"
+                                                },
+                                                "meta": {
+                                                    "type": "object"
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "title": "Progress entry resource",
+                                                        "allOf": [
+                                                            {
+                                                                "title": "Loosely describes the JSON:API resource format",
+                                                                "type": "object",
+                                                                "additionalProperties": false,
+                                                                "required": [
+                                                                    "type",
+                                                                    "id",
+                                                                    "attributes"
+                                                                ],
+                                                                "properties": {
+                                                                    "type": {
+                                                                        "type": "string"
+                                                                    },
+                                                                    "id": {
+                                                                        "type": "string",
+                                                                        "anyOf": [
+                                                                            {
+                                                                                "title": "Section Id",
+                                                                                "type": "string",
+                                                                                "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer|owner)$"
+                                                                            },
+                                                                            {
+                                                                                "title": "UUID v4",
+                                                                                "type": "string",
+                                                                                "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+                                                                            },
+                                                                            {
+                                                                                "description": "Used by dataset endpoint",
+                                                                                "enum": ["0"]
+                                                                            }
+                                                                        ]
+                                                                    },
+                                                                    "attributes": {
+                                                                        "type": "object",
+                                                                        "title": "Any valid resource"
+                                                                    },
+                                                                    "relationships": {
+                                                                        "type": "object"
+                                                                    }
+                                                                }
+                                                            },
+                                                            {
+                                                                "required": ["relationships"],
+                                                                "properties": {
+                                                                    "type": {
+                                                                        "enum": ["progress-entries"]
+                                                                    },
+                                                                    "attributes": {
+                                                                        "additionalProperties": false,
+                                                                        "required": [
+                                                                            "sectionId",
+                                                                            "url"
+                                                                        ],
+                                                                        "properties": {
+                                                                            "sectionId": {
+                                                                                "anyOf": [
+                                                                                    {
+                                                                                        "nullable": true
+                                                                                    },
+                                                                                    {
+                                                                                        "title": "Section Id",
+                                                                                        "type": "string",
+                                                                                        "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer|owner)$"
+                                                                                    }
+                                                                                ]
+                                                                            },
+                                                                            "url": {
+                                                                                "type": "string",
+                                                                                "nullable": true
+                                                                            }
+                                                                        }
+                                                                    },
+                                                                    "relationships": {
+                                                                        "additionalProperties": false,
+                                                                        "required": ["section"],
+                                                                        "properties": {
+                                                                            "section": {
+                                                                                "type": "object",
+                                                                                "additionalProperties": false,
+                                                                                "required": [
+                                                                                    "data"
+                                                                                ],
+                                                                                "properties": {
+                                                                                    "data": {
+                                                                                        "type": "object",
+                                                                                        "additionalProperties": false,
+                                                                                        "required": [
+                                                                                            "type",
+                                                                                            "id"
+                                                                                        ],
+                                                                                        "properties": {
+                                                                                            "type": {
+                                                                                                "type": "string"
+                                                                                            },
+                                                                                            "id": {
+                                                                                                "title": "Section Id",
+                                                                                                "type": "string",
+                                                                                                "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer|owner)$"
+                                                                                            }
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        ]
+                                                    }
+                                                },
+                                                "included": {
+                                                    "items": {
+                                                        "anyOf": [
+                                                            {
+                                                                "title": "Section resource",
+                                                                "allOf": [
+                                                                    {
+                                                                        "title": "Loosely describes the JSON:API resource format",
+                                                                        "type": "object",
+                                                                        "additionalProperties": false,
+                                                                        "required": [
+                                                                            "type",
+                                                                            "id",
+                                                                            "attributes"
+                                                                        ],
+                                                                        "properties": {
+                                                                            "type": {
+                                                                                "type": "string"
+                                                                            },
+                                                                            "id": {
+                                                                                "type": "string",
+                                                                                "anyOf": [
+                                                                                    {
+                                                                                        "title": "Section Id",
+                                                                                        "type": "string",
+                                                                                        "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer|owner)$"
+                                                                                    },
+                                                                                    {
+                                                                                        "title": "UUID v4",
+                                                                                        "type": "string",
+                                                                                        "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+                                                                                    },
+                                                                                    {
+                                                                                        "description": "Used by dataset endpoint",
+                                                                                        "enum": [
+                                                                                            "0"
+                                                                                        ]
+                                                                                    }
+                                                                                ]
+                                                                            },
+                                                                            "attributes": {
+                                                                                "type": "object",
+                                                                                "title": "Any valid resource"
+                                                                            },
+                                                                            "relationships": {
+                                                                                "type": "object"
+                                                                            }
+                                                                        }
+                                                                    },
+                                                                    {
+                                                                        "properties": {
+                                                                            "type": {
+                                                                                "enum": ["sections"]
+                                                                            },
+                                                                            "attributes": {
+                                                                                "title": "Section",
+                                                                                "type": "object",
+                                                                                "required": [
+                                                                                    "$schema"
+                                                                                ],
+                                                                                "properties": {
+                                                                                    "$schema": {
+                                                                                        "enum": [
+                                                                                            "http://json-schema.org/draft-07/schema#"
+                                                                                        ]
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                ]
+                                                            },
+                                                            {
+                                                                "title": "Answer resource",
+                                                                "allOf": [
+                                                                    {
+                                                                        "title": "Loosely describes the JSON:API resource format",
+                                                                        "type": "object",
+                                                                        "additionalProperties": false,
+                                                                        "required": [
+                                                                            "type",
+                                                                            "id",
+                                                                            "attributes"
+                                                                        ],
+                                                                        "properties": {
+                                                                            "type": {
+                                                                                "type": "string"
+                                                                            },
+                                                                            "id": {
+                                                                                "type": "string",
+                                                                                "anyOf": [
+                                                                                    {
+                                                                                        "title": "Section Id",
+                                                                                        "type": "string",
+                                                                                        "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer|owner)$"
+                                                                                    },
+                                                                                    {
+                                                                                        "title": "UUID v4",
+                                                                                        "type": "string",
+                                                                                        "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+                                                                                    },
+                                                                                    {
+                                                                                        "description": "Used by dataset endpoint",
+                                                                                        "enum": [
+                                                                                            "0"
+                                                                                        ]
+                                                                                    }
+                                                                                ]
+                                                                            },
+                                                                            "attributes": {
+                                                                                "type": "object",
+                                                                                "title": "Any valid resource"
+                                                                            },
+                                                                            "relationships": {
+                                                                                "type": "object"
+                                                                            }
+                                                                        }
+                                                                    },
+                                                                    {
+                                                                        "properties": {
+                                                                            "type": {
+                                                                                "enum": ["answers"]
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                ]
+                                                            }
+                                                        ]
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    ]
+                                },
+                                "example": {
+                                    "data": [
+                                        {
+                                            "type": "progress-entries",
+                                            "id": "08dbd0d2-6cee-49e5-a55f-35b31ac4aa9e",
+                                            "attributes": {
+                                                "sectionId": "p-applicant-declaration"
+                                            },
+                                            "relationships": {
+                                                "section": {
+                                                    "data": {
+                                                        "type": "sections",
+                                                        "id": "p-applicant-declaration"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    ],
+                                    "links": {
+                                        "prev": "questionnaires/{questionnaireId}/progress-entries?page[before]=p-applicant-declaration"
+                                    },
+                                    "included": [
+                                        {
+                                            "type": "sections",
+                                            "id": "p-applicant-declaration",
+                                            "attributes": {
+                                                "$schema": "http://json-schema.org/draft-07/schema#",
+                                                "type": "object",
+                                                "title": "Declaration",
+                                                "additionalProperties": false,
+                                                "properties": {
+                                                    "applicant-declaration": {
+                                                        "description": "\n                <p class=\"g-body\">By continuing you confirm that the information you will give is true as far as you know.</p>\n                {{ govukWarningText({\n                    text: \"If you deliberately give false or misleading information, you may get less compensation or be prosecuted.\",\n                    iconFallbackText: \"Warning\"\n                }) }}"
+                                                    }
+                                                }
+                                            },
+                                            "relationships": {
+                                                "answer": {
+                                                    "data": {
+                                                        "type": "answers",
+                                                        "id": "p-applicant-declaration"
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "type": "answers",
+                                            "id": "p-applicant-declaration",
+                                            "attributes": {}
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "There is an issue with the request",
+                        "content": {
+                            "application/vnd.api+json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": ["errors"],
+                                    "properties": {
+                                        "errors": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "required": ["status", "title", "detail"],
+                                                "properties": {
+                                                    "status": {
+                                                        "enum": [400]
+                                                    },
+                                                    "title": {
+                                                        "enum": ["400 Bad Request"]
+                                                    },
+                                                    "detail": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "status": 400,
+                                            "title": "400 Bad Request",
+                                            "detail": "Request JSON is malformed"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Access token is missing or invalid",
+                        "content": {
+                            "application/vnd.api+json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": ["errors"],
+                                    "properties": {
+                                        "errors": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "required": ["status", "title", "detail"],
+                                                "properties": {
+                                                    "status": {
+                                                        "enum": [401]
+                                                    },
+                                                    "title": {
+                                                        "enum": ["401 Unauthorized"]
+                                                    },
+                                                    "detail": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "status": 401,
+                                            "detail": "No authorization token was found"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "The JWT doesn't permit access to this endpoint",
+                        "content": {
+                            "application/vnd.api+json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": ["errors"],
+                                    "properties": {
+                                        "errors": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "required": ["status", "title", "detail"],
+                                                "properties": {
+                                                    "status": {
+                                                        "enum": [403]
+                                                    },
+                                                    "title": {
+                                                        "enum": ["403 Forbidden"]
+                                                    },
+                                                    "detail": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "status": 403,
+                                            "title": "403 Forbidden",
+                                            "detail": "Insufficient scope"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "The specified resource was not found",
+                        "content": {
+                            "application/vnd.api+json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": ["errors"],
+                                    "properties": {
+                                        "errors": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "required": ["status", "title", "detail"],
+                                                "properties": {
+                                                    "status": {
+                                                        "enum": [404]
+                                                    },
+                                                    "title": {
+                                                        "enum": ["404 Not Found"]
+                                                    },
+                                                    "detail": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "status": 404,
+                                            "title": "404 Not Found",
+                                            "detail": "Resource /api/v1/questionnaires/2d7caf89-2c72-469f-b19d-17f2a22270b6/sections/answers does not exist"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "components": {
@@ -444,6 +1043,77 @@
                     "enum": ["2023-05-17"]
                 },
                 "example": "2023-05-17"
+            },
+            "questionnaireId": {
+                "name": "questionnaireId",
+                "in": "path",
+                "required": true,
+                "description": "The id of the specific questionnaire instance. Format UUIDv4.",
+                "schema": {
+                    "title": "UUID v4",
+                    "type": "string",
+                    "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+                },
+                "example": "285cb104-0c15-4a9c-9840-cb1007f098fb"
+            },
+            "filter": {
+                "in": "query",
+                "name": "filter",
+                "description": "Filter progress entries",
+                "schema": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                        "position": {
+                            "enum": ["current", "first"]
+                        },
+                        "sectionId": {
+                            "title": "Section Id",
+                            "type": "string",
+                            "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer|owner)$"
+                        }
+                    }
+                },
+                "style": "deepObject",
+                "explode": true,
+                "example": {
+                    "position": "current"
+                }
+            },
+            "page": {
+                "in": "query",
+                "name": "page",
+                "description": "Paginate progress entries",
+                "schema": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                        "before": {
+                            "title": "Section Id",
+                            "type": "string",
+                            "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer|owner)$"
+                        }
+                    }
+                },
+                "style": "deepObject",
+                "explode": true,
+                "example": {
+                    "before": "p-applicant-declaration"
+                }
+            },
+            "onBehalfOf": {
+                "in": "header",
+                "name": "On-Behalf-Of",
+                "required": true,
+                "description": "Specify the owner of the resource.",
+                "schema": {
+                    "title": "Owner Id",
+                    "type": "string",
+                    "format": "uri",
+                    "maxLength": 64,
+                    "pattern": "^urn:(uuid|fdc:gov.uk:2022):"
+                },
+                "example": "urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
             }
         },
         "responses": {
