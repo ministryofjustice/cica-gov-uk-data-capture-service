@@ -45,7 +45,7 @@
         "pino-http": "^5.5.0",
         "q-expressions": "github:CriminalInjuriesCompensationAuthority/q-expressions",
         "q-router": "github:CriminalInjuriesCompensationAuthority/q-router#v3.0.2",
-        "q-templates-application": "github:CriminalInjuriesCompensationAuthority/q-templates-application#v10.0.3",
+        "q-templates-application": "github:CriminalInjuriesCompensationAuthority/q-templates-application#v10.0.4",
         "swagger-ui-express": "^4.6.3",
         "uuid": "^3.3.2",
         "verror": "^1.10.0"
