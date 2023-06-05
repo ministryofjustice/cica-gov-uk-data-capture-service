@@ -20,12 +20,12 @@
         "lint:fix": "eslint --fix ."
     },
     "dependencies": {
+        "@aws-sdk/client-sqs": "^3.345.0",
         "@netflix/nerror": "^1.1.0",
         "@slack/webhook": "^6.0.0",
         "ajv": "^6.12.6",
         "ajv-errors": "^1.0.1",
         "ajv-formats-mobile-uk": "github:CriminalInjuriesCompensationAuthority/ajv-formats-mobile-uk#v1.0.0",
-        "aws-sdk": "^2.1356.0",
         "cookie-parser": "~1.4.3",
         "debug": "~2.6.9",
         "express": "^4.18.2",
@@ -51,6 +51,7 @@
         "verror": "^1.10.0"
     },
     "devDependencies": {
+        "aws-sdk-client-mock": "^2.1.1",
         "eslint": "^8.0.0",
         "eslint-config-airbnb-base": "^15.0.0",
         "eslint-config-prettier": "^6.9.0",
