@@ -24,7 +24,7 @@ describe('SQS Service', () => {
     const queueUrl = 'some-url';
 
     it('Should successfully send a message to the sqs queue', async () => {
-        await sqsService.sendSQS(payload, queueUrl);
+        await sqsService.send(payload, queueUrl);
         expect(sqsClientMock.call(0).args[0].input).toEqual({
             QueueUrl: queueUrl,
             MessageBody: JSON.stringify(payload)
@@ -34,7 +34,7 @@ describe('SQS Service', () => {
     const wrongTestPayload = 9007199254740991n;
 
     it('Should error gracefully', async () => {
-        await expect(() => sqsService.sendSQS(wrongTestPayload, queueUrl)).rejects.toThrowError(
+        await expect(() => sqsService.send(wrongTestPayload, queueUrl)).rejects.toThrowError(
             'Message failed to send with the following error: TypeError: Do not know how to serialize a BigInt'
         );
     });
