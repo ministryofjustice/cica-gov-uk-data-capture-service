@@ -193,10 +193,10 @@ describe('Issue: https://github.com/cdimascio/express-openapi-validator/issues/7
     });
 });
 
-describe('V2 openapi validation', () => {
-    jest.doMock('./questionnaire-service.js', () =>
-        jest.fn(() => ({
-            createQuestionnaire: templateName => {
+describe('Openapi version 2023-05-17 validation', () => {
+    jest.doMock('./questionnaire-service.js', () => {
+        const questionnaireServiceMock = {
+            createQuestionnaire: jest.fn(templateName => {
                 if (templateName === 'this-does-not-exist') {
                     throw new VError(
                         {
@@ -217,8 +217,8 @@ describe('V2 openapi validation', () => {
                         }
                     }
                 };
-            },
-            getProgressEntries: (id, query) => {
+            }),
+            getProgressEntries: jest.fn((id, query) => {
                 if (query.filter.sectionId === 'p--not-a-valid-section') {
                     throw new VError(
                         {
@@ -235,16 +235,38 @@ describe('V2 openapi validation', () => {
                         url: 'questionnaire'
                     }
                 };
-            }
-        }))
-    );
+            }),
+            createAnswers: jest.fn((id, section) => {
+                if (section === 'p-not-a-section') {
+                    throw new Error(
+                        `Resource /api/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/sections/not-a-section/answers does not exist`
+                    );
+                }
+                return 'ok';
+            }),
+            updateQuestionnaireSubmissionStatus: jest.fn(() => {
+                return 'ok';
+            }),
+            getQuestionnaire: jest.fn(() => {
+                return 'ok';
+            }),
+            runOnCompleteActions: jest.fn(() => {
+                return 'ok';
+            })
+        };
+
+        return () => questionnaireServiceMock;
+    });
+
+    const mockQuestionnaireService = require('./questionnaire-service.js')();
     // app has an indirect dependency on questionnaire-service.js, require it after
     // the mock so that it references the mocked version
     const app = require('../app');
-    describe('POST /questionnaires', () => {
-        const token =
-            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJkYXRhLWNhcHR1cmUtc2VydmljZSIsImlzcyI6IiQuYXVkIiwianRpIjoiYWE3Nzk1ZmItNDg2Yy00NWEwLWJkNGMtZTMwNjFlNmNjNDk2Iiwic3ViIjoiY2ljYS13ZWIiLCJzY29wZSI6ImNyZWF0ZTpxdWVzdGlvbm5haXJlcyByZWFkOnF1ZXN0aW9ubmFpcmVzIHVwZGF0ZTpxdWVzdGlvbm5haXJlcyBkZWxldGU6cXVlc3Rpb25uYWlyZXMgcmVhZDpwcm9ncmVzcy1lbnRyaWVzIHJlYWQ6YW5zd2VycyIsImlhdCI6MTY4MDcwNTI3N30.OFXEk5CjaMZJVmS8Ioke2l2AlffayMCvIWZ2DwJCu2o';
 
+    const token =
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJkYXRhLWNhcHR1cmUtc2VydmljZSIsImlzcyI6IiQuYXVkIiwianRpIjoiODU4NDFhMTAtYjdlMS00OTA4LThkYTUtN2QwMjcxNGY0ZDZkIiwic3ViIjoiY2ljYS13ZWIiLCJzY29wZSI6ImNyZWF0ZTpzeXN0ZW0tYW5zd2VycyBjcmVhdGU6cXVlc3Rpb25uYWlyZXMgcmVhZDpxdWVzdGlvbm5haXJlcyB1cGRhdGU6cXVlc3Rpb25uYWlyZXMgZGVsZXRlOnF1ZXN0aW9ubmFpcmVzIHJlYWQ6cHJvZ3Jlc3MtZW50cmllcyIsImlhdCI6MTY4NjA2Mjk3M30.Z29MVERMyNTriszNJyPXx4n-sUFZMNCFSH1eQ74d8bI';
+
+    describe('POST /questionnaires', () => {
         it('should return status code 401 if bearer token is NOT valid', async () => {
             const response = await request(app)
                 .post('/api/questionnaires')
@@ -437,9 +459,6 @@ describe('V2 openapi validation', () => {
     });
 
     describe('GET questionnaires/{questionnaireId}/progress-entries', () => {
-        const token =
-            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJkYXRhLWNhcHR1cmUtc2VydmljZSIsImlzcyI6IiQuYXVkIiwianRpIjoiYWE3Nzk1ZmItNDg2Yy00NWEwLWJkNGMtZTMwNjFlNmNjNDk2Iiwic3ViIjoiY2ljYS13ZWIiLCJzY29wZSI6ImNyZWF0ZTpxdWVzdGlvbm5haXJlcyByZWFkOnF1ZXN0aW9ubmFpcmVzIHVwZGF0ZTpxdWVzdGlvbm5haXJlcyBkZWxldGU6cXVlc3Rpb25uYWlyZXMgcmVhZDpwcm9ncmVzcy1lbnRyaWVzIHJlYWQ6YW5zd2VycyIsImlhdCI6MTY4MDcwNTI3N30.OFXEk5CjaMZJVmS8Ioke2l2AlffayMCvIWZ2DwJCu2o';
-
         it('should return status code 401 if bearer token is NOT valid', async () => {
             const response = await request(app)
                 .get('/api/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/progress-entries')
@@ -554,6 +573,223 @@ describe('V2 openapi validation', () => {
                     .set('Content-Type', 'application/vnd.api+json')
                     .set('Dcs-Api-Version', '2023-05-17');
                 expect(response.statusCode).toEqual(200);
+            });
+        });
+    });
+
+    describe('POST /questionnaires/:questionnaireId/sections/:sectionId/answers', () => {
+        it('should return status code 401 if bearer token is NOT valid', async () => {
+            const response = await request(app)
+                .post(
+                    '/api/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/sections/p-some-section/answers'
+                )
+                .set('Authorization', `Bearer I-AM-INVALID`)
+                .set('Content-Type', 'application/vnd.api+json')
+                .set('On-Behalf-Of', `urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6`)
+                .set('Dcs-Api-Version', '2023-05-17')
+                .send({
+                    data: {
+                        type: 'answers',
+                        attributes: {
+                            'q-some-question': true
+                        }
+                    }
+                });
+            expect(response.body).toHaveProperty('errors');
+            expect(response.body.errors[0].status).toEqual(401);
+            expect(response.body.errors[0].detail).toEqual('jwt malformed');
+        });
+
+        it('should return status code 403 if the bearer token has insufficient scope', async () => {
+            // THIS IS A TOKEN WITH A DUMMY SCOPE
+            const dummyToken =
+                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJkYXRhLWNhcHR1cmUtc2VydmljZSIsImlzcyI6IiQuYXVkIiwianRpIjoiNTFhODljYWUtM2Q1MC00ZDc1LTliMmEtMjU2NzliODgwMTkxIiwic3ViIjoiY2ljYS13ZWIiLCJzY29wZSI6ImNyZWF0ZTpub3RoaW5nIiwiaWF0IjoxNjgwNzk4NDU5fQ.97LgtlW_dcAV0Xno6BsbVmuyhLtq4gCoVWGQ56_VmEk';
+            const response = await request(app)
+                .post(
+                    '/api/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/sections/p-some-section/answers'
+                )
+                .set('Authorization', `Bearer ${dummyToken}`)
+                .set('Content-Type', 'application/vnd.api+json')
+                .set('On-Behalf-Of', `urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6`)
+                .set('Dcs-Api-Version', '2023-05-17')
+                .send({
+                    data: {
+                        type: 'answers',
+                        attributes: {
+                            'q-some-question': true
+                        }
+                    }
+                });
+            expect(response.body).toHaveProperty('errors');
+            expect(response.body.errors[0].status).toEqual(403);
+            expect(response.body.errors[0].detail).toEqual('Insufficient scope');
+        });
+
+        it('should return status code 404 if the query string contains incorrect data', async () => {
+            const response = await request(app)
+                .post(
+                    '/api/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/sections/p-not-a-section/answers'
+                )
+                .set('Authorization', `Bearer ${token}`)
+                .set('Content-Type', 'application/vnd.api+json')
+                .set('On-Behalf-Of', `urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6`)
+                .set('Dcs-Api-Version', '2023-05-17')
+                .send({
+                    data: {
+                        type: 'answers',
+                        attributes: {
+                            'q-some-question': true
+                        }
+                    }
+                });
+            expect(response.text).toContain(
+                'Resource /api/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/sections/not-a-section/answers does not exist'
+            );
+        });
+
+        describe('Requests made MUST include owner data', () => {
+            it('should return status code 400 if owner data is NOT included in the request body', async () => {
+                const response = await request(app)
+                    .post(
+                        '/api/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/sections/p-some-section/answers'
+                    )
+                    .set('Authorization', `Bearer ${token}`)
+                    .set('Content-Type', 'application/vnd.api+json')
+                    .set('Dcs-Api-Version', '2023-05-17')
+                    .send({
+                        data: {
+                            type: 'answers',
+                            attributes: {
+                                'q-some-question': true
+                            }
+                        }
+                    });
+                expect(response.body).toHaveProperty('errors');
+                expect(response.body.errors[0].status).toEqual(400);
+                expect(response.body.errors[0].detail).toEqual(
+                    "should have required property 'on-behalf-of'"
+                );
+            });
+
+            it('should return status code 201 if owner data is included in the header', async () => {
+                const response = await request(app)
+                    .post(
+                        '/api/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/sections/p-some-section/answers'
+                    )
+                    .set('Authorization', `Bearer ${token}`)
+                    .set('Content-Type', 'application/vnd.api+json')
+                    .set('On-Behalf-Of', `urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6`)
+                    .set('Dcs-Api-Version', '2023-05-17')
+                    .send({
+                        data: {
+                            type: 'answers',
+                            attributes: {
+                                'q-some-question': true
+                            }
+                        }
+                    });
+                expect(response.statusCode).toEqual(201);
+            });
+        });
+
+        describe('Requests made MUST include "Dcs-Api-Version" header', () => {
+            it('should return status code 400 if "Dcs-Api-Version" is NOT included in the header', async () => {
+                const response = await request(app)
+                    .post(
+                        '/api/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/sections/p-some-section/answers'
+                    )
+                    .set('Authorization', `Bearer ${token}`)
+                    .set('Content-Type', 'application/vnd.api+json')
+                    .set('On-Behalf-Of', `urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6`)
+                    .send({
+                        data: {
+                            type: 'answers',
+                            attributes: {
+                                'q-some-question': true
+                            }
+                        }
+                    });
+                expect(response.body).toHaveProperty('errors');
+                expect(response.body.errors[0].status).toEqual(400);
+                expect(response.body.errors[0].detail).toEqual(
+                    "should have required property 'dcs-api-version'"
+                );
+            });
+
+            it('should return status code 201 if "Dcs-Api-Version" is included in the header', async () => {
+                const response = await request(app)
+                    .post(
+                        '/api/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/sections/p-some-section/answers'
+                    )
+                    .set('Authorization', `Bearer ${token}`)
+                    .set('Content-Type', 'application/vnd.api+json')
+                    .set('On-Behalf-Of', `urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6`)
+                    .set('Dcs-Api-Version', '2023-05-17')
+                    .send({
+                        data: {
+                            type: 'answers',
+                            attributes: {
+                                'q-some-question': true
+                            }
+                        }
+                    });
+                expect(response.statusCode).toEqual(201);
+            });
+        });
+
+        describe('POST answers to the "system" section', () => {
+            it('should perform actions specific to the "system" section', async () => {
+                const response = await request(app)
+                    .post(
+                        '/api/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/sections/system/answers'
+                    )
+                    .set('Authorization', `Bearer ${token}`)
+                    .set('Content-Type', 'application/vnd.api+json')
+                    .set('On-Behalf-Of', `urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6`)
+                    .set('Dcs-Api-Version', '2023-05-17')
+                    .send({
+                        data: {
+                            type: 'answers',
+                            attributes: {
+                                system: {
+                                    'case-reference': '23/700000'
+                                }
+                            }
+                        }
+                    });
+                expect(response.statusCode).toEqual(201);
+                expect(
+                    mockQuestionnaireService.updateQuestionnaireSubmissionStatus
+                ).toBeCalledTimes(1);
+                expect(mockQuestionnaireService.getQuestionnaire).toBeCalledTimes(1);
+                expect(mockQuestionnaireService.runOnCompleteActions).toBeCalledTimes(1);
+            });
+        });
+
+        describe('POST answers to the "owner" section', () => {
+            it('should perform actions specific to the "owner" section', async () => {
+                const response = await request(app)
+                    .post(
+                        '/api/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/sections/system/answers'
+                    )
+                    .set('Authorization', `Bearer ${token}`)
+                    .set('Content-Type', 'application/vnd.api+json')
+                    .set('On-Behalf-Of', `urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6`)
+                    .set('Dcs-Api-Version', '2023-05-17')
+                    .send({
+                        data: {
+                            type: 'answers',
+                            attributes: {
+                                owner: {
+                                    id:
+                                        'urn:fdc:gov.uk:2022:ZoTyx0owL1MYS-UkCwtQXbF2A-padOhdssGvXDfamws',
+                                    isAuthenticated: true
+                                }
+                            }
+                        }
+                    });
+                expect(response.statusCode).toEqual(201);
+                // ToDo: This should update the expires column
             });
         });
     });
