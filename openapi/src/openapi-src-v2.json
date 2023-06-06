@@ -201,6 +201,80 @@
                     }
                 }
             }
+        },
+        "/questionnaires/{questionnaireId}/sections/{sectionId}/answers": {
+            "post": {
+                "tags": ["Answers"],
+                "summary": "Create answer(s) for a specified section",
+                "description": "Adds the supplied answer(s) to a section",
+                "operationId": "createAnswers",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/questionnaireId"
+                    },
+                    {
+                        "$ref": "#/components/parameters/sectionId"
+                    },
+                    {
+                        "$ref": "#/components/parameters/onBehalfOf"
+                    },
+                    {
+                        "$ref": "#/components/parameters/apiVersion"
+                    }
+                ],
+                "requestBody": {
+                    "description": "Application reference number",
+                    "required": true,
+                    "content": {
+                        "application/vnd.api+json": {
+                            "schema": {
+                                "$ref": "./json-schemas/api/_questionnaires_{questionnaireId}_sections_{sectionId}_answers/post/req/201.json"
+                            },
+                            "example": {
+                                "data": {
+                                    "type": "answers",
+                                    "attributes": {
+                                        "case-reference": "11\\111111"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "application/vnd.api+json": {
+                                "schema": {
+                                    "$ref": "./json-schemas/api/_questionnaires_{questionnaireId}_sections_{sectionId}_answers/post/res/201.json"
+                                },
+                                "example": {
+                                    "data": {
+                                        "type": "answers",
+                                        "id": "p-some-id",
+                                        "attributes": {
+                                            "case-reference": "11\\111111"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/UnauthorizedError"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/Forbidden"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    }
+                }
+            }
         }
     },
     "components": {
@@ -267,6 +341,16 @@
                     "$ref": "./json-schemas/models/definitions/owner-id.json"
                 },
                 "example": "urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+            },
+            "sectionId": {
+                "name": "sectionId",
+                "in": "path",
+                "required": true,
+                "description": "The id of the specific questionnaire section.",
+                "schema": {
+                    "$ref": "./json-schemas/models/definitions/section-id.json"
+                },
+                "example": "system"
             }
         },
         "responses": {

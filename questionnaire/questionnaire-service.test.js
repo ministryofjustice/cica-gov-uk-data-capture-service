@@ -2,7 +2,23 @@
 
 'use strict';
 
+const mockAjv = require('ajv');
 const questionnaireFixture = require('./test-fixtures/res/questionnaireCompleteWithCRN');
+
+const validSectionId = 'p-some-section';
+const invalidSectionId = 'p-not-a-section';
+const validQuestionnaireId = '12345678-7dec-11d0-a765-00a0c91e6bf6';
+const invalidQuestionnaireId = '11111111-7dec-11d0-a765-00a0c91e6bf6';
+const answers = {
+    'q-some-section': true
+};
+const ownerId = 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6';
+const templatename = 'sexual-assault';
+const ownerData = {
+    id: ownerId,
+    isAuthenticated: true
+};
+const apiVersion = '2023-05-17';
 
 beforeEach(() => {
     jest.clearAllMocks();
@@ -12,8 +28,18 @@ beforeEach(() => {
 jest.doMock('q-router', () => {
     const routerServiceMock = {
         current: jest.fn(sectionId => {
-            if (sectionId === 'p-not-a-section') {
+            if (sectionId === invalidSectionId) {
                 return undefined;
+            }
+            if (sectionId) {
+                return {
+                    id: sectionId,
+                    context: {
+                        routes: {
+                            initial: sectionId
+                        }
+                    }
+                };
             }
             return {
                 id: 'p-applicant-when-did-the-crime-happen',
@@ -46,17 +72,47 @@ jest.doMock('q-router', () => {
                     }
                 }
             };
+        }),
+        next: jest.fn(sectionId => {
+            return {
+                id: sectionId,
+                context: {
+                    routes: {
+                        initial: sectionId
+                    }
+                }
+            };
         })
     };
 
     return () => routerServiceMock;
 });
 
+jest.mock('ajv');
+jest.mock('ajv-errors');
+mockAjv.mockImplementation(() => {
+    return {
+        compile: jest.fn(sectionId => {
+            return jest.fn(() => {
+                return sectionId !== invalidSectionId;
+            });
+        }),
+        addFormat: jest.fn()
+    };
+});
+
 jest.doMock('./questionnaire/questionnaire', () => {
     const questionnaireHelperMock = {
-        getSection: jest.fn(() => {
+        getSection: jest.fn(sectionId => {
             return {
-                getSchema: jest.fn()
+                getSchema: jest.fn(() => {
+                    return sectionId;
+                })
+            };
+        }),
+        getQuestionnaire: jest.fn(() => {
+            return {
+                answers: {}
             };
         })
     };
@@ -70,13 +126,19 @@ jest.doMock('./questionnaire-dal', () => {
         createQuestionnaire: jest.fn(() => {
             return 'ok!';
         }),
-        getQuestionnaire: jest.fn(() => {
+        getQuestionnaire: jest.fn(questionnaireId => {
+            if (questionnaireId === invalidQuestionnaireId) {
+                throw new Error('Cannot find questionnaire');
+            }
             return questionnaireFixture;
         }),
         updateQuestionnaire: jest.fn(() => {
             return 'ok!';
         }),
-        getQuestionnaireByOwner: jest.fn(() => {
+        getQuestionnaireByOwner: jest.fn(questionnaireId => {
+            if (questionnaireId === invalidQuestionnaireId) {
+                throw new Error('Cannot find questionnaire');
+            }
             return questionnaireFixture;
         }),
         updateQuestionnaireByOwner: jest.fn(() => {
@@ -100,8 +162,6 @@ describe('Questionnaire Service', () => {
         });
         describe('createQuestionnaire', () => {
             it('Should create a questionnaire', async () => {
-                const templatename = 'sexual-assault';
-
                 const actual = await questionnaireService.createQuestionnaire(templatename);
 
                 expect(actual.data).toMatchObject({
@@ -122,11 +182,10 @@ describe('Questionnaire Service', () => {
 
         describe('getProgressEntries', () => {
             it('Should return a progressEntry collection', async () => {
-                const questionnaireId = '12345678-7dec-11d0-a765-00a0c91e6bf6';
                 const query = undefined;
 
                 const actual = await questionnaireService.getProgressEntries(
-                    questionnaireId,
+                    validQuestionnaireId,
                     query
                 );
 
@@ -140,14 +199,13 @@ describe('Questionnaire Service', () => {
             });
 
             it('Should NOT use DB functions which filter by owner', async () => {
-                const questionnaireId = '12345678-7dec-11d0-a765-00a0c91e6bf6';
                 const query = {
                     filter: {
                         sectionId: 'p-applicant-when-did-the-crime-happen'
                     }
                 };
 
-                await questionnaireService.getProgressEntries(questionnaireId, query);
+                await questionnaireService.getProgressEntries(validQuestionnaireId, query);
 
                 expect(mockDalService.getQuestionnaire).toHaveBeenCalledTimes(1);
                 expect(mockDalService.updateQuestionnaire).toHaveBeenCalledTimes(1);
@@ -157,16 +215,14 @@ describe('Questionnaire Service', () => {
 
             describe('filter functions', () => {
                 it('Should filter to the current section', async () => {
-                    const questionnaireId = '12345678-7dec-11d0-a765-00a0c91e6bf6';
                     const query = {
                         filter: {
                             position: 'current'
                         }
                     };
-                    const ownerId = 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6';
 
                     const actual = await questionnaireService.getProgressEntries(
-                        questionnaireId,
+                        validQuestionnaireId,
                         query,
                         ownerId
                     );
@@ -184,18 +240,15 @@ describe('Questionnaire Service', () => {
                 });
 
                 it('Should filter to the first section', async () => {
-                    const questionnaireId = '12345678-7dec-11d0-a765-00a0c91e6bf6';
                     const query = {
                         filter: {
                             position: 'first'
                         }
                     };
-                    const ownerId = 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6';
 
                     const actual = await questionnaireService.getProgressEntries(
-                        questionnaireId,
-                        query,
-                        ownerId
+                        validQuestionnaireId,
+                        query
                     );
 
                     expect(Array.isArray(actual.data)).toBe(true);
@@ -211,18 +264,15 @@ describe('Questionnaire Service', () => {
                 });
 
                 it('Should filter to a specific section', async () => {
-                    const questionnaireId = '12345678-7dec-11d0-a765-00a0c91e6bf6';
                     const query = {
                         filter: {
                             sectionId: 'p-applicant-when-did-the-crime-happen'
                         }
                     };
-                    const ownerId = 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6';
 
                     const actual = await questionnaireService.getProgressEntries(
-                        questionnaireId,
-                        query,
-                        ownerId
+                        validQuestionnaireId,
+                        query
                     );
 
                     expect(Array.isArray(actual.data)).toBe(true);
@@ -238,18 +288,15 @@ describe('Questionnaire Service', () => {
                 });
 
                 it('Should filter to the previous section', async () => {
-                    const questionnaireId = '12345678-7dec-11d0-a765-00a0c91e6bf6';
                     const query = {
                         page: {
                             before: 'p-applicant-enter-your-telephone-number'
                         }
                     };
-                    const ownerId = 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6';
 
                     const actual = await questionnaireService.getProgressEntries(
-                        questionnaireId,
-                        query,
-                        ownerId
+                        validQuestionnaireId,
+                        query
                     );
 
                     expect(Array.isArray(actual.data)).toBe(true);
@@ -265,18 +312,15 @@ describe('Questionnaire Service', () => {
                 });
 
                 it('Should filter to the referrer where no previous section exists', async () => {
-                    const questionnaireId = '12345678-7dec-11d0-a765-00a0c91e6bf6';
                     const query = {
                         page: {
                             before: 'p-first-section'
                         }
                     };
-                    const ownerId = 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6';
 
                     const actual = await questionnaireService.getProgressEntries(
-                        questionnaireId,
-                        query,
-                        ownerId
+                        validQuestionnaireId,
+                        query
                     );
 
                     expect(Array.isArray(actual.data)).toBe(true);
@@ -292,18 +336,63 @@ describe('Questionnaire Service', () => {
                 });
 
                 it('Should error gracefully if section does not exist', async () => {
-                    const questionnaireId = '12345678-7dec-11d0-a765-00a0c91e6bf6';
                     const query = {
                         filter: {
-                            sectionId: 'p-not-a-section'
+                            sectionId: invalidSectionId
                         }
                     };
-                    const ownerId = 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6';
 
                     await expect(
-                        questionnaireService.getProgressEntries(questionnaireId, query, ownerId)
+                        questionnaireService.getProgressEntries(validQuestionnaireId, query)
                     ).rejects.toThrow('ProgressEntry "p-not-a-section" does not exist');
                 });
+            });
+        });
+
+        describe('createAnswers', () => {
+            it('Should return an answer resource', async () => {
+                const actual = await questionnaireService.createAnswers(
+                    validQuestionnaireId,
+                    validSectionId,
+                    answers
+                );
+
+                expect(actual.data).toMatchObject({
+                    id: validSectionId,
+                    type: 'answers',
+                    attributes: expect.any(Object)
+                });
+            });
+
+            it('Should NOT use DB functions which filter by owner', async () => {
+                await questionnaireService.createAnswers(
+                    validQuestionnaireId,
+                    validSectionId,
+                    answers
+                );
+
+                expect(mockDalService.updateQuestionnaire).toHaveBeenCalledTimes(1);
+                expect(mockDalService.updateQuestionnaireByOwner).not.toHaveBeenCalled();
+            });
+
+            it('Should throw a validation error if the schema is not valid', async () => {
+                await expect(
+                    questionnaireService.createAnswers(
+                        validQuestionnaireId,
+                        invalidSectionId,
+                        answers
+                    )
+                ).rejects.toThrow();
+            });
+
+            it('Should error gracefully', async () => {
+                await expect(
+                    questionnaireService.createAnswers(
+                        invalidQuestionnaireId,
+                        validSectionId,
+                        answers
+                    )
+                ).rejects.toThrow('Cannot find questionnaire');
             });
         });
     });
@@ -311,17 +400,11 @@ describe('Questionnaire Service', () => {
     describe('DCS API Version 2023-05-17', () => {
         const questionnaireService = createQuestionnaireService({
             logger: () => 'Logged from createQuestionnaire test',
-            apiVersion: '2023-05-17',
-            ownerId: 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6'
+            apiVersion,
+            ownerId
         });
         describe('createQuestionnaire', () => {
             it('Should create a questionnaire', async () => {
-                const templatename = 'sexual-assault';
-                const ownerData = {
-                    id: 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6',
-                    isAuthenticated: true
-                };
-
                 const actual = await questionnaireService.createQuestionnaire(
                     templatename,
                     ownerData
@@ -336,10 +419,6 @@ describe('Questionnaire Service', () => {
 
             it('Should error if templateName not found', async () => {
                 const templatename = 'not-a-template';
-                const ownerData = {
-                    id: 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6',
-                    isAuthenticated: true
-                };
 
                 await expect(
                     questionnaireService.createQuestionnaire(templatename, ownerData)
@@ -347,12 +426,6 @@ describe('Questionnaire Service', () => {
             });
 
             it('Should set owner data in the answers', async () => {
-                const templatename = 'sexual-assault';
-                const ownerData = {
-                    id: 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6',
-                    isAuthenticated: true
-                };
-
                 await questionnaireService.createQuestionnaire(templatename, ownerData);
 
                 expect(mockDalService.createQuestionnaire).toHaveBeenCalledTimes(1);
@@ -372,9 +445,8 @@ describe('Questionnaire Service', () => {
             it('Should error if owner data is undefined', async () => {
                 const questionnaireService = createQuestionnaireService({
                     logger: () => 'Logged from createQuestionnaire test',
-                    apiVersion: '2023-05-17'
+                    apiVersion
                 });
-                const templatename = 'sexual-assault';
                 const ownerData = undefined;
 
                 await expect(
@@ -385,11 +457,10 @@ describe('Questionnaire Service', () => {
 
         describe('getProgressEntries', () => {
             it('Should return a progressEntry collection', async () => {
-                const questionnaireId = '12345678-7dec-11d0-a765-00a0c91e6bf6';
                 const query = undefined;
 
                 const actual = await questionnaireService.getProgressEntries(
-                    questionnaireId,
+                    validQuestionnaireId,
                     query
                 );
 
@@ -403,14 +474,13 @@ describe('Questionnaire Service', () => {
             });
 
             it('Should ONLY use DB functions which filter by owner', async () => {
-                const questionnaireId = '12345678-7dec-11d0-a765-00a0c91e6bf6';
                 const query = {
                     filter: {
                         sectionId: 'p-applicant-when-did-the-crime-happen'
                     }
                 };
 
-                await questionnaireService.getProgressEntries(questionnaireId, query);
+                await questionnaireService.getProgressEntries(validQuestionnaireId, query);
 
                 expect(mockDalService.getQuestionnaireByOwner).toHaveBeenCalledTimes(1);
                 expect(mockDalService.updateQuestionnaireByOwner).toHaveBeenCalledTimes(1);
@@ -420,18 +490,15 @@ describe('Questionnaire Service', () => {
 
             describe('filter functions', () => {
                 it('Should filter to the current section', async () => {
-                    const questionnaireId = '12345678-7dec-11d0-a765-00a0c91e6bf6';
                     const query = {
                         filter: {
                             position: 'current'
                         }
                     };
-                    const ownerId = 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6';
 
                     const actual = await questionnaireService.getProgressEntries(
-                        questionnaireId,
-                        query,
-                        ownerId
+                        validQuestionnaireId,
+                        query
                     );
 
                     expect(Array.isArray(actual.data)).toBe(true);
@@ -447,18 +514,15 @@ describe('Questionnaire Service', () => {
                 });
 
                 it('Should filter to the first section', async () => {
-                    const questionnaireId = '12345678-7dec-11d0-a765-00a0c91e6bf6';
                     const query = {
                         filter: {
                             position: 'first'
                         }
                     };
-                    const ownerId = 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6';
 
                     const actual = await questionnaireService.getProgressEntries(
-                        questionnaireId,
-                        query,
-                        ownerId
+                        validQuestionnaireId,
+                        query
                     );
 
                     expect(Array.isArray(actual.data)).toBe(true);
@@ -474,18 +538,15 @@ describe('Questionnaire Service', () => {
                 });
 
                 it('Should filter to a specific section', async () => {
-                    const questionnaireId = '12345678-7dec-11d0-a765-00a0c91e6bf6';
                     const query = {
                         filter: {
                             sectionId: 'p-applicant-when-did-the-crime-happen'
                         }
                     };
-                    const ownerId = 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6';
 
                     const actual = await questionnaireService.getProgressEntries(
-                        questionnaireId,
-                        query,
-                        ownerId
+                        validQuestionnaireId,
+                        query
                     );
 
                     expect(Array.isArray(actual.data)).toBe(true);
@@ -501,18 +562,15 @@ describe('Questionnaire Service', () => {
                 });
 
                 it('Should filter to the previous section', async () => {
-                    const questionnaireId = '12345678-7dec-11d0-a765-00a0c91e6bf6';
                     const query = {
                         page: {
                             before: 'p-applicant-enter-your-telephone-number'
                         }
                     };
-                    const ownerId = 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6';
 
                     const actual = await questionnaireService.getProgressEntries(
-                        questionnaireId,
-                        query,
-                        ownerId
+                        validQuestionnaireId,
+                        query
                     );
 
                     expect(Array.isArray(actual.data)).toBe(true);
@@ -528,18 +586,15 @@ describe('Questionnaire Service', () => {
                 });
 
                 it('Should filter to the referrer where no previous section exists', async () => {
-                    const questionnaireId = '12345678-7dec-11d0-a765-00a0c91e6bf6';
                     const query = {
                         page: {
                             before: 'p-first-section'
                         }
                     };
-                    const ownerId = 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6';
 
                     const actual = await questionnaireService.getProgressEntries(
-                        questionnaireId,
-                        query,
-                        ownerId
+                        validQuestionnaireId,
+                        query
                     );
 
                     expect(Array.isArray(actual.data)).toBe(true);
@@ -555,18 +610,63 @@ describe('Questionnaire Service', () => {
                 });
 
                 it('Should error gracefully if section does not exist', async () => {
-                    const questionnaireId = '12345678-7dec-11d0-a765-00a0c91e6bf6';
                     const query = {
                         filter: {
-                            sectionId: 'p-not-a-section'
+                            sectionId: invalidSectionId
                         }
                     };
-                    const ownerId = 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6';
 
                     await expect(
-                        questionnaireService.getProgressEntries(questionnaireId, query, ownerId)
+                        questionnaireService.getProgressEntries(validQuestionnaireId, query)
                     ).rejects.toThrow('ProgressEntry "p-not-a-section" does not exist');
                 });
+            });
+        });
+
+        describe('createAnswers', () => {
+            it('Should return an answer resource', async () => {
+                const actual = await questionnaireService.createAnswers(
+                    validQuestionnaireId,
+                    validSectionId,
+                    answers
+                );
+
+                expect(actual.data).toMatchObject({
+                    id: validSectionId,
+                    type: 'answers',
+                    attributes: expect.any(Object)
+                });
+            });
+
+            it('Should ONLY use DB functions which filter by owner', async () => {
+                await questionnaireService.createAnswers(
+                    validQuestionnaireId,
+                    validSectionId,
+                    answers
+                );
+
+                expect(mockDalService.updateQuestionnaireByOwner).toHaveBeenCalledTimes(1);
+                expect(mockDalService.updateQuestionnaire).not.toHaveBeenCalled();
+            });
+
+            it('Should throw a validation error if the schema is not valid', async () => {
+                await expect(
+                    questionnaireService.createAnswers(
+                        validQuestionnaireId,
+                        invalidSectionId,
+                        answers
+                    )
+                ).rejects.toThrow();
+            });
+
+            it('Should error gracefully', async () => {
+                await expect(
+                    questionnaireService.createAnswers(
+                        invalidQuestionnaireId,
+                        validSectionId,
+                        answers
+                    )
+                ).rejects.toThrow('Cannot find questionnaire');
             });
         });
     });

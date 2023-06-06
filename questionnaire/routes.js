@@ -66,7 +66,9 @@ router
             // There can only every be one "answers" block per section
             // TODO: handle multiple attempts to "create" answers
             const answers = req.body.data.attributes;
-            const questionnaireService = createQuestionnaireService({logger: req.log});
+            const questionnaireService = createQuestionnaireService({
+                logger: req.log
+            });
             const response = await questionnaireService.createAnswers(
                 req.params.questionnaireId,
                 'system',
@@ -91,13 +93,43 @@ router
     });
 
 router
+    .route('/:questionnaireId/sections/owner/answers')
+    .post(permissions('update:questionnaires'), async (req, res, next) => {
+        try {
+            // There can only every be one "answers" block per section
+            // TODO: handle multiple attempts to "create" answers
+            const answers = req.body.data.attributes;
+            const questionnaireService = createQuestionnaireService({
+                logger: req.log,
+                apiVersion: req.get('Dcs-Api-Version'),
+                ownerId: req.get('On-Behalf-Of')
+            });
+            const response = await questionnaireService.createAnswers(
+                req.params.questionnaireId,
+                'owner',
+                answers
+            );
+
+            // Todo: update expires column
+
+            res.status(201).json(response);
+        } catch (err) {
+            next(err);
+        }
+    });
+
+router
     .route('/:questionnaireId/sections/:sectionId/answers')
     .post(permissions('update:questionnaires'), async (req, res, next) => {
         try {
             // There can only every be one "answers" block per section
             // TODO: handle multiple attempts to "create" answers
             const answers = req.body.data.attributes;
-            const questionnaireService = createQuestionnaireService({logger: req.log});
+            const questionnaireService = createQuestionnaireService({
+                logger: req.log,
+                apiVersion: req.get('Dcs-Api-Version'),
+                ownerId: req.get('On-Behalf-Of')
+            });
             const response = await questionnaireService.createAnswers(
                 req.params.questionnaireId,
                 req.params.sectionId,

@@ -93,11 +93,11 @@ function createQuestionnaireService({
     function getSection(sectionId, qRouter) {
         let section;
 
-        if (sectionId === 'system') {
+        if (sectionId === 'system' || sectionId === 'owner') {
             const currentSection = qRouter.current();
 
             section = {
-                id: 'system',
+                id: sectionId,
                 // Get the context (questionnaire) from the current section
                 context: currentSection.context
             };
@@ -253,9 +253,9 @@ function createQuestionnaireService({
             // Pass the answers to the router which will update the context (questionnaire) with these answers.
             let answeredQuestionnaire;
 
-            if (sectionDetails.id === 'system') {
+            if (sectionDetails.id === 'system' || sectionDetails.id === 'owner') {
                 const currentSection = qRouter.current();
-                currentSection.context.answers.system = coercedAnswers;
+                currentSection.context.answers[sectionDetails.id] = coercedAnswers;
                 answeredQuestionnaire = currentSection.context;
             } else {
                 const nextSection = qRouter.next(coercedAnswers, sectionDetails.id);
@@ -263,7 +263,11 @@ function createQuestionnaireService({
             }
 
             // Store the updated questionnaire object
-            await db.updateQuestionnaire(questionnaireId, answeredQuestionnaire);
+            if (apiVersion === '2023-05-17') {
+                await db.updateQuestionnaireByOwner(questionnaireId, answeredQuestionnaire);
+            } else {
+                await db.updateQuestionnaire(questionnaireId, answeredQuestionnaire);
+            }
 
             answerResource = {
                 data: {
