@@ -1,17 +1,17 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: dcs-app-prod
+  name: dcs-app-stag
 spec:
-  replicas: 4
+  replicas: 2
   template:
     metadata:
       labels:
-        app: dcs-app-prod
+        app: dcs-app-stag
     spec:
       containers:
         - name: data-capture-service
-          image: 754256621582.dkr.ecr.eu-west-2.amazonaws.com/cica/cica-repo-prod:latest
+          image: 754256621582.dkr.ecr.eu-west-2.amazonaws.com/cica/cica-repo-stag:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 3100
@@ -74,9 +74,9 @@ spec:
                   name: shared-secrets
                   key: notify_api_key
             - name: DCS_URL
-              value: https://data-capture-service.claim-criminal-injuries-compensation.service.justice.gov.uk
+              value: https://data-capture-service.stag.claim-criminal-injuries-compensation.service.justice.gov.uk
             - name: APP_ENV
-              value: prod
+              value: stag
             - name: DCS_SESSION_DURATION
               valueFrom:
                 secretKeyRef:
@@ -104,4 +104,4 @@ spec:
                   key: kta_s3_bucket
   selector:
     matchLabels:
-      app: dcs-app-prod
+      app: dcs-app-uat
