@@ -238,8 +238,11 @@ describe('Openapi version 2023-05-17 validation', () => {
             }),
             createAnswers: jest.fn((id, section) => {
                 if (section === 'p-not-a-section') {
-                    throw new Error(
-                        `Resource /api/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/sections/not-a-section/answers does not exist`
+                    throw new VError(
+                        {
+                            name: 'ResourceNotFound'
+                        },
+                        `Resource /api/questionnaires/${id}/sections/${section}/answers does not exist`
                     );
                 }
                 return 'ok';
@@ -251,6 +254,17 @@ describe('Openapi version 2023-05-17 validation', () => {
                 return 'ok';
             }),
             runOnCompleteActions: jest.fn(() => {
+                return 'ok';
+            }),
+            getAnswersBySectionId: jest.fn((questionnaireId, sectionId) => {
+                if (sectionId === 'p-not-a-section') {
+                    throw new VError(
+                        {
+                            name: 'ResourceNotFound'
+                        },
+                        `Section "${sectionId}" does not exist`
+                    );
+                }
                 return 'ok';
             })
         };
@@ -458,7 +472,7 @@ describe('Openapi version 2023-05-17 validation', () => {
         });
     });
 
-    describe('GET questionnaires/{questionnaireId}/progress-entries', () => {
+    describe('GET /questionnaires/{questionnaireId}/progress-entries', () => {
         it('should return status code 401 if bearer token is NOT valid', async () => {
             const response = await request(app)
                 .get('/api/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/progress-entries')
@@ -642,8 +656,10 @@ describe('Openapi version 2023-05-17 validation', () => {
                         }
                     }
                 });
-            expect(response.text).toContain(
-                'Resource /api/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/sections/not-a-section/answers does not exist'
+            expect(response.body).toHaveProperty('errors');
+            expect(response.body.errors[0].status).toEqual(404);
+            expect(response.body.errors[0].detail).toEqual(
+                'Resource /api/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/sections/p-not-a-section/answers does not exist'
             );
         });
 
@@ -790,6 +806,113 @@ describe('Openapi version 2023-05-17 validation', () => {
                     });
                 expect(response.statusCode).toEqual(201);
                 // ToDo: This should update the expires column
+            });
+        });
+    });
+
+    describe('GET /questionnaires/:questionnaireId/sections/:sectionId/answers', () => {
+        it('should return status code 401 if bearer token is NOT valid', async () => {
+            const response = await request(app)
+                .get(
+                    '/api/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/sections/p-some-section/answers'
+                )
+                .set('Authorization', `Bearer I-AM-INVALID`)
+                .set('Content-Type', 'application/vnd.api+json')
+                .set('On-Behalf-Of', `urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6`)
+                .set('Dcs-Api-Version', '2023-05-17');
+            expect(response.body).toHaveProperty('errors');
+            expect(response.body.errors[0].status).toEqual(401);
+            expect(response.body.errors[0].detail).toEqual('jwt malformed');
+        });
+
+        it('should return status code 403 if the bearer token has insufficient scope', async () => {
+            // THIS IS A TOKEN WITH A DUMMY SCOPE
+            const dummyToken =
+                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJkYXRhLWNhcHR1cmUtc2VydmljZSIsImlzcyI6IiQuYXVkIiwianRpIjoiNTFhODljYWUtM2Q1MC00ZDc1LTliMmEtMjU2NzliODgwMTkxIiwic3ViIjoiY2ljYS13ZWIiLCJzY29wZSI6ImNyZWF0ZTpub3RoaW5nIiwiaWF0IjoxNjgwNzk4NDU5fQ.97LgtlW_dcAV0Xno6BsbVmuyhLtq4gCoVWGQ56_VmEk';
+            const response = await request(app)
+                .get(
+                    '/api/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/sections/p-some-section/answers'
+                )
+                .set('Authorization', `Bearer ${dummyToken}`)
+                .set('Content-Type', 'application/vnd.api+json')
+                .set('On-Behalf-Of', `urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6`)
+                .set('Dcs-Api-Version', '2023-05-17');
+            expect(response.body).toHaveProperty('errors');
+            expect(response.body.errors[0].status).toEqual(403);
+            expect(response.body.errors[0].detail).toEqual('Insufficient scope');
+        });
+
+        it('should return status code 404 if the query string contains incorrect data', async () => {
+            const response = await request(app)
+                .get(
+                    '/api/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/sections/p-not-a-section/answers'
+                )
+                .set('Authorization', `Bearer ${token}`)
+                .set('Content-Type', 'application/vnd.api+json')
+                .set('On-Behalf-Of', `urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6`)
+                .set('Dcs-Api-Version', '2023-05-17');
+            expect(response.body).toHaveProperty('errors');
+            expect(response.body.errors[0].status).toEqual(404);
+            expect(response.body.errors[0].detail).toEqual(
+                'Section "p-not-a-section" does not exist'
+            );
+        });
+
+        describe('Requests made MUST include owner data', () => {
+            it('should return status code 400 if owner data is NOT included in the request body', async () => {
+                const response = await request(app)
+                    .get(
+                        '/api/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/sections/p-some-section/answers'
+                    )
+                    .set('Authorization', `Bearer ${token}`)
+                    .set('Content-Type', 'application/vnd.api+json')
+                    .set('Dcs-Api-Version', '2023-05-17');
+                expect(response.body).toHaveProperty('errors');
+                expect(response.body.errors[0].status).toEqual(400);
+                expect(response.body.errors[0].detail).toEqual(
+                    "should have required property 'on-behalf-of'"
+                );
+            });
+
+            it('should return status code 200 if owner data is included in the header', async () => {
+                const response = await request(app)
+                    .get(
+                        '/api/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/sections/p-some-section/answers'
+                    )
+                    .set('Authorization', `Bearer ${token}`)
+                    .set('Content-Type', 'application/vnd.api+json')
+                    .set('On-Behalf-Of', `urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6`)
+                    .set('Dcs-Api-Version', '2023-05-17');
+                expect(response.statusCode).toEqual(200);
+            });
+        });
+
+        describe('Requests made MUST include "Dcs-Api-Version" header', () => {
+            it('should return status code 400 if "Dcs-Api-Version" is NOT included in the header', async () => {
+                const response = await request(app)
+                    .get(
+                        '/api/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/sections/p-some-section/answers'
+                    )
+                    .set('Authorization', `Bearer ${token}`)
+                    .set('Content-Type', 'application/vnd.api+json')
+                    .set('On-Behalf-Of', `urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6`);
+                expect(response.body).toHaveProperty('errors');
+                expect(response.body.errors[0].status).toEqual(400);
+                expect(response.body.errors[0].detail).toEqual(
+                    "should have required property 'dcs-api-version'"
+                );
+            });
+
+            it('should return status code 200 if "Dcs-Api-Version" is included in the header', async () => {
+                const response = await request(app)
+                    .get(
+                        '/api/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/sections/p-some-section/answers'
+                    )
+                    .set('Authorization', `Bearer ${token}`)
+                    .set('Content-Type', 'application/vnd.api+json')
+                    .set('On-Behalf-Of', `urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6`)
+                    .set('Dcs-Api-Version', '2023-05-17');
+                expect(response.statusCode).toEqual(200);
             });
         });
     });

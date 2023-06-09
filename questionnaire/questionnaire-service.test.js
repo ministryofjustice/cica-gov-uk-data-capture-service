@@ -5,7 +5,7 @@
 const mockAjv = require('ajv');
 const questionnaireFixture = require('./test-fixtures/res/questionnaireCompleteWithCRN');
 
-const validSectionId = 'p-some-section';
+const validSectionId = 'p-applicant-enter-your-name';
 const invalidSectionId = 'p-not-a-section';
 const validQuestionnaireId = '12345678-7dec-11d0-a765-00a0c91e6bf6';
 const invalidQuestionnaireId = '11111111-7dec-11d0-a765-00a0c91e6bf6';
@@ -667,6 +667,30 @@ describe('Questionnaire Service', () => {
                         answers
                     )
                 ).rejects.toThrow('Cannot find questionnaire');
+            });
+        });
+
+        describe('getAnswersBySectionId', () => {
+            it('Should return an answer resource', async () => {
+                const actual = await questionnaireService.getAnswersBySectionId(
+                    validQuestionnaireId,
+                    validSectionId
+                );
+
+                expect(actual.data).toMatchObject({
+                    id: validSectionId,
+                    type: 'answers',
+                    attributes: expect.any(Object)
+                });
+            });
+
+            it("Should throw a validation error if the sectionId doesn't exist in the questionnaires progress", async () => {
+                await expect(
+                    questionnaireService.getAnswersBySectionId(
+                        validQuestionnaireId,
+                        invalidSectionId
+                    )
+                ).rejects.toThrow();
             });
         });
     });
