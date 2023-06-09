@@ -1,0 +1,68 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Metadata resource",
+    "allOf": [
+        {"$ref": "../json-api-base-resource.json"},
+        {
+            "properties": {
+                "type": {
+                    "const": "metadata"
+                },
+                "id": {
+                    "$ref": "../../models/definitions/uuid-v4.json"
+                },
+                "attributes": {
+                    "allOf": [
+                        {
+                            "required": [
+                                "questionnaire-document-version",
+                                "questionnaire-id",
+                                "created",
+                                "modified",
+                                "submission-status",
+                                "expires",
+                                "owner"
+                            ],
+                            "properties": {
+                                "questionnaire-document-version": {
+                                    "enum": ["4.1.0"]
+                                },
+                                "questionnaire-id": {
+                                    "$ref": "../../models/definitions/uuid-v4.json"
+                                },
+                                "created": {
+                                    "$ref": "../../models/definitions/timestamp.json"
+                                },
+                                "modified": {
+                                    "$ref": "../../models/definitions/timestamp.json"
+                                },
+                                "submission-status": {
+                                    "enum": ["NOT_STARTED", "IN_PROGRESS", "COMPLETED", "FAILED"]
+                                },
+                                "owner": {
+                                    "type": "object",
+                                    "additionalProperties": false,
+                                    "required": ["owner-id", "is-authorised"],
+                                    "properties": {
+                                        "owner-id": {
+                                            "$ref": "../../models/definitions/owner-id.json"
+                                        },
+                                        "is-authenticated": {
+                                            "type": "boolean"
+                                        }
+                                    }
+                                },
+                                "expires": {
+                                    "$ref": "../../models/definitions/timestamp.json"
+                                }
+                            }
+                        },
+                        {
+                            "$ref": "../../models/definitions/metadata-id.json"
+                        }
+                    ]
+                }
+            }
+        }
+    ]
+}
