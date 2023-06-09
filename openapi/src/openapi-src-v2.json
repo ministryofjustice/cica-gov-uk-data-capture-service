@@ -28,6 +28,12 @@
         },
         {
             "name": "ProgressEntries"
+        },
+        {
+            "name": "Answers"
+        },
+        {
+            "name": "Metadata"
         }
     ],
     "paths": {
@@ -71,7 +77,7 @@
                         "content": {
                             "application/vnd.api+json": {
                                 "schema": {
-                                    "$ref": "./json-schemas/api/_questionnaires/post/res/201.json"
+                                    "$ref": "./json-schemas/api/v2_questionnaires/post/res/201.json"
                                 },
                                 "example": {
                                     "data": {
@@ -130,7 +136,7 @@
                         "content": {
                             "application/vnd.api+json": {
                                 "schema": {
-                                    "$ref": "json-schemas/api/_questionnaires_{questionnaireId}_progress-entries/get/res/200.json"
+                                    "$ref": "json-schemas/api/v2_questionnaires_{questionnaireId}_progress-entries/get/res/200.json"
                                 },
                                 "example": {
                                     "data": [
@@ -228,7 +234,7 @@
                     "content": {
                         "application/vnd.api+json": {
                             "schema": {
-                                "$ref": "./json-schemas/api/_questionnaires_{questionnaireId}_sections_{sectionId}_answers/post/req/201.json"
+                                "$ref": "./json-schemas/api/v2_questionnaires_{questionnaireId}_sections_{sectionId}_answers/post/req/201.json"
                             },
                             "example": {
                                 "data": {
@@ -247,7 +253,7 @@
                         "content": {
                             "application/vnd.api+json": {
                                 "schema": {
-                                    "$ref": "./json-schemas/api/_questionnaires_{questionnaireId}_sections_{sectionId}_answers/post/res/201.json"
+                                    "$ref": "./json-schemas/api/v2_questionnaires_{questionnaireId}_sections_{sectionId}_answers/post/res/201.json"
                                 },
                                 "example": {
                                     "data": {
@@ -257,6 +263,174 @@
                                             "case-reference": "11\\111111"
                                         }
                                     }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/UnauthorizedError"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/Forbidden"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    }
+                }
+            },
+            "get": {
+                "tags": ["Answers"],
+                "summary": "Get answer(s) for a specified section",
+                "description": "Gets the answer(s) to a supplied section",
+                "operationId": "getAnswer",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/questionnaireId"
+                    },
+                    {
+                        "$ref": "#/components/parameters/sectionId"
+                    },
+                    {
+                        "$ref": "#/components/parameters/onBehalfOf"
+                    },
+                    {
+                        "$ref": "#/components/parameters/apiVersion"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/vnd.api+json": {
+                                "schema": {
+                                    "$ref": "json-schemas/api/v2_questionnaires_{questionnaireId}_sections_{sectionId}_answers/get/res/200.json"
+                                },
+                                "example": {
+                                    "data": [
+                                        {
+                                            "type": "answers",
+                                            "id": "p-applicant-british-citizen-or-eu-national",
+                                            "attributes": {
+                                                "q-applicant-british-citizen-or-eu-national": true
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/UnauthorizedError"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/Forbidden"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    }
+                }
+            }
+        },
+        "/questionnaires/metadata": {
+            "get": {
+                "tags": ["Metadata"],
+                "summary": "Get the metadata associated with all questionnaires",
+                "description": "Gets questionnaire metadata. The results are filtered by owner.",
+                "operationId": "getMetadata",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/onBehalfOf"
+                    },
+                    {
+                        "$ref": "#/components/parameters/apiVersion"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/vnd.api+json": {
+                                "schema": {
+                                    "$ref": "json-schemas/api/v2_questionnaires_metadata/get/res/200.json"
+                                },
+                                "example": {
+                                    "data": [
+                                        {
+                                            "type": "metadata",
+                                            "id": "285cb104-0c15-4a9c-9840-cb1007f098fb",
+                                            "attributes": {
+                                                "questionnaire-id": "285cb104-0c15-4a9c-9840-cb1007f098fb",
+                                                "created": "2022-01-18T04:05:06Z",
+                                                "modified": "2022-01-18T05:05:06Z",
+                                                "submission-status": "IN_PROGRESS",
+                                                "expires": "2023-01-24T05:05:06Z"
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/UnauthorizedError"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/Forbidden"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    }
+                }
+            }
+        },
+        "/questionnaires/{questionnaireId}/metadata": {
+            "get": {
+                "tags": ["Metadata"],
+                "summary": "Get the metadata associated with a specific questionnaires",
+                "description": "Gets a single questionnaire's metadata. The results are filtered by owner.",
+                "operationId": "getQuestionnaireMetadata",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/questionnaireId"
+                    },
+                    {
+                        "$ref": "#/components/parameters/onBehalfOf"
+                    },
+                    {
+                        "$ref": "#/components/parameters/apiVersion"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/vnd.api+json": {
+                                "schema": {
+                                    "$ref": "json-schemas/api/v2_questionnaires_{questionnaireId}_metadata/get/res/200.json"
+                                },
+                                "example": {
+                                    "data": [
+                                        {
+                                            "type": "metadata",
+                                            "id": "285cb104-0c15-4a9c-9840-cb1007f098fb",
+                                            "attributes": {
+                                                "questionnaire-id": "285cb104-0c15-4a9c-9840-cb1007f098fb",
+                                                "created": "2022-01-18T04:05:06Z",
+                                                "modified": "2022-01-18T05:05:06Z",
+                                                "submission-status": "IN_PROGRESS",
+                                                "expires": "2023-01-24T05:05:06Z"
+                                            }
+                                        }
+                                    ]
                                 }
                             }
                         }
