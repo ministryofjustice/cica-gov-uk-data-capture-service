@@ -61,8 +61,8 @@ function createQuestionnaireService({
 
             questionnaire.answers = {
                 owner: {
-                    ownerId: ownerData.id,
-                    isAuthenticated: ownerData.isAuthenticated
+                    'owner-id': ownerData.id,
+                    'is-authenticated': ownerData.isAuthenticated
                 }
             };
         }

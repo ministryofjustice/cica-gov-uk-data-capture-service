@@ -434,8 +434,8 @@ describe('Questionnaire Service', () => {
                     expect.objectContaining({
                         answers: {
                             owner: {
-                                ownerId: 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6',
-                                isAuthenticated: true
+                                'owner-id': 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6',
+                                'is-authenticated': true
                             }
                         }
                     })
