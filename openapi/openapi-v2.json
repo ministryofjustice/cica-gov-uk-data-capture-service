@@ -39,16 +39,7 @@
                 "operationId": "createQuestionnaires",
                 "parameters": [
                     {
-                        "name": "Dcs-Api-Version",
-                        "in": "header",
-                        "required": true,
-                        "description": "The date based version of the requested API",
-                        "schema": {
-                            "title": "Dcs-Api-Version",
-                            "type": "string",
-                            "enum": ["2023-05-17"]
-                        },
-                        "example": "2023-05-17"
+                        "$ref": "#/components/parameters/apiVersion"
                     }
                 ],
                 "requestBody": {
@@ -176,14 +167,10 @@
                                                                     "type": "string",
                                                                     "anyOf": [
                                                                         {
-                                                                            "title": "Section Id",
-                                                                            "type": "string",
-                                                                            "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer|owner)$"
+                                                                            "$ref": "#/components/parameters/filter/schema/properties/sectionId"
                                                                         },
                                                                         {
-                                                                            "title": "UUID v4",
-                                                                            "type": "string",
-                                                                            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+                                                                            "$ref": "#/paths/~1questionnaires/post/responses/201/content/application~1vnd.api%2Bjson/schema/allOf/1/properties/data/allOf/1/properties/attributes/properties/id"
                                                                         },
                                                                         {
                                                                             "description": "Used by dataset endpoint",
@@ -221,9 +208,7 @@
                                                                             "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
                                                                         },
                                                                         "type": {
-                                                                            "title": "Questionnaire template name",
-                                                                            "type": "string",
-                                                                            "pattern": "^[a-z]{1,20}(?:-[a-z]{1,20}){0,10}$"
+                                                                            "$ref": "#/paths/~1questionnaires/post/requestBody/content/application~1vnd.api%2Bjson/schema/properties/data/properties/attributes/properties/templateName"
                                                                         },
                                                                         "version": {
                                                                             "title": "semver",
@@ -235,9 +220,7 @@
                                                                             "required": ["initial"],
                                                                             "properties": {
                                                                                 "initial": {
-                                                                                    "title": "Section Id",
-                                                                                    "type": "string",
-                                                                                    "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer|owner)$"
+                                                                                    "$ref": "#/components/parameters/filter/schema/properties/sectionId"
                                                                                 }
                                                                             }
                                                                         }
@@ -265,163 +248,16 @@
                         }
                     },
                     "400": {
-                        "description": "There is an issue with the request",
-                        "content": {
-                            "application/vnd.api+json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": ["errors"],
-                                    "properties": {
-                                        "errors": {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "object",
-                                                "required": ["status", "title", "detail"],
-                                                "properties": {
-                                                    "status": {
-                                                        "enum": [400]
-                                                    },
-                                                    "title": {
-                                                        "enum": ["400 Bad Request"]
-                                                    },
-                                                    "detail": {
-                                                        "type": "string"
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                },
-                                "example": {
-                                    "errors": [
-                                        {
-                                            "status": 400,
-                                            "title": "400 Bad Request",
-                                            "detail": "Request JSON is malformed"
-                                        }
-                                    ]
-                                }
-                            }
-                        }
+                        "$ref": "#/components/responses/BadRequest"
                     },
                     "401": {
-                        "description": "Access token is missing or invalid",
-                        "content": {
-                            "application/vnd.api+json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": ["errors"],
-                                    "properties": {
-                                        "errors": {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "object",
-                                                "required": ["status", "title", "detail"],
-                                                "properties": {
-                                                    "status": {
-                                                        "enum": [401]
-                                                    },
-                                                    "title": {
-                                                        "enum": ["401 Unauthorized"]
-                                                    },
-                                                    "detail": {
-                                                        "type": "string"
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                },
-                                "example": {
-                                    "errors": [
-                                        {
-                                            "status": 401,
-                                            "detail": "No authorization token was found"
-                                        }
-                                    ]
-                                }
-                            }
-                        }
+                        "$ref": "#/components/responses/UnauthorizedError"
                     },
                     "403": {
-                        "description": "The JWT doesn't permit access to this endpoint",
-                        "content": {
-                            "application/vnd.api+json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": ["errors"],
-                                    "properties": {
-                                        "errors": {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "object",
-                                                "required": ["status", "title", "detail"],
-                                                "properties": {
-                                                    "status": {
-                                                        "enum": [403]
-                                                    },
-                                                    "title": {
-                                                        "enum": ["403 Forbidden"]
-                                                    },
-                                                    "detail": {
-                                                        "type": "string"
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                },
-                                "example": {
-                                    "errors": [
-                                        {
-                                            "status": 403,
-                                            "title": "403 Forbidden",
-                                            "detail": "Insufficient scope"
-                                        }
-                                    ]
-                                }
-                            }
-                        }
+                        "$ref": "#/components/responses/Forbidden"
                     },
                     "404": {
-                        "description": "The specified resource was not found",
-                        "content": {
-                            "application/vnd.api+json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": ["errors"],
-                                    "properties": {
-                                        "errors": {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "object",
-                                                "required": ["status", "title", "detail"],
-                                                "properties": {
-                                                    "status": {
-                                                        "enum": [404]
-                                                    },
-                                                    "title": {
-                                                        "enum": ["404 Not Found"]
-                                                    },
-                                                    "detail": {
-                                                        "type": "string"
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                },
-                                "example": {
-                                    "errors": [
-                                        {
-                                            "status": 404,
-                                            "title": "404 Not Found",
-                                            "detail": "Resource /api/v1/questionnaires/2d7caf89-2c72-469f-b19d-17f2a22270b6/sections/answers does not exist"
-                                        }
-                                    ]
-                                }
-                            }
-                        }
+                        "$ref": "#/components/responses/NotFound"
                     }
                 }
             }
@@ -434,87 +270,19 @@
                 "operationId": "getProgressEntries",
                 "parameters": [
                     {
-                        "name": "questionnaireId",
-                        "in": "path",
-                        "required": true,
-                        "description": "The id of the specific questionnaire instance. Format UUIDv4.",
-                        "schema": {
-                            "title": "UUID v4",
-                            "type": "string",
-                            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
-                        },
-                        "example": "285cb104-0c15-4a9c-9840-cb1007f098fb"
+                        "$ref": "#/components/parameters/questionnaireId"
                     },
                     {
-                        "in": "query",
-                        "name": "filter",
-                        "description": "Filter progress entries",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": false,
-                            "properties": {
-                                "position": {
-                                    "enum": ["current", "first"]
-                                },
-                                "sectionId": {
-                                    "title": "Section Id",
-                                    "type": "string",
-                                    "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer|owner)$"
-                                }
-                            }
-                        },
-                        "style": "deepObject",
-                        "explode": true,
-                        "example": {
-                            "position": "current"
-                        }
+                        "$ref": "#/components/parameters/filter"
                     },
                     {
-                        "in": "query",
-                        "name": "page",
-                        "description": "Paginate progress entries",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": false,
-                            "properties": {
-                                "before": {
-                                    "title": "Section Id",
-                                    "type": "string",
-                                    "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer|owner)$"
-                                }
-                            }
-                        },
-                        "style": "deepObject",
-                        "explode": true,
-                        "example": {
-                            "before": "p-applicant-declaration"
-                        }
+                        "$ref": "#/components/parameters/page"
                     },
                     {
-                        "in": "header",
-                        "name": "On-Behalf-Of",
-                        "required": true,
-                        "description": "Specify the owner of the resource.",
-                        "schema": {
-                            "title": "Owner Id",
-                            "type": "string",
-                            "format": "uri",
-                            "maxLength": 64,
-                            "pattern": "^urn:(uuid|fdc:gov.uk:2022):"
-                        },
-                        "example": "urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+                        "$ref": "#/components/parameters/onBehalfOf"
                     },
                     {
-                        "name": "Dcs-Api-Version",
-                        "in": "header",
-                        "required": true,
-                        "description": "The date based version of the requested API",
-                        "schema": {
-                            "title": "Dcs-Api-Version",
-                            "type": "string",
-                            "enum": ["2023-05-17"]
-                        },
-                        "example": "2023-05-17"
+                        "$ref": "#/components/parameters/apiVersion"
                     }
                 ],
                 "responses": {
@@ -526,33 +294,7 @@
                                     "title": "Progress entries document",
                                     "allOf": [
                                         {
-                                            "title": "Loosely describes the JSON:API document format",
-                                            "type": "object",
-                                            "additionalProperties": false,
-                                            "required": ["data"],
-                                            "properties": {
-                                                "data": {
-                                                    "anyOf": [
-                                                        {
-                                                            "type": "object"
-                                                        },
-                                                        {
-                                                            "type": "array",
-                                                            "items": {}
-                                                        }
-                                                    ]
-                                                },
-                                                "included": {
-                                                    "type": "array",
-                                                    "items": {}
-                                                },
-                                                "links": {
-                                                    "type": "object"
-                                                },
-                                                "meta": {
-                                                    "type": "object"
-                                                }
-                                            }
+                                            "$ref": "#/paths/~1questionnaires/post/responses/201/content/application~1vnd.api%2Bjson/schema/allOf/0"
                                         },
                                         {
                                             "properties": {
@@ -562,45 +304,7 @@
                                                         "title": "Progress entry resource",
                                                         "allOf": [
                                                             {
-                                                                "title": "Loosely describes the JSON:API resource format",
-                                                                "type": "object",
-                                                                "additionalProperties": false,
-                                                                "required": [
-                                                                    "type",
-                                                                    "id",
-                                                                    "attributes"
-                                                                ],
-                                                                "properties": {
-                                                                    "type": {
-                                                                        "type": "string"
-                                                                    },
-                                                                    "id": {
-                                                                        "type": "string",
-                                                                        "anyOf": [
-                                                                            {
-                                                                                "title": "Section Id",
-                                                                                "type": "string",
-                                                                                "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer|owner)$"
-                                                                            },
-                                                                            {
-                                                                                "title": "UUID v4",
-                                                                                "type": "string",
-                                                                                "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
-                                                                            },
-                                                                            {
-                                                                                "description": "Used by dataset endpoint",
-                                                                                "enum": ["0"]
-                                                                            }
-                                                                        ]
-                                                                    },
-                                                                    "attributes": {
-                                                                        "type": "object",
-                                                                        "title": "Any valid resource"
-                                                                    },
-                                                                    "relationships": {
-                                                                        "type": "object"
-                                                                    }
-                                                                }
+                                                                "$ref": "#/paths/~1questionnaires/post/responses/201/content/application~1vnd.api%2Bjson/schema/allOf/1/properties/data/allOf/0"
                                                             },
                                                             {
                                                                 "required": ["relationships"],
@@ -621,9 +325,7 @@
                                                                                         "nullable": true
                                                                                     },
                                                                                     {
-                                                                                        "title": "Section Id",
-                                                                                        "type": "string",
-                                                                                        "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer|owner)$"
+                                                                                        "$ref": "#/components/parameters/filter/schema/properties/sectionId"
                                                                                     }
                                                                                 ]
                                                                             },
@@ -656,9 +358,7 @@
                                                                                                 "type": "string"
                                                                                             },
                                                                                             "id": {
-                                                                                                "title": "Section Id",
-                                                                                                "type": "string",
-                                                                                                "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer|owner)$"
+                                                                                                "$ref": "#/components/parameters/filter/schema/properties/sectionId"
                                                                                             }
                                                                                         }
                                                                                     }
@@ -678,47 +378,7 @@
                                                                 "title": "Section resource",
                                                                 "allOf": [
                                                                     {
-                                                                        "title": "Loosely describes the JSON:API resource format",
-                                                                        "type": "object",
-                                                                        "additionalProperties": false,
-                                                                        "required": [
-                                                                            "type",
-                                                                            "id",
-                                                                            "attributes"
-                                                                        ],
-                                                                        "properties": {
-                                                                            "type": {
-                                                                                "type": "string"
-                                                                            },
-                                                                            "id": {
-                                                                                "type": "string",
-                                                                                "anyOf": [
-                                                                                    {
-                                                                                        "title": "Section Id",
-                                                                                        "type": "string",
-                                                                                        "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer|owner)$"
-                                                                                    },
-                                                                                    {
-                                                                                        "title": "UUID v4",
-                                                                                        "type": "string",
-                                                                                        "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
-                                                                                    },
-                                                                                    {
-                                                                                        "description": "Used by dataset endpoint",
-                                                                                        "enum": [
-                                                                                            "0"
-                                                                                        ]
-                                                                                    }
-                                                                                ]
-                                                                            },
-                                                                            "attributes": {
-                                                                                "type": "object",
-                                                                                "title": "Any valid resource"
-                                                                            },
-                                                                            "relationships": {
-                                                                                "type": "object"
-                                                                            }
-                                                                        }
+                                                                        "$ref": "#/paths/~1questionnaires/post/responses/201/content/application~1vnd.api%2Bjson/schema/allOf/1/properties/data/allOf/0"
                                                                     },
                                                                     {
                                                                         "properties": {
@@ -747,47 +407,7 @@
                                                                 "title": "Answer resource",
                                                                 "allOf": [
                                                                     {
-                                                                        "title": "Loosely describes the JSON:API resource format",
-                                                                        "type": "object",
-                                                                        "additionalProperties": false,
-                                                                        "required": [
-                                                                            "type",
-                                                                            "id",
-                                                                            "attributes"
-                                                                        ],
-                                                                        "properties": {
-                                                                            "type": {
-                                                                                "type": "string"
-                                                                            },
-                                                                            "id": {
-                                                                                "type": "string",
-                                                                                "anyOf": [
-                                                                                    {
-                                                                                        "title": "Section Id",
-                                                                                        "type": "string",
-                                                                                        "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer|owner)$"
-                                                                                    },
-                                                                                    {
-                                                                                        "title": "UUID v4",
-                                                                                        "type": "string",
-                                                                                        "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
-                                                                                    },
-                                                                                    {
-                                                                                        "description": "Used by dataset endpoint",
-                                                                                        "enum": [
-                                                                                            "0"
-                                                                                        ]
-                                                                                    }
-                                                                                ]
-                                                                            },
-                                                                            "attributes": {
-                                                                                "type": "object",
-                                                                                "title": "Any valid resource"
-                                                                            },
-                                                                            "relationships": {
-                                                                                "type": "object"
-                                                                            }
-                                                                        }
+                                                                        "$ref": "#/paths/~1questionnaires/post/responses/201/content/application~1vnd.api%2Bjson/schema/allOf/1/properties/data/allOf/0"
                                                                     },
                                                                     {
                                                                         "properties": {
@@ -861,163 +481,16 @@
                         }
                     },
                     "400": {
-                        "description": "There is an issue with the request",
-                        "content": {
-                            "application/vnd.api+json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": ["errors"],
-                                    "properties": {
-                                        "errors": {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "object",
-                                                "required": ["status", "title", "detail"],
-                                                "properties": {
-                                                    "status": {
-                                                        "enum": [400]
-                                                    },
-                                                    "title": {
-                                                        "enum": ["400 Bad Request"]
-                                                    },
-                                                    "detail": {
-                                                        "type": "string"
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                },
-                                "example": {
-                                    "errors": [
-                                        {
-                                            "status": 400,
-                                            "title": "400 Bad Request",
-                                            "detail": "Request JSON is malformed"
-                                        }
-                                    ]
-                                }
-                            }
-                        }
+                        "$ref": "#/components/responses/BadRequest"
                     },
                     "401": {
-                        "description": "Access token is missing or invalid",
-                        "content": {
-                            "application/vnd.api+json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": ["errors"],
-                                    "properties": {
-                                        "errors": {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "object",
-                                                "required": ["status", "title", "detail"],
-                                                "properties": {
-                                                    "status": {
-                                                        "enum": [401]
-                                                    },
-                                                    "title": {
-                                                        "enum": ["401 Unauthorized"]
-                                                    },
-                                                    "detail": {
-                                                        "type": "string"
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                },
-                                "example": {
-                                    "errors": [
-                                        {
-                                            "status": 401,
-                                            "detail": "No authorization token was found"
-                                        }
-                                    ]
-                                }
-                            }
-                        }
+                        "$ref": "#/components/responses/UnauthorizedError"
                     },
                     "403": {
-                        "description": "The JWT doesn't permit access to this endpoint",
-                        "content": {
-                            "application/vnd.api+json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": ["errors"],
-                                    "properties": {
-                                        "errors": {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "object",
-                                                "required": ["status", "title", "detail"],
-                                                "properties": {
-                                                    "status": {
-                                                        "enum": [403]
-                                                    },
-                                                    "title": {
-                                                        "enum": ["403 Forbidden"]
-                                                    },
-                                                    "detail": {
-                                                        "type": "string"
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                },
-                                "example": {
-                                    "errors": [
-                                        {
-                                            "status": 403,
-                                            "title": "403 Forbidden",
-                                            "detail": "Insufficient scope"
-                                        }
-                                    ]
-                                }
-                            }
-                        }
+                        "$ref": "#/components/responses/Forbidden"
                     },
                     "404": {
-                        "description": "The specified resource was not found",
-                        "content": {
-                            "application/vnd.api+json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": ["errors"],
-                                    "properties": {
-                                        "errors": {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "object",
-                                                "required": ["status", "title", "detail"],
-                                                "properties": {
-                                                    "status": {
-                                                        "enum": [404]
-                                                    },
-                                                    "title": {
-                                                        "enum": ["404 Not Found"]
-                                                    },
-                                                    "detail": {
-                                                        "type": "string"
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                },
-                                "example": {
-                                    "errors": [
-                                        {
-                                            "status": 404,
-                                            "title": "404 Not Found",
-                                            "detail": "Resource /api/v1/questionnaires/2d7caf89-2c72-469f-b19d-17f2a22270b6/sections/answers does not exist"
-                                        }
-                                    ]
-                                }
-                            }
-                        }
+                        "$ref": "#/components/responses/NotFound"
                     }
                 }
             }
@@ -1030,54 +503,16 @@
                 "operationId": "createAnswers",
                 "parameters": [
                     {
-                        "name": "questionnaireId",
-                        "in": "path",
-                        "required": true,
-                        "description": "The id of the specific questionnaire instance. Format UUIDv4.",
-                        "schema": {
-                            "title": "UUID v4",
-                            "type": "string",
-                            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
-                        },
-                        "example": "285cb104-0c15-4a9c-9840-cb1007f098fb"
+                        "$ref": "#/components/parameters/questionnaireId"
                     },
                     {
-                        "name": "sectionId",
-                        "in": "path",
-                        "required": true,
-                        "description": "The id of the specific questionnaire section.",
-                        "schema": {
-                            "title": "Section Id",
-                            "type": "string",
-                            "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer|owner)$"
-                        },
-                        "example": "system"
+                        "$ref": "#/components/parameters/sectionId"
                     },
                     {
-                        "in": "header",
-                        "name": "On-Behalf-Of",
-                        "required": true,
-                        "description": "Specify the owner of the resource.",
-                        "schema": {
-                            "title": "Owner Id",
-                            "type": "string",
-                            "format": "uri",
-                            "maxLength": 64,
-                            "pattern": "^urn:(uuid|fdc:gov.uk:2022):"
-                        },
-                        "example": "urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+                        "$ref": "#/components/parameters/onBehalfOf"
                     },
                     {
-                        "name": "Dcs-Api-Version",
-                        "in": "header",
-                        "required": true,
-                        "description": "The date based version of the requested API",
-                        "schema": {
-                            "title": "Dcs-Api-Version",
-                            "type": "string",
-                            "enum": ["2023-05-17"]
-                        },
-                        "example": "2023-05-17"
+                        "$ref": "#/components/parameters/apiVersion"
                     }
                 ],
                 "requestBody": {
@@ -1125,88 +560,12 @@
                                     "title": "Single answers document",
                                     "allOf": [
                                         {
-                                            "title": "Loosely describes the JSON:API document format",
-                                            "type": "object",
-                                            "additionalProperties": false,
-                                            "required": ["data"],
-                                            "properties": {
-                                                "data": {
-                                                    "anyOf": [
-                                                        {
-                                                            "type": "object"
-                                                        },
-                                                        {
-                                                            "type": "array",
-                                                            "items": {}
-                                                        }
-                                                    ]
-                                                },
-                                                "included": {
-                                                    "type": "array",
-                                                    "items": {}
-                                                },
-                                                "links": {
-                                                    "type": "object"
-                                                },
-                                                "meta": {
-                                                    "type": "object"
-                                                }
-                                            }
+                                            "$ref": "#/paths/~1questionnaires/post/responses/201/content/application~1vnd.api%2Bjson/schema/allOf/0"
                                         },
                                         {
                                             "properties": {
                                                 "data": {
-                                                    "title": "Answer resource",
-                                                    "allOf": [
-                                                        {
-                                                            "title": "Loosely describes the JSON:API resource format",
-                                                            "type": "object",
-                                                            "additionalProperties": false,
-                                                            "required": [
-                                                                "type",
-                                                                "id",
-                                                                "attributes"
-                                                            ],
-                                                            "properties": {
-                                                                "type": {
-                                                                    "type": "string"
-                                                                },
-                                                                "id": {
-                                                                    "type": "string",
-                                                                    "anyOf": [
-                                                                        {
-                                                                            "title": "Section Id",
-                                                                            "type": "string",
-                                                                            "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer|owner)$"
-                                                                        },
-                                                                        {
-                                                                            "title": "UUID v4",
-                                                                            "type": "string",
-                                                                            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
-                                                                        },
-                                                                        {
-                                                                            "description": "Used by dataset endpoint",
-                                                                            "enum": ["0"]
-                                                                        }
-                                                                    ]
-                                                                },
-                                                                "attributes": {
-                                                                    "type": "object",
-                                                                    "title": "Any valid resource"
-                                                                },
-                                                                "relationships": {
-                                                                    "type": "object"
-                                                                }
-                                                            }
-                                                        },
-                                                        {
-                                                            "properties": {
-                                                                "type": {
-                                                                    "enum": ["answers"]
-                                                                }
-                                                            }
-                                                        }
-                                                    ]
+                                                    "$ref": "#/paths/~1questionnaires~1%7BquestionnaireId%7D~1progress-entries/get/responses/200/content/application~1vnd.api%2Bjson/schema/allOf/1/properties/included/items/anyOf/1"
                                                 }
                                             }
                                         }
@@ -1225,163 +584,16 @@
                         }
                     },
                     "400": {
-                        "description": "There is an issue with the request",
-                        "content": {
-                            "application/vnd.api+json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": ["errors"],
-                                    "properties": {
-                                        "errors": {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "object",
-                                                "required": ["status", "title", "detail"],
-                                                "properties": {
-                                                    "status": {
-                                                        "enum": [400]
-                                                    },
-                                                    "title": {
-                                                        "enum": ["400 Bad Request"]
-                                                    },
-                                                    "detail": {
-                                                        "type": "string"
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                },
-                                "example": {
-                                    "errors": [
-                                        {
-                                            "status": 400,
-                                            "title": "400 Bad Request",
-                                            "detail": "Request JSON is malformed"
-                                        }
-                                    ]
-                                }
-                            }
-                        }
+                        "$ref": "#/components/responses/BadRequest"
                     },
                     "401": {
-                        "description": "Access token is missing or invalid",
-                        "content": {
-                            "application/vnd.api+json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": ["errors"],
-                                    "properties": {
-                                        "errors": {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "object",
-                                                "required": ["status", "title", "detail"],
-                                                "properties": {
-                                                    "status": {
-                                                        "enum": [401]
-                                                    },
-                                                    "title": {
-                                                        "enum": ["401 Unauthorized"]
-                                                    },
-                                                    "detail": {
-                                                        "type": "string"
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                },
-                                "example": {
-                                    "errors": [
-                                        {
-                                            "status": 401,
-                                            "detail": "No authorization token was found"
-                                        }
-                                    ]
-                                }
-                            }
-                        }
+                        "$ref": "#/components/responses/UnauthorizedError"
                     },
                     "403": {
-                        "description": "The JWT doesn't permit access to this endpoint",
-                        "content": {
-                            "application/vnd.api+json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": ["errors"],
-                                    "properties": {
-                                        "errors": {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "object",
-                                                "required": ["status", "title", "detail"],
-                                                "properties": {
-                                                    "status": {
-                                                        "enum": [403]
-                                                    },
-                                                    "title": {
-                                                        "enum": ["403 Forbidden"]
-                                                    },
-                                                    "detail": {
-                                                        "type": "string"
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                },
-                                "example": {
-                                    "errors": [
-                                        {
-                                            "status": 403,
-                                            "title": "403 Forbidden",
-                                            "detail": "Insufficient scope"
-                                        }
-                                    ]
-                                }
-                            }
-                        }
+                        "$ref": "#/components/responses/Forbidden"
                     },
                     "404": {
-                        "description": "The specified resource was not found",
-                        "content": {
-                            "application/vnd.api+json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": ["errors"],
-                                    "properties": {
-                                        "errors": {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "object",
-                                                "required": ["status", "title", "detail"],
-                                                "properties": {
-                                                    "status": {
-                                                        "enum": [404]
-                                                    },
-                                                    "title": {
-                                                        "enum": ["404 Not Found"]
-                                                    },
-                                                    "detail": {
-                                                        "type": "string"
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                },
-                                "example": {
-                                    "errors": [
-                                        {
-                                            "status": 404,
-                                            "title": "404 Not Found",
-                                            "detail": "Resource /api/v1/questionnaires/2d7caf89-2c72-469f-b19d-17f2a22270b6/sections/answers does not exist"
-                                        }
-                                    ]
-                                }
-                            }
-                        }
+                        "$ref": "#/components/responses/NotFound"
                     }
                 }
             },
@@ -1392,54 +604,16 @@
                 "operationId": "getAnswer",
                 "parameters": [
                     {
-                        "name": "questionnaireId",
-                        "in": "path",
-                        "required": true,
-                        "description": "The id of the specific questionnaire instance. Format UUIDv4.",
-                        "schema": {
-                            "title": "UUID v4",
-                            "type": "string",
-                            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
-                        },
-                        "example": "285cb104-0c15-4a9c-9840-cb1007f098fb"
+                        "$ref": "#/components/parameters/questionnaireId"
                     },
                     {
-                        "name": "sectionId",
-                        "in": "path",
-                        "required": true,
-                        "description": "The id of the specific questionnaire section.",
-                        "schema": {
-                            "title": "Section Id",
-                            "type": "string",
-                            "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer|owner)$"
-                        },
-                        "example": "system"
+                        "$ref": "#/components/parameters/sectionId"
                     },
                     {
-                        "in": "header",
-                        "name": "On-Behalf-Of",
-                        "required": true,
-                        "description": "Specify the owner of the resource.",
-                        "schema": {
-                            "title": "Owner Id",
-                            "type": "string",
-                            "format": "uri",
-                            "maxLength": 64,
-                            "pattern": "^urn:(uuid|fdc:gov.uk:2022):"
-                        },
-                        "example": "urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+                        "$ref": "#/components/parameters/onBehalfOf"
                     },
                     {
-                        "name": "Dcs-Api-Version",
-                        "in": "header",
-                        "required": true,
-                        "description": "The date based version of the requested API",
-                        "schema": {
-                            "title": "Dcs-Api-Version",
-                            "type": "string",
-                            "enum": ["2023-05-17"]
-                        },
-                        "example": "2023-05-17"
+                        "$ref": "#/components/parameters/apiVersion"
                     }
                 ],
                 "responses": {
@@ -1451,90 +625,14 @@
                                     "title": "Answers document",
                                     "allOf": [
                                         {
-                                            "title": "Loosely describes the JSON:API document format",
-                                            "type": "object",
-                                            "additionalProperties": false,
-                                            "required": ["data"],
-                                            "properties": {
-                                                "data": {
-                                                    "anyOf": [
-                                                        {
-                                                            "type": "object"
-                                                        },
-                                                        {
-                                                            "type": "array",
-                                                            "items": {}
-                                                        }
-                                                    ]
-                                                },
-                                                "included": {
-                                                    "type": "array",
-                                                    "items": {}
-                                                },
-                                                "links": {
-                                                    "type": "object"
-                                                },
-                                                "meta": {
-                                                    "type": "object"
-                                                }
-                                            }
+                                            "$ref": "#/paths/~1questionnaires/post/responses/201/content/application~1vnd.api%2Bjson/schema/allOf/0"
                                         },
                                         {
                                             "properties": {
                                                 "data": {
                                                     "type": "array",
                                                     "items": {
-                                                        "title": "Answer resource",
-                                                        "allOf": [
-                                                            {
-                                                                "title": "Loosely describes the JSON:API resource format",
-                                                                "type": "object",
-                                                                "additionalProperties": false,
-                                                                "required": [
-                                                                    "type",
-                                                                    "id",
-                                                                    "attributes"
-                                                                ],
-                                                                "properties": {
-                                                                    "type": {
-                                                                        "type": "string"
-                                                                    },
-                                                                    "id": {
-                                                                        "type": "string",
-                                                                        "anyOf": [
-                                                                            {
-                                                                                "title": "Section Id",
-                                                                                "type": "string",
-                                                                                "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer|owner)$"
-                                                                            },
-                                                                            {
-                                                                                "title": "UUID v4",
-                                                                                "type": "string",
-                                                                                "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
-                                                                            },
-                                                                            {
-                                                                                "description": "Used by dataset endpoint",
-                                                                                "enum": ["0"]
-                                                                            }
-                                                                        ]
-                                                                    },
-                                                                    "attributes": {
-                                                                        "type": "object",
-                                                                        "title": "Any valid resource"
-                                                                    },
-                                                                    "relationships": {
-                                                                        "type": "object"
-                                                                    }
-                                                                }
-                                                            },
-                                                            {
-                                                                "properties": {
-                                                                    "type": {
-                                                                        "enum": ["answers"]
-                                                                    }
-                                                                }
-                                                            }
-                                                        ]
+                                                        "$ref": "#/paths/~1questionnaires~1%7BquestionnaireId%7D~1progress-entries/get/responses/200/content/application~1vnd.api%2Bjson/schema/allOf/1/properties/included/items/anyOf/1"
                                                     }
                                                 }
                                             }
@@ -1556,163 +654,16 @@
                         }
                     },
                     "400": {
-                        "description": "There is an issue with the request",
-                        "content": {
-                            "application/vnd.api+json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": ["errors"],
-                                    "properties": {
-                                        "errors": {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "object",
-                                                "required": ["status", "title", "detail"],
-                                                "properties": {
-                                                    "status": {
-                                                        "enum": [400]
-                                                    },
-                                                    "title": {
-                                                        "enum": ["400 Bad Request"]
-                                                    },
-                                                    "detail": {
-                                                        "type": "string"
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                },
-                                "example": {
-                                    "errors": [
-                                        {
-                                            "status": 400,
-                                            "title": "400 Bad Request",
-                                            "detail": "Request JSON is malformed"
-                                        }
-                                    ]
-                                }
-                            }
-                        }
+                        "$ref": "#/components/responses/BadRequest"
                     },
                     "401": {
-                        "description": "Access token is missing or invalid",
-                        "content": {
-                            "application/vnd.api+json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": ["errors"],
-                                    "properties": {
-                                        "errors": {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "object",
-                                                "required": ["status", "title", "detail"],
-                                                "properties": {
-                                                    "status": {
-                                                        "enum": [401]
-                                                    },
-                                                    "title": {
-                                                        "enum": ["401 Unauthorized"]
-                                                    },
-                                                    "detail": {
-                                                        "type": "string"
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                },
-                                "example": {
-                                    "errors": [
-                                        {
-                                            "status": 401,
-                                            "detail": "No authorization token was found"
-                                        }
-                                    ]
-                                }
-                            }
-                        }
+                        "$ref": "#/components/responses/UnauthorizedError"
                     },
                     "403": {
-                        "description": "The JWT doesn't permit access to this endpoint",
-                        "content": {
-                            "application/vnd.api+json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": ["errors"],
-                                    "properties": {
-                                        "errors": {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "object",
-                                                "required": ["status", "title", "detail"],
-                                                "properties": {
-                                                    "status": {
-                                                        "enum": [403]
-                                                    },
-                                                    "title": {
-                                                        "enum": ["403 Forbidden"]
-                                                    },
-                                                    "detail": {
-                                                        "type": "string"
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                },
-                                "example": {
-                                    "errors": [
-                                        {
-                                            "status": 403,
-                                            "title": "403 Forbidden",
-                                            "detail": "Insufficient scope"
-                                        }
-                                    ]
-                                }
-                            }
-                        }
+                        "$ref": "#/components/responses/Forbidden"
                     },
                     "404": {
-                        "description": "The specified resource was not found",
-                        "content": {
-                            "application/vnd.api+json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": ["errors"],
-                                    "properties": {
-                                        "errors": {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "object",
-                                                "required": ["status", "title", "detail"],
-                                                "properties": {
-                                                    "status": {
-                                                        "enum": [404]
-                                                    },
-                                                    "title": {
-                                                        "enum": ["404 Not Found"]
-                                                    },
-                                                    "detail": {
-                                                        "type": "string"
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                },
-                                "example": {
-                                    "errors": [
-                                        {
-                                            "status": 404,
-                                            "title": "404 Not Found",
-                                            "detail": "Resource /api/v1/questionnaires/2d7caf89-2c72-469f-b19d-17f2a22270b6/sections/answers does not exist"
-                                        }
-                                    ]
-                                }
-                            }
-                        }
+                        "$ref": "#/components/responses/NotFound"
                     }
                 }
             }
@@ -1725,30 +676,10 @@
                 "operationId": "getMetadata",
                 "parameters": [
                     {
-                        "in": "header",
-                        "name": "On-Behalf-Of",
-                        "required": true,
-                        "description": "Specify the owner of the resource.",
-                        "schema": {
-                            "title": "Owner Id",
-                            "type": "string",
-                            "format": "uri",
-                            "maxLength": 64,
-                            "pattern": "^urn:(uuid|fdc:gov.uk:2022):"
-                        },
-                        "example": "urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+                        "$ref": "#/components/parameters/onBehalfOf"
                     },
                     {
-                        "name": "Dcs-Api-Version",
-                        "in": "header",
-                        "required": true,
-                        "description": "The date based version of the requested API",
-                        "schema": {
-                            "title": "Dcs-Api-Version",
-                            "type": "string",
-                            "enum": ["2023-05-17"]
-                        },
-                        "example": "2023-05-17"
+                        "$ref": "#/components/parameters/apiVersion"
                     }
                 ],
                 "responses": {
@@ -1760,33 +691,7 @@
                                     "title": "Metadata document",
                                     "allOf": [
                                         {
-                                            "title": "Loosely describes the JSON:API document format",
-                                            "type": "object",
-                                            "additionalProperties": false,
-                                            "required": ["data"],
-                                            "properties": {
-                                                "data": {
-                                                    "anyOf": [
-                                                        {
-                                                            "type": "object"
-                                                        },
-                                                        {
-                                                            "type": "array",
-                                                            "items": {}
-                                                        }
-                                                    ]
-                                                },
-                                                "included": {
-                                                    "type": "array",
-                                                    "items": {}
-                                                },
-                                                "links": {
-                                                    "type": "object"
-                                                },
-                                                "meta": {
-                                                    "type": "object"
-                                                }
-                                            }
+                                            "$ref": "#/paths/~1questionnaires/post/responses/201/content/application~1vnd.api%2Bjson/schema/allOf/0"
                                         },
                                         {
                                             "properties": {
@@ -1796,45 +701,7 @@
                                                         "title": "Metadata resource",
                                                         "allOf": [
                                                             {
-                                                                "title": "Loosely describes the JSON:API resource format",
-                                                                "type": "object",
-                                                                "additionalProperties": false,
-                                                                "required": [
-                                                                    "type",
-                                                                    "id",
-                                                                    "attributes"
-                                                                ],
-                                                                "properties": {
-                                                                    "type": {
-                                                                        "type": "string"
-                                                                    },
-                                                                    "id": {
-                                                                        "type": "string",
-                                                                        "anyOf": [
-                                                                            {
-                                                                                "title": "Section Id",
-                                                                                "type": "string",
-                                                                                "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer|owner)$"
-                                                                            },
-                                                                            {
-                                                                                "title": "UUID v4",
-                                                                                "type": "string",
-                                                                                "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
-                                                                            },
-                                                                            {
-                                                                                "description": "Used by dataset endpoint",
-                                                                                "enum": ["0"]
-                                                                            }
-                                                                        ]
-                                                                    },
-                                                                    "attributes": {
-                                                                        "type": "object",
-                                                                        "title": "Any valid resource"
-                                                                    },
-                                                                    "relationships": {
-                                                                        "type": "object"
-                                                                    }
-                                                                }
+                                                                "$ref": "#/paths/~1questionnaires/post/responses/201/content/application~1vnd.api%2Bjson/schema/allOf/1/properties/data/allOf/0"
                                                             },
                                                             {
                                                                 "properties": {
@@ -1842,9 +709,7 @@
                                                                         "enum": ["metadata"]
                                                                     },
                                                                     "id": {
-                                                                        "title": "UUID v4",
-                                                                        "type": "string",
-                                                                        "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+                                                                        "$ref": "#/paths/~1questionnaires/post/responses/201/content/application~1vnd.api%2Bjson/schema/allOf/1/properties/data/allOf/1/properties/attributes/properties/id"
                                                                     },
                                                                     "attributes": {
                                                                         "allOf": [
@@ -1865,9 +730,7 @@
                                                                                         ]
                                                                                     },
                                                                                     "questionnaire-id": {
-                                                                                        "title": "UUID v4",
-                                                                                        "type": "string",
-                                                                                        "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+                                                                                        "$ref": "#/paths/~1questionnaires/post/responses/201/content/application~1vnd.api%2Bjson/schema/allOf/1/properties/data/allOf/1/properties/attributes/properties/id"
                                                                                     },
                                                                                     "created": {
                                                                                         "title": "Timestamp",
@@ -1875,9 +738,7 @@
                                                                                         "format": "date-time"
                                                                                     },
                                                                                     "modified": {
-                                                                                        "title": "Timestamp",
-                                                                                        "type": "string",
-                                                                                        "format": "date-time"
+                                                                                        "$ref": "#/paths/~1questionnaires~1metadata/get/responses/200/content/application~1vnd.api%2Bjson/schema/allOf/1/properties/data/items/allOf/1/properties/attributes/allOf/0/properties/created"
                                                                                     },
                                                                                     "submission-status": {
                                                                                         "enum": [
@@ -1896,11 +757,7 @@
                                                                                         ],
                                                                                         "properties": {
                                                                                             "owner-id": {
-                                                                                                "title": "Owner Id",
-                                                                                                "type": "string",
-                                                                                                "format": "uri",
-                                                                                                "maxLength": 64,
-                                                                                                "pattern": "^urn:(uuid|fdc:gov.uk:2022):"
+                                                                                                "$ref": "#/paths/~1questionnaires/post/requestBody/content/application~1vnd.api%2Bjson/schema/properties/data/properties/attributes/properties/owner/properties/id"
                                                                                             },
                                                                                             "is-authenticated": {
                                                                                                 "type": "boolean"
@@ -1908,9 +765,7 @@
                                                                                         }
                                                                                     },
                                                                                     "expires": {
-                                                                                        "title": "Timestamp",
-                                                                                        "type": "string",
-                                                                                        "format": "date-time"
+                                                                                        "$ref": "#/paths/~1questionnaires~1metadata/get/responses/200/content/application~1vnd.api%2Bjson/schema/allOf/1/properties/data/items/allOf/1/properties/attributes/allOf/0/properties/created"
                                                                                     }
                                                                                 }
                                                                             },
@@ -1954,163 +809,16 @@
                         }
                     },
                     "400": {
-                        "description": "There is an issue with the request",
-                        "content": {
-                            "application/vnd.api+json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": ["errors"],
-                                    "properties": {
-                                        "errors": {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "object",
-                                                "required": ["status", "title", "detail"],
-                                                "properties": {
-                                                    "status": {
-                                                        "enum": [400]
-                                                    },
-                                                    "title": {
-                                                        "enum": ["400 Bad Request"]
-                                                    },
-                                                    "detail": {
-                                                        "type": "string"
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                },
-                                "example": {
-                                    "errors": [
-                                        {
-                                            "status": 400,
-                                            "title": "400 Bad Request",
-                                            "detail": "Request JSON is malformed"
-                                        }
-                                    ]
-                                }
-                            }
-                        }
+                        "$ref": "#/components/responses/BadRequest"
                     },
                     "401": {
-                        "description": "Access token is missing or invalid",
-                        "content": {
-                            "application/vnd.api+json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": ["errors"],
-                                    "properties": {
-                                        "errors": {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "object",
-                                                "required": ["status", "title", "detail"],
-                                                "properties": {
-                                                    "status": {
-                                                        "enum": [401]
-                                                    },
-                                                    "title": {
-                                                        "enum": ["401 Unauthorized"]
-                                                    },
-                                                    "detail": {
-                                                        "type": "string"
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                },
-                                "example": {
-                                    "errors": [
-                                        {
-                                            "status": 401,
-                                            "detail": "No authorization token was found"
-                                        }
-                                    ]
-                                }
-                            }
-                        }
+                        "$ref": "#/components/responses/UnauthorizedError"
                     },
                     "403": {
-                        "description": "The JWT doesn't permit access to this endpoint",
-                        "content": {
-                            "application/vnd.api+json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": ["errors"],
-                                    "properties": {
-                                        "errors": {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "object",
-                                                "required": ["status", "title", "detail"],
-                                                "properties": {
-                                                    "status": {
-                                                        "enum": [403]
-                                                    },
-                                                    "title": {
-                                                        "enum": ["403 Forbidden"]
-                                                    },
-                                                    "detail": {
-                                                        "type": "string"
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                },
-                                "example": {
-                                    "errors": [
-                                        {
-                                            "status": 403,
-                                            "title": "403 Forbidden",
-                                            "detail": "Insufficient scope"
-                                        }
-                                    ]
-                                }
-                            }
-                        }
+                        "$ref": "#/components/responses/Forbidden"
                     },
                     "404": {
-                        "description": "The specified resource was not found",
-                        "content": {
-                            "application/vnd.api+json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": ["errors"],
-                                    "properties": {
-                                        "errors": {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "object",
-                                                "required": ["status", "title", "detail"],
-                                                "properties": {
-                                                    "status": {
-                                                        "enum": [404]
-                                                    },
-                                                    "title": {
-                                                        "enum": ["404 Not Found"]
-                                                    },
-                                                    "detail": {
-                                                        "type": "string"
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                },
-                                "example": {
-                                    "errors": [
-                                        {
-                                            "status": 404,
-                                            "title": "404 Not Found",
-                                            "detail": "Resource /api/v1/questionnaires/2d7caf89-2c72-469f-b19d-17f2a22270b6/sections/answers does not exist"
-                                        }
-                                    ]
-                                }
-                            }
-                        }
+                        "$ref": "#/components/responses/NotFound"
                     }
                 }
             }
@@ -2123,42 +831,13 @@
                 "operationId": "getQuestionnaireMetadata",
                 "parameters": [
                     {
-                        "name": "questionnaireId",
-                        "in": "path",
-                        "required": true,
-                        "description": "The id of the specific questionnaire instance. Format UUIDv4.",
-                        "schema": {
-                            "title": "UUID v4",
-                            "type": "string",
-                            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
-                        },
-                        "example": "285cb104-0c15-4a9c-9840-cb1007f098fb"
+                        "$ref": "#/components/parameters/questionnaireId"
                     },
                     {
-                        "in": "header",
-                        "name": "On-Behalf-Of",
-                        "required": true,
-                        "description": "Specify the owner of the resource.",
-                        "schema": {
-                            "title": "Owner Id",
-                            "type": "string",
-                            "format": "uri",
-                            "maxLength": 64,
-                            "pattern": "^urn:(uuid|fdc:gov.uk:2022):"
-                        },
-                        "example": "urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+                        "$ref": "#/components/parameters/onBehalfOf"
                     },
                     {
-                        "name": "Dcs-Api-Version",
-                        "in": "header",
-                        "required": true,
-                        "description": "The date based version of the requested API",
-                        "schema": {
-                            "title": "Dcs-Api-Version",
-                            "type": "string",
-                            "enum": ["2023-05-17"]
-                        },
-                        "example": "2023-05-17"
+                        "$ref": "#/components/parameters/apiVersion"
                     }
                 ],
                 "responses": {
@@ -2167,178 +846,7 @@
                         "content": {
                             "application/vnd.api+json": {
                                 "schema": {
-                                    "title": "Metadata document",
-                                    "allOf": [
-                                        {
-                                            "title": "Loosely describes the JSON:API document format",
-                                            "type": "object",
-                                            "additionalProperties": false,
-                                            "required": ["data"],
-                                            "properties": {
-                                                "data": {
-                                                    "anyOf": [
-                                                        {
-                                                            "type": "object"
-                                                        },
-                                                        {
-                                                            "type": "array",
-                                                            "items": {}
-                                                        }
-                                                    ]
-                                                },
-                                                "included": {
-                                                    "type": "array",
-                                                    "items": {}
-                                                },
-                                                "links": {
-                                                    "type": "object"
-                                                },
-                                                "meta": {
-                                                    "type": "object"
-                                                }
-                                            }
-                                        },
-                                        {
-                                            "properties": {
-                                                "data": {
-                                                    "type": "array",
-                                                    "items": {
-                                                        "title": "Metadata resource",
-                                                        "allOf": [
-                                                            {
-                                                                "title": "Loosely describes the JSON:API resource format",
-                                                                "type": "object",
-                                                                "additionalProperties": false,
-                                                                "required": [
-                                                                    "type",
-                                                                    "id",
-                                                                    "attributes"
-                                                                ],
-                                                                "properties": {
-                                                                    "type": {
-                                                                        "type": "string"
-                                                                    },
-                                                                    "id": {
-                                                                        "type": "string",
-                                                                        "anyOf": [
-                                                                            {
-                                                                                "title": "Section Id",
-                                                                                "type": "string",
-                                                                                "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer|owner)$"
-                                                                            },
-                                                                            {
-                                                                                "title": "UUID v4",
-                                                                                "type": "string",
-                                                                                "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
-                                                                            },
-                                                                            {
-                                                                                "description": "Used by dataset endpoint",
-                                                                                "enum": ["0"]
-                                                                            }
-                                                                        ]
-                                                                    },
-                                                                    "attributes": {
-                                                                        "type": "object",
-                                                                        "title": "Any valid resource"
-                                                                    },
-                                                                    "relationships": {
-                                                                        "type": "object"
-                                                                    }
-                                                                }
-                                                            },
-                                                            {
-                                                                "properties": {
-                                                                    "type": {
-                                                                        "enum": ["metadata"]
-                                                                    },
-                                                                    "id": {
-                                                                        "title": "UUID v4",
-                                                                        "type": "string",
-                                                                        "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
-                                                                    },
-                                                                    "attributes": {
-                                                                        "allOf": [
-                                                                            {
-                                                                                "required": [
-                                                                                    "questionnaire-document-version",
-                                                                                    "questionnaire-id",
-                                                                                    "created",
-                                                                                    "modified",
-                                                                                    "submission-status",
-                                                                                    "expires",
-                                                                                    "owner"
-                                                                                ],
-                                                                                "properties": {
-                                                                                    "questionnaire-document-version": {
-                                                                                        "enum": [
-                                                                                            "4.1.0"
-                                                                                        ]
-                                                                                    },
-                                                                                    "questionnaire-id": {
-                                                                                        "title": "UUID v4",
-                                                                                        "type": "string",
-                                                                                        "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
-                                                                                    },
-                                                                                    "created": {
-                                                                                        "title": "Timestamp",
-                                                                                        "type": "string",
-                                                                                        "format": "date-time"
-                                                                                    },
-                                                                                    "modified": {
-                                                                                        "title": "Timestamp",
-                                                                                        "type": "string",
-                                                                                        "format": "date-time"
-                                                                                    },
-                                                                                    "submission-status": {
-                                                                                        "enum": [
-                                                                                            "NOT_STARTED",
-                                                                                            "IN_PROGRESS",
-                                                                                            "COMPLETED",
-                                                                                            "FAILED"
-                                                                                        ]
-                                                                                    },
-                                                                                    "owner": {
-                                                                                        "type": "object",
-                                                                                        "additionalProperties": false,
-                                                                                        "required": [
-                                                                                            "owner-id",
-                                                                                            "is-authorised"
-                                                                                        ],
-                                                                                        "properties": {
-                                                                                            "owner-id": {
-                                                                                                "title": "Owner Id",
-                                                                                                "type": "string",
-                                                                                                "format": "uri",
-                                                                                                "maxLength": 64,
-                                                                                                "pattern": "^urn:(uuid|fdc:gov.uk:2022):"
-                                                                                            },
-                                                                                            "is-authenticated": {
-                                                                                                "type": "boolean"
-                                                                                            }
-                                                                                        }
-                                                                                    },
-                                                                                    "expires": {
-                                                                                        "title": "Timestamp",
-                                                                                        "type": "string",
-                                                                                        "format": "date-time"
-                                                                                    }
-                                                                                }
-                                                                            },
-                                                                            {
-                                                                                "title": "Metadata ID",
-                                                                                "type": "string",
-                                                                                "pattern": "^[a-z]{1,20}(?:-[a-z]{1,20}){0,10}$"
-                                                                            }
-                                                                        ]
-                                                                    }
-                                                                }
-                                                            }
-                                                        ]
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    ]
+                                    "$ref": "#/paths/~1questionnaires~1metadata/get/responses/200/content/application~1vnd.api%2Bjson/schema"
                                 },
                                 "example": {
                                     "data": [
@@ -2364,163 +872,16 @@
                         }
                     },
                     "400": {
-                        "description": "There is an issue with the request",
-                        "content": {
-                            "application/vnd.api+json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": ["errors"],
-                                    "properties": {
-                                        "errors": {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "object",
-                                                "required": ["status", "title", "detail"],
-                                                "properties": {
-                                                    "status": {
-                                                        "enum": [400]
-                                                    },
-                                                    "title": {
-                                                        "enum": ["400 Bad Request"]
-                                                    },
-                                                    "detail": {
-                                                        "type": "string"
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                },
-                                "example": {
-                                    "errors": [
-                                        {
-                                            "status": 400,
-                                            "title": "400 Bad Request",
-                                            "detail": "Request JSON is malformed"
-                                        }
-                                    ]
-                                }
-                            }
-                        }
+                        "$ref": "#/components/responses/BadRequest"
                     },
                     "401": {
-                        "description": "Access token is missing or invalid",
-                        "content": {
-                            "application/vnd.api+json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": ["errors"],
-                                    "properties": {
-                                        "errors": {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "object",
-                                                "required": ["status", "title", "detail"],
-                                                "properties": {
-                                                    "status": {
-                                                        "enum": [401]
-                                                    },
-                                                    "title": {
-                                                        "enum": ["401 Unauthorized"]
-                                                    },
-                                                    "detail": {
-                                                        "type": "string"
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                },
-                                "example": {
-                                    "errors": [
-                                        {
-                                            "status": 401,
-                                            "detail": "No authorization token was found"
-                                        }
-                                    ]
-                                }
-                            }
-                        }
+                        "$ref": "#/components/responses/UnauthorizedError"
                     },
                     "403": {
-                        "description": "The JWT doesn't permit access to this endpoint",
-                        "content": {
-                            "application/vnd.api+json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": ["errors"],
-                                    "properties": {
-                                        "errors": {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "object",
-                                                "required": ["status", "title", "detail"],
-                                                "properties": {
-                                                    "status": {
-                                                        "enum": [403]
-                                                    },
-                                                    "title": {
-                                                        "enum": ["403 Forbidden"]
-                                                    },
-                                                    "detail": {
-                                                        "type": "string"
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                },
-                                "example": {
-                                    "errors": [
-                                        {
-                                            "status": 403,
-                                            "title": "403 Forbidden",
-                                            "detail": "Insufficient scope"
-                                        }
-                                    ]
-                                }
-                            }
-                        }
+                        "$ref": "#/components/responses/Forbidden"
                     },
                     "404": {
-                        "description": "The specified resource was not found",
-                        "content": {
-                            "application/vnd.api+json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": ["errors"],
-                                    "properties": {
-                                        "errors": {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "object",
-                                                "required": ["status", "title", "detail"],
-                                                "properties": {
-                                                    "status": {
-                                                        "enum": [404]
-                                                    },
-                                                    "title": {
-                                                        "enum": ["404 Not Found"]
-                                                    },
-                                                    "detail": {
-                                                        "type": "string"
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                },
-                                "example": {
-                                    "errors": [
-                                        {
-                                            "status": 404,
-                                            "title": "404 Not Found",
-                                            "detail": "Resource /api/v1/questionnaires/2d7caf89-2c72-469f-b19d-17f2a22270b6/sections/answers does not exist"
-                                        }
-                                    ]
-                                }
-                            }
-                        }
+                        "$ref": "#/components/responses/NotFound"
                     }
                 }
             }
@@ -2592,9 +953,7 @@
                     "additionalProperties": false,
                     "properties": {
                         "before": {
-                            "title": "Section Id",
-                            "type": "string",
-                            "pattern": "^(?:p-?(?:-[a-z0-9]{1,20}){1,20}|system|referrer|owner)$"
+                            "$ref": "#/components/parameters/filter/schema/properties/sectionId"
                         }
                     }
                 },
