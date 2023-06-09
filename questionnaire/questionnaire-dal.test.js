@@ -5,6 +5,8 @@ const DB_QUERY_ERROR_SUBMISSION_STATUS_ID = 'FAIL_TEST';
 const DB_QUERY_ROW_COUNT_ZERO_QUESTIONNAIRE_ID = 'c9723b81-c50d-4050-805f-108995067913';
 const DB_QUERY_ROW_COUNT_ZERO_SUBMISSION_STATUS = 'ZERO_ROWS_SUBMISSION_STATUS';
 const DB_QUERY_SUCCESS_QUESTIONNAIRE_ID = '12345678-c50d-4050-805f-108995067913';
+const ownerId = 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6';
+const dbQueryErrorOwnerId = 'urn:uuid:11111111-7dec-11d0-a765-00a0c91e6bf6';
 
 beforeEach(() => {
     jest.clearAllMocks();
@@ -19,6 +21,10 @@ jest.doMock('../db/index.js', () => {
             }
 
             if (parameters.includes(DB_QUERY_ERROR_SUBMISSION_STATUS_ID)) {
+                throw new Error('DB_QUERY_ERROR');
+            }
+
+            if (parameters.includes(dbQueryErrorOwnerId)) {
                 throw new Error('DB_QUERY_ERROR');
             }
 
@@ -201,7 +207,6 @@ describe('questionnaire data access layer', () => {
         it('Should run an update questionnaire query and filter by owner', async () => {
             const questionnaire = {answers: {}};
             const questionnaireId = DB_QUERY_SUCCESS_QUESTIONNAIRE_ID;
-            const ownerId = 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6';
             const questionnaireDAL = createQuestionnaireDAL({logger: jest.fn(), ownerId});
             await questionnaireDAL.updateQuestionnaireByOwner(questionnaire, questionnaireId);
 
@@ -216,7 +221,6 @@ describe('questionnaire data access layer', () => {
         it('Should error gracefully if no rows are updated', async () => {
             const questionnaire = {answers: {}};
             const questionnaireId = DB_QUERY_ROW_COUNT_ZERO_QUESTIONNAIRE_ID;
-            const ownerId = 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6';
             const questionnaireDAL = createQuestionnaireDAL({logger: jest.fn(), ownerId});
             await expect(
                 questionnaireDAL.updateQuestionnaireByOwner(questionnaireId, questionnaire)
@@ -228,7 +232,6 @@ describe('questionnaire data access layer', () => {
         it('Should handle errors gracefully', async () => {
             const questionnaire = {answers: {}};
             const questionnaireId = DB_QUERY_ERROR_QUESTIONNAIRE_ID;
-            const ownerId = 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6';
             const questionnaireDAL = createQuestionnaireDAL({logger: jest.fn(), ownerId});
 
             await expect(
@@ -242,7 +245,6 @@ describe('questionnaire data access layer', () => {
             "SELECT questionnaire FROM questionnaire WHERE id = $1 AND questionnaire -> 'answers' -> 'owner' ->> 'owner-id' = $2";
         it('Should run a get questionnaire query', async () => {
             const questionnaireId = DB_QUERY_SUCCESS_QUESTIONNAIRE_ID;
-            const ownerId = 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6';
             const questionnaireDAL = createQuestionnaireDAL({logger: jest.fn(), ownerId});
             await questionnaireDAL.getQuestionnaireByOwner(questionnaireId);
 
@@ -252,12 +254,54 @@ describe('questionnaire data access layer', () => {
 
         it('Should handle errors gracefully', async () => {
             const questionnaireId = DB_QUERY_ERROR_QUESTIONNAIRE_ID;
-            const ownerId = 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6';
             const questionnaireDAL = createQuestionnaireDAL({logger: jest.fn(), ownerId});
 
             await expect(questionnaireDAL.getQuestionnaireByOwner(questionnaireId)).rejects.toThrow(
                 'DB_QUERY_ERROR'
             );
+        });
+    });
+
+    describe('getMetadataByOwner', () => {
+        const query =
+            "SELECT id, created, modified, expires, submission_status FROM questionnaire WHERE questionnaire -> 'answers' -> 'owner' ->> 'owner-id' = $1";
+        it('Should run a get metadata query and filter by owner', async () => {
+            const questionnaireDAL = createQuestionnaireDAL({logger: jest.fn(), ownerId});
+            await questionnaireDAL.getMetadataByOwner();
+
+            expect(mockedDbService.query).toHaveBeenCalledTimes(1);
+            expect(mockedDbService.query).toHaveBeenCalledWith(query, [ownerId]);
+        });
+
+        it('Should handle errors gracefully', async () => {
+            const questionnaireDAL = createQuestionnaireDAL({
+                logger: jest.fn(),
+                ownerId: dbQueryErrorOwnerId
+            });
+
+            await expect(questionnaireDAL.getMetadataByOwner()).rejects.toThrow('DB_QUERY_ERROR');
+        });
+    });
+
+    describe('getQuestionnaireMetadataByOwner', () => {
+        const query =
+            "SELECT id, created, modified, expires, submission_status FROM questionnaire WHERE id = $1 AND questionnaire -> 'answers' -> 'owner' ->> 'owner-id' = $2";
+        it('Should run a get metadata query and filter by questionnaireId and owner', async () => {
+            const questionnaireId = DB_QUERY_SUCCESS_QUESTIONNAIRE_ID;
+            const questionnaireDAL = createQuestionnaireDAL({logger: jest.fn(), ownerId});
+            await questionnaireDAL.getQuestionnaireMetadataByOwner(questionnaireId);
+
+            expect(mockedDbService.query).toHaveBeenCalledTimes(1);
+            expect(mockedDbService.query).toHaveBeenCalledWith(query, [questionnaireId, ownerId]);
+        });
+
+        it('Should handle errors gracefully', async () => {
+            const questionnaireId = DB_QUERY_ERROR_QUESTIONNAIRE_ID;
+            const questionnaireDAL = createQuestionnaireDAL({logger: jest.fn(), ownerId});
+
+            await expect(
+                questionnaireDAL.getQuestionnaireMetadataByOwner(questionnaireId)
+            ).rejects.toThrow('DB_QUERY_ERROR');
         });
     });
 });
