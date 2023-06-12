@@ -14,18 +14,7 @@ jest.doMock('../services/sqs', () => {
     return () => notifyServiceMock;
 });
 
-jest.doMock('../services/sqs/legacy-sms-message-bus', () => {
-    const notifyServiceMock = {
-        sendSms: jest.fn().mockResolvedValue({
-            some: 'response'
-        })
-    };
-
-    return () => notifyServiceMock;
-});
-
 const mockedSqsService = require('../services/sqs')();
-const mockedLegacyMessageBusService = require('../services/sqs/legacy-sms-message-bus')();
 const createQuestionnaireService = require('./questionnaire-service');
 
 describe('runOnCompleteActions', () => {
@@ -92,8 +81,8 @@ describe('runOnCompleteActions', () => {
             );
 
             expect(actionResults).toEqual([{status: 'fulfilled', value: {some: 'response'}}]);
-            expect(mockedLegacyMessageBusService.sendSms).toHaveBeenCalledTimes(1);
-            expect(mockedLegacyMessageBusService.sendSms).toHaveBeenCalledWith(actionData);
+            expect(mockedSqsService.send).toHaveBeenCalledTimes(1);
+            expect(mockedSqsService.send).toHaveBeenCalledWith(actionData, notifySQS);
         });
     });
 
@@ -152,11 +141,11 @@ describe('runOnCompleteActions', () => {
                 {status: 'fulfilled', value: {some: 'response'}},
                 {status: 'fulfilled', value: {some: 'response'}}
             ]);
-            expect(mockedSqsService.send).toHaveBeenCalledTimes(2);
-            expect(mockedLegacyMessageBusService.sendSms).toHaveBeenCalledTimes(1);
-            expect(mockedSqsService.send).toHaveBeenNthCalledWith(1, emailActionData1, notifySQS);
-            expect(mockedSqsService.send).toHaveBeenNthCalledWith(2, emailActionData2, notifySQS);
-            expect(mockedLegacyMessageBusService.sendSms).toHaveBeenCalledWith(smsActionData);
+            expect(mockedSqsService.send).toHaveBeenCalledTimes(3);
+
+            expect(mockedSqsService.send).toHaveBeenNthCalledWith(1, smsActionData, notifySQS);
+            expect(mockedSqsService.send).toHaveBeenNthCalledWith(2, emailActionData1, notifySQS);
+            expect(mockedSqsService.send).toHaveBeenNthCalledWith(3, emailActionData2, notifySQS);
         });
     });
 
@@ -216,15 +205,16 @@ describe('runOnCompleteActions', () => {
             );
 
             expect(actionResults).toEqual([
-                {status: 'fulfilled', value: {some: 'response'}},
                 {status: 'rejected', reason: {some: 'error'}},
+                {status: 'fulfilled', value: {some: 'response'}},
                 {status: 'fulfilled', value: {some: 'response'}}
             ]);
-            expect(mockedLegacyMessageBusService.sendSms).toHaveBeenCalledTimes(1);
-            expect(mockedSqsService.send).toHaveBeenCalledTimes(2);
-            expect(mockedLegacyMessageBusService.sendSms).toHaveBeenCalledWith(smsActionData);
-            expect(mockedSqsService.send).toHaveBeenNthCalledWith(1, emailActionData1, notifySQS);
-            expect(mockedSqsService.send).toHaveBeenNthCalledWith(2, emailActionData2, notifySQS);
+
+            expect(mockedSqsService.send).toHaveBeenCalledTimes(3);
+
+            expect(mockedSqsService.send).toHaveBeenNthCalledWith(1, smsActionData, notifySQS);
+            expect(mockedSqsService.send).toHaveBeenNthCalledWith(2, emailActionData1, notifySQS);
+            expect(mockedSqsService.send).toHaveBeenNthCalledWith(3, emailActionData2, notifySQS);
         });
     });
 });
@@ -540,9 +530,10 @@ describe('template', () => {
                     expect(actionResults).toEqual([
                         {status: 'fulfilled', value: {some: 'response'}}
                     ]);
-                    expect(mockedLegacyMessageBusService.sendSms).toHaveBeenCalledTimes(1);
-                    expect(mockedLegacyMessageBusService.sendSms).toHaveBeenCalledWith(
-                        expectedActionData
+                    expect(mockedSqsService.send).toHaveBeenCalledTimes(1);
+                    expect(mockedSqsService.send).toHaveBeenCalledWith(
+                        expectedActionData,
+                        notifySQS
                     );
                 });
             });
@@ -586,11 +577,11 @@ describe('template', () => {
                         reference: null
                     };
 
-                    expect(mockedLegacyMessageBusService.sendSms).toHaveBeenNthCalledWith(
-                        1,
-                        expectedActionData
+                    expect(mockedSqsService.send).toHaveBeenCalledTimes(1);
+                    expect(mockedSqsService.send).toHaveBeenCalledWith(
+                        expectedActionData,
+                        notifySQS
                     );
-                    expect(mockedLegacyMessageBusService.sendSms).toHaveBeenCalledTimes(1);
                     expect(actionResults).toEqual([
                         {status: 'fulfilled', value: {some: 'response'}}
                     ]);
@@ -644,11 +635,11 @@ describe('template', () => {
                         reference: null
                     };
 
-                    expect(mockedLegacyMessageBusService.sendSms).toHaveBeenNthCalledWith(
-                        1,
-                        expectedActionData
+                    expect(mockedSqsService.send).toHaveBeenCalledTimes(1);
+                    expect(mockedSqsService.send).toHaveBeenCalledWith(
+                        expectedActionData,
+                        notifySQS
                     );
-                    expect(mockedLegacyMessageBusService.sendSms).toHaveBeenCalledTimes(1);
                     expect(actionResults).toEqual([
                         {status: 'fulfilled', value: {some: 'response'}}
                     ]);
