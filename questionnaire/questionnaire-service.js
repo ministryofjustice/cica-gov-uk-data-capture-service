@@ -10,12 +10,10 @@ const uuidv4 = require('uuid/v4');
 const ajvFormatsMobileUk = require('ajv-formats-mobile-uk');
 const templates = require('./templates');
 const createSqsService = require('../services/sqs');
-const createS3Service = require('../services/s3');
 const createLegacyNotifyService = require('../services/sqs/legacy-sms-message-bus');
 const createSlackService = require('../services/slack');
 const questionnaireResource = require('./resources/questionnaire-resource');
 const createQuestionnaireHelper = require('./questionnaire/questionnaire');
-const createDatasetService = require('./dataset/dataset-service');
 
 const defaults = {};
 defaults.createQuestionnaireDAL = require('./questionnaire-dal');
@@ -130,34 +128,6 @@ function createQuestionnaireService({
     async function startSubmission(questionnaireId) {
         try {
             await updateQuestionnaireSubmissionStatus(questionnaireId, 'IN_PROGRESS');
-
-            const questionnaireDefinition = await db.getQuestionnaire(questionnaireId);
-            const questionnaire = createQuestionnaireHelper({questionnaireDefinition});
-
-            const datasetService = createDatasetService({logger});
-            const hierachicalDataView = datasetService.getHierachicalDataView(questionnaire);
-
-            const s3Service = createS3Service({logger});
-
-            const s3UploadResponse = await s3Service.uploadFile(
-                hierachicalDataView,
-                process.env.S3_BUCKET_NAME,
-                questionnaireId
-            );
-
-            logger.info(s3UploadResponse);
-            if (!s3UploadResponse) {
-                await updateQuestionnaireSubmissionStatus(questionnaireId, 'FAILED');
-                const slackService = createSlackService();
-                slackService.sendMessage({
-                    appReference: `${process.env.APP_ENV || 'dev'}.reporter.webhook`,
-                    messageBodyId: 's3-upload-failed',
-                    templateParameters: {
-                        timeStamp: new Date().getTime()
-                    }
-                });
-                return;
-            }
 
             const sqsService = createSqsService({logger});
             const submissionResponse = await sqsService.send(

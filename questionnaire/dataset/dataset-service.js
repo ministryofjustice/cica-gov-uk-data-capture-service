@@ -167,8 +167,7 @@ function createDatasetService({
     }
 
     return Object.freeze({
-        getResource,
-        getHierachicalDataView
+        getResource
     });
 }
 
