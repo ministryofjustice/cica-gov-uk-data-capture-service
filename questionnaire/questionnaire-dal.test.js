@@ -203,7 +203,7 @@ describe('questionnaire data access layer', () => {
 
     describe('updateQuestionnaireByOwner', () => {
         const query =
-            "UPDATE questionnaire SET questionnaire = $1, modified = current_timestamp WHERE id = $2  AND questionnaire -> 'answers' -> 'owner' ->> 'owner-id' = $3";
+            "UPDATE questionnaire SET questionnaire = $1, modified = current_timestamp, expires = (CASE WHEN questionnaire -> 'answers' -> 'owner' ->> 'is-authenticated' = 'true' THEN expires WHEN questionnaire -> 'answers' -> 'owner' ->> 'is-authenticated' = 'false' THEN current_timestamp + INTERVAL '30 minutes' END) WHERE id = $2  AND questionnaire -> 'answers' -> 'owner' ->> 'owner-id' = $3";
         it('Should run an update questionnaire query and filter by owner', async () => {
             const questionnaire = {answers: {}};
             const questionnaireId = DB_QUERY_SUCCESS_QUESTIONNAIRE_ID;
@@ -301,6 +301,70 @@ describe('questionnaire data access layer', () => {
 
             await expect(
                 questionnaireDAL.getQuestionnaireMetadataByOwner(questionnaireId)
+            ).rejects.toThrow('DB_QUERY_ERROR');
+        });
+    });
+
+    describe('updateExpiryForAuthenticatedOwner', () => {
+        const query =
+            "UPDATE questionnaire SET expires = date_trunc('day', expires) + INTERVAL '31 days' WHERE id = $1 AND questionnaire -> 'answers' -> 'owner' ->> 'owner-id' = $2";
+        it('Should run an update expiry query and filter by questionnaireId and owner', async () => {
+            const questionnaireId = DB_QUERY_SUCCESS_QUESTIONNAIRE_ID;
+            const questionnaireDAL = createQuestionnaireDAL({logger: jest.fn(), ownerId});
+            await questionnaireDAL.updateExpiryForAuthenticatedOwner(questionnaireId, ownerId);
+
+            expect(mockedDbService.query).toHaveBeenCalledTimes(1);
+            expect(mockedDbService.query).toHaveBeenCalledWith(query, [questionnaireId, ownerId]);
+        });
+
+        it('Should error gracefully if no rows are updated', async () => {
+            const questionnaireId = DB_QUERY_ROW_COUNT_ZERO_QUESTIONNAIRE_ID;
+            const questionnaireDAL = createQuestionnaireDAL({logger: jest.fn(), ownerId});
+            await expect(
+                questionnaireDAL.updateExpiryForAuthenticatedOwner(questionnaireId)
+            ).rejects.toThrow(
+                'Questionnaire "c9723b81-c50d-4050-805f-108995067913" was not updated successfully'
+            );
+        });
+
+        it('Should handle errors gracefully', async () => {
+            const questionnaireId = DB_QUERY_ERROR_QUESTIONNAIRE_ID;
+            const questionnaireDAL = createQuestionnaireDAL({logger: jest.fn(), ownerId});
+
+            await expect(
+                questionnaireDAL.updateExpiryForAuthenticatedOwner(questionnaireId)
+            ).rejects.toThrow('DB_QUERY_ERROR');
+        });
+    });
+
+    describe('updateQuestionnaireModifiedDateByOwner', () => {
+        const query =
+            "UPDATE questionnaire SET modified = current_timestamp, expires = (CASE WHEN questionnaire -> 'answers' -> 'owner' ->> 'is-authenticated' = 'true' THEN expires WHEN questionnaire -> 'answers' -> 'owner' ->> 'is-authenticated' = 'false' THEN current_timestamp + INTERVAL '30 minutes' END) WHERE id = $1 AND questionnaire -> 'answers' -> 'owner' ->> 'owner-id' = $2";
+        it('Should run an update expiry query and filter by questionnaireId and ownerId', async () => {
+            const questionnaireId = DB_QUERY_SUCCESS_QUESTIONNAIRE_ID;
+            const questionnaireDAL = createQuestionnaireDAL({logger: jest.fn(), ownerId});
+            await questionnaireDAL.updateQuestionnaireModifiedDateByOwner(questionnaireId, ownerId);
+
+            expect(mockedDbService.query).toHaveBeenCalledTimes(1);
+            expect(mockedDbService.query).toHaveBeenCalledWith(query, [questionnaireId, ownerId]);
+        });
+
+        it('Should error gracefully if no rows are updated', async () => {
+            const questionnaireId = DB_QUERY_ROW_COUNT_ZERO_QUESTIONNAIRE_ID;
+            const questionnaireDAL = createQuestionnaireDAL({logger: jest.fn(), ownerId});
+            await expect(
+                questionnaireDAL.updateQuestionnaireModifiedDateByOwner(questionnaireId)
+            ).rejects.toThrow(
+                'Questionnaire "c9723b81-c50d-4050-805f-108995067913" modified date was not updated successfully'
+            );
+        });
+
+        it('Should handle errors gracefully', async () => {
+            const questionnaireId = DB_QUERY_ERROR_QUESTIONNAIRE_ID;
+            const questionnaireDAL = createQuestionnaireDAL({logger: jest.fn(), ownerId});
+
+            await expect(
+                questionnaireDAL.updateQuestionnaireModifiedDateByOwner(questionnaireId)
             ).rejects.toThrow('DB_QUERY_ERROR');
         });
     });
