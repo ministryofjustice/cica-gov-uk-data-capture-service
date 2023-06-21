@@ -233,6 +233,30 @@ describe('runOnCompleteActions', () => {
 const templates = require('./templates');
 
 function setRole(role, answers) {
+    if (role === 'deceased') {
+        answers['p-applicant-fatal-claim'] = {
+            'q-applicant-fatal-claim': true
+        };
+
+        return answers;
+    }
+
+    if (role === 'nonDeceased') {
+        answers['p-applicant-fatal-claim'] = {
+            'q-applicant-fatal-claim': false
+        };
+
+        return answers;
+    }
+
+    if (role === 'myself') {
+        answers['p-applicant-who-are-you-applying-for'] = {
+            'q-applicant-who-are-you-applying-for': 'myself'
+        };
+
+        return answers;
+    }
+
     if (role === 'mainapplicant') {
         answers['p-mainapplicant-parent'] = {
             'q-mainapplicant-parent': true
@@ -372,6 +396,8 @@ describe('template', () => {
                         }
                     };
 
+                    const roles = ['myself', 'adult', 'nonDeceased'];
+                    roles.forEach(role => setRole(role, application.answers));
                     const questionnaireService = createQuestionnaireService();
                     const actionResults = await Promise.allSettled(
                         await questionnaireService.runOnCompleteActions(application)
@@ -524,6 +550,8 @@ describe('template', () => {
                         }
                     };
 
+                    const roles = ['myself', 'adult', 'nonDeceased'];
+                    roles.forEach(role => setRole(role, application.answers));
                     const questionnaireService = createQuestionnaireService();
                     const actionResults = await Promise.allSettled(
                         await questionnaireService.runOnCompleteActions(application)
