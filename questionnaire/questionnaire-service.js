@@ -36,6 +36,10 @@ function createQuestionnaireService({
 
     ajv.addFormat('mobile-uk', ajvFormatsMobileUk);
 
+    async function updateExpiryForAuthenticatedOwner(questionnaireId, owner) {
+        await db.updateExpiryForAuthenticatedOwner(questionnaireId, owner);
+    }
+
     async function createQuestionnaire(templateName, ownerData) {
         if (!(templateName in templates)) {
             throw new VError(
@@ -68,6 +72,10 @@ function createQuestionnaireService({
         }
 
         await db.createQuestionnaire(uuidV4, questionnaire);
+
+        if (apiVersion === '2023-05-17' && ownerData.isAuthenticated) {
+            await updateExpiryForAuthenticatedOwner(uuidV4, ownerData.id);
+        }
 
         return {
             data: questionnaireResource({questionnaire})
@@ -562,6 +570,9 @@ function createQuestionnaireService({
     }
 
     async function updateQuestionnaireModifiedDate(questionnaireId) {
+        if (apiVersion === '2023-05-17') {
+            await db.updateQuestionnaireModifiedDateByOwner(questionnaireId);
+        }
         await db.updateQuestionnaireModifiedDate(questionnaireId);
     }
 
@@ -635,7 +646,8 @@ function createQuestionnaireService({
         updateQuestionnaireModifiedDate,
         getSessionResource,
         runOnCompleteActions,
-        getAnswersBySectionId
+        getAnswersBySectionId,
+        updateExpiryForAuthenticatedOwner
     });
 }
 

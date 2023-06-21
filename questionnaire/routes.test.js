@@ -266,6 +266,9 @@ describe('Openapi version 2023-05-17 validation', () => {
                     );
                 }
                 return 'ok';
+            }),
+            updateExpiryForAuthenticatedOwner: jest.fn(() => {
+                return 'ok';
             })
         };
 
@@ -286,6 +289,7 @@ describe('Openapi version 2023-05-17 validation', () => {
                 .post('/api/questionnaires')
                 .set('Authorization', `Bearer I-AM-INVALID`)
                 .set('Content-Type', 'application/vnd.api+json')
+                .set('On-Behalf-Of', `urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6`)
                 .set('Dcs-Api-Version', '2023-05-17')
                 .send({
                     data: {
@@ -312,6 +316,7 @@ describe('Openapi version 2023-05-17 validation', () => {
                 .post('/api/questionnaires')
                 .set('Authorization', `Bearer ${dummyToken}`)
                 .set('Content-Type', 'application/vnd.api+json')
+                .set('On-Behalf-Of', `urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6`)
                 .set('Dcs-Api-Version', '2023-05-17')
                 .send({
                     data: {
@@ -335,6 +340,7 @@ describe('Openapi version 2023-05-17 validation', () => {
                 .post('/api/questionnaires')
                 .set('Authorization', `Bearer ${token}`)
                 .set('Content-Type', 'application/vnd.api+json')
+                .set('On-Behalf-Of', `urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6`)
                 .set('Dcs-Api-Version', '2023-05-17')
                 .send({
                     data: {
@@ -361,6 +367,7 @@ describe('Openapi version 2023-05-17 validation', () => {
                     .post('/api/questionnaires')
                     .set('Authorization', `Bearer ${token}`)
                     .set('Content-Type', 'application/vnd.api+json')
+                    .set('On-Behalf-Of', `urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6`)
                     .set('Dcs-Api-Version', '2023-05-17')
                     .send({
                         data: {
@@ -382,6 +389,50 @@ describe('Openapi version 2023-05-17 validation', () => {
                     .post('/api/questionnaires')
                     .set('Authorization', `Bearer ${token}`)
                     .set('Content-Type', 'application/vnd.api+json')
+                    .set('On-Behalf-Of', `urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6`)
+                    .set('Dcs-Api-Version', '2023-05-17')
+                    .send({
+                        data: {
+                            type: 'questionnaires',
+                            attributes: {
+                                templateName: 'sexual-assault',
+                                owner: {
+                                    id: 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6',
+                                    isAuthenticated: true
+                                }
+                            }
+                        }
+                    });
+                expect(response.statusCode).toEqual(201);
+            });
+
+            it('should return status code 400 if owner data is NOT included in the request header', async () => {
+                const response = await request(app)
+                    .post('/api/questionnaires')
+                    .set('Authorization', `Bearer ${token}`)
+                    .set('Content-Type', 'application/vnd.api+json')
+                    .set('Dcs-Api-Version', '2023-05-17')
+                    .send({
+                        data: {
+                            type: 'questionnaires',
+                            attributes: {
+                                templateName: 'sexual-assault'
+                            }
+                        }
+                    });
+                expect(response.body).toHaveProperty('errors');
+                expect(response.body.errors[0].status).toEqual(400);
+                expect(response.body.errors[0].detail).toEqual(
+                    "should have required property 'on-behalf-of'"
+                );
+            });
+
+            it('should return status code 201 if owner data is included in the header', async () => {
+                const response = await request(app)
+                    .post('/api/questionnaires')
+                    .set('Authorization', `Bearer ${token}`)
+                    .set('Content-Type', 'application/vnd.api+json')
+                    .set('On-Behalf-Of', `urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6`)
                     .set('Dcs-Api-Version', '2023-05-17')
                     .send({
                         data: {
@@ -405,6 +456,7 @@ describe('Openapi version 2023-05-17 validation', () => {
                     .post('/api/questionnaires')
                     .set('Authorization', `Bearer ${token}`)
                     .set('Content-Type', 'application/vnd.api+json')
+                    .set('On-Behalf-Of', `urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6`)
                     .send({
                         data: {
                             type: 'questionnaires',
@@ -429,6 +481,7 @@ describe('Openapi version 2023-05-17 validation', () => {
                     .post('/api/questionnaires')
                     .set('Authorization', `Bearer ${token}`)
                     .set('Content-Type', 'application/vnd.api+json')
+                    .set('On-Behalf-Of', `urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6`)
                     .set('Dcs-Api-Version', 'not-a-version')
                     .send({
                         data: {
@@ -454,6 +507,7 @@ describe('Openapi version 2023-05-17 validation', () => {
                     .post('/api/questionnaires')
                     .set('Authorization', `Bearer ${token}`)
                     .set('Content-Type', 'application/vnd.api+json')
+                    .set('On-Behalf-Of', `urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6`)
                     .set('Dcs-Api-Version', '2023-05-17')
                     .send({
                         data: {
@@ -786,7 +840,7 @@ describe('Openapi version 2023-05-17 validation', () => {
             it('should perform actions specific to the "owner" section', async () => {
                 const response = await request(app)
                     .post(
-                        '/api/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/sections/system/answers'
+                        '/api/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/sections/owner/answers'
                     )
                     .set('Authorization', `Bearer ${token}`)
                     .set('Content-Type', 'application/vnd.api+json')
@@ -805,7 +859,9 @@ describe('Openapi version 2023-05-17 validation', () => {
                         }
                     });
                 expect(response.statusCode).toEqual(201);
-                // ToDo: This should update the expires column
+                expect(mockQuestionnaireService.updateExpiryForAuthenticatedOwner).toBeCalledTimes(
+                    1
+                );
             });
         });
     });
