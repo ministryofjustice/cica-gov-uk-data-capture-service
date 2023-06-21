@@ -81,10 +81,15 @@ function createDatasetService({
         const progress = questionnaire.getProgress();
         const declarationSectionAndQuestionIds = {
             'p-applicant-declaration': 'q-applicant-declaration',
+            'p-applicant-declaration-deceased': 'q-applicant-declaration',
             'p-mainapplicant-declaration-under-12': 'q-mainapplicant-declaration',
+            'p-mainapplicant-declaration-under-12-deceased': 'q-mainapplicant-declaration',
             'p-mainapplicant-declaration-12-and-over': 'q-mainapplicant-declaration',
+            'p-mainapplicant-declaration-12-and-over-deceased': 'q-mainapplicant-declaration',
             'p-rep-declaration-under-12': 'q-rep-declaration',
-            'p-rep-declaration-12-and-over': 'q-rep-declaration'
+            'p-rep-declaration-under-12-deceased': 'q-rep-declaration',
+            'p-rep-declaration-12-and-over': 'q-rep-declaration',
+            'p-rep-declaration-12-and-over-deceased': 'q-rep-declaration'
         };
         const declarationSectionIds = Object.keys(declarationSectionAndQuestionIds);
         const declarationSectionId = progress.find(sectionId =>

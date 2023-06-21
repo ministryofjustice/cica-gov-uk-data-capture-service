@@ -233,6 +233,30 @@ describe('runOnCompleteActions', () => {
 const templates = require('./templates');
 
 function setRole(role, answers) {
+    if (role === 'deceased') {
+        answers['p-applicant-fatal-claim'] = {
+            'q-applicant-fatal-claim': true
+        };
+
+        return answers;
+    }
+
+    if (role === 'nonDeceased') {
+        answers['p-applicant-fatal-claim'] = {
+            'q-applicant-fatal-claim': false
+        };
+
+        return answers;
+    }
+
+    if (role === 'myself') {
+        answers['p-applicant-who-are-you-applying-for'] = {
+            'q-applicant-who-are-you-applying-for': 'myself'
+        };
+
+        return answers;
+    }
+
     if (role === 'mainapplicant') {
         answers['p-mainapplicant-parent'] = {
             'q-mainapplicant-parent': true
@@ -265,7 +289,7 @@ function setRole(role, answers) {
         return answers;
     }
 
-    if (role === 'rep.applicant:adult:capable') {
+    if (role === 'rep.applicant:adult:capable.nonDeceased') {
         answers['p-applicant-who-are-you-applying-for'] = {
             'q-applicant-who-are-you-applying-for': 'someone-else'
         };
@@ -274,6 +298,26 @@ function setRole(role, answers) {
         };
         answers['p-applicant-can-handle-affairs'] = {
             'q-applicant-capable': true
+        };
+        answers['p-applicant-fatal-claim'] = {
+            'q-applicant-fatal-claim': false
+        };
+
+        return answers;
+    }
+
+    if (role === 'rep.applicant:adult:capable.deceased') {
+        answers['p-applicant-who-are-you-applying-for'] = {
+            'q-applicant-who-are-you-applying-for': 'someone-else'
+        };
+        answers['p-applicant-are-you-18-or-over'] = {
+            'q-applicant-are-you-18-or-over': true
+        };
+        answers['p-applicant-can-handle-affairs'] = {
+            'q-applicant-capable': true
+        };
+        answers['p-applicant-fatal-claim'] = {
+            'q-applicant-fatal-claim': true
         };
 
         return answers;
@@ -358,7 +402,16 @@ describe('template', () => {
     describe('Given a successfully submitted application', () => {
         describe('With "email" as the contact preference', () => {
             describe('And user role is applicant', () => {
-                it('should send a confirmation email to applicant:adult', async () => {
+                it.each([
+                    {
+                        roles: ['myself', 'adult', 'nonDeceased'],
+                        templateId: '5d207246-99d7-4bb9-83e1-75a7847bb8fd'
+                    },
+                    {
+                        roles: ['myself', 'adult', 'deceased'],
+                        templateId: 'aad20568-2726-4d9f-b60c-41257e419c88'
+                    }
+                ])('should send a confirmation email to $roles', async ({roles, templateId}) => {
                     const application = templates['sexual-assault'](
                         '54fbbaaf-e199-47ce-a450-1813be6a5f5c'
                     );
@@ -372,12 +425,13 @@ describe('template', () => {
                         }
                     };
 
+                    roles.forEach(role => setRole(role, application.answers));
                     const questionnaireService = createQuestionnaireService();
                     const actionResults = await Promise.allSettled(
                         await questionnaireService.runOnCompleteActions(application)
                     );
                     const expectedActionData = {
-                        templateId: '5d207246-99d7-4bb9-83e1-75a7847bb8fd',
+                        templateId,
                         emailAddress: 'foo@e2ad804c872c.gov.uk',
                         personalisation: {
                             caseReference: '11/111111'
@@ -399,12 +453,20 @@ describe('template', () => {
             describe('And user role is mainapplicant', () => {
                 it.each([
                     {
-                        roles: ['mainapplicant', 'child'],
+                        roles: ['mainapplicant', 'child', 'nonDeceased'],
                         templateId: '668fac4a-3e1c-40e7-b7ac-090a410fbb03'
                     },
                     {
-                        roles: ['mainapplicant', 'adult', 'incapable'],
+                        roles: ['mainapplicant', 'child', 'deceased'],
+                        templateId: '58708020-d8a5-4d96-b56f-91f5c4c4c590'
+                    },
+                    {
+                        roles: ['mainapplicant', 'adult', 'incapable', 'nonDeceased'],
                         templateId: '80843f77-a68c-4d7a-b3c9-42fd0de271c2'
+                    },
+                    {
+                        roles: ['mainapplicant', 'adult', 'incapable', 'deceased'],
+                        templateId: '21f4d5de-a219-47c8-aa3e-e5489b0fc3ed'
                     }
                 ])('should send a confirmation email to $roles', async ({roles, templateId}) => {
                     const application = templates['sexual-assault'](
@@ -450,20 +512,44 @@ describe('template', () => {
             describe('And user role is rep', () => {
                 it.each([
                     {
-                        roles: ['rep.applicant:adult:capable'],
+                        roles: ['rep.applicant:adult:capable.nonDeceased'],
                         templateId: 'b21f1aa7-cc16-41e7-8b8e-5c69e52f21f9'
                     },
                     {
-                        roles: ['rep.mainapplicant.applicant:adult:incapable', 'incapable'],
+                        roles: ['rep.applicant:adult:capable.deceased'],
+                        templateId: 'ed98bf04-f338-47cf-b949-4367d8f8b707'
+                    },
+                    {
+                        roles: [
+                            'rep.mainapplicant.applicant:adult:incapable',
+                            'incapable',
+                            'nonDeceased'
+                        ],
                         templateId: 'a6583a82-51ca-4f8e-b8b8-cbca763dc59a'
                     },
                     {
-                        roles: ['rep.mainapplicant.applicant:child'],
+                        roles: [
+                            'rep.mainapplicant.applicant:adult:incapable',
+                            'incapable',
+                            'deceased'
+                        ],
+                        templateId: 'a70aaff8-8299-448b-ac22-6579c840c8e6'
+                    },
+                    {
+                        roles: ['rep.mainapplicant.applicant:child', 'nonDeceased'],
                         templateId: 'a0c7b011-b0df-4645-8ce3-6bd8f7905dfc'
                     },
                     {
-                        roles: ['rep:no-legal-authority.applicant', 'noauthority'],
+                        roles: ['rep.mainapplicant.applicant:child', 'deceased'],
+                        templateId: 'c72a9445-7d08-4db7-b7b9-a8d1900818ed'
+                    },
+                    {
+                        roles: ['rep:no-legal-authority.applicant', 'noauthority', 'nonDeceased'],
                         templateId: 'fb865d9c-37b1-4077-b519-aacfe42c9951'
+                    },
+                    {
+                        roles: ['rep:no-legal-authority.applicant', 'noauthority', 'deceased'],
+                        templateId: '54392a68-d12c-4f0d-8388-e8439fdbfc2f'
                     }
                 ])('should send a confirmation email to $roles', async ({roles, templateId}) => {
                     const application = templates['sexual-assault'](
@@ -509,7 +595,16 @@ describe('template', () => {
 
         describe('With "sms" as the contact preference', () => {
             describe('And user role is applicant', () => {
-                it('should send a confirmation sms to applicant:adult', async () => {
+                it.each([
+                    {
+                        roles: ['myself', 'adult', 'nonDeceased'],
+                        templateId: '3f1a741b-20de-4b0d-b8e8-224098291beb'
+                    },
+                    {
+                        roles: ['myself', 'adult', 'deceased'],
+                        templateId: '46e66520-6e0a-412b-a509-18a09c8bfa35'
+                    }
+                ])('should send a confirmation sms to $roles', async ({roles, templateId}) => {
                     const application = templates['sexual-assault'](
                         '54fbbaaf-e199-47ce-a450-1813be6a5f5c'
                     );
@@ -524,12 +619,13 @@ describe('template', () => {
                         }
                     };
 
+                    roles.forEach(role => setRole(role, application.answers));
                     const questionnaireService = createQuestionnaireService();
                     const actionResults = await Promise.allSettled(
                         await questionnaireService.runOnCompleteActions(application)
                     );
                     const expectedActionData = {
-                        templateId: '3f1a741b-20de-4b0d-b8e8-224098291beb',
+                        templateId,
                         phoneNumber: '07700900000',
                         personalisation: {
                             caseReference: '11/111111'
@@ -550,12 +646,20 @@ describe('template', () => {
             describe('And user role is mainapplicant', () => {
                 it.each([
                     {
-                        roles: ['mainapplicant', 'adult', 'incapable'],
+                        roles: ['mainapplicant', 'adult', 'incapable', 'nonDeceased'],
                         templateId: '3e625f9f-75c4-4903-818e-220829bfc2af'
                     },
                     {
-                        roles: ['mainapplicant', 'child'],
+                        roles: ['mainapplicant', 'adult', 'incapable', 'deceased'],
+                        templateId: 'fe1997b8-ba0e-4c97-94f2-d4d350868596'
+                    },
+                    {
+                        roles: ['mainapplicant', 'child', 'nonDeceased'],
                         templateId: 'd2185426-2177-4049-a5b1-b9c6b12e1a79'
+                    },
+                    {
+                        roles: ['mainapplicant', 'child', 'deceased'],
+                        templateId: '228454a8-c178-4f50-a7ca-5cb934dcb8b8'
                     }
                 ])('should send a confirmation sms to $roles', async ({roles, templateId}) => {
                     const application = templates['sexual-assault'](
@@ -600,20 +704,44 @@ describe('template', () => {
             describe('And user role is rep', () => {
                 it.each([
                     {
-                        roles: ['rep.applicant:adult:capable'],
+                        roles: ['rep.applicant:adult:capable.nonDeceased'],
                         templateId: 'b51e5e19-f469-4f8a-a5a2-00499da6f027'
                     },
                     {
-                        roles: ['rep.mainapplicant.applicant:adult:incapable', 'incapable'],
+                        roles: ['rep.applicant:adult:capable.deceased'],
+                        templateId: '1e764481-69c1-4d5a-8a05-fbadc09aa47c'
+                    },
+                    {
+                        roles: [
+                            'rep.mainapplicant.applicant:adult:incapable',
+                            'incapable',
+                            'nonDeceased'
+                        ],
                         templateId: '94a82598-6f6b-4ad0-abc3-ad3a157eb4a3'
                     },
                     {
-                        roles: ['rep.mainapplicant.applicant:child'],
+                        roles: [
+                            'rep.mainapplicant.applicant:adult:incapable',
+                            'incapable',
+                            'deceased'
+                        ],
+                        templateId: '6151b209-33de-40ec-88b0-7f1a4580bf18'
+                    },
+                    {
+                        roles: ['rep.mainapplicant.applicant:child', 'nonDeceased'],
                         templateId: '38047478-4b70-4add-b06c-62c7d93e8a23'
                     },
                     {
-                        roles: ['rep:no-legal-authority.applicant', 'noauthority'],
+                        roles: ['rep.mainapplicant.applicant:child', 'deceased'],
+                        templateId: '768165a8-b5cf-4ce5-acfa-a1bb533aca91'
+                    },
+                    {
+                        roles: ['rep:no-legal-authority.applicant', 'noauthority', 'nonDeceased'],
                         templateId: '29674076-46ba-4150-adf0-5215c8fe8aa9'
+                    },
+                    {
+                        roles: ['rep:no-legal-authority.applicant', 'noauthority', 'deceased'],
+                        templateId: '1ef1b7ae-293c-456d-93b4-8646791450f9'
                     }
                 ])('should send a confirmation email to $roles', async ({roles, templateId}) => {
                     const application = templates['sexual-assault'](
