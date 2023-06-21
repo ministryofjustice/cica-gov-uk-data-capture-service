@@ -268,6 +268,7 @@ function createQuestionnaire({
     function removeDeclarationSectionIds(sectionIds) {
         const sectionIdBlacklist = [
             'p-applicant-declaration',
+            'p-applicant-declaration-deceased',
             'p-mainapplicant-declaration-under-12',
             'p-mainapplicant-declaration-12-and-over',
             'p-rep-declaration-under-12',
