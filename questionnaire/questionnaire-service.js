@@ -10,8 +10,6 @@ const uuidv4 = require('uuid/v4');
 const ajvFormatsMobileUk = require('ajv-formats-mobile-uk');
 const templates = require('./templates');
 const createSqsService = require('../services/sqs');
-const createAwsIntergrationService = require('../services/awsIntergration');
-const createLegacyNotifyService = require('../services/sqs/legacy-sms-message-bus');
 const createSlackService = require('../services/slack');
 const questionnaireResource = require('./resources/questionnaire-resource');
 const createQuestionnaireHelper = require('./questionnaire/questionnaire');
@@ -129,31 +127,6 @@ function createQuestionnaireService({
     async function startSubmission(questionnaireId) {
         try {
             await updateQuestionnaireSubmissionStatus(questionnaireId, 'IN_PROGRESS');
-
-            // let awsIntergrationService = createAwsIntergrationService();
-            // awsIntergrationService.putCheckYourAnswersInS3(questionnaireId, questionnaireId);
-
-            const questionnaireDefinition = await getQuestionnaire(questionnaireId);
-            const questionnaire = createQuestionnaireHelper({questionnaireDefinition});
-
-            const awsIntergrationService = createAwsIntergrationService({logger});
-            const s3SubmissionResponse = await awsIntergrationService.putCheckYourAnswersInS3(
-                questionnaire,
-                questionnaireId
-            );
-
-            logger.info(s3SubmissionResponse);
-            if (!s3SubmissionResponse || !s3SubmissionResponse.MessageId) {
-                await updateQuestionnaireSubmissionStatus(questionnaireId, 'FAILED');
-                const slackService = createSlackService();
-                slackService.sendMessage({
-                    appReference: `${process.env.APP_ENV || 'dev'}.reporter.webhook`,
-                    messageBodyId: 'message-bus-down',
-                    templateParameters: {
-                        timeStamp: new Date().getTime()
-                    }
-                });
-            }
 
             const sqsService = createSqsService({logger});
             const submissionResponse = await sqsService.send(
@@ -598,9 +571,8 @@ function createQuestionnaireService({
         });
         const permittedActions = questionnaire.getPermittedActions();
         const actionResults = permittedActions.map(action => {
+            const sqsService = createSqsService({logger});
             if (action.type === 'sendEmail') {
-                const sqsService = createSqsService({logger});
-
                 const payload = {
                     templateId: action.data.templateId,
                     emailAddress: action.data.emailAddress,
@@ -613,8 +585,6 @@ function createQuestionnaireService({
             }
 
             if (action.type === 'sendSms') {
-                const legacyNotifyService = createLegacyNotifyService({logger});
-
                 const payload = {
                     templateId: action.data.templateId,
                     phoneNumber: action.data.phoneNumber,
@@ -623,9 +593,8 @@ function createQuestionnaireService({
                     },
                     reference: null
                 };
-                return legacyNotifyService.sendSms(payload);
+                return sqsService.send(payload, process.env.NOTIFY_AWS_SQS_ID);
             }
-
             return Promise.reject(Error(`Action type "${action.type}" is not supported`));
         });
 
