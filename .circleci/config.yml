@@ -13,7 +13,7 @@ executors:
 jobs:
   build-for-test:
     docker:
-      - image: cimg/node:18.14.2
+      - image: node:18.16.1-slim
     steps:
       - checkout
       - run:
@@ -34,7 +34,7 @@ jobs:
             - ./node_modules
   test:
     docker:
-      - image: cimg/node:18.14.2
+      - image: node:18.16.1-slim
     steps:
       - attach_workspace:
           at: ./
@@ -45,7 +45,7 @@ jobs:
           command: npx --no-install jest --ci --runInBand --bail --silent --coverage --projects jest.config.js
   lint:
     docker:
-      - image: cimg/node:18.14.2
+      - image: node:18.16.1-slim
     steps:
       - attach_workspace:
           at: ./
@@ -213,12 +213,12 @@ workflows:
                 - dcs-deploy
                 - dcs-deploy-to-uat
       - deploy_to_uat_approval:
-            type: approval
-            requires:
-             - push_image
-            filters:
-              branches:
-               only: dcs-deploy-to-uat
+          type: approval
+          requires:
+            - push_image
+          filters:
+            branches:
+              only: dcs-deploy-to-uat
       - deploy_to_uat:
           requires:
             - deploy_to_uat_approval
@@ -226,12 +226,12 @@ workflows:
             branches:
               only: dcs-deploy-to-uat
       - deploy_to_dev_approval:
-            type: approval
-            requires:
-             - push_image
-            filters:
-              branches:
-               only: dcs-deploy
+          type: approval
+          requires:
+            - push_image
+          filters:
+            branches:
+              only: dcs-deploy
       - deploy_to_dev:
           requires:
             - deploy_to_dev_approval
