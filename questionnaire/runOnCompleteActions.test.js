@@ -382,7 +382,16 @@ describe('template', () => {
     describe('Given a successfully submitted application', () => {
         describe('With "email" as the contact preference', () => {
             describe('And user role is applicant', () => {
-                it('should send a confirmation email to applicant:adult', async () => {
+                it.each([
+                    {
+                        roles: ['myself', 'adult', 'nonDeceased'],
+                        templateId: '5d207246-99d7-4bb9-83e1-75a7847bb8fd'
+                    },
+                    {
+                        roles: ['myself', 'adult', 'deceased'],
+                        templateId: 'aad20568-2726-4d9f-b60c-41257e419c88'
+                    }
+                ])('should send a confirmation email to $roles', async ({roles, templateId}) => {
                     const application = templates['sexual-assault'](
                         '54fbbaaf-e199-47ce-a450-1813be6a5f5c'
                     );
@@ -396,14 +405,13 @@ describe('template', () => {
                         }
                     };
 
-                    const roles = ['myself', 'adult', 'nonDeceased'];
                     roles.forEach(role => setRole(role, application.answers));
                     const questionnaireService = createQuestionnaireService();
                     const actionResults = await Promise.allSettled(
                         await questionnaireService.runOnCompleteActions(application)
                     );
                     const expectedActionData = {
-                        templateId: '5d207246-99d7-4bb9-83e1-75a7847bb8fd',
+                        templateId,
                         emailAddress: 'foo@e2ad804c872c.gov.uk',
                         personalisation: {
                             caseReference: '11/111111'
@@ -429,8 +437,12 @@ describe('template', () => {
                         templateId: '668fac4a-3e1c-40e7-b7ac-090a410fbb03'
                     },
                     {
-                        roles: ['mainapplicant', 'adult', 'incapable'],
+                        roles: ['mainapplicant', 'adult', 'incapable', 'nonDeceased'],
                         templateId: '80843f77-a68c-4d7a-b3c9-42fd0de271c2'
+                    },
+                    {
+                        roles: ['mainapplicant', 'adult', 'incapable', 'deceased'],
+                        templateId: '21f4d5de-a219-47c8-aa3e-e5489b0fc3ed'
                     }
                 ])('should send a confirmation email to $roles', async ({roles, templateId}) => {
                     const application = templates['sexual-assault'](
@@ -535,7 +547,16 @@ describe('template', () => {
 
         describe('With "sms" as the contact preference', () => {
             describe('And user role is applicant', () => {
-                it('should send a confirmation sms to applicant:adult', async () => {
+                it.each([
+                    {
+                        roles: ['myself', 'adult', 'nonDeceased'],
+                        templateId: '3f1a741b-20de-4b0d-b8e8-224098291beb'
+                    },
+                    {
+                        roles: ['myself', 'adult', 'deceased'],
+                        templateId: '46e66520-6e0a-412b-a509-18a09c8bfa35'
+                    }
+                ])('should send a confirmation sms to $roles', async ({roles, templateId}) => {
                     const application = templates['sexual-assault'](
                         '54fbbaaf-e199-47ce-a450-1813be6a5f5c'
                     );
@@ -550,14 +571,13 @@ describe('template', () => {
                         }
                     };
 
-                    const roles = ['myself', 'adult', 'nonDeceased'];
                     roles.forEach(role => setRole(role, application.answers));
                     const questionnaireService = createQuestionnaireService();
                     const actionResults = await Promise.allSettled(
                         await questionnaireService.runOnCompleteActions(application)
                     );
                     const expectedActionData = {
-                        templateId: '3f1a741b-20de-4b0d-b8e8-224098291beb',
+                        templateId,
                         phoneNumber: '07700900000',
                         personalisation: {
                             caseReference: '11/111111'
@@ -578,8 +598,12 @@ describe('template', () => {
             describe('And user role is mainapplicant', () => {
                 it.each([
                     {
-                        roles: ['mainapplicant', 'adult', 'incapable'],
+                        roles: ['mainapplicant', 'adult', 'incapable', 'nonDeceased'],
                         templateId: '3e625f9f-75c4-4903-818e-220829bfc2af'
+                    },
+                    {
+                        roles: ['mainapplicant', 'adult', 'incapable', 'deceased'],
+                        templateId: 'fe1997b8-ba0e-4c97-94f2-d4d350868596'
                     },
                     {
                         roles: ['mainapplicant', 'child'],
