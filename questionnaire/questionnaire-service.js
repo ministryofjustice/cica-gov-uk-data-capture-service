@@ -10,6 +10,7 @@ const uuidv4 = require('uuid/v4');
 const ajvFormatsMobileUk = require('ajv-formats-mobile-uk');
 const templates = require('./templates');
 const createSqsService = require('../services/sqs');
+const createLegacyNotifyService = require('../services/sqs/legacy-sms-message-bus');
 const createSlackService = require('../services/slack');
 const questionnaireResource = require('./resources/questionnaire-resource');
 const createQuestionnaireHelper = require('./questionnaire/questionnaire');
@@ -60,8 +61,8 @@ function createQuestionnaireService({
 
             questionnaire.answers = {
                 owner: {
-                    'owner-id': ownerData.id,
-                    'is-authenticated': ownerData.isAuthenticated
+                    ownerId: ownerData.id,
+                    isAuthenticated: ownerData.isAuthenticated
                 }
             };
         }
@@ -92,11 +93,11 @@ function createQuestionnaireService({
     function getSection(sectionId, qRouter) {
         let section;
 
-        if (sectionId === 'system' || sectionId === 'owner') {
+        if (sectionId === 'system') {
             const currentSection = qRouter.current();
 
             section = {
-                id: sectionId,
+                id: 'system',
                 // Get the context (questionnaire) from the current section
                 context: currentSection.context
             };
@@ -252,9 +253,9 @@ function createQuestionnaireService({
             // Pass the answers to the router which will update the context (questionnaire) with these answers.
             let answeredQuestionnaire;
 
-            if (sectionDetails.id === 'system' || sectionDetails.id === 'owner') {
+            if (sectionDetails.id === 'system') {
                 const currentSection = qRouter.current();
-                currentSection.context.answers[sectionDetails.id] = coercedAnswers;
+                currentSection.context.answers.system = coercedAnswers;
                 answeredQuestionnaire = currentSection.context;
             } else {
                 const nextSection = qRouter.next(coercedAnswers, sectionDetails.id);
@@ -262,11 +263,7 @@ function createQuestionnaireService({
             }
 
             // Store the updated questionnaire object
-            if (apiVersion === '2023-05-17') {
-                await db.updateQuestionnaireByOwner(questionnaireId, answeredQuestionnaire);
-            } else {
-                await db.updateQuestionnaire(questionnaireId, answeredQuestionnaire);
-            }
+            await db.updateQuestionnaire(questionnaireId, answeredQuestionnaire);
 
             answerResource = {
                 data: {
@@ -571,8 +568,9 @@ function createQuestionnaireService({
         });
         const permittedActions = questionnaire.getPermittedActions();
         const actionResults = permittedActions.map(action => {
-            const sqsService = createSqsService({logger});
             if (action.type === 'sendEmail') {
+                const sqsService = createSqsService({logger});
+
                 const payload = {
                     templateId: action.data.templateId,
                     emailAddress: action.data.emailAddress,
@@ -585,6 +583,8 @@ function createQuestionnaireService({
             }
 
             if (action.type === 'sendSms') {
+                const legacyNotifyService = createLegacyNotifyService({logger});
+
                 const payload = {
                     templateId: action.data.templateId,
                     phoneNumber: action.data.phoneNumber,
@@ -593,8 +593,9 @@ function createQuestionnaireService({
                     },
                     reference: null
                 };
-                return sqsService.send(payload, process.env.NOTIFY_AWS_SQS_ID);
+                return legacyNotifyService.sendSms(payload);
             }
+
             return Promise.reject(Error(`Action type "${action.type}" is not supported`));
         });
 
