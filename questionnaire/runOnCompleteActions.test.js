@@ -433,7 +433,7 @@ describe('template', () => {
             describe('And user role is mainapplicant', () => {
                 it.each([
                     {
-                        roles: ['mainapplicant', 'child'],
+                        roles: ['mainapplicant', 'child', 'nonDeceased'],
                         templateId: '668fac4a-3e1c-40e7-b7ac-090a410fbb03'
                     },
                     {
