@@ -23,6 +23,10 @@ function createQuestionnaire({
     getJsonExpressionEvaluator = defaults.getJsonExpressionEvaluator,
     qExpression = defaults.qExpression
 }) {
+    function getId() {
+        return questionnaireDefinition.id;
+    }
+
     function getProgress() {
         return questionnaireDefinition.progress || [];
     }
@@ -360,6 +364,7 @@ function createQuestionnaire({
     }
 
     return Object.freeze({
+        getId,
         getTaxonomy,
         getSection,
         getOrderedAnswers,
