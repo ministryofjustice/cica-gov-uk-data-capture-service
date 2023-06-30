@@ -437,6 +437,10 @@ describe('template', () => {
                         templateId: '668fac4a-3e1c-40e7-b7ac-090a410fbb03'
                     },
                     {
+                        roles: ['mainapplicant', 'child', 'deceased'],
+                        templateId: '58708020-d8a5-4d96-b56f-91f5c4c4c590'
+                    },
+                    {
                         roles: ['mainapplicant', 'adult', 'incapable', 'nonDeceased'],
                         templateId: '80843f77-a68c-4d7a-b3c9-42fd0de271c2'
                     },
@@ -606,8 +610,12 @@ describe('template', () => {
                         templateId: 'fe1997b8-ba0e-4c97-94f2-d4d350868596'
                     },
                     {
-                        roles: ['mainapplicant', 'child'],
+                        roles: ['mainapplicant', 'child', 'nonDeceased'],
                         templateId: 'd2185426-2177-4049-a5b1-b9c6b12e1a79'
+                    },
+                    {
+                        roles: ['mainapplicant', 'child', 'deceased'],
+                        templateId: 'c178-4f50-a7ca-5cb934dcb8b8'
                     }
                 ])('should send a confirmation sms to $roles', async ({roles, templateId}) => {
                     const application = templates['sexual-assault'](
