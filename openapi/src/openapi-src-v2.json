@@ -37,6 +37,9 @@
         },
         {
             "name": "Sessions"
+        },
+        {
+            "name": "Submissions"
         }
     ],
     "paths": {
@@ -509,6 +512,136 @@
                     }
                 }
             }
+        },
+        "/questionnaires/{questionnaireId}/submissions": {
+            "get": {
+                "tags": ["Submissions"],
+                "summary": "Get submission resource for a questionnaire",
+                "description": "Gets submission state for a questionnaire",
+                "operationId": "getSubmissions",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/questionnaireId"
+                    },
+                    {
+                        "$ref": "#/components/parameters/onBehalfOf"
+                    },
+                    {
+                        "$ref": "#/components/parameters/apiVersion"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/vnd.api+json": {
+                                "schema": {
+                                    "$ref": "./json-schemas/api/v2_questionnaires_{questionnaireId}_submissions/get/res/200.json"
+                                },
+                                "example": {
+                                    "data": {
+                                        "id": "285cb104-0c15-4a9c-9840-cb1007f098fb",
+                                        "type": "submissions",
+                                        "attributes": {
+                                            "questionnaireId": "285cb104-0c15-4a9c-9840-cb1007f098fb",
+                                            "submitted": false,
+                                            "status": "IN_PROGRESS",
+                                            "caseReferenceNumber": "11\\111111"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/UnauthorizedError"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/Forbidden"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    }
+                }
+            },
+            "post": {
+                "tags": ["Submissions"],
+                "summary": "Submit a questionnaire",
+                "description": "Start the submission of a questionnaire",
+                "operationId": "SubmitQuestionnaire",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/questionnaireId"
+                    },
+                    {
+                        "$ref": "#/components/parameters/onBehalfOf"
+                    },
+                    {
+                        "$ref": "#/components/parameters/apiVersion"
+                    }
+                ],
+                "requestBody": {
+                    "description": "Questionnaire ID",
+                    "required": true,
+                    "content": {
+                        "application/vnd.api+json": {
+                            "schema": {
+                                "$ref": "./json-schemas/api/v2_questionnaires_{questionnaireId}_submissions/post/req/201.json"
+                            },
+                            "example": {
+                                "data": {
+                                    "type": "submissions",
+                                    "attributes": {
+                                        "questionnaireId": "285cb104-0c15-4a9c-9840-cb1007f098fb"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "application/vnd.api+json": {
+                                "schema": {
+                                    "$ref": "./json-schemas/api/_questionnaires_{questionnaireId}_submissions/post/res/201.json"
+                                },
+                                "example": {
+                                    "data": {
+                                        "id": "285cb104-0c15-4a9c-9840-cb1007f098fb",
+                                        "type": "submissions",
+                                        "attributes": {
+                                            "questionnaireId": "285cb104-0c15-4a9c-9840-cb1007f098fb",
+                                            "submitted": true,
+                                            "status": "IN_PROGRESS",
+                                            "caseReferenceNumber": "11\\111111"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/UnauthorizedError"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/Forbidden"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    },
+                    "409": {
+                        "$ref": "#/components/responses/Conflict"
+                    }
+                }
+            }
         }
     },
     "components": {
@@ -657,6 +790,25 @@
                                     "status": 404,
                                     "title": "404 Not Found",
                                     "detail": "Resource /api/v1/questionnaires/2d7caf89-2c72-469f-b19d-17f2a22270b6/sections/answers does not exist"
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "Conflict": {
+                "description": "Conflict",
+                "content": {
+                    "application/vnd.api+json": {
+                        "schema": {
+                            "$ref": "./json-schemas/api/responses/409.json"
+                        },
+                        "example": {
+                            "errors": [
+                                {
+                                    "status": 409,
+                                    "title": "409 conflict",
+                                    "detail": "Submission resource with ID \"68653be7-877f-4106-b91e-4ba8dac883f3\" already exists"
                                 }
                             ]
                         }

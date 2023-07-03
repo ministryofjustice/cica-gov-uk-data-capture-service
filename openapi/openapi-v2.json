@@ -37,6 +37,9 @@
         },
         {
             "name": "Sessions"
+        },
+        {
+            "name": "Submissions"
         }
     ],
     "paths": {
@@ -2770,6 +2773,658 @@
                     }
                 }
             }
+        },
+        "/questionnaires/{questionnaireId}/submissions": {
+            "get": {
+                "tags": ["Submissions"],
+                "summary": "Get submission resource for a questionnaire",
+                "description": "Gets submission state for a questionnaire",
+                "operationId": "getSubmissions",
+                "parameters": [
+                    {
+                        "name": "questionnaireId",
+                        "in": "path",
+                        "required": true,
+                        "description": "The id of the specific questionnaire instance. Format UUIDv4.",
+                        "schema": {
+                            "title": "UUID v4",
+                            "type": "string",
+                            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+                        },
+                        "example": "285cb104-0c15-4a9c-9840-cb1007f098fb"
+                    },
+                    {
+                        "in": "header",
+                        "name": "On-Behalf-Of",
+                        "required": true,
+                        "description": "Specify the owner of the resource.",
+                        "schema": {
+                            "title": "Owner Id",
+                            "type": "string",
+                            "format": "uri",
+                            "maxLength": 64,
+                            "pattern": "^urn:(uuid|fdc:gov.uk:2022):"
+                        },
+                        "example": "urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+                    },
+                    {
+                        "name": "Dcs-Api-Version",
+                        "in": "header",
+                        "required": true,
+                        "description": "The date based version of the requested API",
+                        "schema": {
+                            "title": "Dcs-Api-Version",
+                            "type": "string",
+                            "enum": ["2023-05-17"]
+                        },
+                        "example": "2023-05-17"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/vnd.api+json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": false,
+                                    "required": ["data"],
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "additionalProperties": false,
+                                            "required": ["id", "type", "attributes"],
+                                            "properties": {
+                                                "id": {
+                                                    "title": "UUID v4",
+                                                    "type": "string",
+                                                    "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+                                                },
+                                                "type": {
+                                                    "enum": ["submissions"]
+                                                },
+                                                "attributes": {
+                                                    "type": "object",
+                                                    "additionalProperties": false,
+                                                    "required": [
+                                                        "questionnaireId",
+                                                        "submitted",
+                                                        "status",
+                                                        "caseReferenceNumber"
+                                                    ],
+                                                    "properties": {
+                                                        "questionnaireId": {
+                                                            "title": "UUID v4",
+                                                            "type": "string",
+                                                            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+                                                        },
+                                                        "submitted": {
+                                                            "type": "boolean"
+                                                        },
+                                                        "status": {
+                                                            "enum": [
+                                                                "NOT_STARTED",
+                                                                "IN_PROGRESS",
+                                                                "COMPLETED",
+                                                                "FAILED"
+                                                            ]
+                                                        },
+                                                        "caseReferenceNumber": {
+                                                            "type": "string",
+                                                            "pattern": "^[0-9]{2}\\\\[0-9]{6}$",
+                                                            "nullable": true
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "example": {
+                                    "data": {
+                                        "id": "285cb104-0c15-4a9c-9840-cb1007f098fb",
+                                        "type": "submissions",
+                                        "attributes": {
+                                            "questionnaireId": "285cb104-0c15-4a9c-9840-cb1007f098fb",
+                                            "submitted": false,
+                                            "status": "IN_PROGRESS",
+                                            "caseReferenceNumber": "11\\111111"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "There is an issue with the request",
+                        "content": {
+                            "application/vnd.api+json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": ["errors"],
+                                    "properties": {
+                                        "errors": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "required": ["status", "title", "detail"],
+                                                "properties": {
+                                                    "status": {
+                                                        "enum": [400]
+                                                    },
+                                                    "title": {
+                                                        "enum": ["400 Bad Request"]
+                                                    },
+                                                    "detail": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "status": 400,
+                                            "title": "400 Bad Request",
+                                            "detail": "Request JSON is malformed"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Access token is missing or invalid",
+                        "content": {
+                            "application/vnd.api+json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": ["errors"],
+                                    "properties": {
+                                        "errors": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "required": ["status", "title", "detail"],
+                                                "properties": {
+                                                    "status": {
+                                                        "enum": [401]
+                                                    },
+                                                    "title": {
+                                                        "enum": ["401 Unauthorized"]
+                                                    },
+                                                    "detail": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "status": 401,
+                                            "detail": "No authorization token was found"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "The JWT doesn't permit access to this endpoint",
+                        "content": {
+                            "application/vnd.api+json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": ["errors"],
+                                    "properties": {
+                                        "errors": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "required": ["status", "title", "detail"],
+                                                "properties": {
+                                                    "status": {
+                                                        "enum": [403]
+                                                    },
+                                                    "title": {
+                                                        "enum": ["403 Forbidden"]
+                                                    },
+                                                    "detail": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "status": 403,
+                                            "title": "403 Forbidden",
+                                            "detail": "Insufficient scope"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "The specified resource was not found",
+                        "content": {
+                            "application/vnd.api+json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": ["errors"],
+                                    "properties": {
+                                        "errors": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "required": ["status", "title", "detail"],
+                                                "properties": {
+                                                    "status": {
+                                                        "enum": [404]
+                                                    },
+                                                    "title": {
+                                                        "enum": ["404 Not Found"]
+                                                    },
+                                                    "detail": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "status": 404,
+                                            "title": "404 Not Found",
+                                            "detail": "Resource /api/v1/questionnaires/2d7caf89-2c72-469f-b19d-17f2a22270b6/sections/answers does not exist"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": ["Submissions"],
+                "summary": "Submit a questionnaire",
+                "description": "Start the submission of a questionnaire",
+                "operationId": "SubmitQuestionnaire",
+                "parameters": [
+                    {
+                        "name": "questionnaireId",
+                        "in": "path",
+                        "required": true,
+                        "description": "The id of the specific questionnaire instance. Format UUIDv4.",
+                        "schema": {
+                            "title": "UUID v4",
+                            "type": "string",
+                            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+                        },
+                        "example": "285cb104-0c15-4a9c-9840-cb1007f098fb"
+                    },
+                    {
+                        "in": "header",
+                        "name": "On-Behalf-Of",
+                        "required": true,
+                        "description": "Specify the owner of the resource.",
+                        "schema": {
+                            "title": "Owner Id",
+                            "type": "string",
+                            "format": "uri",
+                            "maxLength": 64,
+                            "pattern": "^urn:(uuid|fdc:gov.uk:2022):"
+                        },
+                        "example": "urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+                    },
+                    {
+                        "name": "Dcs-Api-Version",
+                        "in": "header",
+                        "required": true,
+                        "description": "The date based version of the requested API",
+                        "schema": {
+                            "title": "Dcs-Api-Version",
+                            "type": "string",
+                            "enum": ["2023-05-17"]
+                        },
+                        "example": "2023-05-17"
+                    }
+                ],
+                "requestBody": {
+                    "description": "Questionnaire ID",
+                    "required": true,
+                    "content": {
+                        "application/vnd.api+json": {
+                            "schema": {
+                                "type": "object",
+                                "additionalProperties": false,
+                                "required": ["data"],
+                                "properties": {
+                                    "data": {
+                                        "type": "object",
+                                        "additionalProperties": false,
+                                        "required": ["type", "attributes"],
+                                        "properties": {
+                                            "type": {
+                                                "enum": ["submissions"]
+                                            },
+                                            "attributes": {
+                                                "type": "object",
+                                                "additionalProperties": false,
+                                                "properties": {
+                                                    "questionnaireId": {
+                                                        "title": "UUID v4",
+                                                        "type": "string",
+                                                        "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "example": {
+                                "data": {
+                                    "type": "submissions",
+                                    "attributes": {
+                                        "questionnaireId": "285cb104-0c15-4a9c-9840-cb1007f098fb"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "application/vnd.api+json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": false,
+                                    "required": ["data"],
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "additionalProperties": false,
+                                            "required": ["id", "type", "attributes"],
+                                            "properties": {
+                                                "id": {
+                                                    "type": "string",
+                                                    "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+                                                },
+                                                "type": {
+                                                    "enum": ["submissions"]
+                                                },
+                                                "attributes": {
+                                                    "type": "object",
+                                                    "additionalProperties": false,
+                                                    "required": [
+                                                        "questionnaireId",
+                                                        "submitted",
+                                                        "status",
+                                                        "caseReferenceNumber"
+                                                    ],
+                                                    "properties": {
+                                                        "questionnaireId": {
+                                                            "type": "string",
+                                                            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+                                                        },
+                                                        "submitted": {
+                                                            "type": "boolean"
+                                                        },
+                                                        "status": {
+                                                            "enum": [
+                                                                "NOT_STARTED",
+                                                                "IN_PROGRESS",
+                                                                "COMPLETED",
+                                                                "FAILED"
+                                                            ]
+                                                        },
+                                                        "caseReferenceNumber": {
+                                                            "type": "string",
+                                                            "pattern": "^[0-9]{2}\\\\[0-9]{6}$",
+                                                            "nullable": true
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "example": {
+                                    "data": {
+                                        "id": "285cb104-0c15-4a9c-9840-cb1007f098fb",
+                                        "type": "submissions",
+                                        "attributes": {
+                                            "questionnaireId": "285cb104-0c15-4a9c-9840-cb1007f098fb",
+                                            "submitted": true,
+                                            "status": "IN_PROGRESS",
+                                            "caseReferenceNumber": "11\\111111"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "There is an issue with the request",
+                        "content": {
+                            "application/vnd.api+json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": ["errors"],
+                                    "properties": {
+                                        "errors": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "required": ["status", "title", "detail"],
+                                                "properties": {
+                                                    "status": {
+                                                        "enum": [400]
+                                                    },
+                                                    "title": {
+                                                        "enum": ["400 Bad Request"]
+                                                    },
+                                                    "detail": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "status": 400,
+                                            "title": "400 Bad Request",
+                                            "detail": "Request JSON is malformed"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Access token is missing or invalid",
+                        "content": {
+                            "application/vnd.api+json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": ["errors"],
+                                    "properties": {
+                                        "errors": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "required": ["status", "title", "detail"],
+                                                "properties": {
+                                                    "status": {
+                                                        "enum": [401]
+                                                    },
+                                                    "title": {
+                                                        "enum": ["401 Unauthorized"]
+                                                    },
+                                                    "detail": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "status": 401,
+                                            "detail": "No authorization token was found"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "The JWT doesn't permit access to this endpoint",
+                        "content": {
+                            "application/vnd.api+json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": ["errors"],
+                                    "properties": {
+                                        "errors": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "required": ["status", "title", "detail"],
+                                                "properties": {
+                                                    "status": {
+                                                        "enum": [403]
+                                                    },
+                                                    "title": {
+                                                        "enum": ["403 Forbidden"]
+                                                    },
+                                                    "detail": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "status": 403,
+                                            "title": "403 Forbidden",
+                                            "detail": "Insufficient scope"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "The specified resource was not found",
+                        "content": {
+                            "application/vnd.api+json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": ["errors"],
+                                    "properties": {
+                                        "errors": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "required": ["status", "title", "detail"],
+                                                "properties": {
+                                                    "status": {
+                                                        "enum": [404]
+                                                    },
+                                                    "title": {
+                                                        "enum": ["404 Not Found"]
+                                                    },
+                                                    "detail": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "status": 404,
+                                            "title": "404 Not Found",
+                                            "detail": "Resource /api/v1/questionnaires/2d7caf89-2c72-469f-b19d-17f2a22270b6/sections/answers does not exist"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "content": {
+                            "application/vnd.api+json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": ["errors"],
+                                    "properties": {
+                                        "errors": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "required": ["status", "title", "detail"],
+                                                "properties": {
+                                                    "status": {
+                                                        "enum": [409]
+                                                    },
+                                                    "title": {
+                                                        "enum": ["409 Conflict"]
+                                                    },
+                                                    "detail": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "status": 409,
+                                            "title": "409 conflict",
+                                            "detail": "Submission resource with ID \"68653be7-877f-4106-b91e-4ba8dac883f3\" already exists"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "components": {
@@ -3031,6 +3686,46 @@
                                     "status": 404,
                                     "title": "404 Not Found",
                                     "detail": "Resource /api/v1/questionnaires/2d7caf89-2c72-469f-b19d-17f2a22270b6/sections/answers does not exist"
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "Conflict": {
+                "description": "Conflict",
+                "content": {
+                    "application/vnd.api+json": {
+                        "schema": {
+                            "type": "object",
+                            "required": ["errors"],
+                            "properties": {
+                                "errors": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "required": ["status", "title", "detail"],
+                                        "properties": {
+                                            "status": {
+                                                "enum": [409]
+                                            },
+                                            "title": {
+                                                "enum": ["409 Conflict"]
+                                            },
+                                            "detail": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "example": {
+                            "errors": [
+                                {
+                                    "status": 409,
+                                    "title": "409 conflict",
+                                    "detail": "Submission resource with ID \"68653be7-877f-4106-b91e-4ba8dac883f3\" already exists"
                                 }
                             ]
                         }
