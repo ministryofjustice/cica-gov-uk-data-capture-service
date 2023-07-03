@@ -140,7 +140,32 @@ async function transformAndUpload(questionnaire) {
     return submissionResponse;
 }
 
+/**
+ * Generates a reference number for the database
+ * and updates the questionnaire object in the database.
+ * @param {questionnaire} questionnaire - The raw questionnaire object
+ * @returns result from update to the database.
+ */
+async function generateReferenceNumber(questionnaire) {
+    // Get new references from db
+    const db = createQuestionnaireDAL({});
+    const referenceNumber = db.getReferenceNumber(
+        questionnaire.getIsFatal(),
+        questionnaire.getId()
+    );
+
+    // Update application object with reference
+    const updatedQuestionnaire = questionnaire.setCaseReference(referenceNumber);
+
+    // Update json in postgres
+    const result = db.updateQuestionnaire(questionnaire.getId(), updatedQuestionnaire);
+
+    // return something
+    return result;
+}
+
 module.exports = {
     transformAndUpload,
-    transformQuestionnaire
+    transformQuestionnaire,
+    generateReferenceNumber
 };
