@@ -20,7 +20,7 @@
         "lint:fix": "eslint --fix ."
     },
     "dependencies": {
-        "@aws-sdk/client-sqs": "^3.345.0",
+        "@aws-sdk/client-sqs": "^3.363.0",
         "@netflix/nerror": "^1.1.0",
         "@slack/webhook": "^6.0.0",
         "ajv": "^6.12.6",
