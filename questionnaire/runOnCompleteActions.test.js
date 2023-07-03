@@ -615,7 +615,7 @@ describe('template', () => {
                     },
                     {
                         roles: ['mainapplicant', 'child', 'deceased'],
-                        templateId: 'c178-4f50-a7ca-5cb934dcb8b8'
+                        templateId: '228454a8-c178-4f50-a7ca-5cb934dcb8b8'
                     }
                 ])('should send a confirmation sms to $roles', async ({roles, templateId}) => {
                     const application = templates['sexual-assault'](
