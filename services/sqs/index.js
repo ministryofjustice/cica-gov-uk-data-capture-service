@@ -22,7 +22,7 @@ function createSqsService(opts) {
      * @param {string} queueUrl - The queue url.
      * @returns SendMessageCommandOutput equal to the output given by the queue for the send command
      */
-    async function sendSQS(payload, queueUrl) {
+    async function send(payload, queueUrl) {
         try {
             logger.info('SQS MESSAGE SENDING');
 
@@ -46,7 +46,7 @@ function createSqsService(opts) {
     }
 
     return Object.freeze({
-        sendSQS
+        send
     });
 }
 
