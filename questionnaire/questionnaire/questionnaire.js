@@ -270,7 +270,9 @@ function createQuestionnaire({
             'p-applicant-declaration',
             'p-applicant-declaration-deceased',
             'p-mainapplicant-declaration-under-12',
+            'p-mainapplicant-declaration-under-12-deceased',
             'p-mainapplicant-declaration-12-and-over',
+            'p-mainapplicant-declaration-12-and-over-deceased',
             'p-rep-declaration-under-12',
             'p-rep-declaration-12-and-over'
         ];
