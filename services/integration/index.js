@@ -205,5 +205,7 @@ async function generateReferenceNumber(questionnaire, logger) {
 module.exports = {
     transformAndUpload,
     transformQuestionnaire,
+    getIsFatal,
+    updateCaseReferenceWithYear,
     generateReferenceNumber
 };

@@ -1,6 +1,6 @@
 'use strict';
 
-const {transformQuestionnaire} = require('.');
+const {transformQuestionnaire, getIsFatal, updateCaseReferenceWithYear} = require('.');
 const questionnaireFixture = require('../../questionnaire/test-fixtures/res/questionnaireCompleteForCheckYourAnswers');
 const questionnaire = require('../../questionnaire/questionnaire/questionnaire');
 
@@ -50,5 +50,19 @@ describe('Integration Service', () => {
         expect(result.declaration.label).toContain('<div id="declaration">');
         expect(result.declaration.value).toBe('i-agree');
         expect(result.declaration.valueLabel).toBe('I have read and understood the declaration');
+    });
+
+    it('Should get false for isFatal if not fatal', () => {
+        const isFatal = getIsFatal(questionnaireObj);
+        expect(isFatal).toBeFalsy();
+    });
+
+    it('Should format the case reference correctly', () => {
+        const referenceNumber = '123456';
+        const dateModified = new Date(2022, 1, 1);
+
+        const caseReference = updateCaseReferenceWithYear(referenceNumber, dateModified);
+
+        expect(caseReference).toBe('22\\123456');
     });
 });
