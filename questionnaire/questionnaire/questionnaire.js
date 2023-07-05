@@ -27,21 +27,6 @@ function createQuestionnaire({
         return questionnaireDefinition.id;
     }
 
-    function getIsFatal() {
-        return true;
-    }
-
-    function setCaseReference(caseReference) {
-        if (
-            !questionnaireDefinition.answers.system['case-reference'] ||
-            questionnaireDefinition.answers.system['case-reference'] === ''
-        ) {
-            questionnaireDefinition.answers.system['case-reference'] = caseReference;
-        }
-
-        return questionnaireDefinition;
-    }
-
     function getProgress() {
         return questionnaireDefinition.progress || [];
     }
@@ -380,8 +365,6 @@ function createQuestionnaire({
 
     return Object.freeze({
         getId,
-        getIsFatal,
-        setCaseReference,
         getTaxonomy,
         getSection,
         getOrderedAnswers,

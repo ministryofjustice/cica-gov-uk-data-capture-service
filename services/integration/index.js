@@ -4,6 +4,7 @@ const VError = require('verror');
 
 const createS3Service = require('../s3');
 const createQuestionnaireDAL = require('../../questionnaire/questionnaire-dal');
+const createQuestionnaireService = require('../../questionnaire/questionnaire-service');
 
 /**
  * Concatenate two arrays.
@@ -141,24 +142,61 @@ async function transformAndUpload(questionnaire) {
 }
 
 /**
+ * @param {questionnaire} questionnaire - The raw questionnaire object
+ * @returns boolean representing whether application is fatal
+ */
+function getIsFatal(questionnaire) {
+    const answers = questionnaire.getAnswers();
+
+    return (
+        answers['p-applicant-fatal-claim'] &&
+        answers['p-applicant-fatal-claim.q-applicant-fatal-claim']
+    );
+}
+
+/**
+ *
+ * @param {string} caseReference generated caseReference
+ * @param {date} dateSubmitted the date the questionnaire was submitted
+ * @returns
+ */
+function updateCaseReferenceWithYear(caseReference, dateSubmitted) {
+    const year = (dateSubmitted.getFullYear() % 100).toString();
+    return `${year}\\${caseReference}`;
+}
+
+/**
+ *
+ * @param {string} caseReference
+ * @param {questionnaire} questionnaire
+ * @returns result of update
+ */
+function setCaseReference(caseReference, questionnaireId, questionnaire, logger) {
+    const systemSection = questionnaire.getSection('system');
+    const questionnaireService = createQuestionnaireService({
+        logger
+    });
+    systemSection['case-reference'] = caseReference;
+    const result = questionnaireService.createAnswers(questionnaireId, 'system', systemSection);
+    return result;
+}
+
+/**
  * Generates a reference number for the database
  * and updates the questionnaire object in the database.
  * @param {questionnaire} questionnaire - The raw questionnaire object
  * @returns result from update to the database.
  */
-async function generateReferenceNumber(questionnaire) {
+async function generateReferenceNumber(questionnaire, logger) {
     // Get new references from db
-    const db = createQuestionnaireDAL({});
-    const referenceNumber = db.getReferenceNumber(
-        questionnaire.getIsFatal(),
-        questionnaire.getId()
-    );
+    let caseReference;
+    const db = createQuestionnaireDAL({logger});
+    caseReference = await db.getReferenceNumber(getIsFatal(questionnaire), questionnaire.getId());
 
+    const dateSubmitted = await db.getQuestionnaireModifiedDate(questionnaire.id);
+    caseReference = updateCaseReferenceWithYear(caseReference, dateSubmitted);
     // Update application object with reference
-    const updatedQuestionnaire = questionnaire.setCaseReference(referenceNumber);
-
-    // Update json in postgres
-    const result = db.updateQuestionnaire(questionnaire.getId(), updatedQuestionnaire);
+    const result = setCaseReference(caseReference, questionnaire.getId(), questionnaire, logger);
 
     // return something
     return result;

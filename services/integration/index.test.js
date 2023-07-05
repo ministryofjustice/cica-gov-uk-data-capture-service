@@ -7,7 +7,6 @@ const questionnaire = require('../../questionnaire/questionnaire/questionnaire')
 describe('Integration Service', () => {
     // Arrange
     const questionnaireObj = questionnaire({questionnaireDefinition: questionnaireFixture});
-    // const questionnaireTest = generateReferenceNumber(questionnaire);
 
     // Act
     const result = transformQuestionnaire(questionnaireObj);
