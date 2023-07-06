@@ -8752,6 +8752,9 @@
                         "meta": {
                             "classifications": {
                                 "theme": "about-application"
+                            },
+                            "integration": {
+                                "hideOnSummary": true
                             }
                         },
                         "type": "string",

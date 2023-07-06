@@ -118,6 +118,7 @@ function createQuestionnaire({
         const summaryTitle = meta.summary && meta.summary.title;
         const themeId = meta.classifications && meta.classifications.theme;
         const format = meta.keywords && meta.keywords.format;
+        const hideOnSummary = meta.integration && meta.integration.hideOnSummary;
         const transformedData = {...dataAttribute};
 
         delete transformedData.meta;
@@ -136,6 +137,10 @@ function createQuestionnaire({
 
         if (format !== undefined) {
             transformedData.format = format;
+        }
+
+        if (hideOnSummary !== undefined) {
+            transformedData.hideOnSummary = hideOnSummary;
         }
 
         return transformedData;

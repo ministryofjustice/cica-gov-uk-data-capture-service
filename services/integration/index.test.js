@@ -51,4 +51,15 @@ describe('Integration Service', () => {
         expect(result.declaration.value).toBe('i-agree');
         expect(result.declaration.valueLabel).toBe('I have read and understood the declaration');
     });
+
+    it('Should keep hideOnSummary flags.', () => {
+        const newOrExistingQuestion = result.themes
+            .find(theme => {
+                return theme.id === 'about-application';
+            })
+            .values.find(question => {
+                return question.id === 'q--new-or-existing-application';
+            });
+        expect(newOrExistingQuestion.hideOnSummary).toBeTruthy();
+    });
 });
