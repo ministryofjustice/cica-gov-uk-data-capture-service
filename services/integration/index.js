@@ -124,19 +124,20 @@ function transformQuestionnaire(questionnaire) {
  * @param {questionnaire} questionnaire - The raw questionnaire object
  * @returns JSON object from bucket with key matching given key
  */
-async function transformAndUpload(questionnaire) {
-    const output = transformQuestionnaire(questionnaire);
+async function transformAndUpload(data) {
+    data.logger.info(`Transforming questionnaire with id: ${data.questionnaire.getId()}`);
+    const output = transformQuestionnaire(data.questionnaire);
 
     // Populate the dateSubmitted from the database
-    const db = createQuestionnaireDAL({}); // TODO: doesn't compile due to not injecting logger
-    output.meta.dateSubmitted = await db.getQuestionnaireModifiedDate(questionnaire.getId());
+    const db = createQuestionnaireDAL({logger: data.logger}); // TODO: doesn't compile due to not injecting logger
+    output.meta.dateSubmitted = await db.getQuestionnaireModifiedDate(data.questionnaire.getId());
 
     // Upload transformed JSON into S3
     const s3Service = createS3Service({}); // TODO: doesn't compile due to not injecting logger
     const submissionResponse = await s3Service.uploadFile(
         output,
         process.env.S3_BUCKET_NAME,
-        `${questionnaire.getId()}.json`
+        `${data.questionnaire.getId()}.json`
     );
     return submissionResponse;
 }
@@ -187,16 +188,24 @@ function setCaseReference(caseReference, questionnaireId, questionnaire, logger)
  * @param {questionnaire} questionnaire - The raw questionnaire object
  * @returns result from update to the database.
  */
-async function generateReferenceNumber(questionnaire, logger) {
+async function generateReferenceNumber(data) {
     // Get new references from db
     let caseReference;
-    const db = createQuestionnaireDAL({logger});
-    caseReference = await db.getReferenceNumber(getIsFatal(questionnaire), questionnaire.getId());
+    const db = createQuestionnaireDAL({logger: data.logger});
+    caseReference = await db.getReferenceNumber(
+        getIsFatal(data.questionnaire),
+        data.questionnaire.getId()
+    );
 
-    const dateSubmitted = await db.getQuestionnaireModifiedDate(questionnaire.id);
+    const dateSubmitted = await db.getQuestionnaireModifiedDate(data.questionnaire.getId());
     caseReference = updateCaseReferenceWithYear(caseReference, dateSubmitted);
     // Update application object with reference
-    const result = setCaseReference(caseReference, questionnaire.getId(), questionnaire, logger);
+    const result = setCaseReference(
+        caseReference,
+        data.questionnaire.getId(),
+        data.questionnaire,
+        data.logger
+    );
 
     // return something
     return result;

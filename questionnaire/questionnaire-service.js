@@ -14,6 +14,8 @@ const createLegacyNotifyService = require('../services/sqs/legacy-sms-message-bu
 const createSlackService = require('../services/slack');
 const questionnaireResource = require('./resources/questionnaire-resource');
 const createQuestionnaireHelper = require('./questionnaire/questionnaire');
+const {createTaskRunner} = require('./questionnaire/utils/taskRunner');
+const {generateReferenceNumber} = require('../services/integration');
 
 const defaults = {};
 defaults.createQuestionnaireDAL = require('./questionnaire-dal');
@@ -125,9 +127,49 @@ function createQuestionnaireService({
 
         return null;
     }
+
+    async function callTaskRunner(questionnaireId) {
+        // get questionnaire object to pass to task runner
+        const questionnaireDefinition = await getQuestionnaire(questionnaireId);
+        const questionnaire = createQuestionnaireHelper({
+            questionnaireDefinition
+        });
+
+        // create task runner
+        const taskRunner = createTaskRunner({
+            taskImplementations: {
+                generateReferenceNumber
+            },
+            context: {
+                questionnaire,
+                logger
+            }
+        });
+
+        // run task
+        await taskRunner.run({
+            id: 'task1',
+            type: 'generateReferenceNumber',
+            data: {
+                questionnaire: '$.questionnaire',
+                logger: '$.logger'
+            }
+        });
+    }
+
     async function startSubmission(questionnaireId) {
         try {
             await updateQuestionnaireSubmissionStatus(questionnaireId, 'IN_PROGRESS');
+
+            try {
+                // call task runner with sequential tasks
+                logger.info('Calling task runnner for submission jobs');
+                await callTaskRunner(questionnaireId);
+            } catch (err) {
+                // this would also add the results of the task to the questionnaire
+                logger.error({err}, 'TASKS FAILED');
+                await updateQuestionnaireSubmissionStatus(questionnaireId, 'FAILED');
+            }
 
             const sqsService = createSqsService({logger});
             const submissionResponse = await sqsService.send(

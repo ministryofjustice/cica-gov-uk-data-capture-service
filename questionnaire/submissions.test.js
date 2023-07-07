@@ -118,6 +118,19 @@ jest.doMock('./questionnaire-dal.js', () =>
         },
         updateQuestionnaireSubmissionStatus,
         retrieveCaseReferenceNumber: () => undefined,
+        getReferenceNumber: () => '1234567',
+        getQuestionnaireModifiedDate: questionnaireId => {
+            if (questionnaireId === '285cb104-0c15-4a9c-9840-cb1007f098fb') {
+                return new Date(2022, 1, 1);
+            }
+
+            throw new VError(
+                {
+                    name: 'ResourceNotFound'
+                },
+                `Questionnaire "${questionnaireId}" not found`
+            );
+        },
         getQuestionnaireIdsBySubmissionStatus: () => [
             '4ddb0208-f7da-4237-a244-34e7e58d2ddf',
             '93259f6d-1826-4e97-ba39-53b4e232dd81'

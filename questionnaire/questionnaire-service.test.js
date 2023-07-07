@@ -132,6 +132,9 @@ jest.doMock('./questionnaire-dal', () => {
             }
             return questionnaireFixture;
         }),
+        getReferenceNumber: jest.fn(() => {
+            return '12345678';
+        }),
         updateQuestionnaire: jest.fn(() => {
             return 'ok!';
         }),
