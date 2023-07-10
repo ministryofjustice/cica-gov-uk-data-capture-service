@@ -76,7 +76,7 @@ jest.doMock('./questionnaire-dal.js', () =>
             );
         },
         updateQuestionnaireModifiedDate: () => undefined,
-        getReferenceNumber: () => '1234567'
+        getReferenceNumber: () => '123456'
     }))
 );
 

@@ -4,7 +4,7 @@ const VError = require('verror');
 
 const createS3Service = require('../s3');
 const createQuestionnaireDAL = require('../../questionnaire/questionnaire-dal');
-const createQuestionnaireService = require('../../questionnaire/questionnaire-service');
+const questionnaire = require('../../questionnaire/test-fixtures/res/get_questionnaire');
 
 /**
  * Concatenate two arrays.
@@ -147,7 +147,7 @@ async function transformAndUpload(data) {
  * @returns boolean representing whether application is fatal
  */
 function getIsFatal(questionnaire) {
-    const answers = questionnaire.getAnswers();
+    const answers = questionnaire.answers;
 
     return (
         answers['p-applicant-fatal-claim'] &&
@@ -173,11 +173,10 @@ function updateCaseReferenceWithYear(caseReference, dateSubmitted) {
  * @returns result of update
  */
 function setCaseReference(caseReference, data) {
-    const systemSection = data.questionnaire.getSection('system');
-    const questionnaireService = createQuestionnaireService({logger: data.logger})
-    systemSection['case-reference'] = caseReference;
-    const result = questionnaireService.createAnswers(data.questionnaire.getId(), 'system', systemSection);
-    return result;
+    const systemSection = data.questionnaire.answers.system;
+    data.questionnaire.answers.system['case-reference'] = !systemSection['case-reference']? caseReference: systemSection['case-reference'];
+    return data.questionnaire;
+    
 }
 
 /**
@@ -192,16 +191,18 @@ async function generateReferenceNumber(data) {
     const db = createQuestionnaireDAL({logger: data.logger});
     caseReference = await db.getReferenceNumber(
         getIsFatal(data.questionnaire),
-        data.questionnaire.getId()
+        data.questionnaire.id
     );
 
-    const dateSubmitted = await db.getQuestionnaireModifiedDate(data.questionnaire.getId());
+    const dateSubmitted = await db.getQuestionnaireModifiedDate(data.questionnaire.id);
     caseReference = updateCaseReferenceWithYear(caseReference, dateSubmitted);
     // Update application object with reference
-    const result = setCaseReference(
+    const updatedQuestionnaire = setCaseReference(
         caseReference,
         data
     );
+
+    db.updateQuestionnaire(updatedQuestionnaire.id, updatedQuestionnaire)
 
     // return something
     return result;

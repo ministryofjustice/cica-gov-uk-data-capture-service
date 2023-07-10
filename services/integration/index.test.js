@@ -64,7 +64,7 @@ describe('Integration Service', () => {
     });
 
     it('Should get false for isFatal if not fatal', () => {
-        const isFatal = getIsFatal(questionnaireObj);
+        const isFatal = getIsFatal(questionnaireFixture);
         expect(isFatal).toBeFalsy();
     });
 

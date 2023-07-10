@@ -130,11 +130,7 @@ function createQuestionnaireService({
 
     async function callTaskRunner(questionnaireId) {
         // get questionnaire object to pass to task runner
-        const questionnaireDefinition = await getQuestionnaire(questionnaireId);
-        const questionnaire = createQuestionnaireHelper({
-            questionnaireDefinition
-        });
-
+        const questionnaire = await db.getQuestionnaire(questionnaireId);
         // create task runner
         const taskRunner = createTaskRunner({
             taskImplementations: {
