@@ -152,7 +152,6 @@ function getIsFatal(questionnaire) {
     return (
         answers['p-applicant-fatal-claim'] &&
         answers['p-applicant-fatal-claim']['q-applicant-fatal-claim']
-
     );
 }
 
