@@ -147,14 +147,19 @@ function createQuestionnaireService({
         });
 
         // run task
-        await taskRunner.run({
-            id: 'task1',
-            type: 'generateReferenceNumber',
-            data: {
-                questionnaire: '$.questionnaire',
-                logger: '$.logger'
-            }
-        });
+        try {
+            await taskRunner.run({
+                id: 'task1',
+                type: 'generateReferenceNumber',
+                data: {
+                    questionnaire: '$.questionnaire',
+                    logger: '$.logger'
+                }
+            });
+        } catch(err) {
+            const task = err.task;
+            logger.error(task.result)
+        }
     }
 
     async function startSubmission(questionnaireId) {

@@ -65,7 +65,7 @@ jest.doMock('./questionnaire-dal.js', () =>
         retrieveCaseReferenceNumber: () => '12345678',
         getQuestionnaireModifiedDate: questionnaireId => {
             if (questionnaireId === '285cb104-0c15-4a9c-9840-cb1007f098fb') {
-                return '2022-08-16T21:52:29Z';
+                return new Date(2022, 1, 1);
             }
 
             throw new VError(

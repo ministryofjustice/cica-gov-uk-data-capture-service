@@ -25,6 +25,9 @@ function populateQuestionnaireAnswersObject(questionaireInstance) {
             'q-applicant-enter-your-telephone-number': '07701234567',
             'q-applicant-enter-your-email-address': 'somebody@cica.gov.uk'
         },
+        "p-applicant-fatal-claim": {
+            "q-applicant-fatal-claim": false
+        },
         system: {
             'case-reference': '21\\123456'
         },
