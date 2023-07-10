@@ -151,11 +151,8 @@ function getIsFatal(questionnaire) {
 
     return (
         answers['p-applicant-fatal-claim'] &&
-<<<<<<< Updated upstream
-        answers['p-applicant-fatal-claim.q-applicant-fatal-claim']
-=======
         answers['p-applicant-fatal-claim']['q-applicant-fatal-claim']
->>>>>>> Stashed changes
+
     );
 }
 
