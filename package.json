@@ -7,7 +7,7 @@
     },
     "scripts": {
         "start": "node ./bin/www",
-        "start:dev": "nodemon -L -e .js,.json,.njk,.yml --ignore openapi/openapi.json --ignore openapi/openapi-v2.json --exec npm run build:run:dev",
+        "start:dev": "nodemon  -L -e .js,.json,.njk,.yml --ignore openapi/openapi.json --ignore openapi/openapi-v2.json --exec npm run build:run:dev",
         "openapi:build-v1": "speccy lint openapi/src/openapi-src.json -j && speccy resolve ./openapi/src/openapi-src.json -j | yaml2json --pretty --indentation 4 --save - > ./openapi/openapi.json && node ./openapi/src/dereference-openapi.js",
         "openapi:build-v2": "speccy lint openapi/src/openapi-src-v2.json -j && speccy resolve ./openapi/src/openapi-src-v2.json -j | yaml2json --pretty --indentation 4 --save - > ./openapi/openapi-v2.json && node ./openapi/src/dereference-openapi-v2.js",
         "openapi:build": "npm run openapi:build-v1 && npm run openapi:build-v2",
