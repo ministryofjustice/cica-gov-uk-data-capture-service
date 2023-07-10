@@ -151,7 +151,11 @@ function getIsFatal(questionnaire) {
 
     return (
         answers['p-applicant-fatal-claim'] &&
+<<<<<<< Updated upstream
         answers['p-applicant-fatal-claim.q-applicant-fatal-claim']
+=======
+        answers['p-applicant-fatal-claim']['q-applicant-fatal-claim']
+>>>>>>> Stashed changes
     );
 }
 
@@ -172,13 +176,11 @@ function updateCaseReferenceWithYear(caseReference, dateSubmitted) {
  * @param {questionnaire} questionnaire
  * @returns result of update
  */
-function setCaseReference(caseReference, questionnaireId, questionnaire, logger) {
-    const systemSection = questionnaire.getSection('system');
-    const questionnaireService = createQuestionnaireService({
-        logger
-    });
+function setCaseReference(caseReference, data) {
+    const systemSection = data.questionnaire.getSection('system');
+    const questionnaireService = createQuestionnaireService({logger: data.logger})
     systemSection['case-reference'] = caseReference;
-    const result = questionnaireService.createAnswers(questionnaireId, 'system', systemSection);
+    const result = questionnaireService.createAnswers(data.questionnaire.getId(), 'system', systemSection);
     return result;
 }
 
@@ -202,9 +204,7 @@ async function generateReferenceNumber(data) {
     // Update application object with reference
     const result = setCaseReference(
         caseReference,
-        data.questionnaire.getId(),
-        data.questionnaire,
-        data.logger
+        data
     );
 
     // return something
