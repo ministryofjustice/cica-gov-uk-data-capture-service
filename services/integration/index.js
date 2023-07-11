@@ -152,7 +152,7 @@ async function transformAndUpload(data) {
  * @returns boolean representing whether application is fatal
  */
 function getIsFatal(questionnaire) {
-    const answers = questionnaire.answers;
+    const {answers} = questionnaire;
 
     return (
         answers['p-applicant-fatal-claim'] &&
@@ -179,9 +179,10 @@ function updateCaseReferenceWithYear(caseReference, dateSubmitted) {
  */
 function setCaseReference(caseReference, data) {
     const systemSection = data.questionnaire.answers.system;
-    data.questionnaire.answers.system['case-reference'] = !systemSection['case-reference']? caseReference: systemSection['case-reference'];
+    data.questionnaire.answers.system['case-reference'] = !systemSection['case-reference']
+        ? caseReference
+        : systemSection['case-reference'];
     return data.questionnaire;
-    
 }
 
 /**
@@ -202,12 +203,9 @@ async function generateReferenceNumber(data) {
     const dateSubmitted = await db.getQuestionnaireModifiedDate(data.questionnaire.id);
     caseReference = updateCaseReferenceWithYear(caseReference, dateSubmitted);
     // Update application object with reference
-    const updatedQuestionnaire = setCaseReference(
-        caseReference,
-        data
-    );
+    const updatedQuestionnaire = setCaseReference(caseReference, data);
 
-    db.updateQuestionnaire(updatedQuestionnaire.id, updatedQuestionnaire)
+    const result = db.updateQuestionnaire(updatedQuestionnaire.id, updatedQuestionnaire);
 
     // return something
     return result;

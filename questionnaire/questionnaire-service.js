@@ -153,9 +153,9 @@ function createQuestionnaireService({
                     logger: '$.logger'
                 }
             });
-        } catch(err) {
-            const task = err.task;
-            logger.error(task.result)
+        } catch (err) {
+            const {task} = err;
+            logger.error(task.result);
         }
 
         // run task
@@ -168,9 +168,9 @@ function createQuestionnaireService({
                     logger: '$.logger'
                 }
             });
-        } catch(err) {
-            const task = err.task;
-            logger.error(task.result)
+        } catch (err) {
+            const {task} = err;
+            logger.error(task.result);
         }
     }
 
