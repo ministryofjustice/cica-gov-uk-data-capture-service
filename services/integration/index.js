@@ -4,7 +4,7 @@ const VError = require('verror');
 
 const createS3Service = require('../s3');
 const createQuestionnaireDAL = require('../../questionnaire/questionnaire-dal');
-const questionnaire = require('../../questionnaire/test-fixtures/res/get_questionnaire');
+const createQuestionnaireHelper = require('../../questionnaire/questionnaire/questionnaire');
 
 /**
  * Concatenate two arrays.
@@ -125,19 +125,24 @@ function transformQuestionnaire(questionnaire) {
  * @returns JSON object from bucket with key matching given key
  */
 async function transformAndUpload(data) {
-    data.logger.info(`Transforming questionnaire with id: ${data.questionnaire.getId()}`);
-    const output = transformQuestionnaire(data.questionnaire);
+    // create question helper
+    const questionnaire = createQuestionnaireHelper({
+        questionnaireDefinition: data.questionnaire
+    });
+    data.logger.info(`Transforming questionnaire with id: ${questionnaire.getId()}`);
+    const output = transformQuestionnaire(questionnaire);
 
     // Populate the dateSubmitted from the database
-    const db = createQuestionnaireDAL({logger: data.logger}); // TODO: doesn't compile due to not injecting logger
-    output.meta.dateSubmitted = await db.getQuestionnaireModifiedDate(data.questionnaire.getId());
+    const db = createQuestionnaireDAL({logger: data.logger});
+    output.meta.dateSubmitted = await db.getQuestionnaireModifiedDate(questionnaire.getId());
 
     // Upload transformed JSON into S3
-    const s3Service = createS3Service({}); // TODO: doesn't compile due to not injecting logger
+    data.logger.info(`Uploading to S3 for questionnaire with id: ${questionnaire.getId()}`);
+    const s3Service = createS3Service({logger: data.logger});
     const submissionResponse = await s3Service.uploadFile(
         output,
         process.env.S3_BUCKET_NAME,
-        `${data.questionnaire.getId()}.json`
+        `${questionnaire.getId()}.json`
     );
     return submissionResponse;
 }

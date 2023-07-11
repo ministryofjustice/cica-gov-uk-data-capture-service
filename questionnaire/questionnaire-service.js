@@ -15,7 +15,7 @@ const createSlackService = require('../services/slack');
 const questionnaireResource = require('./resources/questionnaire-resource');
 const createQuestionnaireHelper = require('./questionnaire/questionnaire');
 const {createTaskRunner} = require('./questionnaire/utils/taskRunner');
-const {generateReferenceNumber} = require('../services/integration');
+const {generateReferenceNumber, transformAndUpload} = require('../services/integration');
 
 const defaults = {};
 defaults.createQuestionnaireDAL = require('./questionnaire-dal');
@@ -130,14 +130,15 @@ function createQuestionnaireService({
 
     async function callTaskRunner(questionnaireId) {
         // get questionnaire object to pass to task runner
-        const questionnaire = await db.getQuestionnaire(questionnaireId);
+        const questionnaireDef = await db.getQuestionnaire(questionnaireId);
         // create task runner
         const taskRunner = createTaskRunner({
             taskImplementations: {
-                generateReferenceNumber
+                generateReferenceNumber,
+                transformAndUpload
             },
             context: {
-                questionnaire,
+                questionnaireDef,
                 logger
             }
         });
@@ -148,7 +149,22 @@ function createQuestionnaireService({
                 id: 'task1',
                 type: 'generateReferenceNumber',
                 data: {
-                    questionnaire: '$.questionnaire',
+                    questionnaire: '$.questionnaireDef',
+                    logger: '$.logger'
+                }
+            });
+        } catch(err) {
+            const task = err.task;
+            logger.error(task.result)
+        }
+
+        // run task
+        try {
+            await taskRunner.run({
+                id: 'task2',
+                type: 'transformAndUpload',
+                data: {
+                    questionnaire: '$.questionnaireDef',
                     logger: '$.logger'
                 }
             });
