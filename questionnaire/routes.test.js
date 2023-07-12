@@ -230,17 +230,8 @@ describe('Openapi version 2023-05-17 validation', () => {
                 }
                 return 'NOT_STARTED';
             }),
-            getSubmissionResponseData: jest.fn(questionnaireId => {
-                return {
-                    id: questionnaireId,
-                    type: 'submissions',
-                    attributes: {
-                        questionnaireId,
-                        submitted: true,
-                        status: ['NOT_STARTED'],
-                        caseReferenceNumber: '11/111111'
-                    }
-                };
+            getSubmissionResponseData: jest.fn(() => {
+                return 'ok';
             }),
             getProgressEntries: jest.fn((id, query) => {
                 if (query.filter.sectionId === 'p--not-a-valid-section') {

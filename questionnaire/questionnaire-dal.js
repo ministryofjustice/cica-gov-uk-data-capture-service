@@ -323,6 +323,54 @@ function questionnaireDAL(spec) {
         return result;
     }
 
+    async function getQuestionnaireSubmissionStatusByOwner(questionnaireId) {
+        let result;
+        try {
+            result = await db.query(
+                "SELECT submission_status FROM questionnaire WHERE id = $1 AND questionnaire -> 'answers' -> 'owner' ->> 'owner-id' = $2",
+                [questionnaireId, ownerId]
+            );
+
+            if (result.rowCount === 0) {
+                // No instance was found
+                throw new VError(
+                    {
+                        name: 'ResourceNotFound'
+                    },
+                    `Questionnaire "${questionnaireId}" not found`
+                );
+            }
+        } catch (err) {
+            throw err;
+        }
+
+        return result.rows[0].submission_status;
+    }
+
+    async function updateQuestionnaireSubmissionStatusByOwner(questionnaireId, submissionStatus) {
+        let result;
+
+        try {
+            result = await db.query(
+                "UPDATE questionnaire SET submission_status = $1, modified = current_timestamp, expires = (CASE WHEN questionnaire -> 'answers' -> 'owner' ->> 'is-authenticated' = 'true' THEN expires WHEN questionnaire -> 'answers' -> 'owner' ->> 'is-authenticated' = 'false' THEN current_timestamp + INTERVAL '30 minutes' END) WHERE id = $2 AND questionnaire -> 'answers' -> 'owner' ->> 'owner-id' = $3",
+                [submissionStatus, questionnaireId, ownerId]
+            );
+
+            if (result.rowCount === 0) {
+                throw new VError(
+                    {
+                        name: 'UpdateNotSuccessful'
+                    },
+                    `Questionnaire "${questionnaireId}" submission status not successfully updated to "${submissionStatus}"`
+                );
+            }
+        } catch (err) {
+            throw err;
+        }
+
+        return result;
+    }
+
     return Object.freeze({
         createQuestionnaire,
         updateQuestionnaire,
@@ -338,7 +386,9 @@ function questionnaireDAL(spec) {
         getMetadataByOwner,
         getQuestionnaireMetadataByOwner,
         updateExpiryForAuthenticatedOwner,
-        updateQuestionnaireModifiedDateByOwner
+        updateQuestionnaireModifiedDateByOwner,
+        getQuestionnaireSubmissionStatusByOwner,
+        updateQuestionnaireSubmissionStatusByOwner
     });
 }
 
