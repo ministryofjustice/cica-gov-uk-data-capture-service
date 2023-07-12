@@ -289,7 +289,7 @@ function setRole(role, answers) {
         return answers;
     }
 
-    if (role === 'rep.applicant:adult:capable') {
+    if (role === 'rep.applicant:adult:capable.nonDeceased') {
         answers['p-applicant-who-are-you-applying-for'] = {
             'q-applicant-who-are-you-applying-for': 'someone-else'
         };
@@ -298,6 +298,26 @@ function setRole(role, answers) {
         };
         answers['p-applicant-can-handle-affairs'] = {
             'q-applicant-capable': true
+        };
+        answers['p-applicant-fatal-claim'] = {
+            'q-applicant-fatal-claim': false
+        };
+
+        return answers;
+    }
+
+    if (role === 'rep.applicant:adult:capable.deceased') {
+        answers['p-applicant-who-are-you-applying-for'] = {
+            'q-applicant-who-are-you-applying-for': 'someone-else'
+        };
+        answers['p-applicant-are-you-18-or-over'] = {
+            'q-applicant-are-you-18-or-over': true
+        };
+        answers['p-applicant-can-handle-affairs'] = {
+            'q-applicant-capable': true
+        };
+        answers['p-applicant-fatal-claim'] = {
+            'q-applicant-fatal-claim': true
         };
 
         return answers;
@@ -492,8 +512,12 @@ describe('template', () => {
             describe('And user role is rep', () => {
                 it.each([
                     {
-                        roles: ['rep.applicant:adult:capable'],
+                        roles: ['rep.applicant:adult:capable.nonDeceased'],
                         templateId: 'b21f1aa7-cc16-41e7-8b8e-5c69e52f21f9'
+                    },
+                    {
+                        roles: ['rep.applicant:adult:capable.deceased'],
+                        templateId: 'ed98bf04-f338-47cf-b949-4367d8f8b707'
                     },
                     {
                         roles: ['rep.mainapplicant.applicant:adult:incapable', 'incapable'],
@@ -660,8 +684,12 @@ describe('template', () => {
             describe('And user role is rep', () => {
                 it.each([
                     {
-                        roles: ['rep.applicant:adult:capable'],
+                        roles: ['rep.applicant:adult:capable.nonDeceased'],
                         templateId: 'b51e5e19-f469-4f8a-a5a2-00499da6f027'
+                    },
+                    {
+                        roles: ['rep.applicant:adult:capable.deceased'],
+                        templateId: '1e764481-69c1-4d5a-8a05-fbadc09aa47c'
                     },
                     {
                         roles: ['rep.mainapplicant.applicant:adult:incapable', 'incapable'],
