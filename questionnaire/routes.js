@@ -169,7 +169,11 @@ router
     .get(permissions('read:questionnaires'), async (req, res, next) => {
         try {
             const {questionnaireId} = req.params;
-            const questionnaireService = createQuestionnaireService({logger: req.log});
+            const questionnaireService = createQuestionnaireService({
+                logger: req.log,
+                apiVersion: req.get('Dcs-Api-Version'),
+                ownerId: req.get('On-Behalf-Of')
+            });
             const submissionStatus = await questionnaireService.getQuestionnaireSubmissionStatus(
                 questionnaireId
             );
@@ -195,7 +199,11 @@ router
     .post(permissions('update:questionnaires'), async (req, res, next) => {
         try {
             const {questionnaireId} = req.params;
-            const questionnaireService = createQuestionnaireService({logger: req.log});
+            const questionnaireService = createQuestionnaireService({
+                logger: req.log,
+                apiVersion: req.get('Dcs-Api-Version'),
+                ownerId: req.get('On-Behalf-Of')
+            });
             const questionnaire = await questionnaireService.getQuestionnaire(questionnaireId);
 
             if (!questionnaire) {
