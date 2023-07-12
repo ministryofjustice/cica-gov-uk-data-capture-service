@@ -19,6 +19,7 @@ const ownerData = {
     isAuthenticated: false
 };
 const apiVersion = '2023-05-17';
+const validSubmissionStatus = 'IN_PROGRESS';
 
 beforeEach(() => {
     jest.clearAllMocks();
@@ -151,6 +152,18 @@ jest.doMock('./questionnaire-dal', () => {
             return 'ok!';
         }),
         updateQuestionnaireModifiedDateByOwner: jest.fn(() => {
+            return 'ok!';
+        }),
+        getQuestionnaireSubmissionStatus: jest.fn(() => {
+            return 'ok!';
+        }),
+        getQuestionnaireSubmissionStatusByOwner: jest.fn(() => {
+            return 'ok!';
+        }),
+        updateQuestionnaireSubmissionStatus: jest.fn(() => {
+            return 'ok!';
+        }),
+        updateQuestionnaireSubmissionStatusByOwner: jest.fn(() => {
             return 'ok!';
         })
     };
@@ -415,6 +428,38 @@ describe('Questionnaire Service', () => {
                 );
                 expect(
                     mockDalService.updateQuestionnaireModifiedDateByOwner
+                ).not.toHaveBeenCalled();
+            });
+        });
+
+        describe('getQuestionnaireSubmissionStatus', () => {
+            it('Should get the submission status of a questionnaire without owner data', async () => {
+                await questionnaireService.getQuestionnaireSubmissionStatus(validQuestionnaireId);
+
+                expect(mockDalService.getQuestionnaireSubmissionStatus).toHaveBeenCalledTimes(1);
+                expect(mockDalService.getQuestionnaireSubmissionStatus).toHaveBeenCalledWith(
+                    validQuestionnaireId
+                );
+                expect(
+                    mockDalService.getQuestionnaireSubmissionStatusByOwner
+                ).not.toHaveBeenCalled();
+            });
+        });
+
+        describe('updateQuestionnaireSubmissionStatus', () => {
+            it('Should update the submission status of a questionnaire without owner data', async () => {
+                await questionnaireService.updateQuestionnaireSubmissionStatus(
+                    validQuestionnaireId,
+                    validSubmissionStatus
+                );
+
+                expect(mockDalService.updateQuestionnaireSubmissionStatus).toHaveBeenCalledTimes(1);
+                expect(mockDalService.updateQuestionnaireSubmissionStatus).toHaveBeenCalledWith(
+                    validQuestionnaireId,
+                    validSubmissionStatus
+                );
+                expect(
+                    mockDalService.updateQuestionnaireSubmissionStatusByOwner
                 ).not.toHaveBeenCalled();
             });
         });
@@ -765,6 +810,37 @@ describe('Questionnaire Service', () => {
                     validQuestionnaireId
                 );
                 expect(mockDalService.updateQuestionnaireModifiedDate).not.toHaveBeenCalled();
+            });
+        });
+
+        describe('getQuestionnaireSubmissionStatus', () => {
+            it('Should get the submission status of a questionnaire without owner data', async () => {
+                await questionnaireService.getQuestionnaireSubmissionStatus(validQuestionnaireId);
+
+                expect(
+                    mockDalService.getQuestionnaireSubmissionStatusByOwner
+                ).toHaveBeenCalledTimes(1);
+                expect(mockDalService.getQuestionnaireSubmissionStatusByOwner).toHaveBeenCalledWith(
+                    validQuestionnaireId
+                );
+                expect(mockDalService.getQuestionnaireSubmissionStatus).not.toHaveBeenCalled();
+            });
+        });
+
+        describe('updateQuestionnaireSubmissionStatus', () => {
+            it('Should update the submission status of a questionnaire without owner data', async () => {
+                await questionnaireService.updateQuestionnaireSubmissionStatus(
+                    validQuestionnaireId,
+                    validSubmissionStatus
+                );
+
+                expect(
+                    mockDalService.updateQuestionnaireSubmissionStatusByOwner
+                ).toHaveBeenCalledTimes(1);
+                expect(
+                    mockDalService.updateQuestionnaireSubmissionStatusByOwner
+                ).toHaveBeenCalledWith(validQuestionnaireId, validSubmissionStatus);
+                expect(mockDalService.updateQuestionnaireSubmissionStatus).not.toHaveBeenCalled();
             });
         });
     });

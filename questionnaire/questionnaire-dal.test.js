@@ -7,6 +7,7 @@ const DB_QUERY_ROW_COUNT_ZERO_SUBMISSION_STATUS = 'ZERO_ROWS_SUBMISSION_STATUS';
 const DB_QUERY_SUCCESS_QUESTIONNAIRE_ID = '12345678-c50d-4050-805f-108995067913';
 const ownerId = 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6';
 const dbQueryErrorOwnerId = 'urn:uuid:11111111-7dec-11d0-a765-00a0c91e6bf6';
+const validSubmissionStatus = 'IN_PROGRESS';
 
 beforeEach(() => {
     jest.clearAllMocks();
@@ -365,6 +366,81 @@ describe('questionnaire data access layer', () => {
 
             await expect(
                 questionnaireDAL.updateQuestionnaireModifiedDateByOwner(questionnaireId)
+            ).rejects.toThrow('DB_QUERY_ERROR');
+        });
+    });
+
+    describe('getQuestionnaireSubmissionStatusByOwner', () => {
+        const query =
+            "SELECT submission_status FROM questionnaire WHERE id = $1 AND questionnaire -> 'answers' -> 'owner' ->> 'owner-id' = $2";
+        it('Should run a get submission status query and filter by questionnaireId and ownerId', async () => {
+            const questionnaireId = DB_QUERY_SUCCESS_QUESTIONNAIRE_ID;
+            const questionnaireDAL = createQuestionnaireDAL({logger: jest.fn(), ownerId});
+            await questionnaireDAL.getQuestionnaireSubmissionStatusByOwner(questionnaireId);
+
+            expect(mockedDbService.query).toHaveBeenCalledTimes(1);
+            expect(mockedDbService.query).toHaveBeenCalledWith(query, [questionnaireId, ownerId]);
+        });
+
+        it('Should error gracefully if no rows are updated', async () => {
+            const questionnaireId = DB_QUERY_ROW_COUNT_ZERO_QUESTIONNAIRE_ID;
+            const questionnaireDAL = createQuestionnaireDAL({logger: jest.fn(), ownerId});
+            await expect(
+                questionnaireDAL.getQuestionnaireSubmissionStatusByOwner(questionnaireId)
+            ).rejects.toThrow('Questionnaire "c9723b81-c50d-4050-805f-108995067913" not found');
+        });
+
+        it('Should handle errors gracefully', async () => {
+            const questionnaireId = DB_QUERY_ERROR_QUESTIONNAIRE_ID;
+            const questionnaireDAL = createQuestionnaireDAL({logger: jest.fn(), ownerId});
+
+            await expect(
+                questionnaireDAL.getQuestionnaireSubmissionStatusByOwner(questionnaireId)
+            ).rejects.toThrow('DB_QUERY_ERROR');
+        });
+    });
+
+    describe('updateQuestionnaireSubmissionStatusByOwner', () => {
+        const query =
+            "UPDATE questionnaire SET submission_status = $1, modified = current_timestamp, expires = (CASE WHEN questionnaire -> 'answers' -> 'owner' ->> 'is-authenticated' = 'true' THEN expires WHEN questionnaire -> 'answers' -> 'owner' ->> 'is-authenticated' = 'false' THEN current_timestamp + INTERVAL '30 minutes' END) WHERE id = $2 AND questionnaire -> 'answers' -> 'owner' ->> 'owner-id' = $3";
+        it('Should run an update submission status query and filter by questionnaireId and ownerId', async () => {
+            const questionnaireId = DB_QUERY_SUCCESS_QUESTIONNAIRE_ID;
+            const questionnaireDAL = createQuestionnaireDAL({logger: jest.fn(), ownerId});
+            await questionnaireDAL.updateQuestionnaireSubmissionStatusByOwner(
+                questionnaireId,
+                validSubmissionStatus
+            );
+
+            expect(mockedDbService.query).toHaveBeenCalledTimes(1);
+            expect(mockedDbService.query).toHaveBeenCalledWith(query, [
+                validSubmissionStatus,
+                questionnaireId,
+                ownerId
+            ]);
+        });
+
+        it('Should error gracefully if no rows are updated', async () => {
+            const questionnaireId = DB_QUERY_ROW_COUNT_ZERO_QUESTIONNAIRE_ID;
+            const questionnaireDAL = createQuestionnaireDAL({logger: jest.fn(), ownerId});
+            await expect(
+                questionnaireDAL.updateQuestionnaireSubmissionStatusByOwner(
+                    questionnaireId,
+                    validSubmissionStatus
+                )
+            ).rejects.toThrow(
+                `Questionnaire "c9723b81-c50d-4050-805f-108995067913" submission status not successfully updated to "IN_PROGRESS"`
+            );
+        });
+
+        it('Should handle errors gracefully', async () => {
+            const questionnaireId = DB_QUERY_ERROR_QUESTIONNAIRE_ID;
+            const questionnaireDAL = createQuestionnaireDAL({logger: jest.fn(), ownerId});
+
+            await expect(
+                questionnaireDAL.updateQuestionnaireSubmissionStatusByOwner(
+                    questionnaireId,
+                    validSubmissionStatus
+                )
             ).rejects.toThrow('DB_QUERY_ERROR');
         });
     });
