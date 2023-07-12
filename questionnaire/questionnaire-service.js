@@ -9,13 +9,17 @@ const createQRouter = require('q-router');
 const uuidv4 = require('uuid/v4');
 const ajvFormatsMobileUk = require('ajv-formats-mobile-uk');
 const templates = require('./templates');
-const createSqsService = require('../services/sqs');
 const createLegacyNotifyService = require('../services/sqs/legacy-sms-message-bus');
+const createSqsService = require('../services/sqs');
 const createSlackService = require('../services/slack');
 const questionnaireResource = require('./resources/questionnaire-resource');
 const createQuestionnaireHelper = require('./questionnaire/questionnaire');
 const {createTaskRunner} = require('./questionnaire/utils/taskRunner');
-const {generateReferenceNumber, transformAndUpload} = require('../services/integration');
+const {
+    generateReferenceNumber
+} = require('./questionnaire/utils/taskRunner/tasks/generateCaseReference');
+const {transformAndUpload} = require('./questionnaire/utils/taskRunner/tasks/transformAndUpload');
+const sequential = require('./questionnaire/utils/taskRunner/tasks/sequential/index');
 
 const defaults = {};
 defaults.createQuestionnaireDAL = require('./questionnaire-dal');
@@ -134,6 +138,7 @@ function createQuestionnaireService({
         // create task runner
         const taskRunner = createTaskRunner({
             taskImplementations: {
+                sequential,
                 generateReferenceNumber,
                 transformAndUpload
             },
@@ -143,30 +148,29 @@ function createQuestionnaireService({
             }
         });
 
-        // run task
+        // run tasks sequentially
         try {
             await taskRunner.run({
-                id: 'task1',
-                type: 'generateReferenceNumber',
-                data: {
-                    questionnaire: '$.questionnaireDef',
-                    logger: '$.logger'
-                }
-            });
-        } catch (err) {
-            const {task} = err;
-            logger.error(task.result);
-        }
-
-        // run task
-        try {
-            await taskRunner.run({
-                id: 'task2',
-                type: 'transformAndUpload',
-                data: {
-                    questionnaire: '$.questionnaireDef',
-                    logger: '$.logger'
-                }
+                id: 'task0',
+                type: 'sequential',
+                data: [
+                    {
+                        id: 'task1',
+                        type: 'generateReferenceNumber',
+                        data: {
+                            questionnaire: '$.questionnaireDef',
+                            logger: '$.logger'
+                        }
+                    },
+                    {
+                        id: 'task2',
+                        type: 'transformAndUpload',
+                        data: {
+                            questionnaire: '$.questionnaireDef',
+                            logger: '$.logger'
+                        }
+                    }
+                ]
             });
         } catch (err) {
             const {task} = err;
@@ -180,7 +184,7 @@ function createQuestionnaireService({
 
             try {
                 // call task runner with sequential tasks
-                logger.info('Calling task runnner for submission jobs');
+                logger.info('Calling task runner for submission jobs');
                 await callTaskRunner(questionnaireId);
             } catch (err) {
                 // this would also add the results of the task to the questionnaire

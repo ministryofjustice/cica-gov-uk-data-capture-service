@@ -2,9 +2,9 @@
 
 const VError = require('verror');
 
-const createS3Service = require('../s3');
-const createQuestionnaireDAL = require('../../questionnaire/questionnaire-dal');
-const createQuestionnaireHelper = require('../../questionnaire/questionnaire/questionnaire');
+const createS3Service = require('../../../../../../services/s3');
+const createQuestionnaireDAL = require('../../../../../questionnaire-dal');
+const createQuestionnaireHelper = require('../../../../questionnaire');
 
 /**
  * Concatenate two arrays.
@@ -147,74 +147,7 @@ async function transformAndUpload(data) {
     return submissionResponse;
 }
 
-/**
- * @param {questionnaire} questionnaire - The raw questionnaire object
- * @returns boolean representing whether application is fatal
- */
-function getIsFatal(questionnaire) {
-    const {answers} = questionnaire;
-
-    return (
-        answers['p-applicant-fatal-claim'] &&
-        answers['p-applicant-fatal-claim']['q-applicant-fatal-claim']
-    );
-}
-
-/**
- *
- * @param {string} caseReference generated caseReference
- * @param {date} dateSubmitted the date the questionnaire was submitted
- * @returns
- */
-function updateCaseReferenceWithYear(caseReference, dateSubmitted) {
-    const year = (dateSubmitted.getFullYear() % 100).toString();
-    return `${year}\\${caseReference}`;
-}
-
-/**
- *
- * @param {string} caseReference
- * @param {questionnaire} questionnaire
- * @returns result of update
- */
-function setCaseReference(caseReference, data) {
-    const systemSection = data.questionnaire.answers.system;
-    data.questionnaire.answers.system['case-reference'] = !systemSection['case-reference']
-        ? caseReference
-        : systemSection['case-reference'];
-    return data.questionnaire;
-}
-
-/**
- * Generates a reference number for the database
- * and updates the questionnaire object in the database.
- * @param {questionnaire} questionnaire - The raw questionnaire object
- * @returns result from update to the database.
- */
-async function generateReferenceNumber(data) {
-    // Get new references from db
-    let caseReference;
-    const db = createQuestionnaireDAL({logger: data.logger});
-    caseReference = await db.getReferenceNumber(
-        getIsFatal(data.questionnaire),
-        data.questionnaire.id
-    );
-
-    const dateSubmitted = await db.getQuestionnaireModifiedDate(data.questionnaire.id);
-    caseReference = updateCaseReferenceWithYear(caseReference, dateSubmitted);
-    // Update application object with reference
-    const updatedQuestionnaire = setCaseReference(caseReference, data);
-
-    const result = db.updateQuestionnaire(updatedQuestionnaire.id, updatedQuestionnaire);
-
-    // return something
-    return result;
-}
-
 module.exports = {
     transformAndUpload,
-    transformQuestionnaire,
-    getIsFatal,
-    updateCaseReferenceWithYear,
-    generateReferenceNumber
+    transformQuestionnaire
 };
