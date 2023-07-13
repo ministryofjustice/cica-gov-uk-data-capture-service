@@ -10,7 +10,6 @@ async function runTasksSequentially(taskDefinitions, run) {
             // eslint-disable-next-line no-await-in-loop
             const result = await run(taskDefinition);
 
-            // taskStates[result.task.id] = result.task;
             taskStates.push(result.task);
         } catch (err) {
             taskStates.push(err.task);

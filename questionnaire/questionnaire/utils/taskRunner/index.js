@@ -46,7 +46,13 @@ function mutateObjectValues({key, value, valueTransformers, isMutableObject, ign
     return mutatedValue;
 }
 
-function createTaskRunner({taskImplementations = {}, context = {}}) {
+function createTaskRunner({
+    taskImplementations = {},
+    context = {},
+    defaults = {
+        retries: 2
+    }
+}) {
     function hasTask(taskId) {
         return Object.hasOwn(taskImplementations, taskId);
     }
@@ -62,7 +68,9 @@ function createTaskRunner({taskImplementations = {}, context = {}}) {
     async function run(
         factoryDefinition,
         {
-            retries = factoryDefinition.retries === undefined ? 2 : factoryDefinition.retries,
+            retries = factoryDefinition.retries === undefined
+                ? defaults.retries
+                : factoryDefinition.retries,
             retryCount = 0
         } = {}
     ) {
