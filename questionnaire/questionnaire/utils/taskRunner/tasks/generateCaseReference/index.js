@@ -93,7 +93,7 @@ async function generateReferenceNumber(data) {
     let updatedQuestionnaire = await setCaseReference(data, db, 'case-reference');
 
     // If
-    if (getIsSplit(data)) {
+    if (getIsSplit(data.questionnaire)) {
         updatedQuestionnaire = await setCaseReference(
             updatedQuestionnaire,
             db,
