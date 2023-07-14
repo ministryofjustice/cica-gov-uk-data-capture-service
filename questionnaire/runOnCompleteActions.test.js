@@ -359,7 +359,7 @@ describe('template', () => {
         describe('With "email" as the contact preference', () => {
             describe('And user role is applicant', () => {
                 it('should send a confirmation email to applicant:adult', async () => {
-                    const application = templates['sexual-assault'](
+                    const application = templates['release-questionnaire'](
                         '54fbbaaf-e199-47ce-a450-1813be6a5f5c'
                     );
                     application.answers = {
@@ -407,7 +407,7 @@ describe('template', () => {
                         templateId: '80843f77-a68c-4d7a-b3c9-42fd0de271c2'
                     }
                 ])('should send a confirmation email to $roles', async ({roles, templateId}) => {
-                    const application = templates['sexual-assault'](
+                    const application = templates['release-questionnaire'](
                         '54fbbaaf-e199-47ce-a450-1813be6a5f5c'
                     );
 
@@ -466,7 +466,7 @@ describe('template', () => {
                         templateId: 'fb865d9c-37b1-4077-b519-aacfe42c9951'
                     }
                 ])('should send a confirmation email to $roles', async ({roles, templateId}) => {
-                    const application = templates['sexual-assault'](
+                    const application = templates['release-questionnaire'](
                         '54fbbaaf-e199-47ce-a450-1813be6a5f5c'
                     );
 
@@ -510,7 +510,7 @@ describe('template', () => {
         describe('With "sms" as the contact preference', () => {
             describe('And user role is applicant', () => {
                 it('should send a confirmation sms to applicant:adult', async () => {
-                    const application = templates['sexual-assault'](
+                    const application = templates['release-questionnaire'](
                         '54fbbaaf-e199-47ce-a450-1813be6a5f5c'
                     );
 
@@ -558,7 +558,7 @@ describe('template', () => {
                         templateId: 'd2185426-2177-4049-a5b1-b9c6b12e1a79'
                     }
                 ])('should send a confirmation sms to $roles', async ({roles, templateId}) => {
-                    const application = templates['sexual-assault'](
+                    const application = templates['release-questionnaire'](
                         '54fbbaaf-e199-47ce-a450-1813be6a5f5c'
                     );
 
@@ -616,7 +616,7 @@ describe('template', () => {
                         templateId: '29674076-46ba-4150-adf0-5215c8fe8aa9'
                     }
                 ])('should send a confirmation email to $roles', async ({roles, templateId}) => {
-                    const application = templates['sexual-assault'](
+                    const application = templates['release-questionnaire'](
                         '54fbbaaf-e199-47ce-a450-1813be6a5f5c'
                     );
 

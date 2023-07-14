@@ -115,7 +115,7 @@ describe('/questionnaires', () => {
                     .send({
                         data: {
                             type: 'questionnaires',
-                            attributes: {templateName: 'sexual-assault'}
+                            attributes: {templateName: 'release-questionnaire'}
                         }
                     });
 

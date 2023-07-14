@@ -7,7 +7,7 @@ const templates = require('../templates');
 const questionnaireFixtures = require('./test-fixtures');
 const createDatasetService = require('./dataset-service');
 
-const templateInstance = templates['sexual-assault']('648f4664-7233-4b66-89f3-ef6e1d2f5fa8');
+const templateInstance = templates['release-questionnaire']('648f4664-7233-4b66-89f3-ef6e1d2f5fa8');
 const sectionDefinitions = {
     applicantDeclaration: templateInstance.sections['p-applicant-declaration'],
     mainApplicantDeclarationUnder12:
