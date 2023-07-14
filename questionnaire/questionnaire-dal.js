@@ -249,6 +249,34 @@ function questionnaireDAL(spec) {
         return referenceNumber.rows[0].referencenumber;
     }
 
+    async function getMetadataByOwner() {
+        let result;
+        try {
+            result = await db.query(
+                `SELECT id, created, modified, expires, submission_status FROM questionnaire WHERE questionnaire -> 'answers' -> 'owner' ->> 'owner-id' = $1`,
+                [ownerId]
+            );
+        } catch (err) {
+            throw err;
+        }
+
+        return result.rowCount ? result.rows : [];
+    }
+
+    async function getQuestionnaireMetadataByOwner(questionnaireId) {
+        let result;
+        try {
+            result = await db.query(
+                `SELECT id, created, modified, expires, submission_status FROM questionnaire WHERE id = $1 AND questionnaire -> 'answers' -> 'owner' ->> 'owner-id' = $2`,
+                [questionnaireId, ownerId]
+            );
+        } catch (err) {
+            throw err;
+        }
+
+        return result.rowCount ? result.rows : [];
+    }
+
     return Object.freeze({
         createQuestionnaire,
         updateQuestionnaire,
@@ -260,7 +288,9 @@ function questionnaireDAL(spec) {
         updateQuestionnaireModifiedDate,
         updateQuestionnaireByOwner,
         getQuestionnaireByOwner,
-        getReferenceNumber
+        getReferenceNumber,
+        getMetadataByOwner,
+        getQuestionnaireMetadataByOwner
     });
 }
 

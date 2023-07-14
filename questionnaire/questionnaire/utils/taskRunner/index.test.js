@@ -88,7 +88,7 @@ describe('Task Runner', () => {
         });
 
         it('should retry the task if it fails', async () => {
-            const retries = 3;
+            const defaultRetries = 2;
             let taskAttempts = 0;
 
             try {
@@ -103,20 +103,19 @@ describe('Task Runner', () => {
 
                 await taskRunner.run({
                     id: 'task1',
-                    type: 'simpleTaskFactory',
-                    retries
+                    type: 'simpleTaskFactory'
                 });
             } catch (err) {
                 // no catch required
             }
 
-            const expectedTaskAttempts = 1 + retries;
+            const expectedTaskAttempts = 1 + defaultRetries;
 
             expect(taskAttempts).toEqual(expectedTaskAttempts);
         });
 
-        it('should allow 0 retries', async () => {
-            const retries = 0;
+        it('should allow retry default to be overridden when creating a task runner (defaults to 2)', async () => {
+            const userDefinedRetriesForAllTasks = 1;
             let taskAttempts = 0;
 
             try {
@@ -126,13 +125,77 @@ describe('Task Runner', () => {
                             taskAttempts += 1;
                             throw Error('foo');
                         }
+                    },
+                    defaults: {
+                        retries: userDefinedRetriesForAllTasks
+                    }
+                });
+
+                await taskRunner.run({
+                    id: 'task1',
+                    type: 'simpleTaskFactory'
+                });
+            } catch (err) {
+                // no catch required
+            }
+
+            const expectedTaskAttempts = 1 + userDefinedRetriesForAllTasks;
+
+            expect(taskAttempts).toEqual(expectedTaskAttempts);
+        });
+
+        it('should allow retries to be set per task', async () => {
+            const userDefinedRetriesForAllTasks = 3;
+            const userDefinedRetriesForSpecificTask = 1;
+            let taskAttempts = 0;
+
+            try {
+                const taskRunner = createTaskRunner({
+                    taskImplementations: {
+                        simpleTaskFactory: async () => {
+                            taskAttempts += 1;
+                            throw Error('foo');
+                        }
+                    },
+                    defaults: {
+                        retries: userDefinedRetriesForAllTasks
                     }
                 });
 
                 await taskRunner.run({
                     id: 'task1',
                     type: 'simpleTaskFactory',
-                    retries
+                    retries: userDefinedRetriesForSpecificTask
+                });
+            } catch (err) {
+                // no catch required
+            }
+
+            const expectedTaskAttempts = 1 + userDefinedRetriesForSpecificTask;
+
+            expect(taskAttempts).toEqual(expectedTaskAttempts);
+        });
+
+        it('should allow 0 retries', async () => {
+            const userDefinedRetries = 0;
+            let taskAttempts = 0;
+
+            try {
+                const taskRunner = createTaskRunner({
+                    taskImplementations: {
+                        simpleTaskFactory: async () => {
+                            taskAttempts += 1;
+                            throw Error('foo');
+                        }
+                    },
+                    defaults: {
+                        retries: userDefinedRetries
+                    }
+                });
+
+                await taskRunner.run({
+                    id: 'task1',
+                    type: 'simpleTaskFactory'
                 });
             } catch (err) {
                 // no catch required

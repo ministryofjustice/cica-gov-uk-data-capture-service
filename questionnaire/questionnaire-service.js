@@ -669,6 +669,22 @@ function createQuestionnaireService({
         return actionResults;
     }
 
+    async function getAnswersBySectionId(questionnaireId, sectionId) {
+        const questionnaire = await getQuestionnaire(questionnaireId);
+
+        if (questionnaire.progress.includes(sectionId)) {
+            return {
+                data: buildAnswerResource(sectionId, questionnaire)
+            };
+        }
+        throw new VError(
+            {
+                name: 'ResourceNotFound'
+            },
+            `Answer resource "${sectionId}" does not exist for ${questionnaireId}`
+        );
+    }
+
     return Object.freeze({
         createQuestionnaire,
         createAnswers,
@@ -681,7 +697,8 @@ function createQuestionnaireService({
         updateQuestionnaireSubmissionStatus,
         updateQuestionnaireModifiedDate,
         getSessionResource,
-        runOnCompleteActions
+        runOnCompleteActions,
+        getAnswersBySectionId
     });
 }
 

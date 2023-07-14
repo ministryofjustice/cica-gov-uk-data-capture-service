@@ -6,6 +6,7 @@ const {expressjwt: validateJWT} = require('express-jwt');
 const createQuestionnaireService = require('./questionnaire-service');
 const permissions = require('../middleware/route-permissions');
 const datasetRouter = require('./dataset/dataset-routes.js');
+const metadataRouter = require('./metadata/metadata-routes.js');
 
 const router = express.Router();
 const rxTemplateName = /^[a-zA-Z0-9-]{1,30}$/;
@@ -42,6 +43,7 @@ router.route('/').post(permissions('create:questionnaires'), async (req, res, ne
 });
 
 router.use(datasetRouter);
+router.use(metadataRouter);
 
 router
     .route('/:questionnaireId/sections/answers')
@@ -120,6 +122,22 @@ router
 
 router
     .route('/:questionnaireId/sections/:sectionId/answers')
+    .get(permissions('read:questionnaires'), async (req, res, next) => {
+        try {
+            const questionnaireService = createQuestionnaireService({
+                logger: req.log,
+                apiVersion: req.get('Dcs-Api-Version'),
+                ownerId: req.get('On-Behalf-Of')
+            });
+            const response = await questionnaireService.getAnswersBySectionId(
+                req.params.questionnaireId,
+                req.params.sectionId
+            );
+            res.status(200).json(response);
+        } catch (err) {
+            next(err);
+        }
+    })
     .post(permissions('update:questionnaires'), async (req, res, next) => {
         try {
             // There can only every be one "answers" block per section
