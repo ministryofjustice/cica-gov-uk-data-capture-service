@@ -1,11 +1,16 @@
 'use strict';
 
-const {getIsFatal, updateCaseReferenceWithYear} = require('.');
+const {getIsFatal, getIsSplit, updateCaseReferenceWithYear} = require('.');
 const questionnaireFixture = require('../../../../../test-fixtures/res/questionnaireCompleteForCheckYourAnswers');
 
 describe('Integration Service', () => {
     it('Should get false for isFatal if not fatal', () => {
         const isFatal = getIsFatal(questionnaireFixture);
+        expect(isFatal).toBeFalsy();
+    });
+
+    it('Should get false for isSplit if not fatal', () => {
+        const isFatal = getIsSplit(questionnaireFixture);
         expect(isFatal).toBeFalsy();
     });
 

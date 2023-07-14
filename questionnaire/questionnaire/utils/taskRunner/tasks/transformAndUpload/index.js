@@ -111,7 +111,8 @@ function transformQuestionnaire(questionnaire) {
 
     return {
         meta: {
-            caseReference: questionnaire.getAnswers().system['case-reference']
+            caseReference: questionnaire.getAnswers().system['case-reference'],
+            funeralReference: questionnaire.getAnswers().system['secondary-reference']
         },
         themes: themeContent,
         declaration: getDeclaration(questionnaire)

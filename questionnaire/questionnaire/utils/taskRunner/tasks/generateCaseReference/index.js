@@ -16,6 +16,23 @@ function getIsFatal(questionnaire) {
 }
 
 /**
+ * @param {questionnaire} questionnaire - The raw questionnaire object
+ * @returns boolean representing whether application is a split fatal/funeral application
+ */
+function getIsSplit(questionnaire) {
+    const {answers} = questionnaire;
+
+    return (
+        answers['p-applicant-funeral-costs-paid'] &&
+        answers['p-applicant-funeral-costs-paid']['q-applicant-funeral-costs-paid'] &&
+        !(
+            answers['p-applicant-claim-type'] &&
+            answers['p-applicant-claim-type']['q-applicant-claim-type']
+        )
+    );
+}
+
+/**
  *
  * @param {string} caseReference generated caseReference
  * @param {date} dateSubmitted the date the questionnaire was submitted
@@ -32,13 +49,13 @@ function updateCaseReferenceWithYear(caseReference, dateSubmitted) {
  * @param {questionnaire} questionnaire
  * @returns result of update
  */
-async function setCaseReference(data, db) {
+async function setCaseReference(data, db, section) {
     const systemSection = data.questionnaire.answers.system;
     let caseReference;
 
-    if (systemSection['case-reference']) {
+    if (systemSection[section]) {
         data.logger.info(
-            `Questionnaire with id ${data.questionnaire.id} already has case reference ${systemSection['case-reference']}. Case reference not updated`
+            `Questionnaire with id ${data.questionnaire.id} already has ${section} ${systemSection[section]}. ${section} not updated`
         );
         return data.questionnaire;
     }
@@ -53,14 +70,14 @@ async function setCaseReference(data, db) {
 
     const dateSubmitted = await db.getQuestionnaireModifiedDate(data.questionnaire.id);
     data.logger.info(
-        `Adding year to case reference for questionnaire with id ${data.questionnaire.id} and case reference ${caseReference}`
+        `Adding year to ${section} for questionnaire with id ${data.questionnaire.id} and case reference ${caseReference}`
     );
     caseReference = updateCaseReferenceWithYear(caseReference, dateSubmitted);
 
     data.logger.info(
-        `Updating questionnaire with id ${data.questionnaire.id} with case reference ${caseReference}`
+        `Updating questionnaire with id ${data.questionnaire.id} with ${section} ${caseReference}`
     );
-    data.questionnaire.answers.system['case-reference'] = caseReference;
+    data.questionnaire.answers.system[section] = caseReference;
     return data.questionnaire;
 }
 
@@ -73,7 +90,16 @@ async function setCaseReference(data, db) {
 async function generateReferenceNumber(data) {
     const db = createQuestionnaireDAL({logger: data.logger});
     // Update application object with reference
-    const updatedQuestionnaire = await setCaseReference(data, db);
+    let updatedQuestionnaire = await setCaseReference(data, db, 'case-reference');
+
+    // If
+    if (getIsSplit(data)) {
+        updatedQuestionnaire = await setCaseReference(
+            updatedQuestionnaire,
+            db,
+            'secondary-reference'
+        );
+    }
 
     data.logger.info(`Updating questionnaire with id ${data.questionnaire.id}`);
     const result = db.updateQuestionnaire(updatedQuestionnaire.id, updatedQuestionnaire);
@@ -84,6 +110,7 @@ async function generateReferenceNumber(data) {
 
 module.exports = {
     getIsFatal,
+    getIsSplit,
     updateCaseReferenceWithYear,
     generateReferenceNumber
 };
