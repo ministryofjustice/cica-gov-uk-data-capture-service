@@ -92,7 +92,7 @@ async function generateReferenceNumber(data) {
     // Update application object with reference
     let updatedQuestionnaire = await setCaseReference(data, db, 'case-reference');
 
-    // If
+    // If split application then we need to generate a secondary reference number too
     if (getIsSplit(data.questionnaire)) {
         updatedQuestionnaire = await setCaseReference(
             updatedQuestionnaire,
@@ -112,5 +112,6 @@ module.exports = {
     getIsFatal,
     getIsSplit,
     updateCaseReferenceWithYear,
-    generateReferenceNumber
+    generateReferenceNumber,
+    setCaseReference
 };

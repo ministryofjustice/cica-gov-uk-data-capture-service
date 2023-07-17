@@ -4,7 +4,7 @@ const {transformQuestionnaire} = require('.');
 const questionnaireFixture = require('../../../../../test-fixtures/res/questionnaireCompleteForCheckYourAnswers');
 const questionnaire = require('../../../../questionnaire');
 
-describe('Transform and upload task', () => {
+describe('Integration Service', () => {
     // Arrange
     const questionnaireObj = questionnaire({questionnaireDefinition: questionnaireFixture});
 
