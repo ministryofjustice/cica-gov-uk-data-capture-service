@@ -20,6 +20,7 @@ const {
 } = require('./questionnaire/utils/taskRunner/tasks/generateCaseReference');
 const {transformAndUpload} = require('./questionnaire/utils/taskRunner/tasks/transformAndUpload');
 const sequential = require('./questionnaire/utils/taskRunner/tasks/sequential/index');
+const {sendSubmissionMessageToSQS} = require('./questionnaire/utils/taskRunner/tasks/postToSQS');
 
 const defaults = {};
 defaults.createQuestionnaireDAL = require('./questionnaire-dal');
@@ -140,7 +141,8 @@ function createQuestionnaireService({
             taskImplementations: {
                 sequential,
                 generateReferenceNumber,
-                transformAndUpload
+                transformAndUpload,
+                sendSubmissionMessageToSQS
             },
             context: {
                 questionnaireDef,
@@ -165,6 +167,14 @@ function createQuestionnaireService({
                     {
                         id: 'task2',
                         type: 'transformAndUpload',
+                        data: {
+                            questionnaire: '$.questionnaireDef',
+                            logger: '$.logger'
+                        }
+                    },
+                    {
+                        id: 'task3',
+                        type: 'sendSubmissionMessageToSQS',
                         data: {
                             questionnaire: '$.questionnaireDef',
                             logger: '$.logger'

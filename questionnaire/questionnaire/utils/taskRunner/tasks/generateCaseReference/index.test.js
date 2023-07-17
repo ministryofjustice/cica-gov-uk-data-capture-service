@@ -3,7 +3,7 @@
 const {getIsFatal, getIsSplit, updateCaseReferenceWithYear} = require('.');
 const questionnaireFixture = require('../../../../../test-fixtures/res/questionnaireCompleteForCheckYourAnswers');
 
-describe('Integration Service', () => {
+describe('Generate Case reference', () => {
     it('Should get false for isFatal if not fatal', () => {
         const isFatal = getIsFatal(questionnaireFixture);
         expect(isFatal).toBeFalsy();
