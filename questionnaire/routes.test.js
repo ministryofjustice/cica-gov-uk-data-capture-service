@@ -5,6 +5,9 @@
 const request = require('supertest');
 const VError = require('verror');
 
+const completeQuestionnaireWithoutCRN = require('./test-fixtures/res/questionnaireCompleteWithoutCRN');
+const incompleteQuestionnaireWithoutCRN = require('./test-fixtures/res/questionnaireIncompleteWithoutCRN');
+
 beforeEach(() => {
     jest.resetModules();
     jest.unmock('./questionnaire-service.js');
@@ -218,6 +221,27 @@ describe('Openapi version 2023-05-17 validation', () => {
                     }
                 };
             }),
+            getQuestionnaireSubmissionStatus: jest.fn(questionnaireId => {
+                if (questionnaireId === '11111111-0c15-4a9c-9840-cb1007f098fb') {
+                    return undefined;
+                }
+                if (questionnaireId === '44444444-0c15-4a9c-9840-cb1007f098fb') {
+                    return 'IN_PROGRESS';
+                }
+                return 'NOT_STARTED';
+            }),
+            getSubmissionResponseData: jest.fn(questionnaireId => {
+                return {
+                    id: questionnaireId,
+                    type: 'submissions',
+                    attributes: {
+                        questionnaireId,
+                        submitted: true,
+                        status: ['NOT_STARTED'],
+                        caseReferenceNumber: '11/111111'
+                    }
+                };
+            }),
             getProgressEntries: jest.fn((id, query) => {
                 if (query.filter.sectionId === 'p--not-a-valid-section') {
                     throw new VError(
@@ -250,7 +274,19 @@ describe('Openapi version 2023-05-17 validation', () => {
             updateQuestionnaireSubmissionStatus: jest.fn(() => {
                 return 'ok';
             }),
-            getQuestionnaire: jest.fn(() => {
+            getQuestionnaire: jest.fn(questionnaireId => {
+                if (questionnaireId === '00000000-0c15-4a9c-9840-cb1007f098fb') {
+                    return undefined;
+                }
+                if (
+                    questionnaireId === '22222222-0c15-4a9c-9840-cb1007f098fb' ||
+                    questionnaireId === '44444444-0c15-4a9c-9840-cb1007f098fb'
+                ) {
+                    return completeQuestionnaireWithoutCRN;
+                }
+                if (questionnaireId === '33333333-0c15-4a9c-9840-cb1007f098fb') {
+                    return incompleteQuestionnaireWithoutCRN;
+                }
                 return 'ok';
             }),
             runOnCompleteActions: jest.fn(() => {
@@ -282,6 +318,9 @@ describe('Openapi version 2023-05-17 validation', () => {
                 return 'ok';
             }),
             getSessionResource: jest.fn(() => {
+                return 'ok';
+            }),
+            validateAllAnswers: jest.fn(() => {
                 return 'ok';
             })
         };
@@ -1030,6 +1069,292 @@ describe('Openapi version 2023-05-17 validation', () => {
                     .set('On-Behalf-Of', `urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6`)
                     .set('Dcs-Api-Version', '2023-05-17');
                 expect(response.statusCode).toEqual(200);
+            });
+        });
+    });
+
+    describe('GET /questionnaires/:questionnaireId/submissions', () => {
+        it('should return status code 401 if bearer token is NOT valid', async () => {
+            const response = await request(app)
+                .get('/api/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/submissions')
+                .set('Authorization', `Bearer I-AM-INVALID`)
+                .set('Content-Type', 'application/vnd.api+json')
+                .set('On-Behalf-Of', `urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6`)
+                .set('Dcs-Api-Version', '2023-05-17');
+            expect(response.body).toHaveProperty('errors');
+            expect(response.body.errors[0].status).toEqual(401);
+            expect(response.body.errors[0].detail).toEqual('jwt malformed');
+        });
+
+        it('should return status code 403 if the bearer token has insufficient scope', async () => {
+            // THIS IS A TOKEN WITH A DUMMY SCOPE
+            const dummyToken =
+                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJkYXRhLWNhcHR1cmUtc2VydmljZSIsImlzcyI6IiQuYXVkIiwianRpIjoiNTFhODljYWUtM2Q1MC00ZDc1LTliMmEtMjU2NzliODgwMTkxIiwic3ViIjoiY2ljYS13ZWIiLCJzY29wZSI6ImNyZWF0ZTpub3RoaW5nIiwiaWF0IjoxNjgwNzk4NDU5fQ.97LgtlW_dcAV0Xno6BsbVmuyhLtq4gCoVWGQ56_VmEk';
+            const response = await request(app)
+                .get('/api/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/submissions')
+                .set('Authorization', `Bearer ${dummyToken}`)
+                .set('Content-Type', 'application/vnd.api+json')
+                .set('On-Behalf-Of', `urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6`)
+                .set('Dcs-Api-Version', '2023-05-17');
+            expect(response.body).toHaveProperty('errors');
+            expect(response.body.errors[0].status).toEqual(403);
+            expect(response.body.errors[0].detail).toEqual('Insufficient scope');
+        });
+
+        it('should return status code 404 if the query string contains incorrect data', async () => {
+            const response = await request(app)
+                .get('/api/questionnaires/11111111-0c15-4a9c-9840-cb1007f098fb/submissions')
+                .set('Authorization', `Bearer ${token}`)
+                .set('Content-Type', 'application/vnd.api+json')
+                .set('On-Behalf-Of', `urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6`)
+                .set('Dcs-Api-Version', '2023-05-17');
+            expect(response.body).toHaveProperty('errors');
+            expect(response.body.errors[0].status).toEqual(404);
+            expect(response.body.errors[0].detail).toEqual(
+                'Questionnaire with questionnaireId "11111111-0c15-4a9c-9840-cb1007f098fb" does not exist'
+            );
+        });
+
+        describe('Requests made MUST include owner data', () => {
+            it('should return status code 400 if owner data is NOT included in the request header', async () => {
+                const response = await request(app)
+                    .get('/api/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/submissions')
+                    .set('Authorization', `Bearer ${token}`)
+                    .set('Content-Type', 'application/vnd.api+json')
+                    .set('Dcs-Api-Version', '2023-05-17');
+                expect(response.body).toHaveProperty('errors');
+                expect(response.body.errors[0].status).toEqual(400);
+                expect(response.body.errors[0].detail).toEqual(
+                    "should have required property 'on-behalf-of'"
+                );
+            });
+
+            it('should return status code 200 if owner data is included in the header', async () => {
+                const response = await request(app)
+                    .get('/api/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/submissions')
+                    .set('Authorization', `Bearer ${token}`)
+                    .set('Content-Type', 'application/vnd.api+json')
+                    .set('On-Behalf-Of', `urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6`)
+                    .set('Dcs-Api-Version', '2023-05-17');
+                expect(response.statusCode).toEqual(200);
+            });
+        });
+
+        describe('Requests made MUST include "Dcs-Api-Version" header', () => {
+            it('should return status code 400 if "Dcs-Api-Version" is NOT included in the header', async () => {
+                const response = await request(app)
+                    .get('/api/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/submissions')
+                    .set('Authorization', `Bearer ${token}`)
+                    .set('Content-Type', 'application/vnd.api+json')
+                    .set('On-Behalf-Of', `urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6`);
+                expect(response.body).toHaveProperty('errors');
+                expect(response.body.errors[0].status).toEqual(400);
+                expect(response.body.errors[0].detail).toEqual(
+                    "should have required property 'dcs-api-version'"
+                );
+            });
+
+            it('should return status code 200 if "Dcs-Api-Version" is included in the header', async () => {
+                const response = await request(app)
+                    .get('/api/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/submissions')
+                    .set('Authorization', `Bearer ${token}`)
+                    .set('Content-Type', 'application/vnd.api+json')
+                    .set('On-Behalf-Of', `urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6`)
+                    .set('Dcs-Api-Version', '2023-05-17');
+                expect(response.statusCode).toEqual(200);
+            });
+        });
+    });
+
+    describe('POST /questionnaires/:questionnaireId/submissions', () => {
+        it('should return status code 401 if bearer token is NOT valid', async () => {
+            const response = await request(app)
+                .post('/api/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/submissions')
+                .set('Authorization', `Bearer I-AM-INVALID`)
+                .set('Content-Type', 'application/vnd.api+json')
+                .set('On-Behalf-Of', `urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6`)
+                .set('Dcs-Api-Version', '2023-05-17')
+                .send({
+                    data: {
+                        type: 'submissions',
+                        attributes: {
+                            questionnaireId: '285cb104-0c15-4a9c-9840-cb1007f098fb'
+                        }
+                    }
+                });
+            expect(response.body).toHaveProperty('errors');
+            expect(response.body.errors[0].status).toEqual(401);
+            expect(response.body.errors[0].detail).toEqual('jwt malformed');
+        });
+
+        it('should return status code 403 if the bearer token has insufficient scope', async () => {
+            // THIS IS A TOKEN WITH A DUMMY SCOPE
+            const dummyToken =
+                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJkYXRhLWNhcHR1cmUtc2VydmljZSIsImlzcyI6IiQuYXVkIiwianRpIjoiNTFhODljYWUtM2Q1MC00ZDc1LTliMmEtMjU2NzliODgwMTkxIiwic3ViIjoiY2ljYS13ZWIiLCJzY29wZSI6ImNyZWF0ZTpub3RoaW5nIiwiaWF0IjoxNjgwNzk4NDU5fQ.97LgtlW_dcAV0Xno6BsbVmuyhLtq4gCoVWGQ56_VmEk';
+            const response = await request(app)
+                .post('/api/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/submissions')
+                .set('Authorization', `Bearer ${dummyToken}`)
+                .set('Content-Type', 'application/vnd.api+json')
+                .set('On-Behalf-Of', `urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6`)
+                .set('Dcs-Api-Version', '2023-05-17')
+                .send({
+                    data: {
+                        type: 'submissions',
+                        attributes: {
+                            questionnaireId: '285cb104-0c15-4a9c-9840-cb1007f098fb'
+                        }
+                    }
+                });
+            expect(response.body).toHaveProperty('errors');
+            expect(response.body.errors[0].status).toEqual(403);
+            expect(response.body.errors[0].detail).toEqual('Insufficient scope');
+        });
+
+        it('should return status code 404 if the query string contains incorrect data', async () => {
+            const response = await request(app)
+                .post('/api/questionnaires/00000000-0c15-4a9c-9840-cb1007f098fb/submissions')
+                .set('Authorization', `Bearer ${token}`)
+                .set('Content-Type', 'application/vnd.api+json')
+                .set('On-Behalf-Of', `urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6`)
+                .set('Dcs-Api-Version', '2023-05-17')
+                .send({
+                    data: {
+                        type: 'submissions',
+                        attributes: {
+                            questionnaireId: '00000000-0c15-4a9c-9840-cb1007f098fb'
+                        }
+                    }
+                });
+            expect(response.body).toHaveProperty('errors');
+            expect(response.body.errors[0].status).toEqual(404);
+            expect(response.body.errors[0].detail).toEqual(
+                'Questionnaire with questionnaireId "00000000-0c15-4a9c-9840-cb1007f098fb" does not exist'
+            );
+        });
+
+        it('should return status code 409 if the resource is not in a submittable state', async () => {
+            const response = await request(app)
+                .post('/api/questionnaires/33333333-0c15-4a9c-9840-cb1007f098fb/submissions')
+                .set('Authorization', `Bearer ${token}`)
+                .set('Content-Type', 'application/vnd.api+json')
+                .set('On-Behalf-Of', `urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6`)
+                .set('Dcs-Api-Version', '2023-05-17')
+                .send({
+                    data: {
+                        type: 'submissions',
+                        attributes: {
+                            questionnaireId: '33333333-0c15-4a9c-9840-cb1007f098fb'
+                        }
+                    }
+                });
+            expect(response.body).toHaveProperty('errors');
+            expect(response.body.errors[0].status).toEqual(409);
+            expect(response.body.errors[0].detail).toEqual(
+                'Questionnaire with ID "33333333-0c15-4a9c-9840-cb1007f098fb" is not in a submittable state'
+            );
+        });
+
+        it('should return status code 409 if there is a resource conflict', async () => {
+            const response = await request(app)
+                .post('/api/questionnaires/44444444-0c15-4a9c-9840-cb1007f098fb/submissions')
+                .set('Authorization', `Bearer ${token}`)
+                .set('Content-Type', 'application/vnd.api+json')
+                .set('On-Behalf-Of', `urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6`)
+                .set('Dcs-Api-Version', '2023-05-17')
+                .send({
+                    data: {
+                        type: 'submissions',
+                        attributes: {
+                            questionnaireId: '44444444-0c15-4a9c-9840-cb1007f098fb'
+                        }
+                    }
+                });
+            expect(response.body).toHaveProperty('errors');
+            expect(response.body.errors[0].status).toEqual(409);
+            expect(response.body.errors[0].detail).toEqual(
+                'Submission resource with ID "44444444-0c15-4a9c-9840-cb1007f098fb" already exists'
+            );
+        });
+
+        describe('Requests made MUST include owner data', () => {
+            it('should return status code 400 if owner data is NOT included in the request header', async () => {
+                const response = await request(app)
+                    .post('/api/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/submissions')
+                    .set('Authorization', `Bearer ${token}`)
+                    .set('Content-Type', 'application/vnd.api+json')
+                    .set('Dcs-Api-Version', '2023-05-17')
+                    .send({
+                        data: {
+                            type: 'submissions',
+                            attributes: {
+                                questionnaireId: '285cb104-0c15-4a9c-9840-cb1007f098fb'
+                            }
+                        }
+                    });
+                expect(response.body).toHaveProperty('errors');
+                expect(response.body.errors[0].status).toEqual(400);
+                expect(response.body.errors[0].detail).toEqual(
+                    "should have required property 'on-behalf-of'"
+                );
+            });
+
+            it('should return status code 201 if owner data is included in the header', async () => {
+                const response = await request(app)
+                    .post('/api/questionnaires/22222222-0c15-4a9c-9840-cb1007f098fb/submissions')
+                    .set('Authorization', `Bearer ${token}`)
+                    .set('Content-Type', 'application/vnd.api+json')
+                    .set('On-Behalf-Of', `urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6`)
+                    .set('Dcs-Api-Version', '2023-05-17')
+                    .send({
+                        data: {
+                            type: 'submissions',
+                            attributes: {
+                                questionnaireId: '22222222-0c15-4a9c-9840-cb1007f098fb'
+                            }
+                        }
+                    });
+                expect(response.statusCode).toEqual(201);
+            });
+        });
+
+        describe('Requests made MUST include "Dcs-Api-Version" header', () => {
+            it('should return status code 400 if "Dcs-Api-Version" is NOT included in the header', async () => {
+                const response = await request(app)
+                    .post('/api/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/submissions')
+                    .set('Authorization', `Bearer ${token}`)
+                    .set('Content-Type', 'application/vnd.api+json')
+                    .set('On-Behalf-Of', `urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6`)
+                    .send({
+                        data: {
+                            type: 'submissions',
+                            attributes: {
+                                questionnaireId: '285cb104-0c15-4a9c-9840-cb1007f098fb'
+                            }
+                        }
+                    });
+                expect(response.body).toHaveProperty('errors');
+                expect(response.body.errors[0].status).toEqual(400);
+                expect(response.body.errors[0].detail).toEqual(
+                    "should have required property 'dcs-api-version'"
+                );
+            });
+
+            it('should return status code 201 if "Dcs-Api-Version" is included in the header', async () => {
+                const response = await request(app)
+                    .post('/api/questionnaires/22222222-0c15-4a9c-9840-cb1007f098fb/submissions')
+                    .set('Authorization', `Bearer ${token}`)
+                    .set('Content-Type', 'application/vnd.api+json')
+                    .set('On-Behalf-Of', `urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6`)
+                    .set('Dcs-Api-Version', '2023-05-17')
+                    .send({
+                        data: {
+                            type: 'submissions',
+                            attributes: {
+                                questionnaireId: '22222222-0c15-4a9c-9840-cb1007f098fb'
+                            }
+                        }
+                    });
+                expect(response.statusCode).toEqual(201);
             });
         });
     });

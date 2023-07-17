@@ -1,16 +1,26 @@
 'use strict';
 
-const applicationTemplate = require('q-templates-application');
+const releaseApplicationTemplate = require('q-templates-application-release');
+const featureApplicationTemplate = require('q-templates-application-feature');
 
-const applicationTemplateAsJson = JSON.stringify(applicationTemplate);
+const releaseApplicationTemplateAsJson = JSON.stringify(releaseApplicationTemplate);
+const featureApplicationTemplateAsJson = JSON.stringify(featureApplicationTemplate);
 
-function getApplicationTemplateCopy() {
-    return JSON.parse(applicationTemplateAsJson);
+function getReleaseApplicationTemplateCopy() {
+    return JSON.parse(releaseApplicationTemplateAsJson);
+}
+
+function getFeatureApplicationTemplateCopy() {
+    return JSON.parse(featureApplicationTemplateAsJson);
 }
 
 module.exports = {
-    'sexual-assault': id => ({
+    'release-questionnaire': id => ({
         id,
-        ...getApplicationTemplateCopy()
+        ...getReleaseApplicationTemplateCopy()
+    }),
+    'feature-questionnaire': id => ({
+        id,
+        ...getFeatureApplicationTemplateCopy()
     })
 };

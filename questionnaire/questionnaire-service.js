@@ -89,13 +89,15 @@ function createQuestionnaireService({
     }
 
     async function getQuestionnaireSubmissionStatus(questionnaireId) {
-        const submissionStatus = await db.getQuestionnaireSubmissionStatus(questionnaireId);
-
-        return submissionStatus;
+        return apiVersion === '2023-05-17'
+            ? db.getQuestionnaireSubmissionStatusByOwner(questionnaireId)
+            : db.getQuestionnaireSubmissionStatus(questionnaireId);
     }
 
     async function updateQuestionnaireSubmissionStatus(questionnaireId, submissionStatus) {
-        await db.updateQuestionnaireSubmissionStatus(questionnaireId, submissionStatus);
+        return apiVersion === '2023-05-17'
+            ? db.updateQuestionnaireSubmissionStatusByOwner(questionnaireId, submissionStatus)
+            : db.updateQuestionnaireSubmissionStatus(questionnaireId, submissionStatus);
     }
 
     function getSection(sectionId, qRouter) {

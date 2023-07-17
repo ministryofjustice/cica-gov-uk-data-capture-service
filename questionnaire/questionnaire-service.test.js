@@ -13,12 +13,13 @@ const answers = {
     'q-some-section': true
 };
 const ownerId = 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6';
-const templatename = 'sexual-assault';
+const templateName = 'release-questionnaire';
 const ownerData = {
     id: ownerId,
     isAuthenticated: false
 };
 const apiVersion = '2023-05-17';
+const validSubmissionStatus = 'IN_PROGRESS';
 
 beforeEach(() => {
     jest.clearAllMocks();
@@ -152,6 +153,18 @@ jest.doMock('./questionnaire-dal', () => {
         }),
         updateQuestionnaireModifiedDateByOwner: jest.fn(() => {
             return 'ok!';
+        }),
+        getQuestionnaireSubmissionStatus: jest.fn(() => {
+            return 'ok!';
+        }),
+        getQuestionnaireSubmissionStatusByOwner: jest.fn(() => {
+            return 'ok!';
+        }),
+        updateQuestionnaireSubmissionStatus: jest.fn(() => {
+            return 'ok!';
+        }),
+        updateQuestionnaireSubmissionStatusByOwner: jest.fn(() => {
+            return 'ok!';
         })
     };
 
@@ -171,7 +184,7 @@ describe('Questionnaire Service', () => {
         });
         describe('createQuestionnaire', () => {
             it('Should create a questionnaire', async () => {
-                const actual = await questionnaireService.createQuestionnaire(templatename);
+                const actual = await questionnaireService.createQuestionnaire(templateName);
 
                 expect(actual.data).toMatchObject({
                     id: expect.any(String),
@@ -181,10 +194,10 @@ describe('Questionnaire Service', () => {
             });
 
             it('Should error if templateName not found', async () => {
-                const templatename = 'not-a-template';
+                const templateName = 'not-a-template';
 
                 await expect(
-                    questionnaireService.createQuestionnaire(templatename)
+                    questionnaireService.createQuestionnaire(templateName)
                 ).rejects.toThrow('Template "not-a-template" does not exist');
             });
         });
@@ -418,6 +431,38 @@ describe('Questionnaire Service', () => {
                 ).not.toHaveBeenCalled();
             });
         });
+
+        describe('getQuestionnaireSubmissionStatus', () => {
+            it('Should get the submission status of a questionnaire without owner data', async () => {
+                await questionnaireService.getQuestionnaireSubmissionStatus(validQuestionnaireId);
+
+                expect(mockDalService.getQuestionnaireSubmissionStatus).toHaveBeenCalledTimes(1);
+                expect(mockDalService.getQuestionnaireSubmissionStatus).toHaveBeenCalledWith(
+                    validQuestionnaireId
+                );
+                expect(
+                    mockDalService.getQuestionnaireSubmissionStatusByOwner
+                ).not.toHaveBeenCalled();
+            });
+        });
+
+        describe('updateQuestionnaireSubmissionStatus', () => {
+            it('Should update the submission status of a questionnaire without owner data', async () => {
+                await questionnaireService.updateQuestionnaireSubmissionStatus(
+                    validQuestionnaireId,
+                    validSubmissionStatus
+                );
+
+                expect(mockDalService.updateQuestionnaireSubmissionStatus).toHaveBeenCalledTimes(1);
+                expect(mockDalService.updateQuestionnaireSubmissionStatus).toHaveBeenCalledWith(
+                    validQuestionnaireId,
+                    validSubmissionStatus
+                );
+                expect(
+                    mockDalService.updateQuestionnaireSubmissionStatusByOwner
+                ).not.toHaveBeenCalled();
+            });
+        });
     });
 
     describe('DCS API Version 2023-05-17', () => {
@@ -429,7 +474,7 @@ describe('Questionnaire Service', () => {
         describe('createQuestionnaire', () => {
             it('Should create a questionnaire', async () => {
                 const actual = await questionnaireService.createQuestionnaire(
-                    templatename,
+                    templateName,
                     ownerData
                 );
 
@@ -441,15 +486,15 @@ describe('Questionnaire Service', () => {
             });
 
             it('Should error if templateName not found', async () => {
-                const templatename = 'not-a-template';
+                const templateName = 'not-a-template';
 
                 await expect(
-                    questionnaireService.createQuestionnaire(templatename, ownerData)
+                    questionnaireService.createQuestionnaire(templateName, ownerData)
                 ).rejects.toThrow('Template "not-a-template" does not exist');
             });
 
             it('Should set owner data in the answers', async () => {
-                await questionnaireService.createQuestionnaire(templatename, ownerData);
+                await questionnaireService.createQuestionnaire(templateName, ownerData);
 
                 expect(mockDalService.createQuestionnaire).toHaveBeenCalledTimes(1);
                 expect(mockDalService.createQuestionnaire).toHaveBeenCalledWith(
@@ -470,7 +515,7 @@ describe('Questionnaire Service', () => {
                     id: ownerId,
                     isAuthenticated: true
                 };
-                await questionnaireService.createQuestionnaire(templatename, ownerData);
+                await questionnaireService.createQuestionnaire(templateName, ownerData);
 
                 expect(mockDalService.updateExpiryForAuthenticatedOwner).toHaveBeenCalledTimes(1);
                 expect(mockDalService.createQuestionnaire).toHaveBeenCalledTimes(1);
@@ -495,7 +540,7 @@ describe('Questionnaire Service', () => {
                 const ownerData = undefined;
 
                 await expect(
-                    questionnaireService.createQuestionnaire(templatename, ownerData)
+                    questionnaireService.createQuestionnaire(templateName, ownerData)
                 ).rejects.toThrow('Owner data must be defined');
             });
         });
@@ -765,6 +810,37 @@ describe('Questionnaire Service', () => {
                     validQuestionnaireId
                 );
                 expect(mockDalService.updateQuestionnaireModifiedDate).not.toHaveBeenCalled();
+            });
+        });
+
+        describe('getQuestionnaireSubmissionStatus', () => {
+            it('Should get the submission status of a questionnaire without owner data', async () => {
+                await questionnaireService.getQuestionnaireSubmissionStatus(validQuestionnaireId);
+
+                expect(
+                    mockDalService.getQuestionnaireSubmissionStatusByOwner
+                ).toHaveBeenCalledTimes(1);
+                expect(mockDalService.getQuestionnaireSubmissionStatusByOwner).toHaveBeenCalledWith(
+                    validQuestionnaireId
+                );
+                expect(mockDalService.getQuestionnaireSubmissionStatus).not.toHaveBeenCalled();
+            });
+        });
+
+        describe('updateQuestionnaireSubmissionStatus', () => {
+            it('Should update the submission status of a questionnaire without owner data', async () => {
+                await questionnaireService.updateQuestionnaireSubmissionStatus(
+                    validQuestionnaireId,
+                    validSubmissionStatus
+                );
+
+                expect(
+                    mockDalService.updateQuestionnaireSubmissionStatusByOwner
+                ).toHaveBeenCalledTimes(1);
+                expect(
+                    mockDalService.updateQuestionnaireSubmissionStatusByOwner
+                ).toHaveBeenCalledWith(validQuestionnaireId, validSubmissionStatus);
+                expect(mockDalService.updateQuestionnaireSubmissionStatus).not.toHaveBeenCalled();
             });
         });
     });
