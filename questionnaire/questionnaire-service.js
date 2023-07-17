@@ -192,16 +192,6 @@ function createQuestionnaireService({
         try {
             await updateQuestionnaireSubmissionStatus(questionnaireId, 'IN_PROGRESS');
 
-            try {
-                // call task runner with sequential tasks
-                logger.info('Calling task runner for submission jobs');
-                await callTaskRunner(questionnaireId);
-            } catch (err) {
-                // this would also add the results of the task to the questionnaire
-                logger.error({err}, 'TASKS FAILED');
-                await updateQuestionnaireSubmissionStatus(questionnaireId, 'FAILED');
-            }
-
             const sqsService = createSqsService({logger});
             const submissionResponse = await sqsService.send(
                 {
@@ -696,6 +686,7 @@ function createQuestionnaireService({
     }
 
     return Object.freeze({
+        callTaskRunner,
         createQuestionnaire,
         createAnswers,
         getQuestionnaire,
