@@ -17,7 +17,7 @@ process.env.DCS_SQS_ACCESS_KEY_ID = 'dummy_access_key';
 process.env.DCS_SQS_SECRET_ACCESS_KEY = 'dummy_secret_key';
 process.env.AWS_SQS_ID = 'dummy_queue';
 process.env.NOTIFY_AWS_SQS_ID = 'dummy_notify_queue';
-
+process.env.S3_DIRECTORY = 'test';
 config.coverageThreshold = {
     './!(db)/!(questionnaire-dal).js': {
         branches: 60,

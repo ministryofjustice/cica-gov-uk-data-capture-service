@@ -130,6 +130,7 @@ async function transformAndUpload(data) {
     const questionnaire = createQuestionnaireHelper({
         questionnaireDefinition: data.questionnaire
     });
+    const s3Directory = process.env.S3_DIRECTORY ? process.env.S3_DIRECTORY : 'application_json';
     data.logger.info(`Transforming questionnaire with id: ${questionnaire.getId()}`);
     const output = transformQuestionnaire(questionnaire);
 
@@ -143,7 +144,7 @@ async function transformAndUpload(data) {
     const submissionResponse = await s3Service.uploadFile(
         output,
         process.env.S3_BUCKET_NAME,
-        `${questionnaire.getId()}.json`
+        `${s3Directory}/${questionnaire.getId()}.json`
     );
     return submissionResponse;
 }

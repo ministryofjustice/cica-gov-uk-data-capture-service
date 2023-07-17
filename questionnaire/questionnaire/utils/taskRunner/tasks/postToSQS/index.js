@@ -1,5 +1,6 @@
 'use strict';
 
+const VError = require('verror');
 const createSqsService = require('../../../../../../services/sqs');
 
 /**
@@ -8,7 +9,8 @@ const createSqsService = require('../../../../../../services/sqs');
  * @returns The body of the SQS message
  */
 function buildMessageBody(questionnaireId) {
-    return `{"applicationJSONDocumentSummaryKey": "${questionnaireId}.json"`;
+    const s3Directory = process.env.S3_DIRECTORY ? process.env.S3_DIRECTORY : 'application_json';
+    return `{"applicationJSONDocumentSummaryKey": "${s3Directory}/${questionnaireId}.json"}`;
 }
 
 /**
@@ -32,7 +34,12 @@ async function sendSubmissionMessageToSQS(data) {
         data.logger.error(
             `Message not sent to SQS for questionnaire with id ${questionnaireId} with error ${sqsResponse}`
         );
-        throw Error(`Message not sent to SQS for questionnaire with id ${questionnaireId}`);
+        throw new VError(
+            {
+                name: 'SendMessageFailed'
+            },
+            `Message not sent to SQS for questionnaire with id ${questionnaireId}`
+        );
     }
 
     // return something
