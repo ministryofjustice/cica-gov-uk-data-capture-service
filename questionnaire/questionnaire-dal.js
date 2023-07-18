@@ -249,6 +249,29 @@ function questionnaireDAL(spec) {
         return questionnaire.rows[0].questionnaire;
     }
 
+    async function getReferenceNumber(isFatal, questionnaireId) {
+        let referenceNumber;
+
+        try {
+            referenceNumber = await db.query('SELECT public.get_reference($1) as referencenumber', [
+                isFatal
+            ]);
+
+            if (referenceNumber.rowCount === 0) {
+                // No instance was found
+                throw new VError(
+                    {
+                        name: 'ResourceNotFound'
+                    },
+                    `Reference number for "${questionnaireId}" not created`
+                );
+            }
+        } catch (err) {
+            throw err;
+        }
+        return referenceNumber.rows[0].referencenumber;
+    }
+
     async function getMetadataByOwner() {
         let result;
         try {
@@ -311,6 +334,7 @@ function questionnaireDAL(spec) {
         updateQuestionnaireModifiedDate,
         updateQuestionnaireByOwner,
         getQuestionnaireByOwner,
+        getReferenceNumber,
         getMetadataByOwner,
         getQuestionnaireMetadataByOwner,
         updateExpiryForAuthenticatedOwner,

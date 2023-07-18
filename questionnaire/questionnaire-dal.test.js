@@ -7,6 +7,8 @@ const DB_QUERY_ROW_COUNT_ZERO_SUBMISSION_STATUS = 'ZERO_ROWS_SUBMISSION_STATUS';
 const DB_QUERY_SUCCESS_QUESTIONNAIRE_ID = '12345678-c50d-4050-805f-108995067913';
 const ownerId = 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6';
 const dbQueryErrorOwnerId = 'urn:uuid:11111111-7dec-11d0-a765-00a0c91e6bf6';
+const isFatalError = '23232';
+const isFatalNoRows = '34455';
 
 beforeEach(() => {
     jest.clearAllMocks();
@@ -29,6 +31,15 @@ jest.doMock('../db/index.js', () => {
             }
 
             if (parameters.includes(DB_QUERY_ROW_COUNT_ZERO_QUESTIONNAIRE_ID)) {
+                return {
+                    rows: [],
+                    rowCount: 0
+                };
+            }
+            if (parameters.includes(isFatalError)) {
+                throw new Error('DB_QUERY_ERROR');
+            }
+            if (parameters.includes(isFatalNoRows)) {
                 return {
                     rows: [],
                     rowCount: 0
@@ -258,6 +269,42 @@ describe('questionnaire data access layer', () => {
 
             await expect(questionnaireDAL.getQuestionnaireByOwner(questionnaireId)).rejects.toThrow(
                 'DB_QUERY_ERROR'
+            );
+        });
+    });
+
+    describe('getReferenceNumber', () => {
+        const isFatal = true;
+        const query = 'SELECT public.get_reference($1) as referencenumber';
+        it('Should run a get reference number function', async () => {
+            const questionnaireDAL = createQuestionnaireDAL({logger: jest.fn(), ownerId});
+            await questionnaireDAL.getReferenceNumber(isFatal, DB_QUERY_SUCCESS_QUESTIONNAIRE_ID);
+
+            expect(mockedDbService.query).toHaveBeenCalledTimes(1);
+            expect(mockedDbService.query).toHaveBeenCalledWith(query, [isFatal]);
+        });
+
+        it('Should handle errors gracefully', async () => {
+            const questionnaireDAL = createQuestionnaireDAL({
+                logger: jest.fn(),
+                ownerId: dbQueryErrorOwnerId
+            });
+
+            await expect(
+                questionnaireDAL.getReferenceNumber(isFatalError, DB_QUERY_ERROR_QUESTIONNAIRE_ID)
+            ).rejects.toThrow('DB_QUERY_ERROR');
+        });
+
+        it('Should handle zero rows returned', async () => {
+            const questionnaireDAL = createQuestionnaireDAL({
+                logger: jest.fn(),
+                ownerId: dbQueryErrorOwnerId
+            });
+
+            await expect(
+                questionnaireDAL.getReferenceNumber(isFatalNoRows, DB_QUERY_ERROR_QUESTIONNAIRE_ID)
+            ).rejects.toThrow(
+                `Reference number for "${DB_QUERY_ERROR_QUESTIONNAIRE_ID}" not created`
             );
         });
     });
