@@ -23,6 +23,10 @@ function createQuestionnaire({
     getJsonExpressionEvaluator = defaults.getJsonExpressionEvaluator,
     qExpression = defaults.qExpression
 }) {
+    function getId() {
+        return questionnaireDefinition.id;
+    }
+
     function getProgress() {
         return questionnaireDefinition.progress || [];
     }
@@ -114,6 +118,7 @@ function createQuestionnaire({
         const summaryTitle = meta.summary && meta.summary.title;
         const themeId = meta.classifications && meta.classifications.theme;
         const format = meta.keywords && meta.keywords.format;
+        const hideOnSummary = meta.integration?.hideOnSummary;
         const transformedData = {...dataAttribute};
 
         delete transformedData.meta;
@@ -132,6 +137,10 @@ function createQuestionnaire({
 
         if (format !== undefined) {
             transformedData.format = format;
+        }
+
+        if (hideOnSummary !== undefined) {
+            transformedData.meta = {integration: {hideOnSummary}};
         }
 
         return transformedData;
@@ -360,6 +369,7 @@ function createQuestionnaire({
     }
 
     return Object.freeze({
+        getId,
         getTaxonomy,
         getSection,
         getOrderedAnswers,
