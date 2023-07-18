@@ -177,12 +177,35 @@ function questionnaireDAL(spec) {
         return result;
     }
 
+    async function updateQuestionnaireModifiedDateByOwner(questionnaireId) {
+        let result;
+
+        try {
+            result = await db.query(
+                "UPDATE questionnaire SET modified = current_timestamp, expires = (CASE WHEN questionnaire -> 'answers' -> 'owner' ->> 'is-authenticated' = 'true' THEN expires WHEN questionnaire -> 'answers' -> 'owner' ->> 'is-authenticated' = 'false' THEN current_timestamp + INTERVAL '30 minutes' END) WHERE id = $1 AND questionnaire -> 'answers' -> 'owner' ->> 'owner-id' = $2",
+                [questionnaireId, ownerId]
+            );
+            if (result.rowCount === 0) {
+                throw new VError(
+                    {
+                        name: 'UpdateNotSuccessful'
+                    },
+                    `Questionnaire "${questionnaireId}" modified date was not updated successfully`
+                );
+            }
+        } catch (err) {
+            throw err;
+        }
+
+        return result;
+    }
+
     async function updateQuestionnaireByOwner(questionnaireId, questionnaire) {
         let result;
 
         try {
             result = await db.query(
-                "UPDATE questionnaire SET questionnaire = $1, modified = current_timestamp WHERE id = $2  AND questionnaire -> 'answers' -> 'owner' ->> 'owner-id' = $3",
+                "UPDATE questionnaire SET questionnaire = $1, modified = current_timestamp, expires = (CASE WHEN questionnaire -> 'answers' -> 'owner' ->> 'is-authenticated' = 'true' THEN expires WHEN questionnaire -> 'answers' -> 'owner' ->> 'is-authenticated' = 'false' THEN current_timestamp + INTERVAL '30 minutes' END) WHERE id = $2  AND questionnaire -> 'answers' -> 'owner' ->> 'owner-id' = $3",
                 [questionnaire, questionnaireId, ownerId]
                 // Currently replacing the whole questionnaire object. The following commented query/params could be used to update only the answers object:
                 // 'UPDATE questionnaire SET questionnaire = jsonb_set(questionnaire, $1, $2, TRUE), modified = current_timestamp WHERE id = $3',
@@ -277,6 +300,29 @@ function questionnaireDAL(spec) {
         return result.rowCount ? result.rows : [];
     }
 
+    async function updateExpiryForAuthenticatedOwner(questionnaireId, owner) {
+        let result;
+        try {
+            result = await db.query(
+                "UPDATE questionnaire SET expires = date_trunc('day', expires) + INTERVAL '31 days' WHERE id = $1 AND questionnaire -> 'answers' -> 'owner' ->> 'owner-id' = $2",
+                [questionnaireId, owner]
+            );
+
+            if (result.rowCount === 0) {
+                throw new VError(
+                    {
+                        name: 'ResourceNotFound'
+                    },
+                    `Questionnaire "${questionnaireId}" was not updated successfully`
+                );
+            }
+        } catch (err) {
+            throw err;
+        }
+
+        return result;
+    }
+
     return Object.freeze({
         createQuestionnaire,
         updateQuestionnaire,
@@ -290,7 +336,9 @@ function questionnaireDAL(spec) {
         getQuestionnaireByOwner,
         getReferenceNumber,
         getMetadataByOwner,
-        getQuestionnaireMetadataByOwner
+        getQuestionnaireMetadataByOwner,
+        updateExpiryForAuthenticatedOwner,
+        updateQuestionnaireModifiedDateByOwner
     });
 }
 

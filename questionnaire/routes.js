@@ -32,7 +32,8 @@ router.route('/').post(permissions('create:questionnaires'), async (req, res, ne
 
         const questionnaireService = createQuestionnaireService({
             logger: req.log,
-            apiVersion: req.get('Dcs-Api-Version')
+            apiVersion: req.get('Dcs-Api-Version'),
+            ownerId: owner?.id
         });
         const response = await questionnaireService.createQuestionnaire(templateName, owner);
 
@@ -106,13 +107,17 @@ router
                 apiVersion: req.get('Dcs-Api-Version'),
                 ownerId: req.get('On-Behalf-Of')
             });
+
             const response = await questionnaireService.createAnswers(
                 req.params.questionnaireId,
                 'owner',
                 answers
             );
 
-            // Todo: update expires column
+            await questionnaireService.updateExpiryForAuthenticatedOwner(
+                req.params.questionnaireId,
+                answers['owner-id']
+            );
 
             res.status(201).json(response);
         } catch (err) {
@@ -279,7 +284,11 @@ router
     .get(permissions('update:questionnaires'), async (req, res, next) => {
         try {
             const {questionnaireId} = req.params;
-            const questionnaireService = createQuestionnaireService({logger: req.log});
+            const questionnaireService = createQuestionnaireService({
+                logger: req.log,
+                apiVersion: req.get('Dcs-Api-Version'),
+                ownerId: req.get('On-Behalf-Of')
+            });
             await questionnaireService.updateQuestionnaireModifiedDate(questionnaireId);
             const sessionResource = await questionnaireService.getSessionResource(questionnaireId);
             res.status(200).json(sessionResource);

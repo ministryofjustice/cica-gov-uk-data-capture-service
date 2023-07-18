@@ -16,7 +16,7 @@ const ownerId = 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6';
 const templatename = 'sexual-assault';
 const ownerData = {
     id: ownerId,
-    isAuthenticated: true
+    isAuthenticated: false
 };
 const apiVersion = '2023-05-17';
 
@@ -145,6 +145,15 @@ jest.doMock('./questionnaire-dal', () => {
             return questionnaireFixture;
         }),
         updateQuestionnaireByOwner: jest.fn(() => {
+            return 'ok!';
+        }),
+        updateExpiryForAuthenticatedOwner: jest.fn(() => {
+            return 'ok!';
+        }),
+        updateQuestionnaireModifiedDate: jest.fn(() => {
+            return 'ok!';
+        }),
+        updateQuestionnaireModifiedDateByOwner: jest.fn(() => {
             return 'ok!';
         })
     };
@@ -398,6 +407,20 @@ describe('Questionnaire Service', () => {
                 ).rejects.toThrow('Cannot find questionnaire');
             });
         });
+
+        describe('updateQuestionnaireModifiedDate', () => {
+            it('Should update the modified column of a questionnaire without owner data', async () => {
+                await questionnaireService.updateQuestionnaireModifiedDate(validQuestionnaireId);
+
+                expect(mockDalService.updateQuestionnaireModifiedDate).toHaveBeenCalledTimes(1);
+                expect(mockDalService.updateQuestionnaireModifiedDate).toHaveBeenCalledWith(
+                    validQuestionnaireId
+                );
+                expect(
+                    mockDalService.updateQuestionnaireModifiedDateByOwner
+                ).not.toHaveBeenCalled();
+            });
+        });
     });
 
     describe('DCS API Version 2023-05-17', () => {
@@ -431,6 +454,28 @@ describe('Questionnaire Service', () => {
             it('Should set owner data in the answers', async () => {
                 await questionnaireService.createQuestionnaire(templatename, ownerData);
 
+                expect(mockDalService.createQuestionnaire).toHaveBeenCalledTimes(1);
+                expect(mockDalService.createQuestionnaire).toHaveBeenCalledWith(
+                    expect.any(String),
+                    expect.objectContaining({
+                        answers: {
+                            owner: {
+                                'owner-id': 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6',
+                                'is-authenticated': false
+                            }
+                        }
+                    })
+                );
+            });
+
+            it('Should set expiry date is owner is authenticated', async () => {
+                const ownerData = {
+                    id: ownerId,
+                    isAuthenticated: true
+                };
+                await questionnaireService.createQuestionnaire(templatename, ownerData);
+
+                expect(mockDalService.updateExpiryForAuthenticatedOwner).toHaveBeenCalledTimes(1);
                 expect(mockDalService.createQuestionnaire).toHaveBeenCalledTimes(1);
                 expect(mockDalService.createQuestionnaire).toHaveBeenCalledWith(
                     expect.any(String),
@@ -694,6 +739,35 @@ describe('Questionnaire Service', () => {
                         invalidSectionId
                     )
                 ).rejects.toThrow();
+            });
+        });
+
+        describe('updateExpiryForAuthenticatedOwner', () => {
+            it('Should execute the updateExpiryForAuthenticatedOwner db call', async () => {
+                await questionnaireService.updateExpiryForAuthenticatedOwner(
+                    validQuestionnaireId,
+                    ownerId
+                );
+
+                expect(mockDalService.updateExpiryForAuthenticatedOwner).toHaveBeenCalledTimes(1);
+                expect(mockDalService.updateExpiryForAuthenticatedOwner).toHaveBeenCalledWith(
+                    validQuestionnaireId,
+                    ownerId
+                );
+            });
+        });
+
+        describe('updateQuestionnaireModifiedDate', () => {
+            it('Should execute the updateExpiryForAuthenticatedOwner db call', async () => {
+                await questionnaireService.updateQuestionnaireModifiedDate(validQuestionnaireId);
+
+                expect(mockDalService.updateQuestionnaireModifiedDateByOwner).toHaveBeenCalledTimes(
+                    1
+                );
+                expect(mockDalService.updateQuestionnaireModifiedDateByOwner).toHaveBeenCalledWith(
+                    validQuestionnaireId
+                );
+                expect(mockDalService.updateQuestionnaireModifiedDate).not.toHaveBeenCalled();
             });
         });
     });

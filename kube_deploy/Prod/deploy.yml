@@ -78,7 +78,10 @@ spec:
             - name: APP_ENV
               value: prod
             - name: DCS_SESSION_DURATION
-              value: '1800000'
+              valueFrom:
+                secretKeyRef:
+                  name: shared-secrets
+                  key: session_duration
             - name: WEBHOOK_TEAM_REPORTER_SLACK
               valueFrom:
                 secretKeyRef:
