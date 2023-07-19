@@ -2,7 +2,7 @@
 
 const defaults = {};
 defaults.createQuestionnaireDAL = require('../questionnaire-dal');
-defaults.createTaskRunner = require('../questionnaire/utils/taskRunner');
+defaults.createTaskRunner = require('../questionnaire/utils/taskRunner').createTaskRunner;
 defaults.sequential = require('../questionnaire/utils/taskRunner/tasks/sequential');
 // Pull in additional task implementations here
 
