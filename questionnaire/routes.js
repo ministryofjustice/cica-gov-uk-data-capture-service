@@ -199,18 +199,7 @@ router
         }
     })
     .post(permissions('update:questionnaires'), async (req, res, next) => {
-<<<<<<< HEAD
-        try {
-            const {questionnaireId} = req.params;
-            const questionnaireService = createQuestionnaireService({
-                logger: req.log,
-                apiVersion: req.get('Dcs-Api-Version'),
-                ownerId: req.get('On-Behalf-Of')
-            });
-            const questionnaire = await questionnaireService.getQuestionnaire(questionnaireId);
-=======
         // *** THIS HANDLER HANDLES THE HAPPIEST HAPPY PATH ONLY. DO NOT USE IN PRODUCTION. ***
->>>>>>> WIP: Allow DCS to run submission tasks
 
         const {questionnaireId} = req.params;
         const questionnaireService = createQuestionnaireService({

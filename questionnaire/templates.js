@@ -95,7 +95,10 @@ function modifyTemplateToHaveOneQuestion(template) {
     return template;
 }
 
+<<<<<<< HEAD
 // eslint-disable-next-line no-unused-vars
+=======
+>>>>>>> WIP: Allow DCS to run submission tasks
 function modifyTemplateToIncludeTaskDefinition(template) {
     // This was taken from Jennifer's branch
     template.onSubmit = {

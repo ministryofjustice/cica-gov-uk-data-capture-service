@@ -2,7 +2,11 @@
 
 const defaults = {};
 defaults.createQuestionnaireDAL = require('../questionnaire-dal');
+<<<<<<< HEAD
 defaults.createTaskRunner = require('../questionnaire/utils/taskRunner').createTaskRunner;
+=======
+defaults.createTaskRunner = require('../questionnaire/utils/taskRunner');
+>>>>>>> WIP: Allow DCS to run submission tasks
 defaults.sequential = require('../questionnaire/utils/taskRunner/tasks/sequential');
 // Pull in additional task implementations here
 
