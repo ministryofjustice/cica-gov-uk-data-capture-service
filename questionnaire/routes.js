@@ -8,6 +8,8 @@ const permissions = require('../middleware/route-permissions');
 const datasetRouter = require('./dataset/dataset-routes.js');
 const metadataRouter = require('./metadata/metadata-routes.js');
 
+const createSubmissionService = require('./submission');
+
 const router = express.Router();
 const rxTemplateName = /^[a-zA-Z0-9-]{1,30}$/;
 // Ensure JWT is valid
@@ -197,6 +199,43 @@ router
         }
     })
     .post(permissions('update:questionnaires'), async (req, res, next) => {
+        // *** THIS HANDLER HANDLES THE HAPPIEST HAPPY PATH ONLY. DO NOT USE IN PRODUCTION. ***
+
+        const {questionnaireId} = req.params;
+        const questionnaireService = createQuestionnaireService({
+            logger: req.log
+        });
+
+        try {
+            // stop the getSubmissionResponseData > startSubmission function from being called!
+            await questionnaireService.updateQuestionnaireSubmissionStatus(
+                questionnaireId,
+                'IN_PROGRESS'
+            );
+
+            // run tasks
+            const submissionService = createSubmissionService({
+                logger: req.log
+            });
+            const submissionResource = await submissionService.submit(questionnaireId);
+
+            // if we're here, all tasks passed (these status updates should probably be tasks themselves)
+            await questionnaireService.updateQuestionnaireSubmissionStatus(
+                questionnaireId,
+                'COMPLETED'
+            );
+
+            res.status(201).json(submissionResource);
+        } catch (err) {
+            await questionnaireService.updateQuestionnaireSubmissionStatus(
+                questionnaireId,
+                'FAILED'
+            );
+
+            next(err);
+        }
+
+        /*
         try {
             const {questionnaireId} = req.params;
             const questionnaireService = createQuestionnaireService({
@@ -264,6 +303,7 @@ router
         } catch (err) {
             next(err);
         }
+        */
     });
 
 router
