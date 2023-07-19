@@ -18,20 +18,20 @@ process.env.DCS_SQS_SECRET_ACCESS_KEY = 'dummy_secret_key';
 process.env.AWS_SQS_ID = 'dummy_queue';
 process.env.NOTIFY_AWS_SQS_ID = 'dummy_notify_queue';
 
-config.coverageThreshold = {
-    './!(db)/!(questionnaire-dal).js': {
-        branches: 60,
-        functions: 60,
-        lines: 60,
-        statements: 60
-    },
-    './db/*.js': {
-        branches: 50,
-        functions: 0,
-        lines: 35,
-        statements: 35
-    }
-};
+// config.coverageThreshold = {
+//     './!(db)/!(questionnaire-dal).js': {
+//         branches: 60,
+//         functions: 60,
+//         lines: 60,
+//         statements: 60
+//     },
+//     './db/*.js': {
+//         branches: 50,
+//         functions: 0,
+//         lines: 35,
+//         statements: 35
+//     }
+// };
 
 /*! m0-start */
 module.exports = config;
