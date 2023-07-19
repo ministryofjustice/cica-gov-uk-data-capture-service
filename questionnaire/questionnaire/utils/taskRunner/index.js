@@ -142,6 +142,4 @@ function createTaskRunner({
     });
 }
 
-module.exports = {
-    createTaskRunner
-};
+module.exports = createTaskRunner;
