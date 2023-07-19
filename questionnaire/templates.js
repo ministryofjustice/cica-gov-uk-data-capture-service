@@ -95,6 +95,7 @@ function modifyTemplateToHaveOneQuestion(template) {
     return template;
 }
 
+// eslint-disable-next-line no-unused-vars
 function modifyTemplateToIncludeTaskDefinition(template) {
     // This was taken from Jennifer's branch
     template.onSubmit = {
