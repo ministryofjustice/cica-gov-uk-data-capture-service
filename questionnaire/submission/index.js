@@ -4,13 +4,18 @@ const defaults = {};
 defaults.createQuestionnaireDAL = require('../questionnaire-dal');
 defaults.createTaskRunner = require('../questionnaire/utils/taskRunner').createTaskRunner;
 defaults.sequential = require('../questionnaire/utils/taskRunner/tasks/sequential');
-// Pull in additional task implementations here
+defaults.transformAndUpload = require('../questionnaire/utils/taskRunner/tasks/transformAndUpload');
+defaults.generateCaseReference = require('../questionnaire/utils/taskRunner/tasks/generateCaseReference');
+defaults.postToSQS = require('../questionnaire/utils/taskRunner/tasks/postToSQS');
 
 function createSubmissionService({
     logger,
     createQuestionnaireDAL = defaults.createQuestionnaireDAL,
     createTaskRunner = defaults.createTaskRunner,
-    sequential = defaults.sequential
+    sequential = defaults.sequential,
+    transformAndUpload = defaults.transformAndUpload,
+    generateCaseReference = defaults.generateCaseReference,
+    postToSQS = defaults.generateCaseReference
 } = {}) {
     const db = createQuestionnaireDAL({logger});
 
@@ -23,18 +28,13 @@ function createSubmissionService({
             const taskRunner = createTaskRunner({
                 taskImplementations: {
                     sequential,
-                    // Add additional task implementations here
-
-                    // DON'T INCLUDE THIS TEST TASK
-                    updateCaseRefTestTask: async data => {
-                        data.questionnaire.answers.system['case-reference'] = '11\\223344';
-                        await db.updateQuestionnaire(data.questionnaire.id, data.questionnaire);
-                        return true;
-                    }
+                    transformAndUpload,
+                    generateCaseReference,
+                    postToSQS
                 },
                 context: {
-                    logger,
-                    questionnaireDef: questionnaireDefinition
+                    questionnaireDef: questionnaireDefinition,
+                    logger
                 }
             });
 
