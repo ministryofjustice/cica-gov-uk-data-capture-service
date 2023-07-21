@@ -520,16 +520,36 @@ describe('template', () => {
                         templateId: 'ed98bf04-f338-47cf-b949-4367d8f8b707'
                     },
                     {
-                        roles: ['rep.mainapplicant.applicant:adult:incapable', 'incapable'],
+                        roles: [
+                            'rep.mainapplicant.applicant:adult:incapable',
+                            'incapable',
+                            'nonDeceased'
+                        ],
                         templateId: 'a6583a82-51ca-4f8e-b8b8-cbca763dc59a'
                     },
                     {
-                        roles: ['rep.mainapplicant.applicant:child'],
+                        roles: [
+                            'rep.mainapplicant.applicant:adult:incapable',
+                            'incapable',
+                            'deceased'
+                        ],
+                        templateId: 'a70aaff8-8299-448b-ac22-6579c840c8e6'
+                    },
+                    {
+                        roles: ['rep.mainapplicant.applicant:child', 'nonDeceased'],
                         templateId: 'a0c7b011-b0df-4645-8ce3-6bd8f7905dfc'
                     },
                     {
-                        roles: ['rep:no-legal-authority.applicant', 'noauthority'],
+                        roles: ['rep.mainapplicant.applicant:child', 'deceased'],
+                        templateId: 'c72a9445-7d08-4db7-b7b9-a8d1900818ed'
+                    },
+                    {
+                        roles: ['rep:no-legal-authority.applicant', 'noauthority', 'nonDeceased'],
                         templateId: 'fb865d9c-37b1-4077-b519-aacfe42c9951'
+                    },
+                    {
+                        roles: ['rep:no-legal-authority.applicant', 'noauthority', 'deceased'],
+                        templateId: '54392a68-d12c-4f0d-8388-e8439fdbfc2f'
                     }
                 ])('should send a confirmation email to $roles', async ({roles, templateId}) => {
                     const application = templates['sexual-assault'](
@@ -692,16 +712,36 @@ describe('template', () => {
                         templateId: '1e764481-69c1-4d5a-8a05-fbadc09aa47c'
                     },
                     {
-                        roles: ['rep.mainapplicant.applicant:adult:incapable', 'incapable'],
+                        roles: [
+                            'rep.mainapplicant.applicant:adult:incapable',
+                            'incapable',
+                            'nonDeceased'
+                        ],
                         templateId: '94a82598-6f6b-4ad0-abc3-ad3a157eb4a3'
                     },
                     {
-                        roles: ['rep.mainapplicant.applicant:child'],
+                        roles: [
+                            'rep.mainapplicant.applicant:adult:incapable',
+                            'incapable',
+                            'deceased'
+                        ],
+                        templateId: '6151b209-33de-40ec-88b0-7f1a4580bf18'
+                    },
+                    {
+                        roles: ['rep.mainapplicant.applicant:child', 'nonDeceased'],
                         templateId: '38047478-4b70-4add-b06c-62c7d93e8a23'
                     },
                     {
-                        roles: ['rep:no-legal-authority.applicant', 'noauthority'],
+                        roles: ['rep.mainapplicant.applicant:child', 'deceased'],
+                        templateId: '768165a8-b5cf-4ce5-acfa-a1bb533aca91'
+                    },
+                    {
+                        roles: ['rep:no-legal-authority.applicant', 'noauthority', 'nonDeceased'],
                         templateId: '29674076-46ba-4150-adf0-5215c8fe8aa9'
+                    },
+                    {
+                        roles: ['rep:no-legal-authority.applicant', 'noauthority', 'deceased'],
+                        templateId: '1ef1b7ae-293c-456d-93b4-8646791450f9'
                     }
                 ])('should send a confirmation email to $roles', async ({roles, templateId}) => {
                     const application = templates['sexual-assault'](
