@@ -135,10 +135,11 @@ function modifyTemplateToIncludeTaskDefinition(template) {
 function modifyTemplate(template) {
     // Use the next line to quickly test the trigger via CW. COMMENT OUT WHEN FINISHED.
     // Allows for quick testing of task trigger
-    const modifiedTemplate = modifyTemplateToHaveOneQuestion(template);
+    let modifiedTemplate;
+    modifiedTemplate = modifyTemplateToHaveOneQuestion(template);
 
     // Uncomment the next line when all tasks in the definition are ready
-    // const modifiedTemplate = modifyTemplateToIncludeTaskDefinition(template);
+    modifiedTemplate = modifyTemplateToIncludeTaskDefinition(template);
 
     return modifiedTemplate;
 }
