@@ -131,14 +131,8 @@ async function transformAndUpload({questionnaireDef, logger}) {
         questionnaireDefinition: questionnaireDef
     });
 
-    logger.info(questionnaire)
     const s3Directory = process.env.S3_DIRECTORY ? process.env.S3_DIRECTORY : 'application_json';
-    try {
-        logger.info(`Transforming questionnaire with id: ${questionnaire.getId()}`);
-    }
-    catch (err){
-        logger.info(err)
-    }
+    logger.info(`Transforming questionnaire with id: ${questionnaire.getId()}`);
     const output = transformQuestionnaire(questionnaire);
 
     // Populate the dateSubmitted from the database

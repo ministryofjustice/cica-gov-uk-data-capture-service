@@ -5,7 +5,9 @@ defaults.createQuestionnaireDAL = require('../questionnaire-dal');
 defaults.createTaskRunner = require('../questionnaire/utils/taskRunner').createTaskRunner;
 defaults.sequential = require('../questionnaire/utils/taskRunner/tasks/sequential');
 const {transformAndUpload} = require('../questionnaire/utils/taskRunner/tasks/transformAndUpload');
-const {generateReferenceNumber} = require('../questionnaire/utils/taskRunner/tasks/generateCaseReference');
+const {
+    generateReferenceNumber
+} = require('../questionnaire/utils/taskRunner/tasks/generateCaseReference');
 const {sendSubmissionMessageToSQS} = require('../questionnaire/utils/taskRunner/tasks/postToSQS');
 
 function createSubmissionService({
@@ -19,9 +21,7 @@ function createSubmissionService({
     async function submit(questionnaireId) {
         try {
             const questionnaireDef = await db.getQuestionnaire(questionnaireId);
-            const onSubmitTaskDefinition = JSON.parse(
-                JSON.stringify(questionnaireDef.onSubmit)
-            );
+            const onSubmitTaskDefinition = JSON.parse(JSON.stringify(questionnaireDef.onSubmit));
             const taskRunner = createTaskRunner({
                 taskImplementations: {
                     sequential,
