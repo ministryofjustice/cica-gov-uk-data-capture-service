@@ -8,92 +8,92 @@ function getApplicationTemplateCopy() {
     return JSON.parse(applicationTemplateAsJson);
 }
 
-function modifyTemplateToHaveOneQuestion(template) {
-    const {routes} = template;
-    const modifiedRoutes = {
-        initial: routes.initial,
-        referrer: routes.referrer,
-        summary: [routes.summary[0]],
-        confirmation: routes.confirmation,
-        states: {
-            'p--new-or-existing-application': {
-                on: {
-                    ANSWER: [
-                        {
-                            target: 'p--check-your-answers',
-                            cond: [
-                                '==',
-                                '$.answers.p--new-or-existing-application.q--new-or-existing-application',
-                                'existing'
-                            ]
-                        },
-                        {target: 'p--check-your-answers'}
-                    ]
-                }
-            },
-            'p--check-your-answers': {
-                on: {
-                    ANSWER: [
-                        {
-                            target: 'p-applicant-declaration'
-                        }
-                    ]
-                }
-            },
-            'p-applicant-declaration': {
-                on: {
-                    ANSWER: [
-                        {
-                            target: 'p--confirmation'
-                        }
-                    ]
-                }
-            },
-            'p--confirmation': {
-                type: 'final'
-            }
-        }
-    };
-    template.routes = modifiedRoutes;
+// function modifyTemplateToHaveOneQuestion(template) {
+//     const {routes} = template;
+//     const modifiedRoutes = {
+//         initial: routes.initial,
+//         referrer: routes.referrer,
+//         summary: [routes.summary[0]],
+//         confirmation: routes.confirmation,
+//         states: {
+//             'p--new-or-existing-application': {
+//                 on: {
+//                     ANSWER: [
+//                         {
+//                             target: 'p--check-your-answers',
+//                             cond: [
+//                                 '==',
+//                                 '$.answers.p--new-or-existing-application.q--new-or-existing-application',
+//                                 'existing'
+//                             ]
+//                         },
+//                         {target: 'p--check-your-answers'}
+//                     ]
+//                 }
+//             },
+//             'p--check-your-answers': {
+//                 on: {
+//                     ANSWER: [
+//                         {
+//                             target: 'p-applicant-declaration'
+//                         }
+//                     ]
+//                 }
+//             },
+//             'p-applicant-declaration': {
+//                 on: {
+//                     ANSWER: [
+//                         {
+//                             target: 'p--confirmation'
+//                         }
+//                     ]
+//                 }
+//             },
+//             'p--confirmation': {
+//                 type: 'final'
+//             }
+//         }
+//     };
+//     template.routes = modifiedRoutes;
 
-    const defaultAnswers = {
-        system: {
-            'case-reference': '11\\DEFAULT'
-        },
-        'p-applicant-confirmation-method': {
-            'q-applicant-enter-your-email-address':
-                'DEFAULT@aad319c0-4912-440a-bf44-708530c3959c.gov.uk'
-        }
-    };
+//     const defaultAnswers = {
+//         system: {
+//             'case-reference': '11\\DEFAULT'
+//         },
+//         'p-applicant-confirmation-method': {
+//             'q-applicant-enter-your-email-address':
+//                 'DEFAULT@aad319c0-4912-440a-bf44-708530c3959c.gov.uk'
+//         }
+//     };
 
-    template.answers = defaultAnswers;
+//     template.answers = defaultAnswers;
 
-    const confirmationSection = template.sections['p--confirmation'];
-    const confirmationContent =
-        confirmationSection.l10n.translations[0].resources.confirmation.description.adult;
+//     const confirmationSection = template.sections['p--confirmation'];
+//     const confirmationContent =
+//         confirmationSection.l10n.translations[0].resources.confirmation.description.adult;
 
-    delete confirmationSection.l10n;
-    template.sections[
-        'p--confirmation'
-    ].schema.properties.confirmation.description = confirmationContent;
+//     delete confirmationSection.l10n;
+//     template.sections[
+//         'p--confirmation'
+//     ].schema.properties.confirmation.description = confirmationContent;
 
-    template.onSubmit = {
-        id: 'task0',
-        type: 'sequential',
-        data: [
-            {
-                id: 'task1',
-                type: 'updateCaseRefTestTask',
-                data: {
-                    questionnaire: '$.questionnaireDef',
-                    logger: '$.logger'
-                }
-            }
-        ]
-    };
+//     template.onSubmit = {
+//         id: 'task0',
+//         type: 'sequential',
+//         data: [
+//             {
+//                 id: 'task1',
+//                 type: 'updateCaseRefTestTask',
+//                 data: {
+//                     questionnaire: '$.questionnaireDef',
+//                     logger: '$.logger'
+//                 }
+//             }
+//         ]
+//     };
 
-    return template;
-}
+//     return template;
+// }
 
 // eslint-disable-next-line no-unused-vars
 function modifyTemplateToIncludeTaskDefinition(template) {
@@ -135,11 +135,11 @@ function modifyTemplateToIncludeTaskDefinition(template) {
 function modifyTemplate(template) {
     // Use the next line to quickly test the trigger via CW. COMMENT OUT WHEN FINISHED.
     // Allows for quick testing of task trigger
-    let modifiedTemplate;
-    //modifiedTemplate = modifyTemplateToHaveOneQuestion(template);
+    // let modifiedTemplate;
+    // modifiedTemplate = modifyTemplateToHaveOneQuestion(template);
 
     // Uncomment the next line when all tasks in the definition are ready
-    modifiedTemplate = modifyTemplateToIncludeTaskDefinition(template);
+    const modifiedTemplate = modifyTemplateToIncludeTaskDefinition(template);
 
     return modifiedTemplate;
 }
