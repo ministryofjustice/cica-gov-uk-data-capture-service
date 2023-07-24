@@ -4,36 +4,33 @@ const defaults = {};
 defaults.createQuestionnaireDAL = require('../questionnaire-dal');
 defaults.createTaskRunner = require('../questionnaire/utils/taskRunner').createTaskRunner;
 defaults.sequential = require('../questionnaire/utils/taskRunner/tasks/sequential');
-defaults.transformAndUpload = require('../questionnaire/utils/taskRunner/tasks/transformAndUpload');
-defaults.generateCaseReference = require('../questionnaire/utils/taskRunner/tasks/generateCaseReference');
-defaults.postToSQS = require('../questionnaire/utils/taskRunner/tasks/postToSQS');
+const {transformAndUpload} = require('../questionnaire/utils/taskRunner/tasks/transformAndUpload');
+const {generateReferenceNumber} = require('../questionnaire/utils/taskRunner/tasks/generateCaseReference');
+const {sendSubmissionMessageToSQS} = require('../questionnaire/utils/taskRunner/tasks/postToSQS');
 
 function createSubmissionService({
     logger,
     createQuestionnaireDAL = defaults.createQuestionnaireDAL,
     createTaskRunner = defaults.createTaskRunner,
-    sequential = defaults.sequential,
-    transformAndUpload = defaults.transformAndUpload,
-    generateCaseReference = defaults.generateCaseReference,
-    postToSQS = defaults.generateCaseReference
+    sequential = defaults.sequential
 } = {}) {
     const db = createQuestionnaireDAL({logger});
 
     async function submit(questionnaireId) {
         try {
-            const questionnaireDefinition = await db.getQuestionnaire(questionnaireId);
+            const questionnaireDef = await db.getQuestionnaire(questionnaireId);
             const onSubmitTaskDefinition = JSON.parse(
-                JSON.stringify(questionnaireDefinition.onSubmit)
+                JSON.stringify(questionnaireDef.onSubmit)
             );
             const taskRunner = createTaskRunner({
                 taskImplementations: {
                     sequential,
                     transformAndUpload,
-                    generateCaseReference,
-                    postToSQS
+                    generateReferenceNumber,
+                    sendSubmissionMessageToSQS
                 },
                 context: {
-                    questionnaireDef: questionnaireDefinition,
+                    questionnaireDef,
                     logger
                 }
             });

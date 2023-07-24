@@ -114,7 +114,7 @@ function modifyTemplateToIncludeTaskDefinition(template) {
                 id: 'task2',
                 type: 'transformAndUpload',
                 data: {
-                    questionnaire: '$.questionnaireDef',
+                    questionnaireDef: '$.questionnaireDef',
                     logger: '$.logger'
                 }
             },
@@ -136,7 +136,7 @@ function modifyTemplate(template) {
     // Use the next line to quickly test the trigger via CW. COMMENT OUT WHEN FINISHED.
     // Allows for quick testing of task trigger
     let modifiedTemplate;
-    modifiedTemplate = modifyTemplateToHaveOneQuestion(template);
+    //modifiedTemplate = modifyTemplateToHaveOneQuestion(template);
 
     // Uncomment the next line when all tasks in the definition are ready
     modifiedTemplate = modifyTemplateToIncludeTaskDefinition(template);
