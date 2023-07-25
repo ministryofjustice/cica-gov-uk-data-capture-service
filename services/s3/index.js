@@ -19,14 +19,14 @@ function createS3Service(opts) {
     const {logger} = opts;
     delete opts.logger;
 
-    async function uploadFile(jsonObj, bucketName, keyName) {
+    async function uploadFile(jsonObj, bucketName, keyName, contentType) {
         try {
             logger.info('Uploading to S3...');
             const params = new PutObjectCommand({
                 Bucket: bucketName,
                 Key: keyName,
                 Body: JSON.stringify(jsonObj),
-                contentType: 'dcs/json'
+                contentType
             });
 
             const response = await s3Cli.send(params);
