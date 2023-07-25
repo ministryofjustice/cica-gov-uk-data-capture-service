@@ -48,7 +48,7 @@ async function setCaseReference(questionnaire, logger, db, section) {
 
     if (systemSection[section]) {
         logger.info(
-            `Questionnaire with id ${questionnaire.id} already has ${section} ${systemSection[section]}. ${section} not updated`
+            `Questionnaire with id ${questionnaire.id} already has ${section}. ${section} not updated`
         );
         return questionnaire;
     }
