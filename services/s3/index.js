@@ -26,7 +26,7 @@ function createS3Service(opts) {
                 Bucket: bucketName,
                 Key: keyName,
                 Body: JSON.stringify(jsonObj),
-                contentType
+                ContentType: contentType
             });
 
             const response = await s3Cli.send(params);

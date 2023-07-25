@@ -28,7 +28,7 @@ describe('S3 Service', () => {
             Body: JSON.stringify(testJsonObj),
             Bucket: 'bucket',
             Key: 'test',
-            contentType: 'application/json'
+            ContentType: 'application/json'
         });
     });
 
