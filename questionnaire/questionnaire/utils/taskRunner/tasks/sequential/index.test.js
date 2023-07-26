@@ -1,6 +1,6 @@
 'use strict';
 
-const {createTaskRunner} = require('../../index');
+const createTaskRunner = require('../../index');
 const sequential = require('./index');
 
 const testHelper = {
