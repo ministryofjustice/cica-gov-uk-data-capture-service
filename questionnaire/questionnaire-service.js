@@ -10,7 +10,6 @@ const uuidv4 = require('uuid/v4');
 const ajvFormatsMobileUk = require('ajv-formats-mobile-uk');
 const templates = require('./templates');
 const createSqsService = require('../services/sqs');
-const createLegacyNotifyService = require('../services/sqs/legacy-sms-message-bus');
 const createSlackService = require('../services/slack');
 const questionnaireResource = require('./resources/questionnaire-resource');
 const createQuestionnaireHelper = require('./questionnaire/questionnaire');
@@ -585,9 +584,8 @@ function createQuestionnaireService({
         });
         const permittedActions = questionnaire.getPermittedActions();
         const actionResults = permittedActions.map(action => {
+            const sqsService = createSqsService({logger});
             if (action.type === 'sendEmail') {
-                const sqsService = createSqsService({logger});
-
                 const payload = {
                     templateId: action.data.templateId,
                     emailAddress: action.data.emailAddress,
@@ -600,8 +598,6 @@ function createQuestionnaireService({
             }
 
             if (action.type === 'sendSms') {
-                const legacyNotifyService = createLegacyNotifyService({logger});
-
                 const payload = {
                     templateId: action.data.templateId,
                     phoneNumber: action.data.phoneNumber,
@@ -610,9 +606,8 @@ function createQuestionnaireService({
                     },
                     reference: null
                 };
-                return legacyNotifyService.sendSms(payload);
+                return sqsService.send(payload, process.env.NOTIFY_AWS_SQS_ID);
             }
-
             return Promise.reject(Error(`Action type "${action.type}" is not supported`));
         });
 

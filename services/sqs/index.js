@@ -5,9 +5,9 @@ const VError = require('verror');
 
 AWS.config = new AWS.Config();
 AWS.config.update({
-    region: 'eu-west-2',
-    accessKeyId: process.env.DCS_SQS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.DCS_SQS_SECRET_ACCESS_KEY
+    region: process.env.AWS_DEFAULT_REGION,
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
 });
 
 function createSqsService(opts) {
