@@ -1,32 +1,37 @@
 'use strict';
 
-const AWS = require('aws-sdk');
+const {SQSClient, SendMessageCommand} = require('@aws-sdk/client-sqs');
 const VError = require('verror');
-
-AWS.config = new AWS.Config();
-AWS.config.update({
-    region: 'eu-west-2',
-    accessKeyId: process.env.DCS_SQS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.DCS_SQS_SECRET_ACCESS_KEY
-});
 
 function createSqsService(opts) {
     const {logger} = opts;
     delete opts.logger;
 
-    async function send(payload, queueUrl) {
-        let sqs;
+    const client = new SQSClient({
+        region: 'eu-west-2',
+        credentials: {
+            accessKeyId: process.env.ACCESS_KEY,
+            secretAccessKey: process.env.SECRET_ACCESS_KEY
+        },
+        endpoint: process.env.NODE_ENV === 'local' ? 'http://localhost:4566' : undefined
+    });
+
+    /**
+     * Sends a given message to a given SQS queue
+     * @param {object} payload - The json to be sent to the queue.
+     * @param {string} queueUrl - The queue url.
+     * @returns SendMessageCommandOutput equal to the output given by the queue for the send command
+     */
+    async function sendSQS(payload, queueUrl) {
         try {
-            const msgParams = {
-                QueueUrl: queueUrl,
-                MessageBody: JSON.stringify(payload)
-            };
+            logger.info('SQS MESSAGE SENDING');
 
-            if (!sqs) {
-                sqs = new AWS.SQS({apiVersion: '2012-11-05'});
-            }
+            const input = {QueueUrl: queueUrl}; // url needs to be in object form.
+            input.MessageBody = JSON.stringify(payload);
 
-            const response = await sqs.sendMessage(msgParams).promise();
+            const command = new SendMessageCommand(input);
+            const response = await client.send(command);
+
             logger.info(response, 'MESSAGE SENT');
             return response;
         } catch (err) {
@@ -41,7 +46,7 @@ function createSqsService(opts) {
     }
 
     return Object.freeze({
-        send
+        sendSQS
     });
 }
 

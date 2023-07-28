@@ -596,7 +596,7 @@ function createQuestionnaireService({
                     },
                     reference: null
                 };
-                return sqsService.send(payload, process.env.NOTIFY_AWS_SQS_ID);
+                return sqsService.sendSQS(payload, process.env.NOTIFY_AWS_SQS_ID);
             }
 
             if (action.type === 'sendSms') {
