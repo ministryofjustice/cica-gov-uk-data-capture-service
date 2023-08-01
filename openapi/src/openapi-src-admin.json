@@ -1,0 +1,108 @@
+{
+    "openapi": "3.0.2",
+    "info": {
+        "title": "Data Capture Service Admin API",
+        "description": "Manage admin functions for questionnaires",
+        "version": "1.0.0",
+        "license": {
+            "name": "MIT"
+        },
+        "contact": {
+            "name": "API Support",
+            "email": "api@cica.gov.uk"
+        }
+    },
+    "servers": [
+        {
+            "url": "/api/admin"
+        }
+    ],
+    "security": [
+        {
+            "bearerAuth": []
+        }
+    ],
+    "tags": [{"name": "Submissions"}],
+    "paths": {
+        "/questionnaires/resubmit-failed": {
+            "post": {
+                "tags": ["Submissions"],
+                "summary": "Resubmit any questionnaires that are in a submittable state",
+                "description": "Resubmits any questionnaires that are in a submittable state. Only available to admin users.",
+                "operationId": "SubmitQuestionnaire",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/vnd.api+json": {
+                                "schema": {
+                                    "$ref": "./json-schemas/api/admin_questionnaires_resubmit-failed/post/res/200.json"
+                                },
+                                "example": [
+                                    {
+                                        "id": "285cb104-0c15-4a9c-9840-cb1007f098fb",
+                                        "submitted": true
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/UnauthorizedError"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/Forbidden"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
+            }
+        },
+        "responses": {
+            "UnauthorizedError": {
+                "description": "Access token is missing or invalid",
+                "content": {
+                    "application/vnd.api+json": {
+                        "schema": {
+                            "$ref": "./json-schemas/api/responses/401.json"
+                        },
+                        "example": {
+                            "errors": [
+                                {
+                                    "status": 401,
+                                    "detail": "No authorization token was found"
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "Forbidden": {
+                "description": "The JWT doesn't permit access to this endpoint",
+                "content": {
+                    "application/vnd.api+json": {
+                        "schema": {
+                            "$ref": "./json-schemas/api/responses/403.json"
+                        },
+                        "example": {
+                            "errors": [
+                                {
+                                    "status": 403,
+                                    "title": "403 Forbidden",
+                                    "detail": "Insufficient scope"
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
