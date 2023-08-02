@@ -10,7 +10,7 @@ const createSqsService = require('../../../../../../services/sqs');
  */
 function buildMessageBody(questionnaireId) {
     const s3Directory = process.env.S3_DIRECTORY ? process.env.S3_DIRECTORY : 'application_json';
-    return `{"applicationJSONDocumentSummaryKey": "${s3Directory}/${questionnaireId}.json"}`;
+    return {applicationJSONDocumentSummaryKey: `${s3Directory}/${questionnaireId}.json`};
 }
 
 /**

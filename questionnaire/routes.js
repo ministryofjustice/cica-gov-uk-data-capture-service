@@ -8,6 +8,8 @@ const permissions = require('../middleware/route-permissions');
 const datasetRouter = require('./dataset/dataset-routes.js');
 const metadataRouter = require('./metadata/metadata-routes.js');
 
+const createSubmissionService = require('./submission');
+
 const router = express.Router();
 const rxTemplateName = /^[a-zA-Z0-9-]{1,30}$/;
 // Ensure JWT is valid
@@ -197,13 +199,15 @@ router
         }
     })
     .post(permissions('update:questionnaires'), async (req, res, next) => {
+        // *** THIS HANDLER HANDLES THE HAPPIEST HAPPY PATH ONLY. DO NOT USE IN PRODUCTION. ***
+        const {questionnaireId} = req.params;
+        const questionnaireService = createQuestionnaireService({
+            logger: req.log,
+            apiVersion: req.get('Dcs-Api-Version'),
+            ownerId: req.get('On-Behalf-Of')
+        });
+
         try {
-            const {questionnaireId} = req.params;
-            const questionnaireService = createQuestionnaireService({
-                logger: req.log,
-                apiVersion: req.get('Dcs-Api-Version'),
-                ownerId: req.get('On-Behalf-Of')
-            });
             const questionnaire = await questionnaireService.getQuestionnaire(questionnaireId);
 
             if (!questionnaire) {
@@ -255,13 +259,26 @@ router
             await questionnaireService.validateAllAnswers(questionnaireId);
 
             // TODO: refactor `getSubmissionResponseData` to be more intuitive.
-            const response = await questionnaireService.getSubmissionResponseData(
+            await questionnaireService.getSubmissionResponseData(questionnaireId, 'IN_PROGRESS');
+            // run tasks
+            const submissionService = createSubmissionService({
+                logger: req.log
+            });
+            const submissionResource = await submissionService.submit(questionnaireId);
+
+            // if we're here, all tasks passed (these status updates should probably be tasks themselves)
+            await questionnaireService.updateQuestionnaireSubmissionStatus(
                 questionnaireId,
-                true
+                'COMPLETED'
             );
 
-            res.status(201).json(response);
+            res.status(201).json(submissionResource);
         } catch (err) {
+            await questionnaireService.updateQuestionnaireSubmissionStatus(
+                questionnaireId,
+                'FAILED'
+            );
+
             next(err);
         }
     });
