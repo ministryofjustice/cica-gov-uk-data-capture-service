@@ -104,4 +104,4 @@ spec:
                   key: kta_s3_bucket
   selector:
     matchLabels:
-      app: dcs-app-uat
+      app: dcs-app-stag
