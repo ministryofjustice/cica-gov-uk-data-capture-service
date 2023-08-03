@@ -200,7 +200,6 @@ router
     })
     .post(permissions('update:questionnaires'), async (req, res, next) => {
         // *** THIS HANDLER HANDLES THE HAPPIEST HAPPY PATH ONLY. DO NOT USE IN PRODUCTION. ***
-
         const {questionnaireId} = req.params;
         const questionnaireService = createQuestionnaireService({
             logger: req.log
