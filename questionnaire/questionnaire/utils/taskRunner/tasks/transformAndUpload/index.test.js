@@ -102,7 +102,7 @@ describe('Transform and Upload task', () => {
         }));
 
         result = await transformAndUpload({
-            questionnaireDefinition: questionnaireFixture,
+            questionnaireDef: questionnaireFixture,
             logger: loggerMock
         });
 

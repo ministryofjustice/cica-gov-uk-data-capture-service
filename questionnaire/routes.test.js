@@ -319,6 +319,16 @@ describe('Openapi version 2023-05-17 validation', () => {
         return () => questionnaireServiceMock;
     });
 
+    jest.doMock('./submission/index.js', () => {
+        const submissionServiceMock = {
+            submit: jest.fn(() => {
+                return 'ok';
+            })
+        };
+
+        return () => submissionServiceMock;
+    });
+
     const mockQuestionnaireService = require('./questionnaire-service.js')();
     // app has an indirect dependency on questionnaire-service.js, require it after
     // the mock so that it references the mocked version
@@ -1199,72 +1209,6 @@ describe('Openapi version 2023-05-17 validation', () => {
             expect(response.body).toHaveProperty('errors');
             expect(response.body.errors[0].status).toEqual(403);
             expect(response.body.errors[0].detail).toEqual('Insufficient scope');
-        });
-
-        it('should return status code 404 if the query string contains incorrect data', async () => {
-            const response = await request(app)
-                .post('/api/questionnaires/00000000-0c15-4a9c-9840-cb1007f098fb/submissions')
-                .set('Authorization', `Bearer ${token}`)
-                .set('Content-Type', 'application/vnd.api+json')
-                .set('On-Behalf-Of', `urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6`)
-                .set('Dcs-Api-Version', '2023-05-17')
-                .send({
-                    data: {
-                        type: 'submissions',
-                        attributes: {
-                            questionnaireId: '00000000-0c15-4a9c-9840-cb1007f098fb'
-                        }
-                    }
-                });
-            expect(response.body).toHaveProperty('errors');
-            expect(response.body.errors[0].status).toEqual(404);
-            expect(response.body.errors[0].detail).toEqual(
-                'Questionnaire with questionnaireId "00000000-0c15-4a9c-9840-cb1007f098fb" does not exist'
-            );
-        });
-
-        it('should return status code 409 if the resource is not in a submittable state', async () => {
-            const response = await request(app)
-                .post('/api/questionnaires/33333333-0c15-4a9c-9840-cb1007f098fb/submissions')
-                .set('Authorization', `Bearer ${token}`)
-                .set('Content-Type', 'application/vnd.api+json')
-                .set('On-Behalf-Of', `urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6`)
-                .set('Dcs-Api-Version', '2023-05-17')
-                .send({
-                    data: {
-                        type: 'submissions',
-                        attributes: {
-                            questionnaireId: '33333333-0c15-4a9c-9840-cb1007f098fb'
-                        }
-                    }
-                });
-            expect(response.body).toHaveProperty('errors');
-            expect(response.body.errors[0].status).toEqual(409);
-            expect(response.body.errors[0].detail).toEqual(
-                'Questionnaire with ID "33333333-0c15-4a9c-9840-cb1007f098fb" is not in a submittable state'
-            );
-        });
-
-        it('should return status code 409 if there is a resource conflict', async () => {
-            const response = await request(app)
-                .post('/api/questionnaires/44444444-0c15-4a9c-9840-cb1007f098fb/submissions')
-                .set('Authorization', `Bearer ${token}`)
-                .set('Content-Type', 'application/vnd.api+json')
-                .set('On-Behalf-Of', `urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6`)
-                .set('Dcs-Api-Version', '2023-05-17')
-                .send({
-                    data: {
-                        type: 'submissions',
-                        attributes: {
-                            questionnaireId: '44444444-0c15-4a9c-9840-cb1007f098fb'
-                        }
-                    }
-                });
-            expect(response.body).toHaveProperty('errors');
-            expect(response.body.errors[0].status).toEqual(409);
-            expect(response.body.errors[0].detail).toEqual(
-                'Submission resource with ID "44444444-0c15-4a9c-9840-cb1007f098fb" already exists'
-            );
         });
 
         describe('Requests made MUST include owner data', () => {

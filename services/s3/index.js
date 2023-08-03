@@ -5,7 +5,7 @@ const {VError} = require('verror');
 
 const isPathForced = process.env.NODE_ENV === 'development';
 const s3Cli = new S3Client({
-    region: process.env.AWS_DEFAULT_REGION, // The default value is us-east-1. this is the localstack REGION.
+    region: 'eu-west-2',
     endpoint: process.env.DCS_S3_URL,
     maxAttempts: 4,
     forcePathStyle: isPathForced, // needed with localstack.
@@ -19,14 +19,14 @@ function createS3Service(opts) {
     const {logger} = opts;
     delete opts.logger;
 
-    async function uploadFile(jsonObj, bucketName, keyName) {
+    async function uploadFile(jsonObj, bucketName, keyName, contentType) {
         try {
             logger.info('Uploading to S3...');
             const params = new PutObjectCommand({
                 Bucket: bucketName,
                 Key: keyName,
                 Body: JSON.stringify(jsonObj),
-                contentType: 'dcs/json'
+                ContentType: contentType
             });
 
             const response = await s3Cli.send(params);

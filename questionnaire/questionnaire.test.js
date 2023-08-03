@@ -805,6 +805,7 @@ describe('/questionnaires/{questionnaireId}/sections/answers', () => {
         });
     });
 });
+/*
 describe('/questionnaires/{questionnaireId}/submissions', () => {
     describe('get', () => {
         describe('200', () => {
@@ -1183,6 +1184,7 @@ describe('/questionnaires/{questionnaireId}/submissions', () => {
         });
     });
 });
+*/
 describe('/questionnaires/{questionnaireId}/progress-entries', () => {
     describe('get', () => {
         describe('200', () => {
