@@ -85,12 +85,6 @@ router
                 'COMPLETED'
             );
 
-            const questionnireDefinition = await questionnaireService.getQuestionnaire(
-                req.params.questionnaireId
-            );
-
-            await questionnaireService.runOnCompleteActions(questionnireDefinition);
-
             res.status(201).json(response);
         } catch (err) {
             next(err);

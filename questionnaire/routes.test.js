@@ -280,9 +280,7 @@ describe('Openapi version 2023-05-17 validation', () => {
                 }
                 return 'ok';
             }),
-            runOnCompleteActions: jest.fn(() => {
-                return 'ok';
-            }),
+
             getAnswersBySectionId: jest.fn((questionnaireId, sectionId) => {
                 if (sectionId === 'p-not-a-section') {
                     throw new VError(
@@ -824,8 +822,6 @@ describe('Openapi version 2023-05-17 validation', () => {
                 expect(
                     mockQuestionnaireService.updateQuestionnaireSubmissionStatus
                 ).toBeCalledTimes(1);
-                expect(mockQuestionnaireService.getQuestionnaire).toBeCalledTimes(1);
-                expect(mockQuestionnaireService.runOnCompleteActions).toBeCalledTimes(1);
             });
         });
 
