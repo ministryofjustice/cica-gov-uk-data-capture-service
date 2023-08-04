@@ -254,6 +254,12 @@ router
 
             // TODO: refactor `getSubmissionResponseData` to be more intuitive.
             await questionnaireService.getSubmissionResponseData(questionnaireId, 'IN_PROGRESS');
+            // stop the getSubmissionResponseData > startSubmission function from being called!
+            await questionnaireService.updateQuestionnaireSubmissionStatus(
+                questionnaireId,
+                'IN_PROGRESS'
+            );
+
             // run tasks
             const submissionService = createSubmissionService({
                 logger: req.log
