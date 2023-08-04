@@ -10,7 +10,6 @@ const uuidv4 = require('uuid/v4');
 const ajvFormatsMobileUk = require('ajv-formats-mobile-uk');
 const templates = require('./templates');
 const createSqsService = require('../services/sqs');
-const createLegacyNotifyService = require('../services/sqs/legacy-sms-message-bus');
 const createSlackService = require('../services/slack');
 const questionnaireResource = require('./resources/questionnaire-resource');
 const createQuestionnaireHelper = require('./questionnaire/questionnaire');
@@ -578,47 +577,6 @@ function createQuestionnaireService({
         return db.updateQuestionnaireModifiedDate(questionnaireId);
     }
 
-    // TODO: Move this functionality to q-router
-    async function runOnCompleteActions(questionnaireDefinition) {
-        const questionnaire = createQuestionnaireHelper({
-            questionnaireDefinition
-        });
-        const permittedActions = questionnaire.getPermittedActions();
-        const actionResults = permittedActions.map(action => {
-            if (action.type === 'sendEmail') {
-                const sqsService = createSqsService({logger});
-
-                const payload = {
-                    templateId: action.data.templateId,
-                    emailAddress: action.data.emailAddress,
-                    personalisation: {
-                        caseReference: action.data.personalisation.caseReference
-                    },
-                    reference: null
-                };
-                return sqsService.send(payload, process.env.NOTIFY_AWS_SQS_ID);
-            }
-
-            if (action.type === 'sendSms') {
-                const legacyNotifyService = createLegacyNotifyService({logger});
-
-                const payload = {
-                    templateId: action.data.templateId,
-                    phoneNumber: action.data.phoneNumber,
-                    personalisation: {
-                        caseReference: action.data.personalisation.caseReference
-                    },
-                    reference: null
-                };
-                return legacyNotifyService.sendSms(payload);
-            }
-
-            return Promise.reject(Error(`Action type "${action.type}" is not supported`));
-        });
-
-        return actionResults;
-    }
-
     async function getAnswersBySectionId(questionnaireId, sectionId) {
         const questionnaire = await getQuestionnaire(questionnaireId);
 
@@ -647,7 +605,6 @@ function createQuestionnaireService({
         updateQuestionnaireSubmissionStatus,
         updateQuestionnaireModifiedDate,
         getSessionResource,
-        runOnCompleteActions,
         getAnswersBySectionId,
         updateExpiryForAuthenticatedOwner
     });

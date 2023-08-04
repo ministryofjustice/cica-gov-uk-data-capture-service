@@ -9,6 +9,7 @@ const {
     generateReferenceNumber
 } = require('../questionnaire/utils/taskRunner/tasks/generateCaseReference');
 const {sendSubmissionMessageToSQS} = require('../questionnaire/utils/taskRunner/tasks/postToSQS');
+const sendNotifyMessageToSQS = require('../questionnaire/utils/taskRunner/tasks/postToNotify');
 
 function createSubmissionService({
     logger,
@@ -27,7 +28,8 @@ function createSubmissionService({
                     sequential,
                     transformAndUpload,
                     generateReferenceNumber,
-                    sendSubmissionMessageToSQS
+                    sendSubmissionMessageToSQS,
+                    sendNotifyMessageToSQS
                 },
                 context: {
                     questionnaireDef,
