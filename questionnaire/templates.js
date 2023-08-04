@@ -125,6 +125,14 @@ function modifyTemplateToIncludeTaskDefinition(template) {
                     questionnaire: '$.questionnaireDef',
                     logger: '$.logger'
                 }
+            },
+            {
+                id: 'task4',
+                type: 'sendNotifyMessageToSQS',
+                data: {
+                    questionnaire: '$.questionnaireDef',
+                    logger: '$.logger'
+                }
             }
         ]
     };
