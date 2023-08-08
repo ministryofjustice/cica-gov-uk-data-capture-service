@@ -1,4 +1,5 @@
 /* eslint-disable no-shadow */
+/* eslint-disable global-require */
 
 'use strict';
 
@@ -20,6 +21,7 @@ const ownerData = {
 };
 const apiVersion = '2023-05-17';
 const validSubmissionStatus = 'IN_PROGRESS';
+const failedSubmissionStatus = 'FAILED';
 
 beforeEach(() => {
     jest.clearAllMocks();
@@ -120,6 +122,15 @@ jest.doMock('./questionnaire/questionnaire', () => {
 
     return () => questionnaireHelperMock;
 });
+jest.doMock('../services/sqs', () => {
+    const sqsHelperMock = {
+        send: jest.fn(() => {
+            return {MessageId: '99999999-7dec-11d0-a765-00a0c91e6bf6'};
+        })
+    };
+
+    return () => sqsHelperMock;
+});
 
 // Mock the default DAL
 jest.doMock('./questionnaire-dal', () => {
@@ -164,6 +175,9 @@ jest.doMock('./questionnaire-dal', () => {
             return 'ok!';
         }),
         updateQuestionnaireSubmissionStatusByOwner: jest.fn(() => {
+            return 'ok!';
+        }),
+        getQuestionnaireIdsBySubmissionStatus: jest.fn(() => {
             return 'ok!';
         })
     };
@@ -841,6 +855,82 @@ describe('Questionnaire Service', () => {
                     mockDalService.updateQuestionnaireSubmissionStatusByOwner
                 ).toHaveBeenCalledWith(validQuestionnaireId, validSubmissionStatus);
                 expect(mockDalService.updateQuestionnaireSubmissionStatus).not.toHaveBeenCalled();
+            });
+        });
+    });
+
+    describe('DCS Admin API', () => {
+        describe('getQuestionnaireIdsBySubmissionStatus', () => {
+            it('Should execute the getQuestionnaireIdsBySubmissionStatus db call', async () => {
+                const questionnaireService = createQuestionnaireService({
+                    logger: () => 'Logged from createQuestionnaire test',
+                    apiVersion: undefined, // Undefined should only occur for DCS API v1
+                    ownerId: undefined // Undefined should only occur for DCS API v1
+                });
+                await questionnaireService.getQuestionnaireIdsBySubmissionStatus(
+                    failedSubmissionStatus
+                );
+
+                expect(mockDalService.getQuestionnaireIdsBySubmissionStatus).toHaveBeenCalledTimes(
+                    1
+                );
+                expect(mockDalService.getQuestionnaireIdsBySubmissionStatus).toHaveBeenCalledWith(
+                    failedSubmissionStatus
+                );
+            });
+        });
+
+        describe('postFailedSubmissions', () => {
+            it('Should resubmit a failed application', async () => {
+                jest.doMock('./questionnaire-dal', () => {
+                    const dalServiceMock = {
+                        getQuestionnaireIdsBySubmissionStatus: jest.fn(() => {
+                            return [validQuestionnaireId];
+                        }),
+                        updateQuestionnaireSubmissionStatus: jest.fn(() => {
+                            return 'ok!';
+                        })
+                    };
+
+                    return () => dalServiceMock;
+                });
+                const createQuestionnaireService = require('./questionnaire-service');
+                const questionnaireService = createQuestionnaireService({
+                    logger: {info: jest.fn()},
+                    apiVersion: undefined, // Undefined should only occur for DCS API v1 and Admin.
+                    ownerId: undefined // Undefined should only occur for DCS API v1 and Admin.
+                });
+                const actual = await questionnaireService.postFailedSubmissions();
+
+                expect(actual).toMatchObject([
+                    {
+                        id: validQuestionnaireId,
+                        resubmitted: true
+                    }
+                ]);
+            });
+
+            it('Should do nothing if no failed submissions are found', async () => {
+                jest.doMock('./questionnaire-dal', () => {
+                    const dalServiceMock = {
+                        getQuestionnaireIdsBySubmissionStatus: jest.fn(() => {
+                            return [];
+                        }),
+                        updateQuestionnaireSubmissionStatus: jest.fn(() => {
+                            return 'ok!';
+                        })
+                    };
+
+                    return () => dalServiceMock;
+                });
+                const createQuestionnaireService = require('./questionnaire-service');
+                const questionnaireService = createQuestionnaireService({
+                    logger: {info: jest.fn()},
+                    apiVersion: undefined, // Undefined should only occur for DCS API v1 and Admin.
+                    ownerId: undefined // Undefined should only occur for DCS API v1 and Admin.
+                });
+                const actual = await questionnaireService.postFailedSubmissions();
+                expect(actual).toMatchObject([]);
             });
         });
     });

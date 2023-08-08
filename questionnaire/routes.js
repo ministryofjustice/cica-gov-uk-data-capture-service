@@ -308,9 +308,10 @@ router
 router.route('/resubmit-failed').post(permissions('admin'), async (req, res, next) => {
     let response;
     try {
-        // const submissionsService = createSubmissionsService({logger: req.log});
-        // response = await submissionsService.postFailedSubmissions();
-        response = 'ok';
+        const questionnaireService = createQuestionnaireService({
+            logger: req.log
+        });
+        response = await questionnaireService.postFailedSubmissions();
     } catch (err) {
         next(err);
     }

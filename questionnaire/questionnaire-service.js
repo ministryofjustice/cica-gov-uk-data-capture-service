@@ -635,6 +635,23 @@ function createQuestionnaireService({
         );
     }
 
+    async function getQuestionnaireIdsBySubmissionStatus(status) {
+        return db.getQuestionnaireIdsBySubmissionStatus(status);
+    }
+
+    async function postFailedSubmissions() {
+        const questionnaireIds = await getQuestionnaireIdsBySubmissionStatus('FAILED');
+        const promises = questionnaireIds.map(async id => {
+            try {
+                await startSubmission(id);
+                return {id, resubmitted: true};
+            } catch (err) {
+                return {id, resubmitted: false};
+            }
+        });
+        return Promise.all(promises);
+    }
+
     return Object.freeze({
         createQuestionnaire,
         createAnswers,
@@ -649,7 +666,9 @@ function createQuestionnaireService({
         getSessionResource,
         runOnCompleteActions,
         getAnswersBySectionId,
-        updateExpiryForAuthenticatedOwner
+        updateExpiryForAuthenticatedOwner,
+        getQuestionnaireIdsBySubmissionStatus,
+        postFailedSubmissions
     });
 }
 
