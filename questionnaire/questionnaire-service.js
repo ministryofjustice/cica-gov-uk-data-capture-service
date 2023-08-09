@@ -640,16 +640,17 @@ function createQuestionnaireService({
     }
 
     async function postFailedSubmissions() {
-        const questionnaireIds = await getQuestionnaireIdsBySubmissionStatus('FAILED');
-        const promises = questionnaireIds.map(async id => {
-            try {
+        try {
+            const questionnaireIds = await getQuestionnaireIdsBySubmissionStatus('FAILED');
+            const resubmittedApplications = questionnaireIds.map(async id => {
                 await startSubmission(id);
                 return {id, resubmitted: true};
-            } catch (err) {
-                return {id, resubmitted: false};
-            }
-        });
-        return Promise.all(promises);
+            });
+            return Promise.all(resubmittedApplications);
+        } catch (err) {
+            logger.error({err}, 'RESUBMISSION FAILED');
+            throw err;
+        }
     }
 
     return Object.freeze({
