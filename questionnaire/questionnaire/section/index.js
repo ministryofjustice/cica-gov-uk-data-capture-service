@@ -154,7 +154,7 @@ function createSection({id, sectionDefinition}) {
         }
 
         if (allOf !== undefined) {
-            if (allOf.meta !== undefined) {
+            if (allOf[0].meta !== undefined) {
                 // The page is a composite question
                 const compositeAttributeSchema = allOf[0];
                 const compositeAttribute = createCompositeAttribute(
