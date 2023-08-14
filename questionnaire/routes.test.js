@@ -28,6 +28,7 @@ describe('/questionnaires/{questionnaireId}/progress-entries?filter[position]=cu
                         getQuestionnaireModifiedDate: () => undefined
                     }))
                 );
+                jest.doMock('./utils/isQuestionnaireVersionCompatible', () => () => true);
 
                 const tokens = {
                     'read:progress-entries':
@@ -68,6 +69,7 @@ describe('Answering and retrieving the next section', () => {
                     updateQuestionnaire: () => undefined
                 }))
             );
+            jest.doMock('./utils/isQuestionnaireVersionCompatible', () => () => true);
 
             const tokens = {
                 'update:questionnaires':
@@ -175,6 +177,7 @@ describe('Issue: https://github.com/cdimascio/express-openapi-validator/issues/7
                     getQuestionnaireModifiedDate: () => undefined
                 }))
             );
+            jest.doMock('./utils/isQuestionnaireVersionCompatible', () => () => true);
 
             const tokens = {
                 'read:progress-entries':

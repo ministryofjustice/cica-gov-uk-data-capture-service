@@ -91,6 +91,8 @@ jest.doMock('../services/slack/index.js', () =>
     }))
 );
 
+jest.doMock('./utils/isQuestionnaireVersionCompatible', () => () => true);
+
 // app has an indirect dependency on questionnaire-dal.js, require it after
 // the mock so that it references the mocked version
 const app = require('../app');

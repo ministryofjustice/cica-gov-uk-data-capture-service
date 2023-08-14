@@ -14,6 +14,7 @@ const createLegacyNotifyService = require('../services/sqs/legacy-sms-message-bu
 const createSlackService = require('../services/slack');
 const questionnaireResource = require('./resources/questionnaire-resource');
 const createQuestionnaireHelper = require('./questionnaire/questionnaire');
+const isQuestionnaireCompatible = require('./utils/isQuestionnaireVersionCompatible');
 
 const defaults = {};
 defaults.createQuestionnaireDAL = require('./questionnaire-dal');
@@ -448,6 +449,31 @@ function createQuestionnaireService({
     async function getProgressEntries(questionnaireId, query) {
         // 1 - get questionnaire instance
         const questionnaire = await getQuestionnaire(questionnaireId);
+        // 1.1 check questionnaire is a compatible version
+        const isCompatible = isQuestionnaireCompatible(questionnaire.version);
+        // 1.2 if not, return 'incompatible questionnaire' schema
+        if (!isCompatible) {
+            return {
+                data: [
+                    {
+                        type: 'progress-entries',
+                        id: 'incompatible',
+                        attributes: {
+                            sectionId: null,
+                            url: null
+                        },
+                        relationships: {
+                            section: {
+                                data: {
+                                    type: null,
+                                    id: 'incompatible'
+                                }
+                            }
+                        }
+                    }
+                ]
+            };
+        }
         // 2 - get router
         const qRouter = createQRouter(questionnaire);
         // 3 - filter or paginate progress entries if required
