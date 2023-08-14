@@ -5,11 +5,13 @@
 
 const mockAjv = require('ajv');
 const questionnaireFixture = require('./test-fixtures/res/questionnaireCompleteWithCRN');
+const incompatibleQuestionnaireFixture = require('./test-fixtures/res/questionnaireIncompatible');
 
 const validSectionId = 'p-applicant-enter-your-name';
 const invalidSectionId = 'p-not-a-section';
 const validQuestionnaireId = '12345678-7dec-11d0-a765-00a0c91e6bf6';
 const invalidQuestionnaireId = '11111111-7dec-11d0-a765-00a0c91e6bf6';
+const incompatibleQuestionnaireId = '55555555-7dec-11d0-a765-00a0c91e6bf6';
 const answers = {
     'q-some-section': true
 };
@@ -142,6 +144,9 @@ jest.doMock('./questionnaire-dal', () => {
             if (questionnaireId === invalidQuestionnaireId) {
                 throw new Error('Cannot find questionnaire');
             }
+            if (questionnaireId === incompatibleQuestionnaireId) {
+                return incompatibleQuestionnaireFixture;
+            }
             return questionnaireFixture;
         }),
         updateQuestionnaire: jest.fn(() => {
@@ -150,6 +155,9 @@ jest.doMock('./questionnaire-dal', () => {
         getQuestionnaireByOwner: jest.fn(questionnaireId => {
             if (questionnaireId === invalidQuestionnaireId) {
                 throw new Error('Cannot find questionnaire');
+            }
+            if (questionnaireId === incompatibleQuestionnaireId) {
+                return incompatibleQuestionnaireFixture;
             }
             return questionnaireFixture;
         }),
@@ -183,6 +191,10 @@ jest.doMock('./questionnaire-dal', () => {
     };
 
     return () => dalServiceMock;
+});
+
+jest.doMock('./utils/isQuestionnaireVersionCompatible', () => questionnaireVersion => {
+    return questionnaireVersion !== incompatibleQuestionnaireFixture.version;
 });
 
 const mockDalService = require('./questionnaire-dal')();
@@ -231,6 +243,33 @@ describe('Questionnaire Service', () => {
                     type: 'progress-entries',
                     attributes: expect.any(Object),
                     relationships: expect.any(Object)
+                });
+            });
+
+            it('Should return a "incompatible questionnaire" schema if the questionnaire in incompatible', async () => {
+                const query = undefined;
+
+                const actual = await questionnaireService.getProgressEntries(
+                    incompatibleQuestionnaireId,
+                    query
+                );
+
+                expect(Array.isArray(actual.data)).toBe(true);
+                expect(actual.data[0]).toMatchObject({
+                    id: 'incompatible',
+                    type: 'progress-entries',
+                    attributes: {
+                        sectionId: null,
+                        url: null
+                    },
+                    relationships: {
+                        section: {
+                            data: {
+                                type: null,
+                                id: 'incompatible'
+                            }
+                        }
+                    }
                 });
             });
 
@@ -574,6 +613,33 @@ describe('Questionnaire Service', () => {
                     type: 'progress-entries',
                     attributes: expect.any(Object),
                     relationships: expect.any(Object)
+                });
+            });
+
+            it('Should return a "incompatible questionnaire" schema if the questionnaire in incompatible', async () => {
+                const query = undefined;
+
+                const actual = await questionnaireService.getProgressEntries(
+                    incompatibleQuestionnaireId,
+                    query
+                );
+
+                expect(Array.isArray(actual.data)).toBe(true);
+                expect(actual.data[0]).toMatchObject({
+                    id: 'incompatible',
+                    type: 'progress-entries',
+                    attributes: {
+                        sectionId: null,
+                        url: null
+                    },
+                    relationships: {
+                        section: {
+                            data: {
+                                type: null,
+                                id: 'incompatible'
+                            }
+                        }
+                    }
                 });
             });
 
