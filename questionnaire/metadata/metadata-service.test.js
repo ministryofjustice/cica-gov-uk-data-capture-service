@@ -12,14 +12,16 @@ const metadataCollection = [
         created: '2023-06-08 00:00:00.000000+00',
         modified: '2023-06-08 00:00:00.000000+00',
         expires: '2023-06-08 00:30:00.000000+00',
-        submission_status: 'NOT_STARTED'
+        submission_status: 'NOT_STARTED',
+        questionnaire_version: '1.0.0'
     },
     {
         id: validQuestionnaireId2,
         created: '2023-06-08 00:00:00.000000+00',
         modified: '2023-06-08 00:00:00.000000+00',
         expires: '2023-06-08 00:30:00.000000+00',
-        submission_status: 'NOT_STARTED'
+        submission_status: 'NOT_STARTED',
+        questionnaire_version: '1.0.0'
     }
 ];
 const metadataByOwnerCollection = [
@@ -28,7 +30,8 @@ const metadataByOwnerCollection = [
         created: '2023-06-08 00:00:00.000000+00',
         modified: '2023-06-08 00:00:00.000000+00',
         expires: '2023-06-08 00:30:00.000000+00',
-        submission_status: 'NOT_STARTED'
+        submission_status: 'NOT_STARTED',
+        questionnaire_version: '1.0.0'
     }
 ];
 
@@ -71,7 +74,8 @@ describe('Metadata Service', () => {
                             created: '2023-06-08 00:00:00.000000+00',
                             modified: '2023-06-08 00:00:00.000000+00',
                             expires: '2023-06-08 00:30:00.000000+00',
-                            'submission-status': 'NOT_STARTED'
+                            'submission-status': 'NOT_STARTED',
+                            'questionnaire-version-valid': true
                         }
                     },
                     {
@@ -82,7 +86,8 @@ describe('Metadata Service', () => {
                             created: '2023-06-08 00:00:00.000000+00',
                             modified: '2023-06-08 00:00:00.000000+00',
                             expires: '2023-06-08 00:30:00.000000+00',
-                            'submission-status': 'NOT_STARTED'
+                            'submission-status': 'NOT_STARTED',
+                            'questionnaire-version-valid': true
                         }
                     }
                 ];
@@ -140,7 +145,8 @@ describe('Metadata Service', () => {
                             created: '2023-06-08 00:00:00.000000+00',
                             modified: '2023-06-08 00:00:00.000000+00',
                             expires: '2023-06-08 00:30:00.000000+00',
-                            'submission-status': 'NOT_STARTED'
+                            'submission-status': 'NOT_STARTED',
+                            'questionnaire-version-valid': true
                         }
                     }
                 ];

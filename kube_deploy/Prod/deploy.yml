@@ -102,6 +102,8 @@ spec:
                 secretKeyRef:
                   name: shared-secrets
                   key: kta_s3_bucket
+            - name: LATEST_QUESTIONNAIRE_VERSION
+              value: '10.1.2'
   selector:
     matchLabels:
       app: dcs-app-prod

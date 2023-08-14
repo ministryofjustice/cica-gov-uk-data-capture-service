@@ -2,6 +2,8 @@
 
 const VError = require('verror');
 
+const isValidVersion = require('./utils/versionComparison');
+
 const defaults = {};
 defaults.createQuestionnaireDAL = require('../questionnaire-dal');
 
@@ -32,7 +34,8 @@ function createMetadataService({
                     created: data.created,
                     modified: data.modified,
                     expires: data.expires,
-                    'submission-status': data.submission_status
+                    'submission-status': data.submission_status,
+                    'questionnaire-version-valid': isValidVersion(data.questionnaire_version)
                 }
             };
         });
@@ -61,7 +64,8 @@ function createMetadataService({
                     created: data.created,
                     modified: data.modified,
                     'submission-status': data.submission_status,
-                    expires: data.expires
+                    expires: data.expires,
+                    'questionnaire-version-valid': isValidVersion(data.questionnaire_version)
                 }
             };
         });
