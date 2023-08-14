@@ -16,7 +16,8 @@
                                 "created",
                                 "modified",
                                 "submission-status",
-                                "expires"
+                                "expires",
+                                "questionnaire-version-valid"
                             ],
                             "properties": {
                                 "questionnaire-id": {
@@ -33,6 +34,9 @@
                                 },
                                 "expires": {
                                     "$ref": "../../models/definitions/timestamp.json"
+                                },
+                                "questionnaire-version-valid": {
+                                    "type": "boolean"
                                 }
                             }
                         }

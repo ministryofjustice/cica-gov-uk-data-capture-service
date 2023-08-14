@@ -1861,7 +1861,8 @@
                                                                                     "created",
                                                                                     "modified",
                                                                                     "submission-status",
-                                                                                    "expires"
+                                                                                    "expires",
+                                                                                    "questionnaire-version-valid"
                                                                                 ],
                                                                                 "properties": {
                                                                                     "questionnaire-id": {
@@ -1891,6 +1892,9 @@
                                                                                         "title": "Timestamp",
                                                                                         "type": "string",
                                                                                         "format": "date-time"
+                                                                                    },
+                                                                                    "questionnaire-version-valid": {
+                                                                                        "type": "boolean"
                                                                                     }
                                                                                 }
                                                                             }
@@ -1915,7 +1919,8 @@
                                                 "created": "2022-01-18T04:05:06Z",
                                                 "modified": "2022-01-18T05:05:06Z",
                                                 "submission-status": "IN_PROGRESS",
-                                                "expires": "2023-01-24T05:05:06Z"
+                                                "expires": "2023-01-24T05:05:06Z",
+                                                "questionnaire-version-valid": true
                                             }
                                         }
                                     ]
@@ -2229,7 +2234,8 @@
                                                                                     "created",
                                                                                     "modified",
                                                                                     "submission-status",
-                                                                                    "expires"
+                                                                                    "expires",
+                                                                                    "questionnaire-version-valid"
                                                                                 ],
                                                                                 "properties": {
                                                                                     "questionnaire-id": {
@@ -2259,6 +2265,9 @@
                                                                                         "title": "Timestamp",
                                                                                         "type": "string",
                                                                                         "format": "date-time"
+                                                                                    },
+                                                                                    "questionnaire-version-valid": {
+                                                                                        "type": "boolean"
                                                                                     }
                                                                                 }
                                                                             }
@@ -2283,7 +2292,8 @@
                                                 "created": "2022-01-18T04:05:06Z",
                                                 "modified": "2022-01-18T05:05:06Z",
                                                 "submission-status": "IN_PROGRESS",
-                                                "expires": "2023-01-24T05:05:06Z"
+                                                "expires": "2023-01-24T05:05:06Z",
+                                                "questionnaire-version-valid": true
                                             }
                                         }
                                     ]
