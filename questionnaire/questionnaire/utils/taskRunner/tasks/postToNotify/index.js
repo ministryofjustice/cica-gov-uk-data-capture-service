@@ -19,7 +19,7 @@ async function sendNotifyMessageToSQS({questionnaire, logger}) {
                     templateId: action.data.templateId,
                     emailAddress: action.data.emailAddress,
                     personalisation: {
-                        caseReference: action.data.personalisation.caseReference,
+                        caseReference: action.data.personalisation?.caseReference,
                         content: action.data.personalisation?.content
                     },
                     reference: null
@@ -35,7 +35,7 @@ async function sendNotifyMessageToSQS({questionnaire, logger}) {
                     templateId: action.data.templateId,
                     phoneNumber: action.data.phoneNumber,
                     personalisation: {
-                        caseReference: action.data.personalisation.caseReference,
+                        caseReference: action.data.personalisation?.caseReference,
                         content: action.data.personalisation?.content
                     },
                     reference: null
