@@ -30,7 +30,7 @@ describe('S3 Service', () => {
             Key: 'test',
             ContentType: 'application/json',
             SSEKMSKeyId: undefined,
-            ServerSideEncryption: 'AES256'
+            ServerSideEncryption: 'aws:kms'
         });
     });
 
