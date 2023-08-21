@@ -28,7 +28,9 @@ describe('S3 Service', () => {
             Body: JSON.stringify(testJsonObj),
             Bucket: 'bucket',
             Key: 'test',
-            ContentType: 'application/json'
+            ContentType: 'application/json',
+            SSEKMSKeyId: undefined,
+            ServerSideEncryption: 'AES256'
         });
     });
 
