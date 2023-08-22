@@ -26,7 +26,9 @@ function createS3Service(opts) {
                 Bucket: bucketName,
                 Key: keyName,
                 Body: JSON.stringify(jsonObj),
-                ContentType: contentType
+                ContentType: contentType,
+                SSEKMSKeyId: process.env.KMS_KEY_ID,
+                ServerSideEncryption: 'aws:kms'
             });
 
             const response = await s3Cli.send(params);
