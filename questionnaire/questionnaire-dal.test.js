@@ -355,7 +355,7 @@ describe('questionnaire data access layer', () => {
 
     describe('updateExpiryForAuthenticatedOwner', () => {
         const query =
-            "UPDATE questionnaire SET expires = date_trunc('day', expires) + INTERVAL '31 days' WHERE id = $1 AND questionnaire -> 'answers' -> 'owner' ->> 'owner-id' = $2";
+            "UPDATE questionnaire SET expires = date_trunc('day', created) + INTERVAL '31 days' WHERE id = $1 AND questionnaire -> 'answers' -> 'owner' ->> 'owner-id' = $2";
         it('Should run an update expiry query and filter by questionnaireId and owner', async () => {
             const questionnaireId = DB_QUERY_SUCCESS_QUESTIONNAIRE_ID;
             const questionnaireDAL = createQuestionnaireDAL({logger: jest.fn(), ownerId});

@@ -304,7 +304,7 @@ function questionnaireDAL(spec) {
         let result;
         try {
             result = await db.query(
-                "UPDATE questionnaire SET expires = date_trunc('day', expires) + INTERVAL '31 days' WHERE id = $1 AND questionnaire -> 'answers' -> 'owner' ->> 'owner-id' = $2",
+                "UPDATE questionnaire SET expires = date_trunc('day', created) + INTERVAL '31 days' WHERE id = $1 AND questionnaire -> 'answers' -> 'owner' ->> 'owner-id' = $2",
                 [questionnaireId, owner]
             );
 
