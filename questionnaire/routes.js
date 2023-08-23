@@ -201,41 +201,98 @@ router
     .post(permissions('update:questionnaires'), async (req, res, next) => {
         // *** THIS HANDLER HANDLES THE HAPPIEST HAPPY PATH ONLY. DO NOT USE IN PRODUCTION. ***
 
-        const {questionnaireId} = req.params;
-        const questionnaireService = createQuestionnaireService({
-            logger: req.log
-        });
+        if (false) {
+            // const {questionnaireId} = req.params;
+            // const questionnaireService = createQuestionnaireService({
+            //     logger: req.log
+            // });
 
-        try {
-            // stop the getSubmissionResponseData > startSubmission function from being called!
-            await questionnaireService.updateQuestionnaireSubmissionStatus(
-                questionnaireId,
-                'IN_PROGRESS'
-            );
-
-            // run tasks
-            const submissionService = createSubmissionService({
-                logger: req.log
+            const {questionnaireId} = req.params;
+            const questionnaireService = createQuestionnaireService({
+                logger: req.log,
+                apiVersion: req.get('Dcs-Api-Version'),
+                ownerId: req.get('On-Behalf-Of')
             });
-            const submissionResource = await submissionService.submit(questionnaireId);
 
-            // if we're here, all tasks passed (these status updates should probably be tasks themselves)
-            await questionnaireService.updateQuestionnaireSubmissionStatus(
-                questionnaireId,
-                'COMPLETED'
-            );
+            try {
+                const questionnaire = await questionnaireService.getQuestionnaire(questionnaireId);
 
-            res.status(201).json(submissionResource);
-        } catch (err) {
-            await questionnaireService.updateQuestionnaireSubmissionStatus(
-                questionnaireId,
-                'FAILED'
-            );
+                if (!questionnaire) {
+                    const err = Error(
+                        `Questionnaire with questionnaireId "${questionnaireId}" does not exist`
+                    );
+                    err.name = 'HTTPError';
+                    err.statusCode = 404;
+                    err.error = '404 Not Found';
+                    throw err;
+                }
 
-            next(err);
+                // are we currently, or have we been on this questionnaire's summary page?
+                // we infer a questionnaire is complete if the user has visited the summary page.
+                const isQuestionnaireComplete = questionnaire.routes.summary.some(
+                    summarySectionId => questionnaire.progress.includes(summarySectionId)
+                );
+
+                // if the summary section ID is in the progress array, then that means
+                // the questionnaire is submittable.
+                if (!isQuestionnaireComplete) {
+                    const err = Error(
+                        `Questionnaire with ID "${questionnaireId}" is not in a submittable state`
+                    );
+                    err.name = 'HTTPError';
+                    err.statusCode = 409;
+                    err.error = '409 Conflict';
+                    throw err;
+                }
+
+                const submissionStatus = await questionnaireService.getQuestionnaireSubmissionStatus(
+                    questionnaireId
+                );
+
+                // if the submission status is anything other than 'NOT_STARTED' then it
+                // means that the submission resource has been previously created.
+                // also skip over this for failed application so they can be resubmitted.
+                if (!['NOT_STARTED', 'FAILED'].includes(submissionStatus)) {
+                    const err = Error(
+                        `Submission resource with ID "${questionnaireId}" already exists`
+                    );
+                    err.name = 'HTTPError';
+                    err.statusCode = 409;
+                    err.error = '409 Conflict';
+                    throw err;
+                }
+
+                // stop the getSubmissionResponseData > startSubmission function from being called!
+                await questionnaireService.updateQuestionnaireSubmissionStatus(
+                    questionnaireId,
+                    'IN_PROGRESS'
+                );
+
+                // run tasks
+                const submissionService = createSubmissionService({
+                    logger: req.log
+                });
+                const submissionResource = await submissionService.submit(questionnaireId);
+
+                //
+
+                // if we're here, all tasks passed (these status updates should probably be tasks themselves)
+                await questionnaireService.updateQuestionnaireSubmissionStatus(
+                    questionnaireId,
+                    'COMPLETED'
+                );
+
+                res.status(201).json(submissionResource);
+            } catch (err) {
+                await questionnaireService.updateQuestionnaireSubmissionStatus(
+                    questionnaireId,
+                    'FAILED'
+                );
+
+                next(err);
+            }
         }
 
-        /*
         try {
             const {questionnaireId} = req.params;
             const questionnaireService = createQuestionnaireService({
@@ -303,7 +360,6 @@ router
         } catch (err) {
             next(err);
         }
-        */
     });
 
 router
