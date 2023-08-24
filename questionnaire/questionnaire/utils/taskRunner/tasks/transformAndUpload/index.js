@@ -27,6 +27,20 @@ function mergeArrays(target, source) {
 }
 
 /**
+ * prependsLabel to the value label the question is an injury
+ * @param {question} question
+ * @returns
+ */
+function prependLabel(question) {
+    if (question.id === 'q-applicant-physical-injuries') {
+        const {label, valueLabel: valueLabels} = question;
+
+        question.valueLabel = valueLabels.map(valueLabel => `${label} - ${valueLabel}`);
+    }
+    return question;
+}
+
+/**
  * If there are multiple answers against a single questionId, then these answers
  * are flattened into a single answer with value and valueLabel being concatenated arrays.
  * @param answers - The themed output produced by transformQuestionnaire
@@ -36,18 +50,22 @@ function flattenAnswers(answers) {
         const values = [];
 
         theme.values.forEach(question => {
+            const prependedQuestion = prependLabel(question);
             const existingQuestion = values.find(value => {
-                return value.id === question.id;
+                return value.id === prependedQuestion.id;
             });
 
             if (existingQuestion) {
-                existingQuestion.value = mergeArrays(existingQuestion.value, question.value);
+                existingQuestion.value = mergeArrays(
+                    existingQuestion.value,
+                    prependedQuestion.value
+                );
                 existingQuestion.valueLabel = mergeArrays(
                     existingQuestion.valueLabel,
-                    question.valueLabel
+                    prependedQuestion.valueLabel
                 );
             } else {
-                values.push(question);
+                values.push(prependedQuestion);
             }
         });
 
