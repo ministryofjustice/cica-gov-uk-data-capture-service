@@ -159,7 +159,7 @@ async function transformAndUpload({questionnaireDef, logger}) {
 
     // Populate the dateSubmitted from the database
     const db = createQuestionnaireDAL({logger});
-    output.meta.dateSubmitted = await db.getQuestionnaireModifiedDate(questionnaire.getId());
+    output.meta.submittedDate = await db.getQuestionnaireModifiedDate(questionnaire.getId());
 
     // Upload transformed JSON into S3
     logger.info(`Uploading to S3 for questionnaire with id: ${questionnaire.getId()}`);
