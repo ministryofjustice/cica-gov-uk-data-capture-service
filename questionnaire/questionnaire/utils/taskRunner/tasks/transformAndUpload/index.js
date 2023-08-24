@@ -27,6 +27,20 @@ function mergeArrays(target, source) {
 }
 
 /**
+ * prependsLabel to the value label the question is an injury
+ * @param {question} question
+ * @returns
+ */
+function prependLabel(question) {
+    if (question.id === 'q-applicant-physical-injuries') {
+        const {label, valueLabel: valueLabels} = question;
+
+        question.valueLabel = valueLabels.map(valueLabel => `${label} - ${valueLabel}`);
+    }
+    return question;
+}
+
+/**
  * If there are multiple answers against a single questionId, then these answers
  * are flattened into a single answer with value and valueLabel being concatenated arrays.
  * @param answers - The themed output produced by transformQuestionnaire
@@ -36,18 +50,22 @@ function flattenAnswers(answers) {
         const values = [];
 
         theme.values.forEach(question => {
+            const prependedQuestion = prependLabel(question);
             const existingQuestion = values.find(value => {
-                return value.id === question.id;
+                return value.id === prependedQuestion.id;
             });
 
             if (existingQuestion) {
-                existingQuestion.value = mergeArrays(existingQuestion.value, question.value);
+                existingQuestion.value = mergeArrays(
+                    existingQuestion.value,
+                    prependedQuestion.value
+                );
                 existingQuestion.valueLabel = mergeArrays(
                     existingQuestion.valueLabel,
-                    question.valueLabel
+                    prependedQuestion.valueLabel
                 );
             } else {
-                values.push(question);
+                values.push(prependedQuestion);
             }
         });
 
@@ -65,15 +83,10 @@ function getDeclaration(questionnaire) {
     const progress = questionnaire.getProgress();
     const declarationSectionAndQuestionIds = {
         'p-applicant-declaration': 'q-applicant-declaration',
-        'p-applicant-declaration-deceased': 'q-applicant-declaration',
         'p-mainapplicant-declaration-under-12': 'q-mainapplicant-declaration',
-        'p-mainapplicant-declaration-under-12-deceased': 'q-mainapplicant-declaration',
         'p-mainapplicant-declaration-12-and-over': 'q-mainapplicant-declaration',
-        'p-mainapplicant-declaration-12-and-over-deceased': 'q-mainapplicant-declaration',
         'p-rep-declaration-under-12': 'q-rep-declaration',
-        'p-rep-declaration-under-12-deceased': 'q-rep-declaration',
-        'p-rep-declaration-12-and-over': 'q-rep-declaration',
-        'p-rep-declaration-12-and-over-deceased': 'q-rep-declaration'
+        'p-rep-declaration-12-and-over': 'q-rep-declaration'
     };
     const declarationSectionIds = Object.keys(declarationSectionAndQuestionIds);
     const declarationSectionId = progress.find(sectionId =>
@@ -135,14 +148,13 @@ async function transformAndUpload({questionnaireDef, logger}) {
     const questionnaire = createQuestionnaireHelper({
         questionnaireDefinition: questionnaireDef
     });
-
     const s3Directory = process.env.S3_DIRECTORY ? process.env.S3_DIRECTORY : 'application_json';
     logger.info(`Transforming questionnaire with id: ${questionnaire.getId()}`);
     const output = transformQuestionnaire(questionnaire);
 
     // Populate the dateSubmitted from the database
     const db = createQuestionnaireDAL({logger});
-    output.meta.submittedDate = await db.getQuestionnaireModifiedDate(questionnaire.getId());
+    output.meta.dateSubmitted = await db.getQuestionnaireModifiedDate(questionnaire.getId());
 
     // Upload transformed JSON into S3
     logger.info(`Uploading to S3 for questionnaire with id: ${questionnaire.getId()}`);
@@ -150,8 +162,7 @@ async function transformAndUpload({questionnaireDef, logger}) {
     const submissionResponse = await s3Service.uploadFile(
         output,
         process.env.S3_BUCKET_NAME,
-        `${s3Directory}/${questionnaire.getId()}.json`,
-        'application/json'
+        `${s3Directory}/${questionnaire.getId()}.json`
     );
     return submissionResponse;
 }
