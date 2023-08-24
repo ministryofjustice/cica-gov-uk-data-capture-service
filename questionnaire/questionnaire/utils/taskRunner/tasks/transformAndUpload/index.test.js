@@ -64,13 +64,13 @@ describe('Transform and Upload task', () => {
         ]);
 
         expect(injuries.valueLabel).toStrictEqual([
-            'Quadriplegia or tetraplegia (paralysis of all 4 limbs)',
-            'Other',
-            'Damaged or detached retina',
-            'Broken ear bone',
-            'Hemiplegia (paralysis of one side of the the body)',
-            'Scars',
-            'Cartilage'
+            'Head injuries - Quadriplegia or tetraplegia (paralysis of all 4 limbs)',
+            'Head injuries - Other',
+            'Eye injuries - Damaged or detached retina',
+            'Ear injuries - Broken ear bone',
+            'Arm injuries - Hemiplegia (paralysis of one side of the the body)',
+            'Arm or hand skin injuries - Scars',
+            'Arm or hand tissue injuries - Cartilage'
         ]);
     });
 
