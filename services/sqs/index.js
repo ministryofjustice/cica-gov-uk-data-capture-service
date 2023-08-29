@@ -8,11 +8,7 @@ function createSqsService(opts) {
     delete opts.logger;
 
     const client = new SQSClient({
-        region: 'eu-west-2',
-        credentials: {
-            accessKeyId: process.env.DCS_SQS_ACCESS_KEY_ID,
-            secretAccessKey: process.env.DCS_SQS_SECRET_ACCESS_KEY
-        }
+        region: 'eu-west-2'
     });
 
     /**

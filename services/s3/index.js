@@ -8,11 +8,7 @@ const s3Cli = new S3Client({
     region: process.env.AWS_DEFAULT_REGION, // The default value is us-east-1. this is the localstack REGION.
     endpoint: process.env.DCS_S3_URL,
     maxAttempts: 4,
-    forcePathStyle: isPathForced, // needed with localstack.
-    credentials: {
-        accessKeyId: process.env.DCS_SQS_ACCESS_KEY_ID,
-        secretAccessKey: process.env.DCS_SQS_SECRET_ACCESS_KEY
-    }
+    forcePathStyle: isPathForced // needed with localstack.
 });
 
 function createS3Service(opts) {
