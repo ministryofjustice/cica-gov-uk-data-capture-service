@@ -53,6 +53,25 @@ jest.doMock('../services/sqs/index.js', () => {
     }));
 });
 
+function addOnSubmitDefinition(mock) {
+    mock.onSubmit = {
+        id: 'task0',
+        type: 'sequential',
+        data: [
+            {
+                id: 'task1',
+                type: 'updateCaseRefTestTask',
+                data: {
+                    questionnaire: '$.questionnaireDef',
+                    logger: '$.logger'
+                }
+            }
+        ]
+    };
+
+    return mock;
+}
+
 const updateQuestionnaireSubmissionStatus = jest.fn();
 jest.doMock('./questionnaire-dal.js', () =>
     jest.fn(() => ({
@@ -62,22 +81,22 @@ jest.doMock('./questionnaire-dal.js', () =>
                 questionnaireId === '3fa7bde5-bfad-453a-851d-5e3c8d206d5b' || // in progress.
                 questionnaireId === '67d8e5d2-44a5-4ab7-91c0-3fd27d009235' // failed.
             ) {
-                return questionnaireCompleteWithoutCRN;
+                return addOnSubmitDefinition(questionnaireCompleteWithoutCRN);
             }
 
             if (questionnaireId === 'f197d3e9-d8ba-4500-96ed-9ea1d08f1427') {
                 // completed.
-                return questionnaireCompleteWithCRN;
+                return addOnSubmitDefinition(questionnaireCompleteWithCRN);
             }
 
             // nonSubmittable.
             if (questionnaireId === '4fa7503f-1f73-42e7-b875-b342dee69941') {
-                return questionnaireIncompleteWithoutCRN;
+                return addOnSubmitDefinition(questionnaireIncompleteWithoutCRN);
             }
 
             // failed, then resubmitted.
             if (questionnaireId === '6107e721-9532-419a-8205-3ec72903ef0c') {
-                return failedResubmittedResponse();
+                return addOnSubmitDefinition(failedResubmittedResponse());
             }
 
             throw new VError(
@@ -339,6 +358,7 @@ describe('Questionnaire submissions', () => {
             });
 
             it('should allow resubmission of failed applications', async () => {
+                // TODO: sjs
                 const res = await request(app)
                     .post('/api/v1/questionnaires/6107e721-9532-419a-8205-3ec72903ef0c/submissions')
                     .set('Authorization', `Bearer ${tokens['create:questionnaires']}`)
@@ -351,6 +371,7 @@ describe('Questionnaire submissions', () => {
                             }
                         }
                     });
+
                 expect(res.body.data.attributes.status).toEqual('COMPLETED');
             });
         });

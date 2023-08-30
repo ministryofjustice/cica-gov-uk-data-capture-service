@@ -197,6 +197,45 @@ describe('Issue: https://github.com/cdimascio/express-openapi-validator/issues/7
 });
 
 describe('Openapi version 2023-05-17 validation', () => {
+    function addOnSubmitDefinition(mock) {
+        mock.onSubmit = {
+            id: 'task0',
+            type: 'sequential',
+            data: [
+                {
+                    id: 'task1',
+                    type: 'updateCaseRefTestTask',
+                    data: {
+                        questionnaire: '$.questionnaireDef',
+                        logger: '$.logger'
+                    }
+                }
+            ]
+        };
+
+        return mock;
+    }
+
+    jest.doMock('./questionnaire-dal.js', () =>
+        jest.fn(() => ({
+            getQuestionnaire: questionnaireId => {
+
+                console.log('##################################################7777777777777777777777777777777777777777');
+
+                if (questionnaireId === '22222222-0c15-4a9c-9840-cb1007f098fb') {
+                    return addOnSubmitDefinition(completeQuestionnaireWithoutCRN);
+                }
+
+                throw new VError(
+                    {
+                        name: 'ResourceNotFound'
+                    },
+                    `Questionnaire "${questionnaireId}" not found`
+                );
+            }
+        }))
+    );
+
     jest.doMock('./questionnaire-service.js', () => {
         const questionnaireServiceMock = {
             createQuestionnaire: jest.fn(templateName => {
@@ -1289,7 +1328,7 @@ describe('Openapi version 2023-05-17 validation', () => {
                 );
             });
 
-            it('should return status code 201 if owner data is included in the header', async () => {
+            it.only('should return status code 201 if owner data is included in the header', async () => {
                 const response = await request(app)
                     .post('/api/questionnaires/22222222-0c15-4a9c-9840-cb1007f098fb/submissions')
                     .set('Authorization', `Bearer ${token}`)

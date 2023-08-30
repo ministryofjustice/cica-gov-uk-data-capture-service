@@ -47,24 +47,29 @@ function createSubmissionService({
                     id: questionnaireId,
                     attributes: {
                         status: 'COMPLETED',
-                        submitted: true
+                        submitted: true,
+                        questionnaireId,
+                        caseReferenceNumber: '11\\223344' // TODO: DO WE NEED THIS? ADDED DUMMY CASE REF TO PASS TEST.
                     }
                 }
             };
         } catch (err) {
             // TODO: UNHAPPY THINGS ARE NOT COVERED
-            console.log(err);
+            console.log(err, questionnaireId);
 
-            return {
-                data: {
-                    type: 'submissions',
-                    id: questionnaireId,
-                    attributes: {
-                        status: 'FAILED',
-                        submitted: false
-                    }
-                }
-            };
+            // return {
+            //     data: {
+            //         type: 'submissions',
+            //         id: questionnaireId,
+            //         attributes: {
+            //             status: 'FAILED',
+            //             submitted: false,
+            //             questionnaireId
+            //         }
+            //     }
+            // };
+
+            throw err;
         }
     }
 

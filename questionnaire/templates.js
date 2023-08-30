@@ -97,29 +97,44 @@ function modifyTemplateToHaveOneQuestion(template) {
 
 function modifyTemplateToIncludeTaskDefinition(template) {
     // This was taken from Jennifer's branch
+    // template.onSubmit = {
+    //     id: 'task0',
+    //     type: 'sequential',
+    //     data: [
+    //         {
+    //             id: 'task1',
+    //             type: 'generateReferenceNumber',
+    //             data: {
+    //                 questionnaire: '$.questionnaireDef',
+    //                 logger: '$.logger'
+    //             }
+    //         },
+    //         {
+    //             id: 'task2',
+    //             type: 'transformAndUpload',
+    //             data: {
+    //                 questionnaire: '$.questionnaireDef',
+    //                 logger: '$.logger'
+    //             }
+    //         },
+    //         {
+    //             id: 'task3',
+    //             type: 'sendSubmissionMessageToSQS',
+    //             data: {
+    //                 questionnaire: '$.questionnaireDef',
+    //                 logger: '$.logger'
+    //             }
+    //         }
+    //     ]
+    // };
+
     template.onSubmit = {
         id: 'task0',
         type: 'sequential',
         data: [
             {
                 id: 'task1',
-                type: 'generateReferenceNumber',
-                data: {
-                    questionnaire: '$.questionnaireDef',
-                    logger: '$.logger'
-                }
-            },
-            {
-                id: 'task2',
-                type: 'transformAndUpload',
-                data: {
-                    questionnaire: '$.questionnaireDef',
-                    logger: '$.logger'
-                }
-            },
-            {
-                id: 'task3',
-                type: 'sendSubmissionMessageToSQS',
+                type: 'updateCaseRefTestTask',
                 data: {
                     questionnaire: '$.questionnaireDef',
                     logger: '$.logger'
@@ -134,10 +149,10 @@ function modifyTemplateToIncludeTaskDefinition(template) {
 function modifyTemplate(template) {
     // Use the next line to quickly test the trigger via CW. COMMENT OUT WHEN FINISHED.
     // Allows for quick testing of task trigger
-    const modifiedTemplate = modifyTemplateToHaveOneQuestion(template);
+    // const modifiedTemplate = modifyTemplateToHaveOneQuestion(template);
 
     // Uncomment the next line when all tasks in the definition are ready
-    // const modifiedTemplate = modifyTemplateToIncludeTaskDefinition(template);
+    const modifiedTemplate = modifyTemplateToIncludeTaskDefinition(template);
 
     return modifiedTemplate;
 }
