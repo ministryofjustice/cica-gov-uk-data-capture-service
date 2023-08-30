@@ -9,6 +9,7 @@ spec:
       labels:
         app: dcs-app-uat
     spec:
+      serviceAccountName: irsadcs
       containers:
         - name: data-capture-service
           image: 754256621582.dkr.ecr.eu-west-2.amazonaws.com/cica/cica-repo-uat:latest
@@ -28,16 +29,6 @@ spec:
                   key: database_url_with_credentials
             - name: DCS_LOG_LEVEL
               value: info
-            - name: DCS_SQS_ACCESS_KEY_ID
-              valueFrom:
-                secretKeyRef:
-                  name: dcs-sqs-secret
-                  key: access_key_id
-            - name: DCS_SQS_SECRET_ACCESS_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: dcs-sqs-secret
-                  key: secret_access_key
             - name: AWS_SQS_ARN
               valueFrom:
                 secretKeyRef:
