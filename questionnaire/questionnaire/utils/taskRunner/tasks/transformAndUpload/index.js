@@ -148,18 +148,19 @@ function transformQuestionnaire(questionnaire) {
  * @param {questionnaire} questionnaire - The raw questionnaire object
  * @returns JSON object from bucket with key matching given key
  */
-async function transformAndUpload({questionnaireDefinition, logger}) {
+async function transformAndUpload({questionnaireDef, logger}) {
     // create question helper
     const questionnaire = createQuestionnaireHelper({
-        questionnaireDefinition
+        questionnaireDefinition: questionnaireDef
     });
+
     const s3Directory = process.env.S3_DIRECTORY ? process.env.S3_DIRECTORY : 'application_json';
     logger.info(`Transforming questionnaire with id: ${questionnaire.getId()}`);
     const output = transformQuestionnaire(questionnaire);
 
     // Populate the dateSubmitted from the database
     const db = createQuestionnaireDAL({logger});
-    output.meta.dateSubmitted = await db.getQuestionnaireModifiedDate(questionnaire.getId());
+    output.meta.submittedDate = await db.getQuestionnaireModifiedDate(questionnaire.getId());
 
     // Upload transformed JSON into S3
     logger.info(`Uploading to S3 for questionnaire with id: ${questionnaire.getId()}`);
