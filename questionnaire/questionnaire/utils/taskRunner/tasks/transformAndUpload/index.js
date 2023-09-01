@@ -167,7 +167,8 @@ async function transformAndUpload({questionnaireDefinition, logger}) {
     const submissionResponse = await s3Service.uploadFile(
         output,
         process.env.S3_BUCKET_NAME,
-        `${s3Directory}/${questionnaire.getId()}.json`
+        `${s3Directory}/${questionnaire.getId()}.json`,
+        'application/json'
     );
     return submissionResponse;
 }
