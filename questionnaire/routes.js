@@ -8,7 +8,7 @@ const permissions = require('../middleware/route-permissions');
 const datasetRouter = require('./dataset/dataset-routes.js');
 const metadataRouter = require('./metadata/metadata-routes.js');
 
-const createSubmissionService = require('./submission');
+const createSubmissionService = require('./submissions/submissions-service');
 
 const router = express.Router();
 const rxTemplateName = /^[a-zA-Z0-9-]{1,30}$/;
@@ -201,6 +201,8 @@ router
     .post(permissions('update:questionnaires'), async (req, res, next) => {
         // *** THIS HANDLER HANDLES THE HAPPIEST HAPPY PATH ONLY. DO NOT USE IN PRODUCTION. ***
 
+        console.log('9999999999999999999999999999999999999999999999999999999999999999999999999999999999');
+
         if (true) {
             // const {questionnaireId} = req.params;
             // const questionnaireService = createQuestionnaireService({
@@ -216,6 +218,8 @@ router
 
             try {
                 const questionnaire = await questionnaireService.getQuestionnaire(questionnaireId);
+
+                console.log('}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}: ', questionnaire);
 
                 if (!questionnaire) {
                     const err = Error(
@@ -270,7 +274,9 @@ router
 
                 // run tasks
                 const submissionService = createSubmissionService({
-                    logger: req.log
+                    logger: req.log,
+                    apiVersion: req.get('Dcs-Api-Version'),
+                    ownerId: req.get('On-Behalf-Of')
                 });
                 const submissionResource = await submissionService.submit(questionnaireId);
 
@@ -284,10 +290,12 @@ router
 
                 res.status(201).json(submissionResource);
             } catch (err) {
-                await questionnaireService.updateQuestionnaireSubmissionStatus(
-                    questionnaireId,
-                    'FAILED'
-                );
+
+                console.log('+++++++++++++++++++++++++++++++++++++++++++++: ', err);
+                // await questionnaireService.updateQuestionnaireSubmissionStatus(
+                //     questionnaireId,
+                //     'FAILED'
+                // );
 
                 next(err);
             }

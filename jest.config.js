@@ -9,7 +9,9 @@ const config = {
 
 // config.testRegex = 'questionnaire/questionnaire.test.js';
 // config.testRegex = 'questionnaire/submissions.test.js';
-config.testRegex = 'questionnaire/routes.test.js';
+// config.testRegex = 'questionnaire/routes.test.js';
+// config.testRegex = 'submissions/submissions-routes.test.js';
+config.testRegex = 'submissions/submissions-service.test.js';
 
 process.env.DCS_JWT_SECRET = '123';
 process.env.DCS_LOG_LEVEL = 'silent';
