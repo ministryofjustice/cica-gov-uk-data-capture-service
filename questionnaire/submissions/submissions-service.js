@@ -56,9 +56,10 @@ function createSubmissionService({
             return true;
         }
 
-        const lastModifiedDate = db.getQuestionnaireModifiedDate(questionnaireId);
+        const lastModifiedDate = await db.getQuestionnaireModifiedDate(questionnaireId);
+        const d = new Date();
 
-        console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~: ', lastModifiedDate);
+        console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~: ', typeof lastModifiedDate, lastModifiedDate, Object.prototype.toString.call(lastModifiedDate) === '[object Date]', lastModifiedDate.toISOString(), d.toISOString(), d.getTime());
 
         // if the submission process has had sufficient time to complete, but hasn't completed
         // allow it to be submitted again. Estimated completion time, 1 min.
@@ -69,10 +70,17 @@ function createSubmissionService({
         return false;
     }
 
-    function isSubmittable(questionnaireDefinition) {
+    function isSubmittable(questionnaireId, questionnaireDefinition) {
         // 1 - does it exist
         // 2 - if exists, is it in a submittable state
         // 3 - has it already been submitted
+        const submissionStatus = questionnaireService.getQuestionnaireSubmissionStatus(
+            questionnaireId
+        );
+
+        if (submissionStatus === 'COMPLETED') {
+            return false;
+        }
 
         return hasSummaryIdInProgressEntries(questionnaireDefinition);
     }
@@ -89,14 +97,14 @@ function createSubmissionService({
 
     async function submit(questionnaireId) {
         try {
-            // const onSubmitTaskDefinition = getSubmittableQuestionnaireOnSubmitDefinition(questionnaireId);
+            // const onSubmitTaskDefinition2 = getSubmittableQuestionnaireOnSubmitDefinition(questionnaireId);
 
 
             const questionnaireDefinition = await questionnaireService.getQuestionnaire(
                 questionnaireId
             );
 
-            if (isSubmittable(questionnaireDefinition) === false) {
+            if (isSubmittable(questionnaireId, questionnaireDefinition) === false) {
                 throw Error(
                     `Questionnaire with ID "${questionnaireId}" is not in a submittable state`
                 );

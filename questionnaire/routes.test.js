@@ -1328,7 +1328,7 @@ describe('Openapi version 2023-05-17 validation', () => {
                 );
             });
 
-            it.only('should return status code 201 if owner data is included in the header', async () => {
+            it('should return status code 201 if owner data is included in the header', async () => {
                 const response = await request(app)
                     .post('/api/questionnaires/22222222-0c15-4a9c-9840-cb1007f098fb/submissions')
                     .set('Authorization', `Bearer ${token}`)

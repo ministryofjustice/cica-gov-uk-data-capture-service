@@ -70,7 +70,7 @@ function modifyTemplateToHaveOneQuestion(template) {
 
     const confirmationSection = template.sections['p--confirmation'];
     const confirmationContent =
-        confirmationSection.l10n.translations[0].resources.confirmation.description.adult;
+        confirmationSection.l10n.translations[0].resources.confirmation.description.adult.nonDeceased;
 
     delete confirmationSection.l10n;
     template.sections[
@@ -149,10 +149,10 @@ function modifyTemplateToIncludeTaskDefinition(template) {
 function modifyTemplate(template) {
     // Use the next line to quickly test the trigger via CW. COMMENT OUT WHEN FINISHED.
     // Allows for quick testing of task trigger
-    // const modifiedTemplate = modifyTemplateToHaveOneQuestion(template);
+    const modifiedTemplate = modifyTemplateToHaveOneQuestion(template);
 
     // Uncomment the next line when all tasks in the definition are ready
-    const modifiedTemplate = modifyTemplateToIncludeTaskDefinition(template);
+    // const modifiedTemplate = modifyTemplateToIncludeTaskDefinition(template);
 
     return modifiedTemplate;
 }
