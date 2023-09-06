@@ -91,6 +91,52 @@ jest.doMock('../services/slack/index.js', () =>
     }))
 );
 
+jest.doMock('./questionnaire/utils/taskRunner/tasks/sequential/index.js', () => {
+    return () => {
+        return {
+            task: {
+                id: 'task0',
+                started: '2023-09-06T14:49:50.467Z',
+                ended: '2023-09-06T14:49:50.515Z',
+                result: [
+                    {
+                        id: 'task1',
+                        started: '2023-09-06T14:49:50.468Z',
+                        ended: '2023-09-06T14:49:50.493Z',
+                        result: 1694011790493,
+                        status: 'succeeded'
+                    }
+                ],
+                status: 'succeeded'
+            },
+            context: {
+                task1: {
+                    id: 'task1',
+                    started: '2023-09-06T14:49:50.468Z',
+                    ended: '2023-09-06T14:49:50.493Z',
+                    result: 1694011790493,
+                    status: 'succeeded'
+                },
+                task0: {
+                    id: 'task0',
+                    started: '2023-09-06T14:49:50.467Z',
+                    ended: '2023-09-06T14:49:50.515Z',
+                    result: [
+                        {
+                            id: 'task1',
+                            started: '2023-09-06T14:49:50.468Z',
+                            ended: '2023-09-06T14:49:50.493Z',
+                            result: 1694011790493,
+                            status: 'succeeded'
+                        }
+                    ],
+                    status: 'succeeded'
+                }
+            }
+        };
+    };
+});
+
 // app has an indirect dependency on questionnaire-dal.js, require it after
 // the mock so that it references the mocked version
 const app = require('../app');
