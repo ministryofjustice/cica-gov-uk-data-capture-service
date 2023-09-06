@@ -6,6 +6,12 @@ defaults.createQuestionnaireDAL = require('../questionnaire-dal');
 defaults.createTaskRunner = require('../questionnaire/utils/taskRunner');
 defaults.sequential = require('../questionnaire/utils/taskRunner/tasks/sequential');
 // Pull in additional task implementations here
+const {transformAndUpload} = require('../questionnaire/utils/taskRunner/tasks/transformAndUpload');
+const {
+    generateReferenceNumber
+} = require('../questionnaire/utils/taskRunner/tasks/generateCaseReference');
+const {sendSubmissionMessageToSQS} = require('../questionnaire/utils/taskRunner/tasks/postToSQS');
+const sendNotifyMessageToSQS = require('../questionnaire/utils/taskRunner/tasks/postToNotify');
 
 function createSubmissionService({
     logger,
@@ -15,7 +21,12 @@ function createSubmissionService({
     createQuestionnaireDAL = defaults.createQuestionnaireDAL,
     createTaskRunner = defaults.createTaskRunner,
     sequential = defaults.sequential,
-    taskImplementations = {}
+    taskImplementations = {
+        transformAndUpload,
+        generateReferenceNumber,
+        sendSubmissionMessageToSQS,
+        sendNotifyMessageToSQS
+    }
 } = {}) {
     const db = createQuestionnaireDAL({logger});
     const questionnaireService = createQuestionnaireService({
@@ -35,11 +46,11 @@ function createSubmissionService({
         );
     }
 
-    function isSubmittable(questionnaireId, questionnaireDefinition) {
+    async function isSubmittable(questionnaireId, questionnaireDefinition) {
         // 1 - does it exist
         // 2 - if exists, is it in a submittable state
         // 3 - has it already been submitted
-        const submissionStatus = questionnaireService.getQuestionnaireSubmissionStatus(
+        const submissionStatus = await questionnaireService.getQuestionnaireSubmissionStatus(
             questionnaireId
         );
 
@@ -66,7 +77,7 @@ function createSubmissionService({
                 questionnaireId
             );
 
-            if (isSubmittable(questionnaireId, questionnaireDefinition) === false) {
+            if ((await isSubmittable(questionnaireId, questionnaireDefinition)) === false) {
                 throw Error(
                     `Questionnaire with ID "${questionnaireId}" is not in a submittable state`
                 );
