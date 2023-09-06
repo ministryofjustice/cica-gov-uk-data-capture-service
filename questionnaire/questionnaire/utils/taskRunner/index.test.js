@@ -1,6 +1,6 @@
 'use strict';
 
-const {createTaskRunner} = require('./index');
+const createTaskRunner = require('./index');
 
 describe('Task Runner', () => {
     describe('createTaskRunner', () => {
