@@ -2,7 +2,6 @@
 
 const defaults = {};
 defaults.createQuestionnaireService = require('../questionnaire-service');
-defaults.createQuestionnaireDAL = require('../questionnaire-dal');
 defaults.createTaskRunner = require('../questionnaire/utils/taskRunner');
 defaults.sequential = require('../questionnaire/utils/taskRunner/tasks/sequential');
 // Pull in additional task implementations here
@@ -18,7 +17,6 @@ function createSubmissionService({
     apiVersion,
     ownerId,
     createQuestionnaireService = defaults.createQuestionnaireService,
-    createQuestionnaireDAL = defaults.createQuestionnaireDAL,
     createTaskRunner = defaults.createTaskRunner,
     sequential = defaults.sequential,
     taskImplementations = {
@@ -28,7 +26,6 @@ function createSubmissionService({
         sendNotifyMessageToSQS
     }
 } = {}) {
-    const db = createQuestionnaireDAL({logger});
     const questionnaireService = createQuestionnaireService({
         logger,
         apiVersion,
@@ -86,16 +83,8 @@ function createSubmissionService({
             const onSubmitTaskDefinition = getOnSubmitTaskDefinitionCopy(questionnaireDefinition);
             const taskRunner = createTaskRunner({
                 taskImplementations: {
-                    ...taskImplementations,
                     sequential,
-                    // Add additional task implementations here
-
-                    // DON'T INCLUDE THIS TEST TASK
-                    updateCaseRefTestTask: async data => {
-                        data.questionnaire.answers.system['case-reference'] = '11\\223344';
-                        await db.updateQuestionnaire(data.questionnaire.id, data.questionnaire);
-                        return true;
-                    }
+                    ...taskImplementations
                 },
                 context: {
                     logger,
