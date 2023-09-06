@@ -24,7 +24,7 @@ async function sendNotifyMessageToSQS({questionnaire, logger}) {
                     },
                     reference: null
                 };
-                sqsResponse = await sqsService.send(payload, process.env.DCS_NOTIFY_SQS_URL);
+                sqsResponse = await sqsService.send(payload, process.env.NOTIFY_AWS_SQS_ID);
                 logger.info(
                     `Email sent to Notify SQS for questionnaire with id ${questionnaireId}`
                 );
@@ -40,7 +40,7 @@ async function sendNotifyMessageToSQS({questionnaire, logger}) {
                     },
                     reference: null
                 };
-                sqsResponse = await sqsService.send(payload, process.env.DCS_NOTIFY_SQS_URL);
+                sqsResponse = await sqsService.send(payload, process.env.NOTIFY_AWS_SQS_ID);
                 logger.info(`SMS sent to Notify SQS for questionnaire with id ${questionnaireId}`);
             }
         }
