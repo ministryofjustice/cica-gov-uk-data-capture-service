@@ -70,4 +70,17 @@ router
         }
     });
 
+router.route('/resubmit-failed').post(permissions('admin'), async (req, res, next) => {
+    let response;
+    try {
+        const submissionService = createSubmissionService({
+            logger: req.log
+        });
+        response = await submissionService.postFailedSubmissions();
+    } catch (err) {
+        next(err);
+    }
+    res.status(200).json(response);
+});
+
 module.exports = router;

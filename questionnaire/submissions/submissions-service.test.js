@@ -73,7 +73,8 @@ jest.doMock('../questionnaire-dal.js', () =>
             );
         },
         updateQuestionnaireSubmissionStatus,
-        getQuestionnaireSubmissionStatus: () => 'NOT_STARTED'
+        getQuestionnaireSubmissionStatus: () => 'NOT_STARTED',
+        getQuestionnaireIdsBySubmissionStatus: () => ['508ad99f-a968-495d-b03c-25368e2d99cd']
     }))
 );
 
@@ -222,5 +223,16 @@ describe('Submission service', () => {
             expect(updateQuestionnaireSubmissionStatus.mock.calls[1][0]).toEqual(questionnaireId);
             expect(updateQuestionnaireSubmissionStatus.mock.calls[1][1]).toEqual('FAILED');
         });
+    });
+
+    it('should resubmit applications which have failed to submit', async () => {
+        const submissionService = createSubmissionsService({
+            logger,
+            taskImplementations: {
+                simplePassingTaskFactory: async () => 'foo'
+            }
+        });
+        const actual = await submissionService.postFailedSubmissions();
+        expect(actual).toEqual([{id: '508ad99f-a968-495d-b03c-25368e2d99cd', resubmitted: true}]);
     });
 });

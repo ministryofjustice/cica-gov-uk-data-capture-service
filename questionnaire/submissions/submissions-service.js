@@ -145,8 +145,25 @@ function createSubmissionService({
         }
     }
 
+    async function postFailedSubmissions() {
+        try {
+            const questionnaireIds = await questionnaireService.getQuestionnaireIdsBySubmissionStatus(
+                'FAILED'
+            );
+            const resubmittedApplications = questionnaireIds.map(async id => {
+                await submit(id);
+                return {id, resubmitted: true};
+            });
+            return Promise.all(resubmittedApplications);
+        } catch (err) {
+            logger.error({err}, 'RESUBMISSION FAILED');
+            throw err;
+        }
+    }
+
     return Object.freeze({
-        submit
+        submit,
+        postFailedSubmissions
     });
 }
 

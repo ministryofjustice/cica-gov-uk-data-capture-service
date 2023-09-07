@@ -205,17 +205,4 @@ router
         }
     });
 
-router.route('/resubmit-failed').post(permissions('admin'), async (req, res, next) => {
-    let response;
-    try {
-        const questionnaireService = createQuestionnaireService({
-            logger: req.log
-        });
-        response = await questionnaireService.postFailedSubmissions();
-    } catch (err) {
-        next(err);
-    }
-    res.status(200).json(response);
-});
-
 module.exports = router;

@@ -665,20 +665,6 @@ function createQuestionnaireService({
         return db.getQuestionnaireIdsBySubmissionStatus(status);
     }
 
-    async function postFailedSubmissions() {
-        try {
-            const questionnaireIds = await getQuestionnaireIdsBySubmissionStatus('FAILED');
-            const resubmittedApplications = questionnaireIds.map(async id => {
-                await startSubmission(id);
-                return {id, resubmitted: true};
-            });
-            return Promise.all(resubmittedApplications);
-        } catch (err) {
-            logger.error({err}, 'RESUBMISSION FAILED');
-            throw err;
-        }
-    }
-
     return Object.freeze({
         createQuestionnaire,
         createAnswers,
@@ -694,8 +680,7 @@ function createQuestionnaireService({
         runOnCompleteActions,
         getAnswersBySectionId,
         updateExpiryForAuthenticatedOwner,
-        getQuestionnaireIdsBySubmissionStatus,
-        postFailedSubmissions
+        getQuestionnaireIdsBySubmissionStatus
     });
 }
 
