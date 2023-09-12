@@ -47,6 +47,18 @@ jest.doMock('./questionnaire-dal.js', () =>
                 `Questionnaire "${questionnaireId}" not found`
             );
         },
+        getQuestionnaireByOwner: questionnaireId => {
+            if (questionnaireId === '285cb104-0c15-4a9c-9840-cb1007f098fb') {
+                return getQuestionnaireResponse;
+            }
+
+            throw new VError(
+                {
+                    name: 'ResourceNotFound'
+                },
+                `Questionnaire "${questionnaireId}" not found`
+            );
+        },
         updateQuestionnaire: () => undefined,
         getQuestionnaireSubmissionStatus: questionnaireId => {
             if (questionnaireId === '285cb104-0c15-4a9c-9840-cb1007f098fb') {
@@ -60,7 +72,20 @@ jest.doMock('./questionnaire-dal.js', () =>
                 `Questionnaire "${questionnaireId}" not found`
             );
         },
+        getQuestionnaireSubmissionStatusByOwner: questionnaireId => {
+            if (questionnaireId === '285cb104-0c15-4a9c-9840-cb1007f098fb') {
+                return 'NOT_STARTED';
+            }
+
+            throw new VError(
+                {
+                    name: 'ResourceNotFound'
+                },
+                `Questionnaire "${questionnaireId}" not found`
+            );
+        },
         updateQuestionnaireSubmissionStatus: () => undefined,
+        updateQuestionnaireSubmissionStatusByOwner: () => undefined,
         createQuestionnaireSubmission: () => true,
         retrieveCaseReferenceNumber: () => '12345678',
         getQuestionnaireModifiedDate: questionnaireId => {
@@ -152,7 +177,7 @@ expect.extend(
     })
 );
 
-describe('/questionnaires', () => {
+describe('/v1/questionnaires', () => {
     describe('post', () => {
         describe('201', () => {
             it('should Created', async () => {
@@ -439,7 +464,7 @@ describe('/questionnaires', () => {
         });
     });
 });
-describe('/questionnaires/{questionnaireId}/sections/{sectionId}/answers', () => {
+describe('/v1/questionnaires/{questionnaireId}/sections/{sectionId}/answers', () => {
     describe('post', () => {
         describe('201', () => {
             it('should Created', async () => {
@@ -673,7 +698,7 @@ describe('/questionnaires/{questionnaireId}/sections/{sectionId}/answers', () =>
         });
     });
 });
-describe('/questionnaires/{questionnaireId}/sections/answers', () => {
+describe('/v1/questionnaires/{questionnaireId}/sections/answers', () => {
     describe('get', () => {
         describe('200', () => {
             it('should Success', async () => {
@@ -853,7 +878,7 @@ describe('/questionnaires/{questionnaireId}/sections/answers', () => {
         });
     });
 });
-describe('/questionnaires/{questionnaireId}/submissions', () => {
+describe('/v1/questionnaires/{questionnaireId}/submissions', () => {
     describe('get', () => {
         describe('200', () => {
             it('should Success', async () => {
@@ -1231,7 +1256,7 @@ describe('/questionnaires/{questionnaireId}/submissions', () => {
         });
     });
 });
-describe('/questionnaires/{questionnaireId}/progress-entries', () => {
+describe('/v1/questionnaires/{questionnaireId}/progress-entries', () => {
     describe('get', () => {
         describe('200', () => {
             it('should Success', async () => {
@@ -1624,7 +1649,7 @@ describe('/questionnaires/{questionnaireId}/progress-entries', () => {
         });
     });
 });
-describe('/questionnaires/{questionnaireId}/dataset', () => {
+describe('/v1/questionnaires/{questionnaireId}/dataset', () => {
     describe('get', () => {
         describe('200', () => {
             it('should Success', async () => {
@@ -2168,6 +2193,401 @@ describe('/questionnaires/{questionnaireId}/dataset', () => {
                 const res = await request(app)
                     .get('/api/v1/questionnaires/68653be7-877f-4106-b91e-4ba8dac883f4/dataset')
                     .set('Authorization', `Bearer ${tokens['read:questionnaires']}`);
+
+                expect(res.statusCode).toBe(404);
+                expect(res.type).toBe('application/vnd.api+json');
+                expect(res.body).toMatchSchema({
+                    $schema: 'http://json-schema.org/draft-07/schema#',
+                    type: 'object',
+                    required: ['errors'],
+                    properties: {
+                        errors: {
+                            type: 'array',
+                            items: {
+                                type: 'object',
+                                required: ['status', 'title', 'detail'],
+                                properties: {
+                                    status: {const: 404},
+                                    title: {const: '404 Not Found'},
+                                    detail: {type: 'string'}
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+        });
+    });
+});
+describe('/questionnaires/{questionnaireId}/submissions', () => {
+    describe('get', () => {
+        describe('200', () => {
+            it('should Success', async () => {
+                const res = await request(app)
+                    .get('/api/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/submissions')
+                    .set('Authorization', `Bearer ${tokens['read:questionnaires']}`)
+                    .set('On-Behalf-Of', `urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6`)
+                    .set('Dcs-Api-Version', '2023-05-17');
+
+                expect(res.statusCode).toBe(200);
+                expect(res.type).toBe('application/vnd.api+json');
+                expect(res.body).toMatchSchema({
+                    $schema: 'http://json-schema.org/draft-07/schema#',
+                    type: 'object',
+                    additionalProperties: false,
+                    required: ['data'],
+                    properties: {
+                        data: {
+                            type: 'object',
+                            additionalProperties: false,
+                            required: ['id', 'type', 'attributes'],
+                            properties: {
+                                id: {
+                                    type: 'string',
+                                    pattern:
+                                        '^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$'
+                                },
+                                type: {const: 'submissions'},
+                                attributes: {
+                                    type: 'object',
+                                    additionalProperties: false,
+                                    required: [
+                                        'questionnaireId',
+                                        'submitted',
+                                        'status',
+                                        'caseReferenceNumber'
+                                    ],
+                                    properties: {
+                                        questionnaireId: {
+                                            type: 'string',
+                                            pattern:
+                                                '^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$'
+                                        },
+                                        submitted: {type: 'boolean'},
+                                        status: {
+                                            enum: [
+                                                'NOT_STARTED',
+                                                'IN_PROGRESS',
+                                                'COMPLETED',
+                                                'FAILED'
+                                            ]
+                                        },
+                                        caseReferenceNumber: {
+                                            type: ['string', 'null'],
+                                            pattern: '^[0-9]{2}\\\\[0-9]{6}$'
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        meta: {type: 'object'}
+                    }
+                });
+            });
+        });
+        describe('400', () => {
+            it('should There is an issue with the request', async () => {
+                const res = await request(app)
+                    .get('/api/questionnaires/NOT-A-UUID/submissions')
+                    .set('Authorization', `Bearer ${tokens['read:questionnaires']}`)
+                    .set('On-Behalf-Of', `urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6`)
+                    .set('Dcs-Api-Version', '2023-05-17');
+
+                expect(res.statusCode).toBe(400);
+                expect(res.type).toBe('application/vnd.api+json');
+                expect(res.body).toMatchSchema({
+                    $schema: 'http://json-schema.org/draft-07/schema#',
+                    type: 'object',
+                    required: ['errors'],
+                    properties: {
+                        errors: {
+                            type: 'array',
+                            items: {
+                                type: 'object',
+                                required: ['status', 'title', 'detail'],
+                                properties: {
+                                    status: {const: 400},
+                                    title: {const: '400 Bad Request'},
+                                    detail: {type: 'string'}
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+        });
+        describe('401', () => {
+            it('should Access token is missing or invalid', async () => {
+                const res = await request(app)
+                    .get('/api/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/submissions')
+                    .set('On-Behalf-Of', `urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6`)
+                    .set('Dcs-Api-Version', '2023-05-17');
+
+                expect(res.statusCode).toBe(401);
+                expect(res.type).toBe('application/vnd.api+json');
+                expect(res.body).toMatchSchema({
+                    $schema: 'http://json-schema.org/draft-07/schema#',
+                    type: 'object',
+                    required: ['errors'],
+                    properties: {
+                        errors: {
+                            type: 'array',
+                            items: {
+                                type: 'object',
+                                required: ['status', 'title', 'detail'],
+                                properties: {
+                                    status: {const: 401},
+                                    title: {const: '401 Unauthorized'},
+                                    detail: {type: 'string'}
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+        });
+        describe('404', () => {
+            it('should The specified resource was not found', async () => {
+                const res = await request(app)
+                    .get('/api/questionnaires/68653be7-877f-4106-b91e-4ba8dac883f4/submissions')
+                    .set('Authorization', `Bearer ${tokens['read:questionnaires']}`)
+                    .set('On-Behalf-Of', `urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6`)
+                    .set('Dcs-Api-Version', '2023-05-17');
+
+                expect(res.statusCode).toBe(404);
+                expect(res.type).toBe('application/vnd.api+json');
+                expect(res.body).toMatchSchema({
+                    $schema: 'http://json-schema.org/draft-07/schema#',
+                    type: 'object',
+                    required: ['errors'],
+                    properties: {
+                        errors: {
+                            type: 'array',
+                            items: {
+                                type: 'object',
+                                required: ['status', 'title', 'detail'],
+                                properties: {
+                                    status: {const: 404},
+                                    title: {const: '404 Not Found'},
+                                    detail: {type: 'string'}
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+        });
+    });
+    describe('post', () => {
+        describe('201', () => {
+            it('should Created', async () => {
+                const res = await request(app)
+                    .post('/api/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/submissions')
+                    .set('Authorization', `Bearer ${tokens['update:questionnaires']}`)
+                    .set('Content-Type', 'application/vnd.api+json')
+                    .set('On-Behalf-Of', `urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6`)
+                    .set('Dcs-Api-Version', '2023-05-17')
+                    .send({
+                        data: {
+                            type: 'submissions',
+                            attributes: {
+                                questionnaireId: '285cb104-0c15-4a9c-9840-cb1007f098fb'
+                            }
+                        }
+                    });
+
+                expect(res.statusCode).toBe(201);
+                expect(res.type).toBe('application/vnd.api+json');
+                expect(res.body).toMatchSchema({
+                    $schema: 'http://json-schema.org/draft-07/schema#',
+                    type: 'object',
+                    additionalProperties: false,
+                    required: ['data'],
+                    properties: {
+                        data: {
+                            type: 'object',
+                            additionalProperties: false,
+                            required: ['id', 'type', 'attributes'],
+                            properties: {
+                                id: {
+                                    type: 'string',
+                                    pattern:
+                                        '^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$'
+                                },
+                                type: {const: 'submissions'},
+                                attributes: {
+                                    type: 'object',
+                                    additionalProperties: false,
+                                    required: [
+                                        'questionnaireId',
+                                        'submitted',
+                                        'status',
+                                        'caseReferenceNumber'
+                                    ],
+                                    properties: {
+                                        questionnaireId: {
+                                            type: 'string',
+                                            pattern:
+                                                '^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$'
+                                        },
+                                        submitted: {type: 'boolean'},
+                                        status: {
+                                            enum: [
+                                                'NOT_STARTED',
+                                                'IN_PROGRESS',
+                                                'COMPLETED',
+                                                'FAILED'
+                                            ]
+                                        },
+                                        caseReferenceNumber: {
+                                            type: ['string', 'null'],
+                                            pattern: '^[0-9]{2}\\\\[0-9]{6}$'
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        meta: {type: 'object'}
+                    }
+                });
+            });
+        });
+        describe('400', () => {
+            it('should There is an issue with the request', async () => {
+                const res = await request(app)
+                    .post('/api/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/submissions')
+                    .set('Authorization', `Bearer ${tokens['update:questionnaires']}`)
+                    .set('Content-Type', 'application/vnd.api+json')
+                    .set('On-Behalf-Of', `urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6`)
+                    .set('Dcs-Api-Version', '2023-05-17')
+                    .send({
+                        data: {
+                            type: 'submissions',
+                            attributes: {
+                                questionnaireId: '285cb104-0c15-4a9c-9840-cb1007f098fb'
+                            },
+                            'THIS-IS-NOT-A-VALID-PROPERTY-NAME': 'submissions'
+                        }
+                    });
+
+                expect(res.statusCode).toBe(400);
+                expect(res.type).toBe('application/vnd.api+json');
+                expect(res.body).toMatchSchema({
+                    $schema: 'http://json-schema.org/draft-07/schema#',
+                    type: 'object',
+                    required: ['errors'],
+                    properties: {
+                        errors: {
+                            type: 'array',
+                            items: {
+                                type: 'object',
+                                required: ['status', 'title', 'detail'],
+                                properties: {
+                                    status: {const: 400},
+                                    title: {const: '400 Bad Request'},
+                                    detail: {type: 'string'}
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+        });
+        describe('401', () => {
+            it('should Access token is missing or invalid', async () => {
+                const res = await request(app)
+                    .post('/api/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/submissions')
+                    .set('Content-Type', 'application/vnd.api+json')
+                    .set('On-Behalf-Of', `urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6`)
+                    .set('Dcs-Api-Version', '2023-05-17')
+                    .send({
+                        data: {
+                            type: 'submissions',
+                            attributes: {
+                                questionnaireId: '285cb104-0c15-4a9c-9840-cb1007f098fb'
+                            }
+                        }
+                    });
+
+                expect(res.statusCode).toBe(401);
+                expect(res.type).toBe('application/vnd.api+json');
+                expect(res.body).toMatchSchema({
+                    $schema: 'http://json-schema.org/draft-07/schema#',
+                    type: 'object',
+                    required: ['errors'],
+                    properties: {
+                        errors: {
+                            type: 'array',
+                            items: {
+                                type: 'object',
+                                required: ['status', 'title', 'detail'],
+                                properties: {
+                                    status: {const: 401},
+                                    title: {const: '401 Unauthorized'},
+                                    detail: {type: 'string'}
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+        });
+        describe('403', () => {
+            it("should The JWT doesn't permit access to this endpoint", async () => {
+                const res = await request(app)
+                    .post('/api/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/submissions')
+                    .set('Authorization', `Bearer ${tokens['create:dummy-resource']}`)
+                    .set('Content-Type', 'application/vnd.api+json')
+                    .set('On-Behalf-Of', `urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6`)
+                    .set('Dcs-Api-Version', '2023-05-17')
+                    .send({
+                        data: {
+                            type: 'submissions',
+                            attributes: {
+                                questionnaireId: '285cb104-0c15-4a9c-9840-cb1007f098fb'
+                            }
+                        }
+                    });
+
+                expect(res.statusCode).toBe(403);
+                expect(res.type).toBe('application/vnd.api+json');
+                expect(res.body).toMatchSchema({
+                    $schema: 'http://json-schema.org/draft-07/schema#',
+                    type: 'object',
+                    required: ['errors'],
+                    properties: {
+                        errors: {
+                            type: 'array',
+                            items: {
+                                type: 'object',
+                                required: ['status', 'title', 'detail'],
+                                properties: {
+                                    status: {const: 403},
+                                    title: {const: '403 Forbidden'},
+                                    detail: {type: 'string'}
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+        });
+        describe('404', () => {
+            it('should The specified resource was not found', async () => {
+                const res = await request(app)
+                    .post('/api/questionnaires/68653be7-877f-4106-b91e-4ba8dac883f4/submissions')
+                    .set('Authorization', `Bearer ${tokens['update:questionnaires']}`)
+                    .set('Content-Type', 'application/vnd.api+json')
+                    .set('On-Behalf-Of', `urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6`)
+                    .set('Dcs-Api-Version', '2023-05-17')
+                    .send({
+                        data: {
+                            type: 'submissions',
+                            attributes: {
+                                questionnaireId: '285cb104-0c15-4a9c-9840-cb1007f098fb'
+                            }
+                        }
+                    });
 
                 expect(res.statusCode).toBe(404);
                 expect(res.type).toBe('application/vnd.api+json');
