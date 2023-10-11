@@ -68,6 +68,14 @@ function createSubmissionService({
         return JSON.parse(JSON.stringify(onSubmitTaskDefinition));
     }
 
+    const testHelper = {
+        wait: async milliseconds => {
+            return new Promise(resolve => {
+                setTimeout(() => resolve(true), milliseconds);
+            });
+        }
+    };
+
     async function submit(questionnaireId) {
         try {
             const questionnaireDefinition = await questionnaireService.getQuestionnaire(
@@ -84,7 +92,16 @@ function createSubmissionService({
             const taskRunner = createTaskRunner({
                 taskImplementations: {
                     sequential,
-                    ...taskImplementations
+                    ...taskImplementations,
+                    simpleTaskFactory: async data => {
+                        await testHelper.wait(10000);
+                        console.log(
+                            '00000000000000000000000000000000000000000000000000000',
+                            data.questionnaire.id
+                        );
+                        // throw Error('foo');
+                        return 'woopwoop';
+                    }
                 },
                 context: {
                     logger,
