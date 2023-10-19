@@ -121,6 +121,24 @@ function getDeclaration(questionnaire) {
 }
 
 /**
+ * Removes all unanswered questions from the schema
+ * @param answers - The themed content composed of questionnaire answers
+ * @returns A themed object without any unanswered questions
+ */
+function trimUnansweredQuestions(answers) {
+    const trimmedAnswers = [];
+    answers.forEach(theme => {
+        theme.values = theme.values.filter(
+            question => !(question.value === undefined && question.values === undefined)
+        );
+        if (theme.values.length !== 0) {
+            trimmedAnswers.push(theme);
+        }
+    });
+    return trimmedAnswers;
+}
+
+/**
  * Transforms the questionnaire object into the necessary downstream format.
  * @param {questionnaire} questionnaire - The raw questionnaire object
  * @returns A themed object with attached metadata and declaration content.
@@ -128,8 +146,9 @@ function getDeclaration(questionnaire) {
 function transformQuestionnaire(questionnaire) {
     const section = questionnaire.getSection('p--check-your-answers');
     const sectionSchema = section.getSchema();
-    const themeContent =
-        sectionSchema.properties['p-check-your-answers'].properties.summaryInfo.summaryStructure;
+    const themeContent = trimUnansweredQuestions(
+        sectionSchema.properties['p-check-your-answers'].properties.summaryInfo.summaryStructure
+    );
     flattenAnswers(themeContent);
 
     return {
