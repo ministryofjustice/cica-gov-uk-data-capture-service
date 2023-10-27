@@ -1,5 +1,5 @@
 # lets start from an image that already has nodejs installed
-FROM node:18.16.1-bullseye-slim as base
+FROM node:18.16.1-bookworm-slim as base
 
 RUN groupadd -g 1014 dc_user \
     && useradd -rm -d /usr/src/app -u 1015 -g dc_user dc_user
@@ -41,12 +41,12 @@ USER 1015
 # the command line to run when the container is started
 CMD [ "npm", "start" ]
 
-# Using a different version of bullseye for dev,
+# Using a different image version dev,
 # Issues with nodemon spawning and killing processes on restart
 # Change this when changing the production image
 # keep both in sync, production -slim variant
 # dev the non-slim variant
-FROM node:18.16.1-bullseye as dev
+FROM node:18.16.1-bookworm as dev
 
 RUN groupadd -g 1014 dc_user \
     && useradd -rm -d /usr/src/app -u 1015 -g dc_user dc_user
