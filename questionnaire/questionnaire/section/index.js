@@ -154,29 +154,53 @@ function createSection({id, sectionDefinition}) {
         }
 
         if (allOf !== undefined) {
-            const compositeAttributeSchema = allOf[0];
-            const compositeAttribute = createCompositeAttribute(
-                compositeAttributeSchema,
-                includeMetadata
-            );
-
-            compositeAttributeSchema.allOf.forEach(subSchema => {
-                compositeAttribute.values.push(
-                    ...getAttributesByData({
-                        data,
-                        includeMetadata,
-                        mapAttribute,
-                        schema: subSchema
-                    })
+            if (allOf[0].meta !== undefined) {
+                // The page is a composite question
+                const compositeAttributeSchema = allOf[0];
+                const compositeAttribute = createCompositeAttribute(
+                    compositeAttributeSchema,
+                    includeMetadata
                 );
-            });
 
-            if (mapAttribute !== undefined) {
-                attributes.push(mapAttribute(compositeAttribute));
-            } else {
-                attributes.push(compositeAttribute);
+                compositeAttributeSchema.allOf.forEach(subSchema => {
+                    compositeAttribute.values.push(
+                        ...getAttributesByData({
+                            data,
+                            includeMetadata,
+                            mapAttribute,
+                            schema: subSchema
+                        })
+                    );
+                });
+
+                if (mapAttribute !== undefined) {
+                    attributes.push(mapAttribute(compositeAttribute));
+                } else {
+                    attributes.push(compositeAttribute);
+                }
+
+                return attributes;
             }
+            // The page is an allOf with conditionals
+            allOf[0].allOf.forEach(subSchema => {
+                const attributeId = Object.keys(subSchema.properties)[0];
+                const questionSchema = subSchema.properties[attributeId];
 
+                if (questionSchema !== undefined) {
+                    const attribute = createSimpleAttribute(
+                        attributeId,
+                        questionSchema,
+                        data,
+                        includeMetadata
+                    );
+
+                    if (mapAttribute !== undefined) {
+                        attributes.push(mapAttribute(attribute));
+                    } else {
+                        attributes.push(attribute);
+                    }
+                }
+            });
             return attributes;
         }
 
