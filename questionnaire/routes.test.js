@@ -11,6 +11,7 @@ const incompleteQuestionnaireWithoutCRN = require('./test-fixtures/res/questionn
 beforeEach(() => {
     jest.resetModules();
     jest.unmock('./questionnaire-service.js');
+    jest.unmock('./submissions/submissions-service.js');
 });
 
 describe('Openapi version 2023-05-17 validation', () => {
@@ -131,6 +132,18 @@ describe('Openapi version 2023-05-17 validation', () => {
         };
 
         return () => questionnaireServiceMock;
+    });
+    jest.doMock('./submissions/submissions-service.js', () => {
+        const submissionsServiceMock = {
+            submit: jest.fn(questionnaireId => {
+                if (questionnaireId === '985cb104-0c15-4a9c-9840-cb1007f098fb') {
+                    const err = Error(`Submission error for questionnaireId ${questionnaireId}`);
+                    err.name = 'SubmissionError';
+                    throw err;
+                }
+            })
+        };
+        return () => submissionsServiceMock;
     });
 
     const mockQuestionnaireService = require('./questionnaire-service.js')();
@@ -1134,6 +1147,29 @@ describe('Openapi version 2023-05-17 validation', () => {
                     });
                 expect(response.statusCode).toEqual(201);
             });
+        });
+    });
+
+    describe('Submission Failure: POST /questionnaires/:questionnaireId/submissions', () => {
+        it('should throw a SubmissionError when a sequential task fails', async () => {
+            const response = await request(app)
+                .post('/api/questionnaires/985cb104-0c15-4a9c-9840-cb1007f098fb/submissions')
+                .set('Authorization', `Bearer ${token}`)
+                .set('Content-Type', 'application/vnd.api+json')
+                .set('On-Behalf-Of', `urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6`)
+                .set('Dcs-Api-Version', '2023-05-17')
+                .send({
+                    data: {
+                        type: 'submissions',
+                        attributes: {
+                            questionnaireId: '985cb104-0c15-4a9c-9840-cb1007f098fb'
+                        }
+                    }
+                });
+            expect(response.error.status).toEqual(500);
+            expect(response.error.text).toContain(
+                'SubmissionError: Submission error for questionnaireId 985cb104-0c15-4a9c-9840-cb1007f098fb'
+            );
         });
     });
 });

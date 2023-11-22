@@ -3,12 +3,18 @@
 // TODO: make this standalone and pass it to a middleware function.
 
 const VError = require('verror');
+const serializer = require('pino-std-serializers').err;
 
 // Central error handler
 // https://www.joyent.com/node-js/production/design/errors
 // https://github.com/i0natan/nodebestpractices/blob/master/sections/errorhandling/centralizedhandling.md
 module.exports = async (err, req, res, next) => {
     const error = {errors: []};
+
+    // Only logging SubmissionError in the first instance, concerns over data leakage
+    if (err.name === 'SubmissionError') {
+        req.log.error(serializer(err));
+    }
 
     // handle a malformed JSON request e.g. can't be parsed by the bodyparser (express.json)
     // https://github.com/expressjs/body-parser/issues/122#issuecomment-328190379

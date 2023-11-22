@@ -12,6 +12,8 @@ const {
 const {sendSubmissionMessageToSQS} = require('../questionnaire/utils/taskRunner/tasks/postToSQS');
 const sendNotifyMessageToSQS = require('../questionnaire/utils/taskRunner/tasks/postToNotify');
 
+const {createAppError} = require('../../middleware/error-handler/createAppError');
+
 function createSubmissionService({
     logger,
     apiVersion,
@@ -118,30 +120,18 @@ function createSubmissionService({
                 }
             };
         } catch (err) {
-            const {task} = err;
-
-            if (task === undefined) {
-                throw err;
+            if (err.name === 'SequentialTaskError') {
+                await questionnaireService.updateQuestionnaireSubmissionStatus(
+                    questionnaireId,
+                    'FAILED'
+                );
+                throw createAppError({
+                    name: 'SubmissionError',
+                    message: `Submission error for questionnaireId ${questionnaireId}`,
+                    error: err
+                });
             }
-
-            await questionnaireService.updateQuestionnaireSubmissionStatus(
-                questionnaireId,
-                'FAILED'
-            );
-
-            // eslint-disable-next-line no-throw-literal
-            throw {
-                data: {
-                    type: 'submissions',
-                    id: questionnaireId,
-                    attributes: {
-                        status: 'FAILED',
-                        submitted: false,
-                        questionnaireId,
-                        caseReferenceNumber: '11\\223344' // TODO: DO WE NEED THIS? ADDED DUMMY CASE REF TO PASS TEST.
-                    }
-                }
-            };
+            throw err;
         }
     }
 

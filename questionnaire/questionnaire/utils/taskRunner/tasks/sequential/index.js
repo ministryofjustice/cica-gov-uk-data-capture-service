@@ -1,20 +1,22 @@
 'use strict';
 
-async function runTasksSequentially(taskDefinitions, run) {
+const {createAppError} = require('../../../../../../middleware/error-handler/createAppError');
+
+async function runTasksSequentially(tasks, runTask) {
     const taskStates = [];
 
-    for (let i = 0; i < taskDefinitions.length; i += 1) {
-        const taskDefinition = taskDefinitions[i];
-
+    for (let index = 0; index < tasks.length; index += 1) {
+        const task = tasks[index];
         try {
             // eslint-disable-next-line no-await-in-loop
-            const result = await run(taskDefinition);
-
+            const result = await runTask(task);
             taskStates.push(result.task);
-        } catch (err) {
-            taskStates.push(err.task);
-
-            throw taskStates;
+        } catch (error) {
+            throw createAppError({
+                name: 'SequentialTaskError',
+                message: `Sequential task failed at index ${index}, task id: ${task.id}, task type: ${task.type}`,
+                error
+            });
         }
     }
 
