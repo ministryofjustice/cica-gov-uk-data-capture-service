@@ -1,11 +1,9 @@
 const config = {
     '*.js': ['eslint --fix --color'],
-    '*.{json,yml,yaml}': ['prettier --write']
+    '*.{json,yml,yaml}': ['prettier --write'],
+    './openapi/src/**/*.{js,json}': 'npm run openapi:build',
+    './openapi/openapi.json': 'speccy lint ./openapi/openapi.json',
+    './openapi/openapi-admin.json': 'speccy lint ./openapi/openapi-admin.json'
 };
-
-// Rebuild the OpenAPI spec any time the src files are changed
-config['./openapi/src/**/*.{js,json}'] = ['npm run openapi:build'];
-
-config['./openapi/*.json'] = ['speccy lint ./openapi/openapi.json'];
 
 module.exports = config;

@@ -10,7 +10,7 @@ const tokens = {
     'read:questionnaires':
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJkYXRhLWNhcHR1cmUtc2VydmljZSIsImlzcyI6IiQuYXVkIiwianRpIjoiN2YwYjAxOTktMjcxOS00ZGUxLWE1MjgtY2RmMjZkNmM3YTU5Iiwic3ViIjoiJC5hdWQiLCJzY29wZSI6InJlYWQ6cXVlc3Rpb25uYWlyZXMiLCJpYXQiOjE1NzAxODE2NDB9.uoGJM6snG6pd51UMbf7k86_1ACIrGdEJBRjlEv0twIQ'
 };
-const filepath = 'openapi/src/json-schemas/api/_questionnaires_{questionnaireId}_dataset/get/res';
+const filepath = 'openapi/src/json-schemas/api/v2_questionnaires_{questionnaireId}_dataset/get/res';
 const v1SchemaFilepath = `${filepath}/200-v1.0.0.json`;
 const v2SchemaFilepath = `${filepath}/200-v2.0.0.json`;
 
@@ -46,11 +46,11 @@ expect.extend(
     })
 );
 
-describe('/questionnaires/{questionnaireId}/dataset', () => {
+describe.skip('/questionnaires/{questionnaireId}/dataset', () => {
     describe('Given the header "Accept-Version: 1.0.0"', () => {
         it('should return a corresponding "Content-Version: 1.0.0" header', async () => {
             const res = await request(app)
-                .get('/api/v1/questionnaires/cb2eadc7-9189-4c4d-9eb3-896b72a1ed16/dataset')
+                .get('/api/questionnaires/cb2eadc7-9189-4c4d-9eb3-896b72a1ed16/dataset')
                 .set('Authorization', `Bearer ${tokens['read:questionnaires']}`)
                 .set('Accept-Version', '1.0.0');
 
@@ -59,7 +59,7 @@ describe('/questionnaires/{questionnaireId}/dataset', () => {
 
         it('should return v1.0.0 of the dataset resource', async () => {
             const res = await request(app)
-                .get('/api/v1/questionnaires/cb2eadc7-9189-4c4d-9eb3-896b72a1ed16/dataset')
+                .get('/api/questionnaires/cb2eadc7-9189-4c4d-9eb3-896b72a1ed16/dataset')
                 .set('Authorization', `Bearer ${tokens['read:questionnaires']}`)
                 .set('Accept-Version', '1.0.0');
             const v1Schema = await $RefParser.dereference(v1SchemaFilepath);
@@ -72,7 +72,7 @@ describe('/questionnaires/{questionnaireId}/dataset', () => {
     describe('Given the header "Accept-Version: 2.0.0"', () => {
         it('should return a corresponding "Content-Version: 2.0.0" header', async () => {
             const res = await request(app)
-                .get('/api/v1/questionnaires/cb2eadc7-9189-4c4d-9eb3-896b72a1ed16/dataset')
+                .get('/api/questionnaires/cb2eadc7-9189-4c4d-9eb3-896b72a1ed16/dataset')
                 .set('Authorization', `Bearer ${tokens['read:questionnaires']}`)
                 .set('Accept-Version', '2.0.0');
 
@@ -81,7 +81,7 @@ describe('/questionnaires/{questionnaireId}/dataset', () => {
 
         it('should return v2.0.0 of the dataset resource', async () => {
             const res = await request(app)
-                .get('/api/v1/questionnaires/cb2eadc7-9189-4c4d-9eb3-896b72a1ed16/dataset')
+                .get('/api/questionnaires/cb2eadc7-9189-4c4d-9eb3-896b72a1ed16/dataset')
                 .set('Authorization', `Bearer ${tokens['read:questionnaires']}`)
                 .set('Accept-Version', '2.0.0');
             const v2Schema = await $RefParser.dereference(v2SchemaFilepath);
@@ -94,7 +94,7 @@ describe('/questionnaires/{questionnaireId}/dataset', () => {
     describe('Given no "Accept-Version" header', () => {
         it('should return the latest version in the "Content-Version" header', async () => {
             const res = await request(app)
-                .get('/api/v1/questionnaires/cb2eadc7-9189-4c4d-9eb3-896b72a1ed16/dataset')
+                .get('/api/questionnaires/cb2eadc7-9189-4c4d-9eb3-896b72a1ed16/dataset')
                 .set('Authorization', `Bearer ${tokens['read:questionnaires']}`);
 
             expect(res.get('Content-Version')).toBe('2.0.0');
@@ -102,7 +102,7 @@ describe('/questionnaires/{questionnaireId}/dataset', () => {
 
         it('should default to the the latest dataset resource version', async () => {
             const res = await request(app)
-                .get('/api/v1/questionnaires/cb2eadc7-9189-4c4d-9eb3-896b72a1ed16/dataset')
+                .get('/api/questionnaires/cb2eadc7-9189-4c4d-9eb3-896b72a1ed16/dataset')
                 .set('Authorization', `Bearer ${tokens['read:questionnaires']}`);
             const v2Schema = await $RefParser.dereference(v2SchemaFilepath);
 

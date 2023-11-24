@@ -54,27 +54,25 @@ function createQuestionnaireService({
         const uuidV4 = uuidv4();
         const questionnaire = templates[templateName](uuidV4);
 
-        if (apiVersion === '2023-05-17') {
-            if (!ownerData) {
-                throw new VError(
-                    {
-                        name: 'OwnerNotFound'
-                    },
-                    `Owner data must be defined`
-                );
-            }
-
-            questionnaire.answers = {
-                owner: {
-                    'owner-id': ownerData.id,
-                    'is-authenticated': ownerData.isAuthenticated
-                }
-            };
+        if (!ownerData) {
+            throw new VError(
+                {
+                    name: 'OwnerNotFound'
+                },
+                `Owner data must be defined`
+            );
         }
+
+        questionnaire.answers = {
+            owner: {
+                'owner-id': ownerData.id,
+                'is-authenticated': ownerData.isAuthenticated
+            }
+        };
 
         await db.createQuestionnaire(uuidV4, questionnaire);
 
-        if (apiVersion === '2023-05-17' && ownerData.isAuthenticated) {
+        if (ownerData.isAuthenticated) {
             await updateExpiryForAuthenticatedOwner(uuidV4, ownerData.id);
         }
 

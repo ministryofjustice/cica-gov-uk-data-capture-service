@@ -208,25 +208,6 @@ describe('Questionnaire Service', () => {
             apiVersion: undefined, // Undefined should only occur for DCS API v1
             ownerId: undefined // Undefined should only occur for DCS API v1
         });
-        describe('createQuestionnaire', () => {
-            it('Should create a questionnaire', async () => {
-                const actual = await questionnaireService.createQuestionnaire(templatename);
-
-                expect(actual.data).toMatchObject({
-                    id: expect.any(String),
-                    type: 'questionnaires',
-                    attributes: expect.any(Object)
-                });
-            });
-
-            it('Should error if templateName not found', async () => {
-                const templatename = 'not-a-template';
-
-                await expect(
-                    questionnaireService.createQuestionnaire(templatename)
-                ).rejects.toThrow('Template "not-a-template" does not exist');
-            });
-        });
 
         describe('getProgressEntries', () => {
             it('Should return a progressEntry collection', async () => {

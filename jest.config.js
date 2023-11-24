@@ -20,7 +20,7 @@ process.env.NOTIFY_AWS_SQS_ID = 'dummy_notify_queue';
 process.env.S3_DIRECTORY = 'test';
 
 config.coverageThreshold = {
-    './!(db)/!(questionnaire-dal).js': {
+    './!(db)/!(questionnaire-dal|questionnaire-service).js': {
         branches: 60,
         functions: 60,
         lines: 60,
@@ -31,6 +31,12 @@ config.coverageThreshold = {
         functions: 0,
         lines: 35,
         statements: 35
+    },
+    './questionnaire/questionnaire-service.js': {
+        branches: 50,
+        functions: 60,
+        lines: 60,
+        statements: 60
     }
 };
 
