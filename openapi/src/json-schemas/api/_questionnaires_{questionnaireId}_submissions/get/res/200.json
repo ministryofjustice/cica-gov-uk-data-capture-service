@@ -10,8 +10,7 @@
             "required": ["id", "type", "attributes"],
             "properties": {
                 "id": {
-                    "type": "string",
-                    "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+                    "$ref": "../../../../models/definitions/uuid-v4.json"
                 },
                 "type": {
                     "const": "submissions"
@@ -22,8 +21,7 @@
                     "required": ["questionnaireId", "submitted", "status", "caseReferenceNumber"],
                     "properties": {
                         "questionnaireId": {
-                            "type": "string",
-                            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+                            "$ref": "../../../../models/definitions/uuid-v4.json"
                         },
                         "submitted": {
                             "type": "boolean"

@@ -86,22 +86,10 @@ app.use((req, res, next) => {
 
 app.use('/api/v1/submissions', submissionsRouter);
 
-// Install the OpenApiValidator onto express app
-app.use(
-    '/api/v1/questionnaires',
-    OpenApiValidator.middleware({
-        apiSpec: './openapi/openapi.json',
-        validateRequests: true,
-        validateResponses: false,
-        validateSecurity: false
-    }),
-    questionnaireRouter
-);
-
 app.use(
     '/api/questionnaires',
     OpenApiValidator.middleware({
-        apiSpec: './openapi/openapi-v2.json',
+        apiSpec: './openapi/openapi.json',
         validateRequests: true,
         validateResponses: false,
         validateSecurity: false

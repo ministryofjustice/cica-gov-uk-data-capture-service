@@ -24,6 +24,6 @@ const conf = require('../../.prettierrc.js');
 
         // success case, the file was saved
         // eslint-disable-next-line
-        console.log('dereferenced contract saved');
+        console.log('Dereferenced contract saved');
     });
 })();

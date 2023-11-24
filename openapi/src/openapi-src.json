@@ -3,7 +3,7 @@
     "info": {
         "title": "Data Capture Service API",
         "description": "Manage a questionnaire lifecycle",
-        "version": "1.0.0",
+        "version": "2.0.0",
         "license": {
             "name": "MIT"
         },
@@ -14,7 +14,7 @@
     },
     "servers": [
         {
-            "url": "/api/v1"
+            "url": "/api"
         }
     ],
     "security": [
@@ -23,10 +23,24 @@
         }
     ],
     "tags": [
-        {"name": "Answers"},
-        {"name": "Questionnaires"},
-        {"name": "ProgressEntries"},
-        {"name": "Sessions"}
+        {
+            "name": "Answers"
+        },
+        {
+            "name": "Questionnaires"
+        },
+        {
+            "name": "ProgressEntries"
+        },
+        {
+            "name": "Sessions"
+        },
+        {
+            "name": "Submissions"
+        },
+        {
+            "name": "Metadata"
+        }
     ],
     "paths": {
         "/questionnaires": {
@@ -35,45 +49,11 @@
                 "summary": "Create a new questionnaire from a specified template",
                 "description": "Create a questionnaire",
                 "operationId": "createQuestionnaires",
-                "x-scopes": ["create:questionnaires"],
-                "x-requests": {
-                    "400": {
-                        "requestBody": {
-                            "content": {
-                                "application/vnd.api+json": {
-                                    "example": {
-                                        "data": {
-                                            "THIS-IS-NOT-A-VALID-PROPERTY-NAME": {
-                                                "templateName": "sexual-assault"
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "auth": false
-                    },
-                    "403": {
-                        "x-scopes": ["create:dummy-resource"]
-                    },
-                    "404": {
-                        "requestBody": {
-                            "content": {
-                                "application/vnd.api+json": {
-                                    "example": {
-                                        "data": {
-                                            "attributes": {
-                                                "templateName": "this-does-not-exist"
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/apiVersion"
                     }
-                },
+                ],
                 "requestBody": {
                     "description": "Questionnaire template id",
                     "required": true,
@@ -86,7 +66,11 @@
                                 "data": {
                                     "type": "questionnaires",
                                     "attributes": {
-                                        "templateName": "sexual-assault"
+                                        "templateName": "sexual-assault",
+                                        "owner": {
+                                            "id": "urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6",
+                                            "isAuthenticated": true
+                                        }
                                     }
                                 }
                             }
@@ -129,348 +113,6 @@
                 }
             }
         },
-        "/questionnaires/{questionnaireId}/sections/{sectionId}/answers": {
-            "post": {
-                "tags": ["Answers"],
-                "summary": "Create answer(s) for a specified section",
-                "description": "Adds the supplied answer(s) to a section",
-                "operationId": "createAnswers",
-                "parameters": [
-                    {
-                        "$ref": "#/components/parameters/questionnaireId"
-                    },
-                    {
-                        "$ref": "#/components/parameters/sectionId"
-                    }
-                ],
-                "x-scopes": ["create:system-answers", "update:questionnaires"],
-                "x-requests": {
-                    "400": {
-                        "requestBody": {
-                            "content": {
-                                "application/vnd.api+json": {
-                                    "example": {
-                                        "data": {
-                                            "THIS-IS-NOT-A-VALID-PROPERTY-NAME": "answers",
-                                            "attributes": {
-                                                "case-reference": "11\\111111"
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "auth": false
-                    },
-                    "403": {
-                        "x-scopes": ["create:dummy-resource"]
-                    },
-                    "404": {
-                        "parameters": [
-                            {
-                                "name": "questionnaireId",
-                                "example": "68653be7-877f-4106-b91e-4ba8dac883f4"
-                            }
-                        ]
-                    }
-                },
-                "requestBody": {
-                    "description": "Application reference number",
-                    "required": true,
-                    "content": {
-                        "application/vnd.api+json": {
-                            "schema": {
-                                "$ref": "./json-schemas/api/_questionnaires_{questionnaireId}_sections_{sectionId}_answers/post/req/201.json"
-                            },
-                            "example": {
-                                "data": {
-                                    "type": "answers",
-                                    "attributes": {
-                                        "case-reference": "11\\111111"
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "content": {
-                            "application/vnd.api+json": {
-                                "schema": {
-                                    "$ref": "./json-schemas/api/_questionnaires_{questionnaireId}_sections_{sectionId}_answers/post/res/201.json"
-                                },
-                                "example": {
-                                    "data": {
-                                        "type": "answers",
-                                        "id": "p-some-id",
-                                        "attributes": {
-                                            "case-reference": "11\\111111"
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "$ref": "#/components/responses/BadRequest"
-                    },
-                    "401": {
-                        "$ref": "#/components/responses/UnauthorizedError"
-                    },
-                    "403": {
-                        "$ref": "#/components/responses/Forbidden"
-                    },
-                    "404": {
-                        "$ref": "#/components/responses/NotFound"
-                    }
-                }
-            }
-        },
-        "/questionnaires/{questionnaireId}/sections/answers": {
-            "get": {
-                "tags": ["Answers"],
-                "summary": "Get all answers for a questionnaire",
-                "description": "Gets all answers for all sections",
-                "operationId": "getAnswers",
-                "parameters": [
-                    {
-                        "$ref": "#/components/parameters/questionnaireId"
-                    }
-                ],
-                "x-scopes": ["read:questionnaires"],
-                "x-requests": {
-                    "400": {
-                        "parameters": [
-                            {
-                                "name": "questionnaireId",
-                                "example": "NOT-A-UUID"
-                            }
-                        ]
-                    },
-                    "401": {
-                        "auth": false
-                    },
-                    "404": {
-                        "parameters": [
-                            {
-                                "name": "questionnaireId",
-                                "example": "68653be7-877f-4106-b91e-4ba8dac883f4"
-                            }
-                        ]
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Success",
-                        "content": {
-                            "application/vnd.api+json": {
-                                "schema": {
-                                    "$ref": "json-schemas/api/_questionnaires_{questionnaireId}_sections_answers/get/res/200.json"
-                                },
-                                "example": {
-                                    "data": [
-                                        {
-                                            "type": "answers",
-                                            "id": "p-applicant-british-citizen-or-eu-national",
-                                            "attributes": {
-                                                "q-applicant-british-citizen-or-eu-national": true
-                                            }
-                                        },
-                                        {
-                                            "type": "answers",
-                                            "id": "p-applicant-are-you-18-or-over",
-                                            "attributes": {
-                                                "q-applicant-are-you-18-or-over": true
-                                            }
-                                        }
-                                    ]
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "$ref": "#/components/responses/BadRequest"
-                    },
-                    "401": {
-                        "$ref": "#/components/responses/UnauthorizedError"
-                    },
-                    "404": {
-                        "$ref": "#/components/responses/NotFound"
-                    }
-                }
-            }
-        },
-        "/questionnaires/{questionnaireId}/submissions": {
-            "get": {
-                "tags": ["Submissions"],
-                "summary": "Get submission resource for a questionnaire",
-                "description": "Gets submission state for a questionnaire",
-                "operationId": "getSubmissions",
-                "parameters": [
-                    {
-                        "$ref": "#/components/parameters/questionnaireId"
-                    }
-                ],
-                "x-scopes": ["read:questionnaires"],
-                "x-requests": {
-                    "400": {
-                        "parameters": [
-                            {
-                                "name": "questionnaireId",
-                                "example": "NOT-A-UUID"
-                            }
-                        ]
-                    },
-                    "401": {
-                        "auth": false
-                    },
-                    "404": {
-                        "parameters": [
-                            {
-                                "name": "questionnaireId",
-                                "example": "68653be7-877f-4106-b91e-4ba8dac883f4"
-                            }
-                        ]
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Success",
-                        "content": {
-                            "application/vnd.api+json": {
-                                "schema": {
-                                    "$ref": "./json-schemas/api/_questionnaires_{questionnaireId}_submissions/get/res/200.json"
-                                },
-                                "example": {
-                                    "data": {
-                                        "id": "285cb104-0c15-4a9c-9840-cb1007f098fb",
-                                        "type": "submissions",
-                                        "attributes": {
-                                            "questionnaireId": "285cb104-0c15-4a9c-9840-cb1007f098fb",
-                                            "submitted": false,
-                                            "status": "IN_PROGRESS",
-                                            "caseReferenceNumber": "11\\111111"
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "$ref": "#/components/responses/BadRequest"
-                    },
-                    "401": {
-                        "$ref": "#/components/responses/UnauthorizedError"
-                    },
-                    "404": {
-                        "$ref": "#/components/responses/NotFound"
-                    }
-                }
-            },
-            "post": {
-                "tags": ["Submissions"],
-                "summary": "Submit a questionnaire",
-                "description": "Start the submission of a questionnaire",
-                "operationId": "SubmitQuestionnaire",
-                "parameters": [
-                    {
-                        "$ref": "#/components/parameters/questionnaireId"
-                    }
-                ],
-                "x-scopes": ["update:questionnaires"],
-                "x-requests": {
-                    "400": {
-                        "requestBody": {
-                            "content": {
-                                "application/vnd.api+json": {
-                                    "example": {
-                                        "data": {
-                                            "THIS-IS-NOT-A-VALID-PROPERTY-NAME": "submissions",
-                                            "attributes": {
-                                                "questionnaireId": "285cb104-0c15-4a9c-9840-cb1007f098fb"
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "auth": false
-                    },
-                    "403": {
-                        "x-scopes": ["create:dummy-resource"]
-                    },
-                    "404": {
-                        "parameters": [
-                            {
-                                "name": "questionnaireId",
-                                "example": "68653be7-877f-4106-b91e-4ba8dac883f4"
-                            }
-                        ]
-                    }
-                },
-                "requestBody": {
-                    "description": "Questionnaire ID",
-                    "required": true,
-                    "content": {
-                        "application/vnd.api+json": {
-                            "schema": {
-                                "$ref": "./json-schemas/api/_questionnaires_{questionnaireId}_submissions/post/req/201.json"
-                            },
-                            "example": {
-                                "data": {
-                                    "type": "submissions",
-                                    "attributes": {
-                                        "questionnaireId": "285cb104-0c15-4a9c-9840-cb1007f098fb"
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "content": {
-                            "application/vnd.api+json": {
-                                "schema": {
-                                    "$ref": "./json-schemas/api/_questionnaires_{questionnaireId}_submissions/post/res/201.json"
-                                },
-                                "example": {
-                                    "data": {
-                                        "id": "285cb104-0c15-4a9c-9840-cb1007f098fb",
-                                        "type": "submissions",
-                                        "attributes": {
-                                            "questionnaireId": "285cb104-0c15-4a9c-9840-cb1007f098fb",
-                                            "submitted": true,
-                                            "status": "IN_PROGRESS",
-                                            "caseReferenceNumber": "11\\111111"
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "$ref": "#/components/responses/BadRequest"
-                    },
-                    "401": {
-                        "$ref": "#/components/responses/UnauthorizedError"
-                    },
-                    "403": {
-                        "$ref": "#/components/responses/Forbidden"
-                    },
-                    "404": {
-                        "$ref": "#/components/responses/NotFound"
-                    }
-                }
-            }
-        },
         "/questionnaires/{questionnaireId}/progress-entries": {
             "get": {
                 "tags": ["ProgressEntries"],
@@ -486,39 +128,14 @@
                     },
                     {
                         "$ref": "#/components/parameters/page"
+                    },
+                    {
+                        "$ref": "#/components/parameters/onBehalfOf"
+                    },
+                    {
+                        "$ref": "#/components/parameters/apiVersion"
                     }
                 ],
-                "x-scopes": ["read:progress-entries"],
-                "x-requests": {
-                    "400": {
-                        "parameters": [
-                            {
-                                "name": "filter",
-                                "example": {
-                                    "NOT-A-VALID-FILTER": "FOO",
-                                    "position": "__DELETE__"
-                                }
-                            }
-                        ]
-                    },
-                    "401": {
-                        "auth": false
-                    },
-                    "403": {
-                        "x-scopes": ["create:dummy-resource"]
-                    },
-                    "404": {
-                        "parameters": [
-                            {
-                                "name": "filter",
-                                "example": {
-                                    "sectionId": "p--not-a-valid-section",
-                                    "position": "__DELETE__"
-                                }
-                            }
-                        ]
-                    }
-                },
                 "responses": {
                     "200": {
                         "description": "Success",
@@ -597,205 +214,59 @@
                 }
             }
         },
-        "/questionnaires/{questionnaireId}/dataset": {
-            "get": {
-                "tags": ["Dataset"],
-                "summary": "Get the dataset that has been populated via questions and answers",
-                "description": "Gets a questionnaires dataset",
-                "operationId": "getDataset",
+        "/questionnaires/{questionnaireId}/sections/{sectionId}/answers": {
+            "post": {
+                "tags": ["Answers"],
+                "summary": "Create answer(s) for a specified section",
+                "description": "Adds the supplied answer(s) to a section",
+                "operationId": "createAnswers",
                 "parameters": [
                     {
-                        "name": "questionnaireId",
-                        "in": "path",
-                        "required": true,
-                        "description": "The id of the specific questionnaire instance. Format UUIDv4.",
-                        "schema": {
-                            "$ref": "./json-schemas/models/definitions/uuid-v4.json"
-                        },
-                        "example": "285cb104-0c15-4a9c-9840-cb1007f098fb"
+                        "$ref": "#/components/parameters/questionnaireId"
                     },
                     {
-                        "in": "header",
-                        "name": "Accept-Version",
-                        "description": "Specify the specific version of the resource (SemVer). Defaults to latest version.",
-                        "schema": {
-                            "type": "string",
-                            "enum": ["1.0.0", "2.0.0"],
-                            "default": "2.0.0"
-                        },
-                        "example": "2.0.0"
+                        "$ref": "#/components/parameters/sectionId"
+                    },
+                    {
+                        "$ref": "#/components/parameters/onBehalfOf"
+                    },
+                    {
+                        "$ref": "#/components/parameters/apiVersion"
                     }
                 ],
-                "x-scopes": ["read:questionnaires"],
-                "x-requests": {
-                    "400": {
-                        "parameters": [
-                            {
-                                "name": "questionnaireId",
-                                "example": "NOT-A-UUID"
+                "requestBody": {
+                    "description": "Application reference number",
+                    "required": true,
+                    "content": {
+                        "application/vnd.api+json": {
+                            "schema": {
+                                "$ref": "./json-schemas/api/_questionnaires_{questionnaireId}_sections_{sectionId}_answers/post/req/201.json"
+                            },
+                            "example": {
+                                "data": {
+                                    "type": "answers",
+                                    "attributes": {
+                                        "case-reference": "11\\111111"
+                                    }
+                                }
                             }
-                        ]
-                    },
-                    "401": {
-                        "auth": false
-                    },
-                    "404": {
-                        "parameters": [
-                            {
-                                "name": "questionnaireId",
-                                "example": "68653be7-877f-4106-b91e-4ba8dac883f4"
-                            }
-                        ]
+                        }
                     }
                 },
                 "responses": {
-                    "200": {
-                        "description": "Success",
+                    "201": {
+                        "description": "Created",
                         "content": {
                             "application/vnd.api+json": {
                                 "schema": {
-                                    "anyOf": [
-                                        {
-                                            "$ref": "json-schemas/api/_questionnaires_{questionnaireId}_dataset/get/res/200-v1.0.0.json"
-                                        },
-                                        {
-                                            "$ref": "json-schemas/api/_questionnaires_{questionnaireId}_dataset/get/res/200-v2.0.0.json"
-                                        }
-                                    ]
+                                    "$ref": "./json-schemas/api/_questionnaires_{questionnaireId}_sections_{sectionId}_answers/post/res/201.json"
                                 },
-                                "examples": {
-                                    "v1.0.0": {
-                                        "summary": "Request Header \"Accept-Version: 1.0.0\"",
-                                        "value": {
-                                            "data": [
-                                                {
-                                                    "type": "dataset",
-                                                    "id": "0",
-                                                    "attributes": {
-                                                        "q-applicant-british-citizen-or-eu-national": true
-                                                    }
-                                                }
-                                            ]
-                                        }
-                                    },
-                                    "v2.0.0": {
-                                        "summary": "Request Header \"Accept-Version: 2.0.0\"",
-                                        "value": {
-                                            "data": [
-                                                {
-                                                    "type": "dataset",
-                                                    "id": "0",
-                                                    "attributes": {
-                                                        "values": [
-                                                            {
-                                                                "type": "simple",
-                                                                "id": "q-applicant-british-citizen-or-eu-national",
-                                                                "label": "Are you a British citizen or EU national?",
-                                                                "value": true,
-                                                                "valueLabel": "Yes"
-                                                            },
-                                                            {
-                                                                "type": "composite",
-                                                                "id": "applicant-name",
-                                                                "label": "Enter your name",
-                                                                "values": [
-                                                                    {
-                                                                        "type": "simple",
-                                                                        "id": "q-applicant-title",
-                                                                        "label": "Title",
-                                                                        "value": "Mr"
-                                                                    },
-                                                                    {
-                                                                        "type": "simple",
-                                                                        "id": "q-applicant-first-name",
-                                                                        "label": "First name",
-                                                                        "value": "Foo"
-                                                                    },
-                                                                    {
-                                                                        "type": "simple",
-                                                                        "id": "q-applicant-last-name",
-                                                                        "label": "Last name",
-                                                                        "value": "Bar"
-                                                                    }
-                                                                ]
-                                                            },
-                                                            {
-                                                                "type": "composite",
-                                                                "id": "applicant-address",
-                                                                "label": "Enter your address",
-                                                                "values": [
-                                                                    {
-                                                                        "type": "simple",
-                                                                        "id": "q-applicant-building-and-street",
-                                                                        "label": "Building and street",
-                                                                        "value": "The Oaks"
-                                                                    },
-                                                                    {
-                                                                        "type": "simple",
-                                                                        "id": "q-applicant-building-and-street-2",
-                                                                        "label": "Building and street line 2",
-                                                                        "value": "1 Test Lane"
-                                                                    },
-                                                                    {
-                                                                        "type": "simple",
-                                                                        "id": "q-applicant-town-or-city",
-                                                                        "label": "Town or city",
-                                                                        "value": "Testertown"
-                                                                    },
-                                                                    {
-                                                                        "type": "simple",
-                                                                        "id": "q-applicant-county",
-                                                                        "label": "County (optional)",
-                                                                        "value": "Testshire"
-                                                                    },
-                                                                    {
-                                                                        "type": "simple",
-                                                                        "id": "q-applicant-postcode",
-                                                                        "label": "Postcode (optional)",
-                                                                        "value": "Z1 ZZ1"
-                                                                    }
-                                                                ]
-                                                            },
-                                                            {
-                                                                "type": "simple",
-                                                                "id": "q-confirmation-method",
-                                                                "label": "How should we tell you we've got your application?",
-                                                                "value": "email",
-                                                                "valueLabel": "Email"
-                                                            },
-                                                            {
-                                                                "type": "simple",
-                                                                "id": "q-applicant-enter-your-email-address",
-                                                                "label": "Email address",
-                                                                "value": "foo@36d52b7e-ac5a-418b-8b1d-d2b617b11a41.com"
-                                                            },
-                                                            {
-                                                                "type": "simple",
-                                                                "id": "q-applicant-physical-injuries",
-                                                                "label": "What was injured?",
-                                                                "value": [
-                                                                    "phyinj-146",
-                                                                    "phyinj-003",
-                                                                    "phyinj-042",
-                                                                    "phyinj-053"
-                                                                ],
-                                                                "valueLabel": [
-                                                                    "Head injury causing concussion, headaches or loss of balance",
-                                                                    "Brain damage",
-                                                                    "Fractured skull",
-                                                                    "Hair pulled out"
-                                                                ]
-                                                            },
-                                                            {
-                                                                "type": "simple",
-                                                                "id": "q-applicant-enter-your-date-of-birth",
-                                                                "label": "Enter your date of birth",
-                                                                "value": "1970-01-01T00:00:00.000Z"
-                                                            }
-                                                        ]
-                                                    }
-                                                }
-                                            ]
+                                "example": {
+                                    "data": {
+                                        "type": "answers",
+                                        "id": "p-some-id",
+                                        "attributes": {
+                                            "case-reference": "11\\111111"
                                         }
                                     }
                                 }
@@ -808,6 +279,177 @@
                     "401": {
                         "$ref": "#/components/responses/UnauthorizedError"
                     },
+                    "403": {
+                        "$ref": "#/components/responses/Forbidden"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    }
+                }
+            },
+            "get": {
+                "tags": ["Answers"],
+                "summary": "Get answer(s) for a specified section",
+                "description": "Gets the answer(s) to a supplied section",
+                "operationId": "getAnswer",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/questionnaireId"
+                    },
+                    {
+                        "$ref": "#/components/parameters/sectionId"
+                    },
+                    {
+                        "$ref": "#/components/parameters/onBehalfOf"
+                    },
+                    {
+                        "$ref": "#/components/parameters/apiVersion"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/vnd.api+json": {
+                                "schema": {
+                                    "$ref": "json-schemas/api/_questionnaires_{questionnaireId}_sections_{sectionId}_answers/get/res/200.json"
+                                },
+                                "example": {
+                                    "data": [
+                                        {
+                                            "type": "answers",
+                                            "id": "p-applicant-british-citizen-or-eu-national",
+                                            "attributes": {
+                                                "q-applicant-british-citizen-or-eu-national": true
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/UnauthorizedError"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/Forbidden"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    }
+                }
+            }
+        },
+        "/questionnaires/metadata": {
+            "get": {
+                "tags": ["Metadata"],
+                "summary": "Get the metadata associated with all questionnaires",
+                "description": "Gets questionnaire metadata. The results are filtered by owner.",
+                "operationId": "getMetadata",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/onBehalfOf"
+                    },
+                    {
+                        "$ref": "#/components/parameters/apiVersion"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/vnd.api+json": {
+                                "schema": {
+                                    "$ref": "json-schemas/api/_questionnaires_metadata/get/res/200.json"
+                                },
+                                "example": {
+                                    "data": [
+                                        {
+                                            "type": "metadata",
+                                            "id": "285cb104-0c15-4a9c-9840-cb1007f098fb",
+                                            "attributes": {
+                                                "questionnaire-id": "285cb104-0c15-4a9c-9840-cb1007f098fb",
+                                                "created": "2022-01-18T04:05:06Z",
+                                                "modified": "2022-01-18T05:05:06Z",
+                                                "submission-status": "IN_PROGRESS",
+                                                "expires": "2023-01-24T05:05:06Z"
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/UnauthorizedError"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/Forbidden"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    }
+                }
+            }
+        },
+        "/questionnaires/{questionnaireId}/metadata": {
+            "get": {
+                "tags": ["Metadata"],
+                "summary": "Get the metadata associated with a specific questionnaires",
+                "description": "Gets a single questionnaire's metadata. The results are filtered by owner.",
+                "operationId": "getQuestionnaireMetadata",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/questionnaireId"
+                    },
+                    {
+                        "$ref": "#/components/parameters/onBehalfOf"
+                    },
+                    {
+                        "$ref": "#/components/parameters/apiVersion"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/vnd.api+json": {
+                                "schema": {
+                                    "$ref": "json-schemas/api/_questionnaires_{questionnaireId}_metadata/get/res/200.json"
+                                },
+                                "example": {
+                                    "data": [
+                                        {
+                                            "type": "metadata",
+                                            "id": "285cb104-0c15-4a9c-9840-cb1007f098fb",
+                                            "attributes": {
+                                                "questionnaire-id": "285cb104-0c15-4a9c-9840-cb1007f098fb",
+                                                "created": "2022-01-18T04:05:06Z",
+                                                "modified": "2022-01-18T05:05:06Z",
+                                                "submission-status": "IN_PROGRESS",
+                                                "expires": "2023-01-24T05:05:06Z"
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/UnauthorizedError"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/Forbidden"
+                    },
                     "404": {
                         "$ref": "#/components/responses/NotFound"
                     }
@@ -818,38 +460,19 @@
             "get": {
                 "tags": ["Sessions"],
                 "summary": "Refresh session.",
-                "description": "Refresh the session related to a specific questionnaire id.",
-                "operationId": "RefreshSession  ",
+                "description": "Refresh the session related to a specific questionnaire id and owner.",
+                "operationId": "RefreshSession",
                 "parameters": [
                     {
                         "$ref": "#/components/parameters/questionnaireId"
+                    },
+                    {
+                        "$ref": "#/components/parameters/onBehalfOf"
+                    },
+                    {
+                        "$ref": "#/components/parameters/apiVersion"
                     }
                 ],
-                "x-scopes": ["update:questionnaires"],
-                "x-requests": {
-                    "400": {
-                        "parameters": [
-                            {
-                                "name": "questionnaireId",
-                                "example": "NOT-A-UUID"
-                            }
-                        ]
-                    },
-                    "401": {
-                        "auth": false
-                    },
-                    "403": {
-                        "x-scopes": ["create:dummy-resource"]
-                    },
-                    "404": {
-                        "parameters": [
-                            {
-                                "name": "questionnaireId",
-                                "example": "68653be7-877f-4106-b91e-4ba8dac883f4"
-                            }
-                        ]
-                    }
-                },
                 "responses": {
                     "200": {
                         "description": "Success",
@@ -889,6 +512,136 @@
                     }
                 }
             }
+        },
+        "/questionnaires/{questionnaireId}/submissions": {
+            "get": {
+                "tags": ["Submissions"],
+                "summary": "Get submission resource for a questionnaire",
+                "description": "Gets submission state for a questionnaire",
+                "operationId": "getSubmissions",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/questionnaireId"
+                    },
+                    {
+                        "$ref": "#/components/parameters/onBehalfOf"
+                    },
+                    {
+                        "$ref": "#/components/parameters/apiVersion"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/vnd.api+json": {
+                                "schema": {
+                                    "$ref": "./json-schemas/api/_questionnaires_{questionnaireId}_submissions/get/res/200.json"
+                                },
+                                "example": {
+                                    "data": {
+                                        "id": "285cb104-0c15-4a9c-9840-cb1007f098fb",
+                                        "type": "submissions",
+                                        "attributes": {
+                                            "questionnaireId": "285cb104-0c15-4a9c-9840-cb1007f098fb",
+                                            "submitted": false,
+                                            "status": "IN_PROGRESS",
+                                            "caseReferenceNumber": "11\\111111"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/UnauthorizedError"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/Forbidden"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    }
+                }
+            },
+            "post": {
+                "tags": ["Submissions"],
+                "summary": "Submit a questionnaire",
+                "description": "Start the submission of a questionnaire",
+                "operationId": "SubmitQuestionnaire",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/questionnaireId"
+                    },
+                    {
+                        "$ref": "#/components/parameters/onBehalfOf"
+                    },
+                    {
+                        "$ref": "#/components/parameters/apiVersion"
+                    }
+                ],
+                "requestBody": {
+                    "description": "Questionnaire ID",
+                    "required": true,
+                    "content": {
+                        "application/vnd.api+json": {
+                            "schema": {
+                                "$ref": "./json-schemas/api/_questionnaires_{questionnaireId}_submissions/post/req/201.json"
+                            },
+                            "example": {
+                                "data": {
+                                    "type": "submissions",
+                                    "attributes": {
+                                        "questionnaireId": "285cb104-0c15-4a9c-9840-cb1007f098fb"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "application/vnd.api+json": {
+                                "schema": {
+                                    "$ref": "./json-schemas/api/_questionnaires_{questionnaireId}_submissions/post/res/201.json"
+                                },
+                                "example": {
+                                    "data": {
+                                        "id": "285cb104-0c15-4a9c-9840-cb1007f098fb",
+                                        "type": "submissions",
+                                        "attributes": {
+                                            "questionnaireId": "285cb104-0c15-4a9c-9840-cb1007f098fb",
+                                            "submitted": true,
+                                            "status": "IN_PROGRESS",
+                                            "caseReferenceNumber": "11\\111111"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/UnauthorizedError"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/Forbidden"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    },
+                    "409": {
+                        "$ref": "#/components/responses/Conflict"
+                    }
+                }
+            }
         }
     },
     "components": {
@@ -900,6 +653,16 @@
             }
         },
         "parameters": {
+            "apiVersion": {
+                "name": "Dcs-Api-Version",
+                "in": "header",
+                "required": true,
+                "description": "The date based version of the requested API",
+                "schema": {
+                    "$ref": "./json-schemas/models/definitions/api-version.json"
+                },
+                "example": "2023-05-17"
+            },
             "questionnaireId": {
                 "name": "questionnaireId",
                 "in": "path",
@@ -909,16 +672,6 @@
                     "$ref": "./json-schemas/models/definitions/uuid-v4.json"
                 },
                 "example": "285cb104-0c15-4a9c-9840-cb1007f098fb"
-            },
-            "sectionId": {
-                "name": "sectionId",
-                "in": "path",
-                "required": true,
-                "description": "The id of the specific questionnaire section.",
-                "schema": {
-                    "$ref": "./json-schemas/models/definitions/section-id.json"
-                },
-                "example": "system"
             },
             "filter": {
                 "in": "query",
@@ -945,6 +698,26 @@
                 "example": {
                     "before": "p-applicant-declaration"
                 }
+            },
+            "onBehalfOf": {
+                "in": "header",
+                "name": "On-Behalf-Of",
+                "required": true,
+                "description": "Specify the owner of the resource.",
+                "schema": {
+                    "$ref": "./json-schemas/models/definitions/owner-id.json"
+                },
+                "example": "urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+            },
+            "sectionId": {
+                "name": "sectionId",
+                "in": "path",
+                "required": true,
+                "description": "The id of the specific questionnaire section.",
+                "schema": {
+                    "$ref": "./json-schemas/models/definitions/section-id.json"
+                },
+                "example": "system"
             }
         },
         "responses": {
@@ -1035,7 +808,7 @@
                                 {
                                     "status": 409,
                                     "title": "409 conflict",
-                                    "detail": "Endpoint /api/v1/questionnaires/68653be7-877f-4106-b91e-4ba8dac883f3/sections/system/answers accepts only resources of type \"answers\""
+                                    "detail": "Submission resource with ID \"68653be7-877f-4106-b91e-4ba8dac883f3\" already exists"
                                 }
                             ]
                         }
