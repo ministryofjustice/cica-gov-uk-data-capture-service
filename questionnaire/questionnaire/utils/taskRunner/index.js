@@ -115,12 +115,9 @@ function createTaskRunner({
 
             // eslint-disable-next-line no-param-reassign
             retryCount += 1;
-
             if (retryCount <= retries) {
                 const exponentialDelayInMillieseconds = 10 ** retryCount;
-
                 await wait(exponentialDelayInMillieseconds);
-
                 return run(factoryDefinition, {
                     retries,
                     retryCount
