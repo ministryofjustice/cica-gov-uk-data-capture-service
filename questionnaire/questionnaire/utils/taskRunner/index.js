@@ -126,14 +126,8 @@ function createTaskRunner({
             }
 
             context[taskState.id] = taskState;
-            const {logger} = context;
-            logger.error(err);
-
             // eslint-disable-next-line no-throw-literal
-            throw {
-                task: taskState,
-                context
-            };
+            throw err;
         }
     }
 

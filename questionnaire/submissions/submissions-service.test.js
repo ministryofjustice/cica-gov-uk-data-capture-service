@@ -132,9 +132,11 @@ describe('Submission service', () => {
             error = err;
         }
 
+        expect(error.name).toEqual('ResourceNotFound');
         expect(error.message).toEqual(
             'Questionnaire "85dc5d74-fe27-4b24-a96f-40f3c6d30783" not found'
         );
+        expect(mockLogger.error).toHaveBeenCalledTimes(1);
     });
 
     it('should throw if the questionnaire is not in a submittable state', async () => {
@@ -149,13 +151,11 @@ describe('Submission service', () => {
             error = err;
         }
 
+        expect(error.name).toEqual('NotSubmittableStateError');
         expect(error.message).toEqual(
             'Questionnaire with ID "04bd2bd8-1025-4236-a7a2-e323a4040440" is not in a submittable state'
         );
         expect(mockLogger.error).toHaveBeenCalledTimes(1);
-        expect(mockLogger.error.mock.calls[0][0]).toEqual(
-            'Submission error for questionnaireId 04bd2bd8-1025-4236-a7a2-e323a4040440, error Questionnaire with ID "04bd2bd8-1025-4236-a7a2-e323a4040440" is not in a submittable state'
-        );
     });
 
     describe('Successful submission', () => {
@@ -201,7 +201,7 @@ describe('Submission service', () => {
     });
 
     describe('Unsuccessful submission', () => {
-        describe('Default retries', () => {
+        describe('Using the default task retries of 3 attempts', () => {
             it('should log task errors and return a submissions resource ', async () => {
                 const questionnaireId = '93a1d3ab-56a6-4554-8acf-cdeb088d511d';
                 let error;
@@ -221,17 +221,9 @@ describe('Submission service', () => {
                     error = err;
                 }
 
-                expect(mockLogger.error).toHaveBeenCalledTimes(5);
-                expect(mockLogger.error.mock.calls[0][0].message).toEqual('bar');
-                expect(mockLogger.error.mock.calls[1][0].message).toEqual('bar');
-                expect(mockLogger.error.mock.calls[2][0].message).toEqual('bar');
-                expect(mockLogger.error.mock.calls[3][0][0].id).toEqual('task1');
-                expect(mockLogger.error.mock.calls[3][0][0].type).toEqual(
-                    'simpleFailingTaskFactory'
-                );
-                expect(mockLogger.error.mock.calls[3][0][0].result.message).toEqual('bar');
-                expect(mockLogger.error.mock.calls[4][0]).toEqual(
-                    'Submission error for questionnaireId 93a1d3ab-56a6-4554-8acf-cdeb088d511d, failed tasks simpleFailingTaskFactory, errors bar'
+                expect(mockLogger.error).toHaveBeenCalledTimes(1);
+                expect(mockLogger.error.mock.calls[0][0]).toMatch(
+                    /^Submission error for questionnaireId 93a1d3ab-56a6-4554-8acf-cdeb088d511d:VError: Sequential task failed: simpleFailingTaskFactory: bar/
                 );
                 expect(error).toEqual({
                     data: {
@@ -286,8 +278,8 @@ describe('Submission service', () => {
             ]);
         });
     });
-    describe('Zero retries', () => {
-        it('should log task errors and return a submissions resource ', async () => {
+    describe('Zero retries after unsuccessful task run', () => {
+        it('should log task errors and return a submissions resource', async () => {
             const questionnaireId = '13a1d3ab-56a6-4554-8acf-cdeb088d511d';
             let error;
 
@@ -306,13 +298,9 @@ describe('Submission service', () => {
                 error = err;
             }
 
-            expect(mockLogger.error).toHaveBeenCalledTimes(3);
-            expect(mockLogger.error.mock.calls[0][0].message).toEqual('bar');
-            expect(mockLogger.error.mock.calls[1][0][0].id).toEqual('task1');
-            expect(mockLogger.error.mock.calls[1][0][0].type).toEqual('simpleFailingTaskFactory');
-            expect(mockLogger.error.mock.calls[1][0][0].result.message).toEqual('bar');
-            expect(mockLogger.error.mock.calls[2][0]).toEqual(
-                'Submission error for questionnaireId 13a1d3ab-56a6-4554-8acf-cdeb088d511d, failed tasks simpleFailingTaskFactory, errors bar'
+            expect(mockLogger.error).toHaveBeenCalledTimes(1);
+            expect(mockLogger.error.mock.calls[0][0]).toMatch(
+                /^Submission error for questionnaireId 13a1d3ab-56a6-4554-8acf-cdeb088d511d:VError: Sequential task failed: simpleFailingTaskFactory: bar/
             );
             expect(error).toEqual({
                 data: {

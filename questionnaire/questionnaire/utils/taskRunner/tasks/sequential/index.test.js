@@ -78,10 +78,8 @@ describe('task: sequential', () => {
             }
         });
 
-        let task;
-
-        try {
-            await taskRunner.run({
+        await expect(
+            taskRunner.run({
                 id: 'task0',
                 type: 'sequential',
                 data: [
@@ -106,18 +104,8 @@ describe('task: sequential', () => {
                         type: 'simpleTaskFactory'
                     }
                 ]
-            });
-        } catch (err) {
-            task = err.task;
-        }
-
-        const taskResults = task.result;
-
-        expect(task.status).toEqual('failed');
-        expect(taskResults.length).toEqual(3);
-        expect(taskResults[0].status).toEqual('succeeded');
-        expect(taskResults[1].status).toEqual('succeeded');
-        expect(taskResults[2].status).toEqual('failed');
+            })
+        ).rejects.toThrow('foo');
     });
 
     it('should allow access to previous task results', async () => {

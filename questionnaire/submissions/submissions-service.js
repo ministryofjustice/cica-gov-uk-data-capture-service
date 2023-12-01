@@ -1,6 +1,7 @@
 'use strict';
 
 const defaults = {};
+const VError = require('verror');
 defaults.createQuestionnaireService = require('../questionnaire-service');
 defaults.createTaskRunner = require('../questionnaire/utils/taskRunner');
 defaults.sequential = require('../questionnaire/utils/taskRunner/tasks/sequential');
@@ -11,6 +12,14 @@ const {
 } = require('../questionnaire/utils/taskRunner/tasks/generateCaseReference');
 const {sendSubmissionMessageToSQS} = require('../questionnaire/utils/taskRunner/tasks/postToSQS');
 const sendNotifyMessageToSQS = require('../questionnaire/utils/taskRunner/tasks/postToNotify');
+
+// not in a submittable state
+class NotSubmittableStateError extends Error {
+    constructor(message) {
+        super(message); // (1)
+        this.name = 'NotSubmittableStateError'; // (2)
+    }
+}
 
 function createSubmissionService({
     logger,
@@ -69,25 +78,14 @@ function createSubmissionService({
     }
 
     function logError(questionnaireId, err) {
-        const {task} = err;
-        if (task === undefined) {
-            logger.error(
-                `Submission error for questionnaireId ${questionnaireId}, error ${err.message}`
-            );
+        // log and throw is an anti-pattern
+        if (err instanceof NotSubmittableStateError || err.name === 'ResourceNotFound') {
+            logger.error(err, `Submission error for questionnaireId ${questionnaireId}`);
             throw err;
         }
 
-        const failedTasks = [];
-        const errorMessages = [];
-        task.result.forEach(result => {
-            if (result.status === 'failed') {
-                failedTasks.push(result.type);
-                errorMessages.push(result.result.message);
-            }
-        });
-
         logger.error(
-            `Submission error for questionnaireId ${questionnaireId}, failed tasks ${failedTasks.toString()}, errors ${errorMessages.toString()}`
+            `Submission error for questionnaireId ${questionnaireId}:${VError.fullStack(err)}`
         );
     }
 
@@ -98,7 +96,7 @@ function createSubmissionService({
             );
 
             if ((await isSubmittable(questionnaireId, questionnaireDefinition)) === false) {
-                throw Error(
+                throw new NotSubmittableStateError(
                     `Questionnaire with ID "${questionnaireId}" is not in a submittable state`
                 );
             }
