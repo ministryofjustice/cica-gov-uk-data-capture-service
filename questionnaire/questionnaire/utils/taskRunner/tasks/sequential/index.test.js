@@ -1,7 +1,7 @@
 'use strict';
 
 const createTaskRunner = require('../../index');
-const sequential = require('./index');
+const sequential = require('./index').runTasksSequentially;
 
 const mockLogger = {
     error: jest.fn()
@@ -105,7 +105,9 @@ describe('task: sequential', () => {
                     }
                 ]
             })
-        ).rejects.toThrow('foo');
+        ).rejects.toThrow(
+            'Sequential task failed at index 2, task id: task3, task type: simpleTaskFactoryThatThrows'
+        );
     });
 
     it('should allow access to previous task results', async () => {

@@ -110,10 +110,6 @@ function createTaskRunner({
                 context
             };
         } catch (err) {
-            taskState.status = 'failed';
-            taskState.ended = new Date().toISOString();
-            taskState.result = err;
-
             // eslint-disable-next-line no-param-reassign
             retryCount += 1;
             if (retryCount <= retries) {
@@ -124,9 +120,6 @@ function createTaskRunner({
                     retryCount
                 });
             }
-
-            context[taskState.id] = taskState;
-            // eslint-disable-next-line no-throw-literal
             throw err;
         }
     }

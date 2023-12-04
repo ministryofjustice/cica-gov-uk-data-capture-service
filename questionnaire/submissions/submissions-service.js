@@ -1,10 +1,14 @@
 'use strict';
 
+const serializer = require('pino-std-serializers').err;
+
 const defaults = {};
-const VError = require('verror');
 defaults.createQuestionnaireService = require('../questionnaire-service');
 defaults.createTaskRunner = require('../questionnaire/utils/taskRunner');
-defaults.sequential = require('../questionnaire/utils/taskRunner/tasks/sequential');
+defaults.sequential = require('../questionnaire/utils/taskRunner/tasks/sequential').runTasksSequentially;
+
+const {SequentialTaskError} = require('../questionnaire/utils/taskRunner/tasks/sequential');
+
 // Pull in additional task implementations here
 const {transformAndUpload} = require('../questionnaire/utils/taskRunner/tasks/transformAndUpload');
 const {
@@ -13,11 +17,11 @@ const {
 const {sendSubmissionMessageToSQS} = require('../questionnaire/utils/taskRunner/tasks/postToSQS');
 const sendNotifyMessageToSQS = require('../questionnaire/utils/taskRunner/tasks/postToNotify');
 
-// not in a submittable state
+// not in a submittable state custom error
 class NotSubmittableStateError extends Error {
     constructor(message) {
-        super(message); // (1)
-        this.name = 'NotSubmittableStateError'; // (2)
+        super(message);
+        this.name = 'NotSubmittableStateError';
     }
 }
 
@@ -77,18 +81,6 @@ function createSubmissionService({
         return JSON.parse(JSON.stringify(onSubmitTaskDefinition));
     }
 
-    function logError(questionnaireId, err) {
-        // log and throw is an anti-pattern
-        if (err instanceof NotSubmittableStateError || err.name === 'ResourceNotFound') {
-            logger.error(err, `Submission error for questionnaireId ${questionnaireId}`);
-            throw err;
-        }
-
-        logger.error(
-            `Submission error for questionnaireId ${questionnaireId}:${VError.fullStack(err)}`
-        );
-    }
-
     async function submit(questionnaireId) {
         try {
             const questionnaireDefinition = await questionnaireService.getQuestionnaire(
@@ -139,7 +131,15 @@ function createSubmissionService({
                 }
             };
         } catch (err) {
-            logError(questionnaireId, err);
+            logger.error(
+                serializer(err),
+                `Submission error for questionnaireId ${questionnaireId}: `
+            );
+            // log and throw is an anti-pattern, leaving this here until we fix global logging
+            // see the errorHandler and check we have tests for possible submission errors
+            if (!(err instanceof SequentialTaskError)) {
+                throw err;
+            }
 
             await questionnaireService.updateQuestionnaireSubmissionStatus(
                 questionnaireId,
