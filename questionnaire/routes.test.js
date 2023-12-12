@@ -127,9 +127,6 @@ describe('Openapi version 2023-05-17 validation', () => {
             }),
             getSessionResource: jest.fn(() => {
                 return 'ok';
-            }),
-            validateAllAnswers: jest.fn(() => {
-                return 'ok';
             })
         };
 
@@ -614,35 +611,6 @@ describe('Openapi version 2023-05-17 validation', () => {
                         }
                     });
                 expect(response.statusCode).toEqual(201);
-            });
-        });
-
-        describe('POST answers to the "system" section', () => {
-            it('should perform actions specific to the "system" section', async () => {
-                const response = await request(app)
-                    .post(
-                        '/api/questionnaires/285cb104-0c15-4a9c-9840-cb1007f098fb/sections/system/answers'
-                    )
-                    .set('Authorization', `Bearer ${token}`)
-                    .set('Content-Type', 'application/vnd.api+json')
-                    .set('On-Behalf-Of', `urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6`)
-                    .set('Dcs-Api-Version', '2023-05-17')
-                    .send({
-                        data: {
-                            type: 'answers',
-                            attributes: {
-                                system: {
-                                    'case-reference': '23/700000'
-                                }
-                            }
-                        }
-                    });
-                expect(response.statusCode).toEqual(201);
-                expect(
-                    mockQuestionnaireService.updateQuestionnaireSubmissionStatus
-                ).toBeCalledTimes(1);
-                expect(mockQuestionnaireService.getQuestionnaire).toBeCalledTimes(1);
-                expect(mockQuestionnaireService.runOnCompleteActions).toBeCalledTimes(1);
             });
         });
 

@@ -5,7 +5,6 @@ const {expressjwt: validateJWT} = require('express-jwt');
 
 const createQuestionnaireService = require('./questionnaire-service');
 const permissions = require('../middleware/route-permissions');
-const datasetRouter = require('./dataset/dataset-routes.js');
 const metadataRouter = require('./metadata/metadata-routes.js');
 const submissionsRouter = require('./submissions/submissions-routes.js');
 
@@ -44,7 +43,6 @@ router.route('/').post(permissions('create:questionnaires'), async (req, res, ne
     }
 });
 
-router.use(datasetRouter);
 router.use(metadataRouter);
 router.use(submissionsRouter);
 
@@ -59,39 +57,6 @@ router
             res.status(200).json({
                 data: resourceCollection
             });
-        } catch (err) {
-            next(err);
-        }
-    });
-
-router
-    .route('/:questionnaireId/sections/system/answers')
-    .post(permissions('create:system-answers'), async (req, res, next) => {
-        try {
-            // There can only every be one "answers" block per section
-            // TODO: handle multiple attempts to "create" answers
-            const answers = req.body.data.attributes;
-            const questionnaireService = createQuestionnaireService({
-                logger: req.log
-            });
-            const response = await questionnaireService.createAnswers(
-                req.params.questionnaireId,
-                'system',
-                answers
-            );
-
-            await questionnaireService.updateQuestionnaireSubmissionStatus(
-                req.params.questionnaireId,
-                'COMPLETED'
-            );
-
-            const questionnireDefinition = await questionnaireService.getQuestionnaire(
-                req.params.questionnaireId
-            );
-
-            await questionnaireService.runOnCompleteActions(questionnireDefinition);
-
-            res.status(201).json(response);
         } catch (err) {
             next(err);
         }

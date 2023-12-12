@@ -2,11 +2,11 @@
 
 const VError = require('verror');
 
-const updateQuestionnaireSubmissionStatus = jest.fn();
+const updateQuestionnaireSubmissionStatusByOwner = jest.fn();
 
 jest.doMock('../questionnaire-dal.js', () =>
     jest.fn(() => ({
-        getQuestionnaire: questionnaireId => {
+        getQuestionnaireByOwner: questionnaireId => {
             // unsubmittable due to progress not containing a summary section
             if (questionnaireId === '04bd2bd8-1025-4236-a7a2-e323a4040440') {
                 return {
@@ -72,8 +72,8 @@ jest.doMock('../questionnaire-dal.js', () =>
                 `Questionnaire "${questionnaireId}" not found`
             );
         },
-        updateQuestionnaireSubmissionStatus,
-        getQuestionnaireSubmissionStatus: () => 'NOT_STARTED',
+        updateQuestionnaireSubmissionStatusByOwner,
+        getQuestionnaireSubmissionStatusByOwner: () => 'NOT_STARTED',
         getQuestionnaireIdsBySubmissionStatus: () => ['508ad99f-a968-495d-b03c-25368e2d99cd']
     }))
 );
@@ -162,10 +162,18 @@ describe('Submission service', () => {
             });
             await submissionService.submit(questionnaireId);
 
-            expect(updateQuestionnaireSubmissionStatus.mock.calls[0][0]).toEqual(questionnaireId);
-            expect(updateQuestionnaireSubmissionStatus.mock.calls[0][1]).toEqual('IN_PROGRESS');
-            expect(updateQuestionnaireSubmissionStatus.mock.calls[1][0]).toEqual(questionnaireId);
-            expect(updateQuestionnaireSubmissionStatus.mock.calls[1][1]).toEqual('COMPLETED');
+            expect(updateQuestionnaireSubmissionStatusByOwner.mock.calls[0][0]).toEqual(
+                questionnaireId
+            );
+            expect(updateQuestionnaireSubmissionStatusByOwner.mock.calls[0][1]).toEqual(
+                'IN_PROGRESS'
+            );
+            expect(updateQuestionnaireSubmissionStatusByOwner.mock.calls[1][0]).toEqual(
+                questionnaireId
+            );
+            expect(updateQuestionnaireSubmissionStatusByOwner.mock.calls[1][1]).toEqual(
+                'COMPLETED'
+            );
         });
     });
 
@@ -218,10 +226,16 @@ describe('Submission service', () => {
                 // no catch require for test
             }
 
-            expect(updateQuestionnaireSubmissionStatus.mock.calls[0][0]).toEqual(questionnaireId);
-            expect(updateQuestionnaireSubmissionStatus.mock.calls[0][1]).toEqual('IN_PROGRESS');
-            expect(updateQuestionnaireSubmissionStatus.mock.calls[1][0]).toEqual(questionnaireId);
-            expect(updateQuestionnaireSubmissionStatus.mock.calls[1][1]).toEqual('FAILED');
+            expect(updateQuestionnaireSubmissionStatusByOwner.mock.calls[0][0]).toEqual(
+                questionnaireId
+            );
+            expect(updateQuestionnaireSubmissionStatusByOwner.mock.calls[0][1]).toEqual(
+                'IN_PROGRESS'
+            );
+            expect(updateQuestionnaireSubmissionStatusByOwner.mock.calls[1][0]).toEqual(
+                questionnaireId
+            );
+            expect(updateQuestionnaireSubmissionStatusByOwner.mock.calls[1][1]).toEqual('FAILED');
         });
     });
 

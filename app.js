@@ -9,7 +9,6 @@ const pino = require('pino-http');
 const errorHandler = require('./middleware/error-handler');
 const docsRouter = require('./docs/routes');
 const questionnaireRouter = require('./questionnaire/routes');
-const submissionsRouter = require('./questionnaire/submissions-routes');
 
 const app = express();
 const logger = pino({
@@ -83,8 +82,6 @@ app.use((req, res, next) => {
 
     next();
 });
-
-app.use('/api/v1/submissions', submissionsRouter);
 
 app.use(
     '/api/questionnaires',

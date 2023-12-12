@@ -15,6 +15,9 @@ const incompatibleQuestionnaireId = '55555555-7dec-11d0-a765-00a0c91e6bf6';
 const answers = {
     'q-some-section': true
 };
+const invalidAnswers = {
+    'q-some-section': 'this-answer-will-not-validate-against-its-schema'
+};
 const ownerId = 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6';
 const templatename = 'sexual-assault';
 const ownerData = {
@@ -78,13 +81,14 @@ jest.doMock('q-router', () => {
                 }
             };
         }),
-        next: jest.fn(sectionId => {
+        next: jest.fn((answers, sectionId) => {
             return {
                 id: sectionId,
                 context: {
                     routes: {
                         initial: sectionId
-                    }
+                    },
+                    answers
                 }
             };
         })
@@ -97,9 +101,9 @@ jest.mock('ajv');
 jest.mock('ajv-errors');
 mockAjv.mockImplementation(() => {
     return {
-        compile: jest.fn(sectionId => {
-            return jest.fn(() => {
-                return sectionId !== invalidSectionId;
+        compile: jest.fn(() => {
+            return jest.fn(answers => {
+                return answers !== invalidAnswers;
             });
         }),
         addFormat: jest.fn()
@@ -202,303 +206,19 @@ const mockDalService = require('./questionnaire-dal')();
 const createQuestionnaireService = require('./questionnaire-service');
 
 describe('Questionnaire Service', () => {
-    describe('DCS API Version 1', () => {
-        const questionnaireService = createQuestionnaireService({
-            logger: () => 'Logged from createQuestionnaire test',
-            apiVersion: undefined, // Undefined should only occur for DCS API v1
-            ownerId: undefined // Undefined should only occur for DCS API v1
-        });
-
-        describe('getProgressEntries', () => {
-            it('Should return a progressEntry collection', async () => {
-                const query = undefined;
-
-                const actual = await questionnaireService.getProgressEntries(
-                    validQuestionnaireId,
-                    query
-                );
-
-                expect(Array.isArray(actual.data)).toBe(true);
-                expect(actual.data[0]).toMatchObject({
-                    id: expect.any(String),
-                    type: 'progress-entries',
-                    attributes: expect.any(Object),
-                    relationships: expect.any(Object)
-                });
-            });
-
-            it('Should return a "incompatible questionnaire" schema if the questionnaire in incompatible', async () => {
-                const query = undefined;
-
-                const actual = await questionnaireService.getProgressEntries(
-                    incompatibleQuestionnaireId,
-                    query
-                );
-
-                expect(Array.isArray(actual.data)).toBe(true);
-                expect(actual.data[0]).toMatchObject({
-                    id: 'incompatible',
-                    type: 'progress-entries',
-                    attributes: {
-                        sectionId: null,
-                        url: null
-                    },
-                    relationships: {
-                        section: {
-                            data: {
-                                type: null,
-                                id: 'incompatible'
-                            }
-                        }
-                    }
-                });
-            });
-
-            it('Should NOT use DB functions which filter by owner', async () => {
-                const query = {
-                    filter: {
-                        sectionId: 'p-applicant-when-did-the-crime-happen'
-                    }
-                };
-
-                await questionnaireService.getProgressEntries(validQuestionnaireId, query);
-
-                expect(mockDalService.getQuestionnaire).toHaveBeenCalledTimes(1);
-                expect(mockDalService.updateQuestionnaire).toHaveBeenCalledTimes(1);
-                expect(mockDalService.getQuestionnaireByOwner).not.toHaveBeenCalled();
-                expect(mockDalService.updateQuestionnaireByOwner).not.toHaveBeenCalled();
-            });
-
-            describe('filter functions', () => {
-                it('Should filter to the current section', async () => {
-                    const query = {
-                        filter: {
-                            position: 'current'
-                        }
-                    };
-
-                    const actual = await questionnaireService.getProgressEntries(
-                        validQuestionnaireId,
-                        query,
-                        ownerId
-                    );
-
-                    expect(Array.isArray(actual.data)).toBe(true);
-                    expect(actual.data[0]).toMatchObject({
-                        id: expect.any(String),
-                        type: 'progress-entries',
-                        attributes: {
-                            url: expect.any(Object),
-                            sectionId: 'p-applicant-when-did-the-crime-happen'
-                        },
-                        relationships: expect.any(Object)
+    describe('Unknown API version', () => {
+        describe('Questionnaire service is called with an incompatible API', () => {
+            it('Should fail gracefully', () => {
+                expect(() => {
+                    createQuestionnaireService({
+                        logger: () => 'Logged from createQuestionnaire test',
+                        apiVersion: '2024-01-01', // An incompatible or unknown version
+                        ownerId: undefined
                     });
-                });
-
-                it('Should filter to the first section', async () => {
-                    const query = {
-                        filter: {
-                            position: 'first'
-                        }
-                    };
-
-                    const actual = await questionnaireService.getProgressEntries(
-                        validQuestionnaireId,
-                        query
-                    );
-
-                    expect(Array.isArray(actual.data)).toBe(true);
-                    expect(actual.data[0]).toMatchObject({
-                        id: expect.any(String),
-                        type: 'progress-entries',
-                        attributes: {
-                            url: expect.any(Object),
-                            sectionId: 'p-applicant-declaration'
-                        },
-                        relationships: expect.any(Object)
-                    });
-                });
-
-                it('Should filter to a specific section', async () => {
-                    const query = {
-                        filter: {
-                            sectionId: 'p-applicant-when-did-the-crime-happen'
-                        }
-                    };
-
-                    const actual = await questionnaireService.getProgressEntries(
-                        validQuestionnaireId,
-                        query
-                    );
-
-                    expect(Array.isArray(actual.data)).toBe(true);
-                    expect(actual.data[0]).toMatchObject({
-                        id: expect.any(String),
-                        type: 'progress-entries',
-                        attributes: {
-                            url: expect.any(Object),
-                            sectionId: 'p-applicant-when-did-the-crime-happen'
-                        },
-                        relationships: expect.any(Object)
-                    });
-                });
-
-                it('Should filter to the previous section', async () => {
-                    const query = {
-                        page: {
-                            before: 'p-applicant-enter-your-telephone-number'
-                        }
-                    };
-
-                    const actual = await questionnaireService.getProgressEntries(
-                        validQuestionnaireId,
-                        query
-                    );
-
-                    expect(Array.isArray(actual.data)).toBe(true);
-                    expect(actual.data[0]).toMatchObject({
-                        id: expect.any(String),
-                        type: 'progress-entries',
-                        attributes: {
-                            url: expect.any(Object),
-                            sectionId: 'p-applicant-enter-your-email-address'
-                        },
-                        relationships: expect.any(Object)
-                    });
-                });
-
-                it('Should filter to the referrer where no previous section exists', async () => {
-                    const query = {
-                        page: {
-                            before: 'p-first-section'
-                        }
-                    };
-
-                    const actual = await questionnaireService.getProgressEntries(
-                        validQuestionnaireId,
-                        query
-                    );
-
-                    expect(Array.isArray(actual.data)).toBe(true);
-                    expect(actual.data[0]).toMatchObject({
-                        id: 'referrer',
-                        type: 'progress-entries',
-                        attributes: {
-                            url:
-                                'https://uat.claim-criminal-injuries-compensation.service.justice.gov.uk/start-page',
-                            sectionId: expect.any(Object)
-                        }
-                    });
-                });
-
-                it('Should error gracefully if section does not exist', async () => {
-                    const query = {
-                        filter: {
-                            sectionId: invalidSectionId
-                        }
-                    };
-
-                    await expect(
-                        questionnaireService.getProgressEntries(validQuestionnaireId, query)
-                    ).rejects.toThrow('ProgressEntry "p-not-a-section" does not exist');
-                });
-            });
-        });
-
-        describe('createAnswers', () => {
-            it('Should return an answer resource', async () => {
-                const actual = await questionnaireService.createAnswers(
-                    validQuestionnaireId,
-                    validSectionId,
-                    answers
-                );
-
-                expect(actual.data).toMatchObject({
-                    id: validSectionId,
-                    type: 'answers',
-                    attributes: expect.any(Object)
-                });
-            });
-
-            it('Should NOT use DB functions which filter by owner', async () => {
-                await questionnaireService.createAnswers(
-                    validQuestionnaireId,
-                    validSectionId,
-                    answers
-                );
-
-                expect(mockDalService.updateQuestionnaire).toHaveBeenCalledTimes(1);
-                expect(mockDalService.updateQuestionnaireByOwner).not.toHaveBeenCalled();
-            });
-
-            it('Should throw a validation error if the schema is not valid', async () => {
-                await expect(
-                    questionnaireService.createAnswers(
-                        validQuestionnaireId,
-                        invalidSectionId,
-                        answers
-                    )
-                ).rejects.toThrow();
-            });
-
-            it('Should error gracefully', async () => {
-                await expect(
-                    questionnaireService.createAnswers(
-                        invalidQuestionnaireId,
-                        validSectionId,
-                        answers
-                    )
-                ).rejects.toThrow('Cannot find questionnaire');
-            });
-        });
-
-        describe('updateQuestionnaireModifiedDate', () => {
-            it('Should update the modified column of a questionnaire without owner data', async () => {
-                await questionnaireService.updateQuestionnaireModifiedDate(validQuestionnaireId);
-
-                expect(mockDalService.updateQuestionnaireModifiedDate).toHaveBeenCalledTimes(1);
-                expect(mockDalService.updateQuestionnaireModifiedDate).toHaveBeenCalledWith(
-                    validQuestionnaireId
-                );
-                expect(
-                    mockDalService.updateQuestionnaireModifiedDateByOwner
-                ).not.toHaveBeenCalled();
-            });
-        });
-
-        describe('getQuestionnaireSubmissionStatus', () => {
-            it('Should get the submission status of a questionnaire without owner data', async () => {
-                await questionnaireService.getQuestionnaireSubmissionStatus(validQuestionnaireId);
-
-                expect(mockDalService.getQuestionnaireSubmissionStatus).toHaveBeenCalledTimes(1);
-                expect(mockDalService.getQuestionnaireSubmissionStatus).toHaveBeenCalledWith(
-                    validQuestionnaireId
-                );
-                expect(
-                    mockDalService.getQuestionnaireSubmissionStatusByOwner
-                ).not.toHaveBeenCalled();
-            });
-        });
-
-        describe('updateQuestionnaireSubmissionStatus', () => {
-            it('Should update the submission status of a questionnaire without owner data', async () => {
-                await questionnaireService.updateQuestionnaireSubmissionStatus(
-                    validQuestionnaireId,
-                    validSubmissionStatus
-                );
-
-                expect(mockDalService.updateQuestionnaireSubmissionStatus).toHaveBeenCalledTimes(1);
-                expect(mockDalService.updateQuestionnaireSubmissionStatus).toHaveBeenCalledWith(
-                    validQuestionnaireId,
-                    validSubmissionStatus
-                );
-                expect(
-                    mockDalService.updateQuestionnaireSubmissionStatusByOwner
-                ).not.toHaveBeenCalled();
+                }).toThrow(`API version "2024-01-01" is not compatible with this release`);
             });
         });
     });
-
     describe('DCS API Version 2023-05-17', () => {
         const questionnaireService = createQuestionnaireService({
             logger: () => 'Logged from createQuestionnaire test',
@@ -804,8 +524,8 @@ describe('Questionnaire Service', () => {
                 await expect(
                     questionnaireService.createAnswers(
                         validQuestionnaireId,
-                        invalidSectionId,
-                        answers
+                        validSectionId,
+                        invalidAnswers
                     )
                 ).rejects.toThrow();
             });
@@ -911,8 +631,8 @@ describe('Questionnaire Service', () => {
             it('Should execute the getQuestionnaireIdsBySubmissionStatus db call', async () => {
                 const questionnaireService = createQuestionnaireService({
                     logger: () => 'Logged from createQuestionnaire test',
-                    apiVersion: undefined, // Undefined should only occur for DCS API v1
-                    ownerId: undefined // Undefined should only occur for DCS API v1
+                    apiVersion: undefined, // Undefined should only occur for DCS Admin API
+                    ownerId: undefined // Undefined should only occur for DCS Admin API
                 });
                 await questionnaireService.getQuestionnaireIdsBySubmissionStatus(
                     failedSubmissionStatus
