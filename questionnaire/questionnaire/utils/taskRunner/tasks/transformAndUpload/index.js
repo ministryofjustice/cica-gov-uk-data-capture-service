@@ -154,7 +154,8 @@ async function transformAndUpload({questionnaireDef, logger}) {
         questionnaireDefinition: questionnaireDef
     });
 
-    const s3Directory = process.env.S3_DIRECTORY ? process.env.S3_DIRECTORY : 'application_json';
+    const [year, refNo] = questionnaire.getAnswers().system['case-reference'].split('\\');
+    const s3Directory = `${year}-${refNo}`;
     logger.info(`Transforming questionnaire with id: ${questionnaire.getId()}`);
     const output = transformQuestionnaire(questionnaire);
 
@@ -163,7 +164,9 @@ async function transformAndUpload({questionnaireDef, logger}) {
     output.meta.submittedDate = await db.getQuestionnaireModifiedDate(questionnaire.getId());
 
     // Upload transformed JSON into S3
-    logger.info(`Uploading to S3 for questionnaire with id: ${questionnaire.getId()}`);
+    logger.info(
+        `Uploading to S3 for questionnaire with id: ${questionnaire.getId()} to folder ${s3Directory}`
+    );
     const s3Service = createS3Service({logger});
     const submissionResponse = await s3Service.uploadFile(
         output,
