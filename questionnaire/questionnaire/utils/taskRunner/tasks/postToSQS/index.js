@@ -8,8 +8,9 @@ const createSqsService = require('../../../../../../services/sqs');
  * @param {questionnaireId} questionnaireId - The id of the questionnaire
  * @returns The body of the SQS message
  */
-function buildMessageBody(questionnaireId) {
-    const s3Directory = process.env.S3_DIRECTORY ? process.env.S3_DIRECTORY : 'application_json';
+function buildMessageBody(questionnaireId, questionnaire) {
+    const [year, refNo] = questionnaire.answers.system['case-reference'].split('\\');
+    const s3Directory = `${year}-${refNo}`;
     return {applicationJSONDocumentSummaryKey: `${s3Directory}/${questionnaireId}.json`};
 }
 
@@ -21,7 +22,7 @@ function buildMessageBody(questionnaireId) {
 async function sendSubmissionMessageToSQS({questionnaire, logger}) {
     const questionnaireId = questionnaire.id;
 
-    const body = buildMessageBody(questionnaireId);
+    const body = buildMessageBody(questionnaireId, questionnaire);
     logger.info(`Sending submission message to SQS for questionnaire with id ${questionnaireId}`);
     const sqsService = createSqsService({logger});
     const sqsResponse = await sqsService.send(body, process.env.AWS_SQS_ID);
