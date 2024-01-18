@@ -168,7 +168,8 @@ describe('Openapi version 2023-05-17 validation', () => {
                             templateName: 'sexual-assault',
                             owner: {
                                 id: 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6',
-                                isAuthenticated: true
+                                isAuthenticated: true,
+                                origin: 'W'
                             }
                         }
                     }
@@ -194,7 +195,8 @@ describe('Openapi version 2023-05-17 validation', () => {
                             templateName: 'sexual-assault',
                             owner: {
                                 id: 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6',
-                                isAuthenticated: true
+                                isAuthenticated: true,
+                                origin: 'W'
                             }
                         }
                     }
@@ -217,7 +219,8 @@ describe('Openapi version 2023-05-17 validation', () => {
                             templateName: 'this-does-not-exist',
                             owner: {
                                 id: 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6',
-                                isAuthenticated: true
+                                isAuthenticated: true,
+                                origin: 'W'
                             }
                         }
                     }
@@ -264,7 +267,8 @@ describe('Openapi version 2023-05-17 validation', () => {
                                 templateName: 'sexual-assault',
                                 owner: {
                                     id: 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6',
-                                    isAuthenticated: true
+                                    isAuthenticated: true,
+                                    origin: 'W'
                                 }
                             }
                         }
@@ -286,7 +290,8 @@ describe('Openapi version 2023-05-17 validation', () => {
                                 templateName: 'sexual-assault',
                                 owner: {
                                     id: 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6',
-                                    isAuthenticated: true
+                                    isAuthenticated: true,
+                                    origin: 'W'
                                 }
                             }
                         }
@@ -311,7 +316,8 @@ describe('Openapi version 2023-05-17 validation', () => {
                                 templateName: 'sexual-assault',
                                 owner: {
                                     id: 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6',
-                                    isAuthenticated: true
+                                    isAuthenticated: true,
+                                    origin: 'W'
                                 }
                             }
                         }
@@ -336,7 +342,8 @@ describe('Openapi version 2023-05-17 validation', () => {
                                 templateName: 'sexual-assault',
                                 owner: {
                                     id: 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6',
-                                    isAuthenticated: true
+                                    isAuthenticated: true,
+                                    origin: 'W'
                                 }
                             }
                         }

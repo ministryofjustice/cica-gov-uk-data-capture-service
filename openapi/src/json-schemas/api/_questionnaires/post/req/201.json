@@ -23,13 +23,17 @@
                         "owner": {
                             "type": "object",
                             "additionalProperties": false,
-                            "required": ["id", "isAuthenticated"],
+                            "required": ["id", "isAuthenticated", "origin"],
                             "properties": {
                                 "id": {
                                     "$ref": "../../../../models/definitions/owner-id.json"
                                 },
                                 "isAuthenticated": {
                                     "type": "boolean"
+                                },
+                                "origin": {
+                                    "type": "string",
+                                    "enum": ["W", "T"]
                                 }
                             }
                         }

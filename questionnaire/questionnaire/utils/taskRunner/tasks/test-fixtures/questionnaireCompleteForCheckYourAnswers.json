@@ -4702,6 +4702,11 @@
         "system": {
             "case-reference": "19\\751194"
         },
+        "owner": {
+            "id": "urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6",
+            "isAuthenticated": true,
+            "origin": "W"
+        },
         "p--context-offender": {},
         "p--context-pregnancy": {},
         "p--context-treatment": {},

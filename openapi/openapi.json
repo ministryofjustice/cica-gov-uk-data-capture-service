@@ -94,7 +94,11 @@
                                                     "owner": {
                                                         "type": "object",
                                                         "additionalProperties": false,
-                                                        "required": ["id", "isAuthenticated"],
+                                                        "required": [
+                                                            "id",
+                                                            "isAuthenticated",
+                                                            "origin"
+                                                        ],
                                                         "properties": {
                                                             "id": {
                                                                 "title": "Owner Id",
@@ -105,6 +109,10 @@
                                                             },
                                                             "isAuthenticated": {
                                                                 "type": "boolean"
+                                                            },
+                                                            "origin": {
+                                                                "type": "string",
+                                                                "enum": ["W", "T"]
                                                             }
                                                         }
                                                     }
