@@ -136,7 +136,7 @@ function transformQuestionnaire(questionnaire) {
         meta: {
             caseReference: questionnaire.getAnswers().system['case-reference'],
             funeralReference: questionnaire.getAnswers().system['secondary-reference'],
-            origin: questionnaire.getAnswers().owner.origin
+            ownerOrigin: questionnaire.getAnswers().owner['owner-origin']
         },
         themes: themeContent,
         declaration: getDeclaration(questionnaire)
