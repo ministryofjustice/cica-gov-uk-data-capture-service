@@ -107,6 +107,17 @@
                                                                 "type": "boolean"
                                                             }
                                                         }
+                                                    },
+                                                    "origin": {
+                                                        "type": "object",
+                                                        "additionalProperties": false,
+                                                        "required": ["channel"],
+                                                        "properties": {
+                                                            "channel": {
+                                                                "type": "string",
+                                                                "pattern": "^[a-z][a-z0-9]{0,19}(?:-[a-z0-9]{1,20}){0,20}$"
+                                                            }
+                                                        }
                                                     }
                                                 }
                                             }
@@ -122,6 +133,9 @@
                                         "owner": {
                                             "id": "urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6",
                                             "isAuthenticated": true
+                                        },
+                                        "origin": {
+                                            "channel": "web"
                                         }
                                     }
                                 }

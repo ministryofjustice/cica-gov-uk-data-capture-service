@@ -5,6 +5,7 @@ const VError = require('verror');
 const {transformQuestionnaire, transformAndUpload, mergeArrays, getDeclaration} = require('.');
 const questionnaireFixture = require('../test-fixtures/questionnaireCompleteForCheckYourAnswers');
 const questionnaireFixtureNoDeclaration = require('../test-fixtures/questionnaireCompleteForCheckYourAnswersNoDeclaration');
+const questionnaireFixtureWithOrigin = require('../test-fixtures/questionnaireCompleteForCheckYourAnswersWithOrigin');
 const questionnaire = require('../../../../questionnaire');
 const mockDb = require('../../../../../questionnaire-dal');
 const mockS3 = require('../../../../../../services/s3');
@@ -44,6 +45,22 @@ describe('Transform and Upload task', () => {
 
     it('Should transform correctly and include the correct CRN in the metadata.', () => {
         expect(result.meta.caseReference).toBe('19\\751194');
+    });
+
+    it('Should transform correctly and include the correct channel in the metadata.', () => {
+        const questionnaireObjWithOrigin = questionnaire({
+            questionnaireDefinition: questionnaireFixtureWithOrigin
+        });
+
+        const transformedQuestionnaire = transformQuestionnaire(questionnaireObjWithOrigin);
+        expect(transformedQuestionnaire).toHaveProperty('meta');
+        expect(transformedQuestionnaire.meta).toHaveProperty('channel');
+        expect(transformedQuestionnaire.meta.channel).toBe('dashboard');
+    });
+
+    it('Should transform correctly if no origin is present in the answers', () => {
+        expect(result).toHaveProperty('meta');
+        expect(result.meta).not.toHaveProperty('channel');
     });
 
     it('Should transform correctly with amalgamated injury codes and labels.', () => {

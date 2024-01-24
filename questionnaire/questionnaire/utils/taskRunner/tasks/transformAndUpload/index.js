@@ -132,14 +132,21 @@ function transformQuestionnaire(questionnaire) {
         sectionSchema.properties['p-check-your-answers'].properties.summaryInfo.summaryStructure;
     flattenAnswers(themeContent);
 
-    return {
+    const answers = questionnaire.getAnswers();
+    const transformedQuestionnaire = {
         meta: {
-            caseReference: questionnaire.getAnswers().system['case-reference'],
-            funeralReference: questionnaire.getAnswers().system['secondary-reference']
+            caseReference: answers.system['case-reference'],
+            funeralReference: answers.system['secondary-reference']
         },
         themes: themeContent,
         declaration: getDeclaration(questionnaire)
     };
+
+    if (answers.origin) {
+        transformedQuestionnaire.meta.channel = answers.origin.channel;
+    }
+
+    return transformedQuestionnaire;
 }
 
 /**

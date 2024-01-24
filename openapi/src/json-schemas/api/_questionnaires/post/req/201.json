@@ -32,6 +32,17 @@
                                     "type": "boolean"
                                 }
                             }
+                        },
+                        "origin": {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "required": ["channel"],
+                            "properties": {
+                                "channel": {
+                                    "type": "string",
+                                    "pattern": "^[a-z][a-z0-9]{0,19}(?:-[a-z0-9]{1,20}){0,20}$"
+                                }
+                            }
                         }
                     }
                 }

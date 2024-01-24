@@ -28,14 +28,18 @@ router.route('/').post(permissions('create:questionnaires'), async (req, res, ne
             throw err;
         }
 
-        const {templateName, owner} = req.body.data.attributes;
+        const {templateName, owner, origin} = req.body.data.attributes;
 
         const questionnaireService = createQuestionnaireService({
             logger: req.log,
             apiVersion: req.get('Dcs-Api-Version'),
             ownerId: owner?.id
         });
-        const response = await questionnaireService.createQuestionnaire(templateName, owner);
+        const response = await questionnaireService.createQuestionnaire(
+            templateName,
+            owner,
+            origin
+        );
 
         res.status(201).json(response);
     } catch (err) {

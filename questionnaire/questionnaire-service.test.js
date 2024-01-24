@@ -27,6 +27,9 @@ const ownerData = {
 const apiVersion = '2023-05-17';
 const validSubmissionStatus = 'IN_PROGRESS';
 const failedSubmissionStatus = 'FAILED';
+const originData = {
+    channel: 'telephone'
+};
 
 beforeEach(() => {
     jest.clearAllMocks();
@@ -258,6 +261,26 @@ describe('Questionnaire Service', () => {
                             owner: {
                                 'owner-id': 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6',
                                 'is-authenticated': false
+                            }
+                        }
+                    })
+                );
+            });
+
+            it('Should set origin data in the answers if it is included', async () => {
+                await questionnaireService.createQuestionnaire(templatename, ownerData, originData);
+
+                expect(mockDalService.createQuestionnaire).toHaveBeenCalledTimes(1);
+                expect(mockDalService.createQuestionnaire).toHaveBeenCalledWith(
+                    expect.any(String),
+                    expect.objectContaining({
+                        answers: {
+                            owner: {
+                                'owner-id': 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6',
+                                'is-authenticated': false
+                            },
+                            origin: {
+                                channel: 'telephone'
                             }
                         }
                     })

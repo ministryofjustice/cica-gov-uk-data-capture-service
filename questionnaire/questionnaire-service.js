@@ -51,7 +51,7 @@ function createQuestionnaireService({
         await db.updateExpiryForAuthenticatedOwner(questionnaireId, owner);
     }
 
-    async function createQuestionnaire(templateName, ownerData) {
+    async function createQuestionnaire(templateName, ownerData, originData) {
         if (!(templateName in templates)) {
             throw new VError(
                 {
@@ -79,6 +79,12 @@ function createQuestionnaireService({
                 'is-authenticated': ownerData.isAuthenticated
             }
         };
+
+        if (originData) {
+            questionnaire.answers.origin = {
+                channel: originData.channel
+            };
+        }
 
         await db.createQuestionnaire(uuidV4, questionnaire);
 
