@@ -264,32 +264,13 @@ function createQuestionnaire({
         return createSection({id: sectionId, sectionDefinition});
     }
 
-    // TODO: remove this and implement allOf / describedBy properly
-    function removeDeclarationSectionIds(sectionIds) {
-        const sectionIdBlacklist = [
-            'p-applicant-declaration',
-            'p-applicant-declaration-deceased',
-            'p-mainapplicant-declaration-under-12',
-            'p-mainapplicant-declaration-under-12-deceased',
-            'p-mainapplicant-declaration-12-and-over',
-            'p-mainapplicant-declaration-12-and-over-deceased',
-            'p-rep-declaration-under-12',
-            'p-rep-declaration-under-12-deceased',
-            'p-rep-declaration-12-and-over',
-            'p-rep-declaration-12-and-over-deceased'
-        ];
-
-        return sectionIds.filter(sectionId => sectionIdBlacklist.includes(sectionId) === false);
-    }
-
     function getDataAttributes({
         progress = getProgress(),
         dataAttributeTransformer,
         includeMetadata = true
     } = {}) {
         const allDataAttributes = [];
-        // TODO: remove this and implement allOf / describedBy properly
-        const sectionIds = removeDeclarationSectionIds(progress);
+        const sectionIds = progress;
 
         sectionIds.forEach(sectionId => {
             const sectionAnswers = getSectionAnswers(sectionId);
@@ -305,7 +286,6 @@ function createQuestionnaire({
                 allDataAttributes.push(...sectionDataAttributes);
             }
         });
-
         return allDataAttributes;
     }
 
