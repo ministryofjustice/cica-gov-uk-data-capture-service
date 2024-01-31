@@ -1,6 +1,6 @@
 'use strict';
 
-const createJsonTranslator = require('json-translator-sync');
+const createJsonTranslator = require('json-translator');
 
 function getValueContextualiser(definition, data) {
     const {l10n} = definition;
