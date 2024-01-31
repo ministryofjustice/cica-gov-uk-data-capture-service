@@ -274,7 +274,6 @@ function createQuestionnaire({
 
         sectionIds.forEach(sectionId => {
             const sectionAnswers = getSectionAnswers(sectionId);
-
             if (sectionAnswers !== undefined) {
                 const section = getSection(sectionId, false);
                 const sectionDataAttributes = section.getAttributesByData({
@@ -360,8 +359,6 @@ function createQuestionnaire({
         getOrderedAnswers,
         getDataAttributes,
         getNormalisedDetailsForAttribute,
-        getProgress, // TODO: remove this when declaration is handled correctly
-        getAnswers, // TODO: remove this when declaration is handled correctly
         getPermittedActions
     });
 }

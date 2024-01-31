@@ -74,50 +74,13 @@ function flattenAnswers(answers) {
 }
 
 /**
- * Parses the relevant declaration information from a questionnaire using its progress
- * and application type to determine which declaration has been answered.
- * @param {questionnaire} questionnaire - The raw questionnaire object
+ * Parses the relevant declaration theme data  from the given themes array.
+ * @param themeContent - The themed output produced by transformQuestionnaire
  * @returns a declaration object following the format of a standard question.
  */
-function getDeclaration(questionnaire) {
-    const progress = questionnaire.getProgress();
-    const declarationSectionAndQuestionIds = {
-        'p-applicant-declaration': 'q-applicant-declaration',
-        'p-applicant-declaration-deceased': 'q-applicant-declaration',
-        'p-mainapplicant-declaration-under-12': 'q-mainapplicant-declaration',
-        'p-mainapplicant-declaration-under-12-deceased': 'q-mainapplicant-declaration',
-        'p-mainapplicant-declaration-12-and-over': 'q-mainapplicant-declaration',
-        'p-mainapplicant-declaration-12-and-over-deceased': 'q-mainapplicant-declaration',
-        'p-rep-declaration-under-12': 'q-rep-declaration',
-        'p-rep-declaration-under-12-deceased': 'q-rep-declaration',
-        'p-rep-declaration-12-and-over': 'q-rep-declaration',
-        'p-rep-declaration-12-and-over-deceased': 'q-rep-declaration'
-    };
-    const declarationSectionIds = Object.keys(declarationSectionAndQuestionIds);
-    const declarationSectionId = progress.find(sectionId =>
-        declarationSectionIds.includes(sectionId)
-    );
-
-    if (declarationSectionId !== undefined) {
-        const section = questionnaire.getSection(declarationSectionId);
-        const sectionSchema = section.getSchema();
-        const sectionAnswers = questionnaire.getAnswers()[declarationSectionId];
-        const questionId = declarationSectionAndQuestionIds[declarationSectionId];
-        const descriptionId = questionId.replace('q-', '');
-        const {description} = sectionSchema.allOf[0].properties[descriptionId];
-        const value = sectionAnswers[questionId];
-        const valueLabel = sectionSchema.allOf[1].properties[questionId].title;
-
-        return {
-            type: 'simple',
-            id: declarationSectionId,
-            label: description,
-            value,
-            valueLabel
-        };
-    }
-
-    return undefined;
+function getDeclaration(themeContent) {
+    return themeContent.filter(themeResource => themeResource.id === 'declaration')?.[0]
+        ?.values?.[0];
 }
 
 /**
@@ -125,20 +88,38 @@ function getDeclaration(questionnaire) {
  * @param {questionnaire} questionnaire - The raw questionnaire object
  * @returns A themed object with attached metadata and declaration content.
  */
-function transformQuestionnaire(questionnaire) {
+function transformQuestionnaire(questionnaire, answers) {
+    console.log({
+        a: questionnaire // ,
+        // a: questionnaire.sections['p-applicant-declaration'],
+        // b: answers['p-applicant-declaration']
+    });
     const section = questionnaire.getSection('p--check-your-answers');
     const sectionSchema = section.getSchema();
     const themeContent =
         sectionSchema.properties['p-check-your-answers'].properties.summaryInfo.summaryStructure;
     flattenAnswers(themeContent);
-
+    console.log(
+        JSON.stringify(
+            {
+                meta: {
+                    caseReference: answers.system['case-reference'],
+                    funeralReference: answers.system['secondary-reference']
+                },
+                themes: themeContent,
+                declaration: getDeclaration(themeContent)
+            },
+            null,
+            4
+        )
+    );
     return {
         meta: {
-            caseReference: questionnaire.getAnswers().system['case-reference'],
-            funeralReference: questionnaire.getAnswers().system['secondary-reference']
+            caseReference: answers.system['case-reference'],
+            funeralReference: answers.system['secondary-reference']
         },
         themes: themeContent,
-        declaration: getDeclaration(questionnaire)
+        declaration: getDeclaration(themeContent)
     };
 }
 
@@ -156,7 +137,7 @@ async function transformAndUpload({questionnaireDef, logger}) {
 
     const s3Directory = process.env.S3_DIRECTORY ? process.env.S3_DIRECTORY : 'application_json';
     logger.info(`Transforming questionnaire with id: ${questionnaire.getId()}`);
-    const output = transformQuestionnaire(questionnaire);
+    const output = transformQuestionnaire(questionnaire, questionnaireDef.answers);
 
     // Populate the dateSubmitted from the database
     const db = createQuestionnaireDAL({logger});

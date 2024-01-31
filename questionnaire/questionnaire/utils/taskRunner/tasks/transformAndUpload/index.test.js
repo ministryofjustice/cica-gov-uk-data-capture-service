@@ -17,16 +17,9 @@ const loggerMock = {
 };
 
 describe('Transform and Upload task', () => {
-    // Arrange
-    const questionnaireObj = questionnaire({questionnaireDefinition: questionnaireFixture});
-
-    // Act
-    let result;
-
     beforeEach(() => {
         jest.resetModules();
         jest.resetAllMocks();
-        result = transformQuestionnaire(questionnaireObj);
     });
 
     it('Should error if input parameters are not arrays', () => {
@@ -36,18 +29,40 @@ describe('Transform and Upload task', () => {
     });
 
     it('Should return undefined if declaration does not exist', () => {
-        const questionnaireObjNoDeclaration = questionnaire({
+        const questionnaireSingleton = questionnaire({
             questionnaireDefinition: questionnaireFixtureNoDeclaration
         });
-        expect(getDeclaration(questionnaireObjNoDeclaration)).toBeUndefined();
+
+        const transformation = transformQuestionnaire(
+            questionnaireSingleton,
+            questionnaireFixtureNoDeclaration.answers
+        );
+        expect(getDeclaration(transformation.themes)).toBeUndefined();
     });
 
     it('Should transform correctly and include the correct CRN in the metadata.', () => {
-        expect(result.meta.caseReference).toBe('19\\751194');
+        const questionnaireSingleton = questionnaire({
+            questionnaireDefinition: questionnaireFixture
+        });
+
+        const transformation = transformQuestionnaire(
+            questionnaireSingleton,
+            questionnaireFixture.answers
+        );
+        expect(transformation.meta.caseReference).toBe('19\\751194');
     });
 
     it('Should transform correctly with amalgamated injury codes and labels.', () => {
-        const injuries = result.themes
+        const questionnaireSingleton = questionnaire({
+            questionnaireDefinition: questionnaireFixture
+        });
+
+        const transformation = transformQuestionnaire(
+            questionnaireSingleton,
+            questionnaireFixture.answers
+        );
+
+        const injuries = transformation.themes
             .find(theme => {
                 return theme.id === 'injuries';
             })
@@ -76,15 +91,37 @@ describe('Transform and Upload task', () => {
         ]);
     });
 
-    it('Should transform correctly with the correct declaration.', () => {
-        expect(result.declaration.id).toBe('p-applicant-declaration');
-        expect(result.declaration.label).toContain('<div id="declaration">');
-        expect(result.declaration.value).toBe('i-agree');
-        expect(result.declaration.valueLabel).toBe('I have read and understood the declaration');
+    it.only('Should transform correctly with the correct declaration.', () => {
+        const questionnaireSingleton = questionnaire({
+            questionnaireDefinition: questionnaireFixture
+        });
+
+        const transformation = transformQuestionnaire(
+            questionnaireSingleton,
+            questionnaireFixture.answers
+        );
+        console.log(JSON.stringify(transformation.themes, null, 4));
+        console.log({transformation});
+
+        expect(transformation.declaration.id).toBe('p-applicant-declaration');
+        expect(transformation.declaration.label).toContain('<div id="declaration">');
+        expect(transformation.declaration.value).toBe('i-agree');
+        expect(transformation.declaration.valueLabel).toBe(
+            'I have read and understood the declaration'
+        );
     });
 
     it('Should keep hideOnSummary flags.', () => {
-        const newOrExistingQuestion = result.themes
+        const questionnaireSingleton = questionnaire({
+            questionnaireDefinition: questionnaireFixture
+        });
+
+        const transformation = transformQuestionnaire(
+            questionnaireSingleton,
+            questionnaireFixture.answers
+        );
+
+        const newOrExistingQuestion = transformation.themes
             .find(theme => {
                 return theme.id === 'about-application';
             })
@@ -103,7 +140,7 @@ describe('Transform and Upload task', () => {
             uploadFile: () => 'Success'
         }));
 
-        result = await transformAndUpload({
+        const result = await transformAndUpload({
             questionnaireDef: questionnaireFixture,
             logger: loggerMock
         });

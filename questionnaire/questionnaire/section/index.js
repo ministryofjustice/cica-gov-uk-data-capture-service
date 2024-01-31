@@ -1,5 +1,7 @@
 'use strict';
 
+const pointer = require('jsonpointer');
+
 function createSection({id, sectionDefinition}) {
     function getId() {
         return id;
@@ -50,37 +52,86 @@ function createSection({id, sectionDefinition}) {
         return attributeSchema.meta.compositeId;
     }
 
-    function getAttributeLabel(valueSchemas, value) {
-        const foundValueSchema = valueSchemas.find(valueSchema => valueSchema.const === value);
+    function getAttributeSchemaTitle(attributeSchemas, value) {
+        const foundAttributeSchema = attributeSchemas.find(
+            attributeSchema => attributeSchema.const === value
+        );
 
-        return foundValueSchema.title;
+        return foundAttributeSchema.title;
     }
 
-    function getAttributeLabels(valueSchemas, values) {
-        return values.map(value => getAttributeLabel(valueSchemas, value));
+    function getAttributeSchemaTitles(attributeSchemas, values) {
+        return values.map(value => getAttributeSchemaTitle(attributeSchemas, value));
+    }
+
+    function getAttributeSchemaDescribedBy(attributeSchemas, value, sectionSchema) {
+        const foundAttributeSchema = attributeSchemas.find(
+            attributeSchema => attributeSchema.const === value
+        );
+        const describedBy = foundAttributeSchema?.meta?.describedBy;
+        if (describedBy && '$ref' in describedBy) {
+            const describedByPointerValue = pointer.get(
+                sectionSchema,
+                foundAttributeSchema?.meta?.describedBy.$ref
+            );
+            if (describedByPointerValue === undefined) {
+                return '';
+            }
+            return describedByPointerValue;
+        }
+        return foundAttributeSchema?.meta?.describedBy;
     }
 
     function getValueLabel(attributeSchema, value) {
-        const {oneOf, items} = attributeSchema;
+        const {oneOf, anyOf, items} = attributeSchema;
 
         if (oneOf !== undefined) {
-            return getAttributeLabel(oneOf, value);
+            return getAttributeSchemaTitle(oneOf, value);
+        }
+
+        if (anyOf !== undefined) {
+            return getAttributeSchemaTitle(anyOf, value);
         }
 
         if (items !== undefined) {
-            return getAttributeLabels(items.anyOf, value);
+            return getAttributeSchemaTitles(items.anyOf, value);
         }
 
         return undefined;
     }
 
-    function createSimpleAttribute(attributeId, attributeSchema, data, includeMetadata) {
+    function getLabel(attributeSchema, value, sectionSchema) {
+        const {oneOf, anyOf, items} = attributeSchema;
+
+        if (oneOf !== undefined) {
+            return getAttributeSchemaDescribedBy(oneOf, value, sectionSchema);
+        }
+
+        if (anyOf !== undefined) {
+            return getAttributeSchemaDescribedBy(anyOf, value, sectionSchema);
+        }
+
+        if (items !== undefined) {
+            return getAttributeSchemaDescribedBy(items.anyOf, value, sectionSchema);
+        }
+
+        return attributeSchema.title;
+    }
+
+    function createSimpleAttribute(
+        attributeId,
+        attributeSchema,
+        data,
+        includeMetadata,
+        sectionSchema
+    ) {
         const value = data[attributeId];
         const valueLabel = getValueLabel(attributeSchema, value);
+        const label = getLabel(attributeSchema, value, sectionSchema);
         const simpleAttribute = {
             id: attributeId,
             type: 'simple',
-            label: attributeSchema.title
+            label
         };
 
         if (value !== undefined) {
@@ -139,7 +190,8 @@ function createSection({id, sectionDefinition}) {
                         attributeId,
                         questionSchema,
                         data,
-                        includeMetadata
+                        includeMetadata,
+                        schema
                     );
 
                     if (mapAttribute !== undefined) {
