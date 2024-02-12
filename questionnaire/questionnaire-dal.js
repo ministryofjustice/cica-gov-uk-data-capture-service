@@ -200,13 +200,17 @@ function questionnaireDAL(spec) {
         return result;
     }
 
-    async function updateQuestionnaireByOwner(questionnaireId, questionnaire) {
+    async function updateQuestionnaireByOwner(
+        questionnaireId,
+        questionnaire,
+        sessionUpdateTimestamp = new Date()
+    ) {
         let result;
 
         try {
             result = await db.query(
-                "UPDATE questionnaire SET questionnaire = $1, modified = current_timestamp, expires = (CASE WHEN questionnaire -> 'answers' -> 'owner' ->> 'is-authenticated' = 'true' THEN expires WHEN questionnaire -> 'answers' -> 'owner' ->> 'is-authenticated' = 'false' THEN current_timestamp + INTERVAL '30 minutes' END) WHERE id = $2  AND questionnaire -> 'answers' -> 'owner' ->> 'owner-id' = $3",
-                [questionnaire, questionnaireId, ownerId]
+                "UPDATE questionnaire SET questionnaire = $1, modified = $2, expires = (CASE WHEN questionnaire -> 'answers' -> 'owner' ->> 'is-authenticated' = 'true' THEN expires WHEN questionnaire -> 'answers' -> 'owner' ->> 'is-authenticated' = 'false' THEN current_timestamp + INTERVAL '30 minutes' END) WHERE id = $3  AND questionnaire -> 'answers' -> 'owner' ->> 'owner-id' = $4",
+                [questionnaire, sessionUpdateTimestamp, questionnaireId, ownerId]
                 // Currently replacing the whole questionnaire object. The following commented query/params could be used to update only the answers object:
                 // 'UPDATE questionnaire SET questionnaire = jsonb_set(questionnaire, $1, $2, TRUE), modified = current_timestamp WHERE id = $3',
                 // [`{answers,${sectionId}}`, answers, questionnaireId]

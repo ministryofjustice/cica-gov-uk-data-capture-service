@@ -12,6 +12,7 @@ const templates = require('./templates');
 const questionnaireResource = require('./resources/questionnaire-resource');
 const createQuestionnaireHelper = require('./questionnaire/questionnaire');
 const isQuestionnaireCompatible = require('./utils/isQuestionnaireVersionCompatible');
+const updateSessionData = require('./utils/updateOwnerSessionInfo');
 
 const defaults = {};
 defaults.createQuestionnaireDAL = require('./questionnaire-dal');
@@ -76,7 +77,9 @@ function createQuestionnaireService({
         questionnaire.answers = {
             owner: {
                 'owner-id': ownerData.id,
-                'is-authenticated': ownerData.isAuthenticated
+                'is-authenticated': ownerData.isAuthenticated,
+                'session-time': 0,
+                'session-number': 1
             }
         };
 
@@ -242,8 +245,20 @@ function createQuestionnaireService({
                 answeredQuestionnaire = nextSection.context;
             }
 
+            // Update session info
+            const questionnaireModified = await db.getQuestionnaireModifiedDate(questionnaireId);
+            const sessionData = updateSessionData(
+                answeredQuestionnaire.answers.owner,
+                questionnaireModified
+            );
+            answeredQuestionnaire.answers.owner = sessionData.ownerAnswers;
+
             // Store the updated questionnaire object
-            await db.updateQuestionnaireByOwner(questionnaireId, answeredQuestionnaire);
+            await db.updateQuestionnaireByOwner(
+                questionnaireId,
+                answeredQuestionnaire,
+                sessionData.sessionUpdateTimestamp
+            );
 
             answerResource = {
                 data: {
@@ -446,8 +461,22 @@ function createQuestionnaireService({
             // Is the progress entry available
             if (section) {
                 if (isQuestionnaireModified) {
+                    // Update session info
+                    const questionnaireModified = await db.getQuestionnaireModifiedDate(
+                        questionnaireId
+                    );
+                    const sessionData = updateSessionData(
+                        section.context.answers.owner,
+                        questionnaireModified
+                    );
+                    section.context.answers.owner = sessionData.ownerAnswers;
+
                     // Store the updated questionnaire object
-                    await db.updateQuestionnaireByOwner(questionnaireId, section.context);
+                    await db.updateQuestionnaireByOwner(
+                        questionnaireId,
+                        section.context,
+                        sessionData.sessionUpdateTimestamp
+                    );
                 }
 
                 sectionId = section.id;
