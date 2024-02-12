@@ -18,6 +18,7 @@ process.env.DCS_SQS_SECRET_ACCESS_KEY = 'dummy_secret_key';
 process.env.AWS_SQS_ID = 'dummy_queue';
 process.env.NOTIFY_AWS_SQS_ID = 'dummy_notify_queue';
 process.env.S3_DIRECTORY = 'test';
+process.env.DCS_SESSION_DURATION = 1800000;
 
 config.coverageThreshold = {
     './!(db)/!(questionnaire-dal).js': {

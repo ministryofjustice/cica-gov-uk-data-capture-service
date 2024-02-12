@@ -1,6 +1,6 @@
 'use strict';
 
-function getInstalledModuleVersion(ownerAnswers, modifiedDate) {
+function updateOwnerSession(ownerAnswers, modifiedDate) {
     const modifiedTime = new Date(modifiedDate).getTime();
     const sessionUpdateTimestamp = new Date();
     const sessionUpdateTime = new Date(sessionUpdateTimestamp).getTime();
@@ -15,4 +15,4 @@ function getInstalledModuleVersion(ownerAnswers, modifiedDate) {
     return {ownerAnswers, sessionUpdateTimestamp};
 }
 
-module.exports = getInstalledModuleVersion;
+module.exports = updateOwnerSession;

@@ -215,16 +215,21 @@ describe('questionnaire data access layer', () => {
 
     describe('updateQuestionnaireByOwner', () => {
         const query =
-            "UPDATE questionnaire SET questionnaire = $1, modified = current_timestamp, expires = (CASE WHEN questionnaire -> 'answers' -> 'owner' ->> 'is-authenticated' = 'true' THEN expires WHEN questionnaire -> 'answers' -> 'owner' ->> 'is-authenticated' = 'false' THEN current_timestamp + INTERVAL '30 minutes' END) WHERE id = $2  AND questionnaire -> 'answers' -> 'owner' ->> 'owner-id' = $3";
+            "UPDATE questionnaire SET questionnaire = $1, modified = $2, expires = (CASE WHEN questionnaire -> 'answers' -> 'owner' ->> 'is-authenticated' = 'true' THEN expires WHEN questionnaire -> 'answers' -> 'owner' ->> 'is-authenticated' = 'false' THEN current_timestamp + INTERVAL '30 minutes' END) WHERE id = $3  AND questionnaire -> 'answers' -> 'owner' ->> 'owner-id' = $4";
         it('Should run an update questionnaire query and filter by owner', async () => {
             const questionnaire = {answers: {}};
             const questionnaireId = DB_QUERY_SUCCESS_QUESTIONNAIRE_ID;
             const questionnaireDAL = createQuestionnaireDAL({logger: jest.fn(), ownerId});
-            await questionnaireDAL.updateQuestionnaireByOwner(questionnaire, questionnaireId);
+            await questionnaireDAL.updateQuestionnaireByOwner(
+                questionnaire,
+                questionnaireId,
+                '2024-01-01T00:00:00.000Z'
+            );
 
             expect(mockedDbService.query).toHaveBeenCalledTimes(1);
             expect(mockedDbService.query).toHaveBeenCalledWith(query, [
                 questionnaireId,
+                '2024-01-01T00:00:00.000Z',
                 questionnaire,
                 ownerId
             ]);

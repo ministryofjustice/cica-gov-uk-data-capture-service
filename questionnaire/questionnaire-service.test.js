@@ -13,10 +13,22 @@ const validQuestionnaireId = '12345678-7dec-11d0-a765-00a0c91e6bf6';
 const invalidQuestionnaireId = '11111111-7dec-11d0-a765-00a0c91e6bf6';
 const incompatibleQuestionnaireId = '55555555-7dec-11d0-a765-00a0c91e6bf6';
 const answers = {
-    'q-some-section': true
+    'q-some-section': true,
+    owner: {
+        'owner-id': 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6',
+        'is-authenticated': false,
+        'session-time': 0,
+        'session-number': 1
+    }
 };
 const invalidAnswers = {
-    'q-some-section': 'this-answer-will-not-validate-against-its-schema'
+    'q-some-section': 'this-answer-will-not-validate-against-its-schema',
+    owner: {
+        'owner-id': 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6',
+        'is-authenticated': false,
+        'session-time': 0,
+        'session-number': 1
+    }
 };
 const ownerId = 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6';
 const templatename = 'sexual-assault';
@@ -48,6 +60,14 @@ jest.doMock('q-router', () => {
                     context: {
                         routes: {
                             initial: sectionId
+                        },
+                        answers: {
+                            owner: {
+                                'owner-id': 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6',
+                                'is-authenticated': false,
+                                'session-time': 0,
+                                'session-number': 1
+                            }
                         }
                     }
                 };
@@ -67,6 +87,14 @@ jest.doMock('q-router', () => {
                 context: {
                     routes: {
                         initial: 'p-applicant-declaration'
+                    },
+                    answers: {
+                        owner: {
+                            'owner-id': 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6',
+                            'is-authenticated': false,
+                            'session-time': 0,
+                            'session-number': 1
+                        }
                     }
                 }
             };
@@ -80,6 +108,14 @@ jest.doMock('q-router', () => {
                 context: {
                     routes: {
                         initial: 'p-applicant-enter-your-email-address'
+                    },
+                    answers: {
+                        owner: {
+                            'owner-id': 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6',
+                            'is-authenticated': false,
+                            'session-time': 0,
+                            'session-number': 1
+                        }
                     }
                 }
             };
@@ -194,6 +230,9 @@ jest.doMock('./questionnaire-dal', () => {
         }),
         getQuestionnaireIdsBySubmissionStatus: jest.fn(() => {
             return 'ok!';
+        }),
+        getQuestionnaireModifiedDate: jest.fn(() => {
+            return '2024-01-01T00:00:00.000Z';
         })
     };
 
@@ -260,7 +299,9 @@ describe('Questionnaire Service', () => {
                         answers: {
                             owner: {
                                 'owner-id': 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6',
-                                'is-authenticated': false
+                                'is-authenticated': false,
+                                'session-time': 0,
+                                'session-number': 1
                             }
                         }
                     })
@@ -277,7 +318,9 @@ describe('Questionnaire Service', () => {
                         answers: {
                             owner: {
                                 'owner-id': 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6',
-                                'is-authenticated': false
+                                'is-authenticated': false,
+                                'session-time': 0,
+                                'session-number': 1
                             },
                             origin: {
                                 channel: 'telephone'
@@ -302,7 +345,9 @@ describe('Questionnaire Service', () => {
                         answers: {
                             owner: {
                                 'owner-id': 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6',
-                                'is-authenticated': true
+                                'is-authenticated': true,
+                                'session-time': 0,
+                                'session-number': 1
                             }
                         }
                     })

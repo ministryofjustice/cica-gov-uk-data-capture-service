@@ -3,58 +3,58 @@
 
 'use strict';
 
-jest.doMock('../../../package-lock', () => {
-    return {
-        packages: {
-            'node_modules/module1': {
-                version: '1.0.0'
-            },
-            'node_modules/module3': {
-                'no-version': undefined
-            }
-        }
+const updateOwnerSession = require('.');
+
+let ownerAnswers;
+const oneMinuteBefore = '2023-12-31T23:59:00.000Z';
+const thirtyOneMinutesBefore = '2023-12-31T23:29:00.000Z';
+
+beforeEach(() => {
+    jest.useFakeTimers('modern');
+    jest.setSystemTime(new Date(2024, 0, 1));
+
+    ownerAnswers = {
+        'owner-id': 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6',
+        'is-authenticated': false,
+        'session-time': 0,
+        'session-number': 1
     };
 });
 
-const getVersion = require('.');
+afterAll(() => {
+    jest.useRealTimers();
+});
 
-describe('getInstalledModuleVersion', () => {
-    describe('No package-lock file is found', () => {
-        jest.clearAllMocks();
-        jest.resetModules();
-        jest.unmock('../../../package-lock');
-        jest.doMock('../../../package-lock', () => {
-            return undefined;
-        });
+describe('updateOwnerSessionInfo', () => {
+    describe('Time since last interaction is less than session duration', () => {
+        it('Should update the session-time but not the session-number', () => {
+            const actual = updateOwnerSession(ownerAnswers, oneMinuteBefore);
 
-        const getVersion = require('.');
-        it('Should error gracefully', () => {
-            expect(() => {
-                getVersion('module1');
-            }).toThrow('Failed to find valid package-lock.json');
-        });
-    });
-
-    describe('Package not installed in node_modules', () => {
-        it('Should error gracefully', () => {
-            expect(() => {
-                getVersion('module-not-exist');
-            }).toThrow(`Couldn't find installed version of "node_modules/module-not-exist"`);
+            expect(actual).toMatchObject({
+                ownerAnswers: {
+                    'owner-id': 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6',
+                    'is-authenticated': false,
+                    'session-time': 60000,
+                    'session-number': 1
+                },
+                sessionUpdateTimestamp: new Date('2024-01-01T00:00:00.000Z')
+            });
         });
     });
 
-    describe('Package.json is malformed', () => {
-        it('Should error gracefully', () => {
-            expect(() => {
-                getVersion('module3');
-            }).toThrow(`Failed to read/parse package-lock.json for "node_modules/module3"`);
-        });
-    });
+    describe('Time since last interaction is greater than session duration', () => {
+        it('Should update the session-number but not the session-time', () => {
+            const actual = updateOwnerSession(ownerAnswers, thirtyOneMinutesBefore);
 
-    describe('Package is installed', () => {
-        it('Should return the installed version', () => {
-            const actual = getVersion('module1');
-            expect(actual).toEqual('1.0.0');
+            expect(actual).toMatchObject({
+                ownerAnswers: {
+                    'owner-id': 'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6',
+                    'is-authenticated': false,
+                    'session-time': 0,
+                    'session-number': 2
+                },
+                sessionUpdateTimestamp: new Date('2024-01-01T00:00:00.000Z')
+            });
         });
     });
 });
