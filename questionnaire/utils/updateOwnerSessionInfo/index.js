@@ -4,7 +4,7 @@ function getInstalledModuleVersion(ownerAnswers, modifiedDate) {
     const modifiedTime = new Date(modifiedDate).getTime();
     const sessionUpdateTimestamp = new Date();
     const sessionUpdateTime = new Date(sessionUpdateTimestamp).getTime();
-    const timeDifference = Math.abs(sessionUpdateTime - modifiedTime);
+    const timeDifference = sessionUpdateTime - modifiedTime;
 
     if (timeDifference <= process.env.DCS_SESSION_DURATION) {
         ownerAnswers['session-time'] += timeDifference;
