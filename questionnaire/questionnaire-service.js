@@ -51,7 +51,7 @@ function createQuestionnaireService({
         await db.updateExpiryForAuthenticatedOwner(questionnaireId, owner);
     }
 
-    async function createQuestionnaire(templateName, ownerData, originData) {
+    async function createQuestionnaire(templateName, ownerData, originData, externalData) {
         if (!(templateName in templates)) {
             throw new VError(
                 {
@@ -83,6 +83,12 @@ function createQuestionnaireService({
         if (originData) {
             questionnaire.answers.origin = {
                 channel: originData.channel
+            };
+        }
+
+        if (externalData) {
+            questionnaire.answers.system = {
+                'external-id': externalData.id
             };
         }
 
