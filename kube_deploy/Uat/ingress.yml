@@ -2,7 +2,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   annotations:
-    nginx.ingress.kubernetes.io/whitelist-source-range: 31.121.104.9/32,37.143.143.162/32,37.143.143.10/32
+    nginx.ingress.kubernetes.io/whitelist-source-range: 213.107.167.128/32
     external-dns.alpha.kubernetes.io/set-identifier: dcs-ingress-uat-claim-criminal-injuries-compensation-uat-green
     external-dns.alpha.kubernetes.io/aws-weight: '100'
   name: dcs-ingress-uat
