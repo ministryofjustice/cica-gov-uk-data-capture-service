@@ -222,10 +222,18 @@ function createQuestionnaireService({
             const coercedAnswers = answers;
 
             if (!valid) {
+                const currentProgressEntry = await getProgressEntries(questionnaireId, {
+                    filter: {
+                        position: 'current'
+                    }
+                });
+
                 const validationError = new VError({
                     name: 'JSONSchemaValidationError',
                     info: {
-                        schema: sectionSchema,
+                        sectionSchema,
+                        sectionId,
+                        progressEntry: currentProgressEntry,
                         answers: rawAnswers,
                         coercedAnswers,
                         schemaErrors: validate.errors

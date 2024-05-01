@@ -117,9 +117,11 @@ module.exports = async (err, req, res, next) => {
 
         error.errors.push(...jsonApiErrors);
         error.meta = {
-            schema: errorInfo.schema,
+            sectionId: errorInfo.sectionId,
+            sectionSchema: errorInfo.sectionSchema,
             answers: errorInfo.coercedAnswers
         };
+        error.links = errorInfo.progressEntry.links;
 
         return res.status(400).json(error);
     }
