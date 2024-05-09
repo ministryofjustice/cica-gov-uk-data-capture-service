@@ -12,7 +12,6 @@ const templates = require('./templates');
 const questionnaireResource = require('./resources/questionnaire-resource');
 const createQuestionnaireHelper = require('./questionnaire/questionnaire');
 const isQuestionnaireCompatible = require('./utils/isQuestionnaireVersionCompatible');
-const createTaskListService = require('./task-list/task-list-service');
 
 const defaults = {};
 defaults.createQuestionnaireDAL = require('./questionnaire-dal');
@@ -272,14 +271,11 @@ function createQuestionnaireService({
         const questionnaire = createQuestionnaireHelper({questionnaireDefinition});
         const section = questionnaire.getSection(sectionId);
         const sectionSchema = section.getSchema();
-        const taskListService = createTaskListService();
+
         const sectionResource = {
             type: 'sections',
             id: sectionId,
-            attributes:
-                'task-list' in sectionSchema.properties
-                    ? taskListService.getTaskListSchema(sectionSchema, questionnaireDefinition)
-                    : sectionSchema
+            attributes: sectionSchema
         };
 
         // Add any answer relationships
@@ -296,7 +292,6 @@ function createQuestionnaireService({
                 }
             };
         }
-
         return sectionResource;
     }
 

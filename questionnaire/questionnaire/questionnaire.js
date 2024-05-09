@@ -146,9 +146,32 @@ function createQuestionnaire({
         return transformedData;
     }
 
+    function getRelevantStepsForGivenRoles() {
+        const taskListSections = questionnaireDefinition['task-list'].sections;
+
+        if (taskListSections) {
+            const answersAndRoles = {
+                answers: getAnswers(),
+                attributes: {
+                    q__roles: getRoles()
+                }
+            };
+            const relevantSteps = taskListSections.filter(section => {
+                if ('cond' in section) {
+                    const isRelevantStep = qExpression.evaluate(section.cond, answersAndRoles);
+                    return isRelevantStep;
+                }
+                return true;
+            });
+
+            return relevantSteps;
+        }
+
+        return [];
+    }
+
     function evaluateJsonExpression(value, sectionId) {
         const fnName = value[0];
-
         if (fnName === 'summary') {
             // TODO: handle multiple summary pages e.g. summarise between last summary and this one
             const progressSubset = getProgressUntil(sectionId);
@@ -165,6 +188,36 @@ function createQuestionnaire({
             });
 
             return summary;
+        }
+
+        if (fnName === 'task-list') {
+            const taskListDefinition = questionnaireDefinition['task-list'];
+
+            // assigned not neccessary. object manipulated.
+            taskListDefinition.sections = getRelevantStepsForGivenRoles();
+
+            // TODO: implement the above logic for tasks as well!
+
+            if (taskListDefinition.l10n !== undefined) {
+                const orderedValueTransformers = [];
+                const allQuestionnaireAnswers = {answers: getAnswers()};
+                const jsonExpressionEvaluator = getJsonExpressionEvaluator({
+                    ...allQuestionnaireAnswers,
+                    attributes: {
+                        q__roles: getRoles()
+                    }
+                });
+
+                const valueContextualier = getValueContextualiser(
+                    taskListDefinition,
+                    allQuestionnaireAnswers
+                );
+                orderedValueTransformers.push(jsonExpressionEvaluator, valueContextualier);
+
+                // TODO: DON'T MUTATE ORIGINAL!
+                mutateObjectValues(taskListDefinition, orderedValueTransformers);
+            }
+            return questionnaireDefinition['task-list'].sections;
         }
 
         return value;
@@ -203,6 +256,15 @@ function createQuestionnaire({
                 {
                     name: 'summary',
                     value: ['summary', {groupByTaxonomy: 'theme'}]
+                }
+            ];
+        }
+
+        if (schema && 'properties' in schema && 'task-list' in schema.properties) {
+            return [
+                {
+                    name: 'task-list',
+                    value: ['task-list'] // , {groupByTaxonomy: 'task-list'}]
                 }
             ];
         }
