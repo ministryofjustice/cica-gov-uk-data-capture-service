@@ -275,6 +275,148 @@ const questionnaireDefinition = {
                 ]
             }
         },
+        'p-applicant-have-you-been-known-by-any-other-names': {
+            schema: {
+                $schema: 'http://json-schema.org/draft-07/schema#',
+                type: 'object',
+                propertyNames: {
+                    enum: [
+                        'q-applicant-have-you-been-known-by-any-other-names',
+                        'q-applicant-what-other-names-have-you-used'
+                    ]
+                },
+                required: ['q-applicant-have-you-been-known-by-any-other-names'],
+                additionalProperties: false,
+                properties: {
+                    'q-applicant-have-you-been-known-by-any-other-names': {
+                        type: 'boolean',
+                        title: 'Have you been known by any other names?',
+                        oneOf: [
+                            {
+                                title: 'Yes',
+                                const: true
+                            },
+                            {
+                                title: 'No',
+                                const: false
+                            }
+                        ],
+                        meta: {
+                            classifications: {
+                                theme: 'applicant-details'
+                            },
+                            summary: {
+                                title: 'Have you been known by any other names?'
+                            }
+                        }
+                    },
+                    'q-applicant-what-other-names-have-you-used': {
+                        type: 'string',
+                        title: 'What other names have you been known by?',
+                        maxLength: 50,
+                        errorMessage: {
+                            maxLength: 'Other names must be less than 50 characters'
+                        },
+                        meta: {
+                            classifications: {
+                                theme: 'applicant-details'
+                            }
+                        }
+                    }
+                },
+                allOf: [
+                    {
+                        $ref: '#/definitions/if-yes-then-q-what-other-names-is-required'
+                    }
+                ],
+                definitions: {
+                    'if-yes-then-q-what-other-names-is-required': {
+                        if: {
+                            properties: {
+                                'q-applicant-have-you-been-known-by-any-other-names': {
+                                    const: true
+                                }
+                            },
+                            required: ['q-applicant-have-you-been-known-by-any-other-names']
+                        },
+                        then: {
+                            required: ['q-applicant-what-other-names-have-you-used'],
+                            propertyNames: {
+                                enum: [
+                                    'q-applicant-have-you-been-known-by-any-other-names',
+                                    'q-applicant-what-other-names-have-you-used'
+                                ]
+                            },
+                            errorMessage: {
+                                required: {
+                                    'q-applicant-what-other-names-have-you-used':
+                                        'Other names must be less than 50 characters'
+                                }
+                            }
+                        },
+                        else: {
+                            required: ['q-applicant-have-you-been-known-by-any-other-names']
+                        }
+                    }
+                },
+                errorMessage: {
+                    required: {
+                        'q-applicant-have-you-been-known-by-any-other-names':
+                            'Enter any other names you have been known by'
+                    }
+                },
+                examples: [
+                    {
+                        'q-applicant-have-you-been-known-by-any-other-names': true,
+                        'q-applicant-what-other-names-have-you-used': 'Mr Biz Baz'
+                    },
+                    {
+                        'q-applicant-have-you-been-known-by-any-other-names': false
+                    }
+                ],
+                invalidExamples: [
+                    {
+                        'q-applicant-have-you-been-known-by-any-other-names': 'foo'
+                    },
+                    {
+                        'q-applicant-what-other-names-have-you-used': 'Mr Biz Baz'
+                    },
+                    {
+                        'q-applicant-have-you-been-known-by-any-other-names': true,
+                        'q-applicant-what-other-names-have-you-used': null
+                    }
+                ],
+                options: {
+                    transformOrder: [
+                        'q-applicant-what-other-names-have-you-used',
+                        'q-applicant-have-you-been-known-by-any-other-names'
+                    ],
+                    outputOrder: ['q-applicant-have-you-been-known-by-any-other-names'],
+                    properties: {
+                        'q-applicant-have-you-been-known-by-any-other-names': {
+                            options: {
+                                macroOptions: {
+                                    classes: 'govuk-radios'
+                                },
+                                conditionalComponentMap: [
+                                    {
+                                        itemValue: true,
+                                        componentIds: ['q-applicant-what-other-names-have-you-used']
+                                    }
+                                ]
+                            }
+                        },
+                        'q-applicant-what-other-names-have-you-used': {
+                            options: {
+                                macroOptions: {
+                                    classes: 'govuk-input--width-20'
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         'p-mainapplicant-name': {
             l10n: {
                 vars: {
@@ -454,6 +596,13 @@ const questionnaireDefinition = {
                             }
                         }
                     }
+                },
+                options: {
+                    ordering: {
+                        'q-applicant-have-you-been-known-by-any-other-names': [
+                            'q-applicant-what-other-names-have-you-used'
+                        ]
+                    }
                 }
             }
         },
@@ -523,6 +672,7 @@ const questionnaireDefinition = {
         'p-applicant-enter-your-email-address',
         'p-applicant-who-are-you-applying-for',
         'p-applicant-enter-your-name',
+        'p-applicant-have-you-been-known-by-any-other-names',
         'p-applicant-british-citizen-or-eu-national',
         'p-applicant-theme-undefined',
         'p-applicant-theme-not-found',
@@ -544,6 +694,10 @@ const questionnaireDefinition = {
             'q-applicant-title': 'Mr',
             'q-applicant-first-name': 'Foo',
             'q-applicant-last-name': 'Bar'
+        },
+        'p-applicant-have-you-been-known-by-any-other-names': {
+            'q-applicant-have-you-been-known-by-any-other-names': true,
+            'q-applicant-what-other-names-have-you-used': 'Mr Test Testcase'
         },
         'p-applicant-british-citizen-or-eu-national': {
             'q-applicant-british-citizen-or-eu-national': true
@@ -802,7 +956,7 @@ describe('Questionnaire', () => {
     });
 
     describe('Given a section definition requiring an answer summary', () => {
-        it('should return a section containing an answer summary', () => {
+        it('should return a section containing a correctly ordered answer summary', () => {
             const questionnaire = createQuestionnaire({questionnaireDefinition});
             const section = questionnaire.getSection('p--check-your-answers');
             const sectionSchema = section.getSchema();
@@ -881,6 +1035,26 @@ describe('Questionnaire', () => {
                                                 theme: 'applicant-details'
                                             },
                                             {
+                                                id:
+                                                    'q-applicant-have-you-been-known-by-any-other-names',
+                                                type: 'simple',
+                                                label: 'Have you been known by any other names?',
+                                                value: true,
+                                                valueLabel: 'Yes',
+                                                sectionId:
+                                                    'p-applicant-have-you-been-known-by-any-other-names',
+                                                theme: 'applicant-details'
+                                            },
+                                            {
+                                                id: 'q-applicant-what-other-names-have-you-used',
+                                                type: 'simple',
+                                                label: 'What other names have you been known by?',
+                                                value: 'Mr Test Testcase',
+                                                sectionId:
+                                                    'p-applicant-have-you-been-known-by-any-other-names',
+                                                theme: 'applicant-details'
+                                            },
+                                            {
                                                 id: 'q-applicant-british-citizen-or-eu-national',
                                                 type: 'simple',
                                                 label:
@@ -940,6 +1114,13 @@ describe('Questionnaire', () => {
                                 }
                             }
                         }
+                    }
+                },
+                options: {
+                    ordering: {
+                        'q-applicant-have-you-been-known-by-any-other-names': [
+                            'q-applicant-what-other-names-have-you-used'
+                        ]
                     }
                 }
             });

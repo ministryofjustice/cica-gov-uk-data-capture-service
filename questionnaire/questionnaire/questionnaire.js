@@ -10,6 +10,7 @@ defaults.getValueContextualiser = require('./utils/getValueContextualiser');
 defaults.deepClone = require('./utils/deepCloneJsonDerivedObject');
 defaults.getJsonExpressionEvaluator = require('./utils/getJsonExpressionEvaluator');
 defaults.qExpression = require('q-expressions');
+defaults.sortThemedAnswers = require('./utils/sortThemedAnswers');
 
 function createQuestionnaire({
     questionnaireDefinition,
@@ -21,7 +22,8 @@ function createQuestionnaire({
     getValueContextualiser = defaults.getValueContextualiser,
     deepClone = defaults.deepClone,
     getJsonExpressionEvaluator = defaults.getJsonExpressionEvaluator,
-    qExpression = defaults.qExpression
+    qExpression = defaults.qExpression,
+    sortThemedAnswers = defaults.sortThemedAnswers
 }) {
     function getId() {
         return questionnaireDefinition.id;
@@ -250,6 +252,15 @@ function createQuestionnaire({
 
         if (sectionDefinitionVars !== undefined && allowSummary === true) {
             const resolvedVars = getResolvedVars(sectionId, sectionDefinitionVars);
+            if (resolvedVars.summary) {
+                if (sectionDefinition.schema.options) {
+                    const sortingInstructions = sectionDefinition.schema.options.ordering;
+                    resolvedVars.summary = sortThemedAnswers(
+                        resolvedVars.summary,
+                        sortingInstructions
+                    );
+                }
+            }
             const valueVarReplacer = getValueVarReplacer(resolvedVars);
 
             orderedValueTransformers.push(valueVarReplacer);
