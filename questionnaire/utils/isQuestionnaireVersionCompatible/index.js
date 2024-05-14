@@ -3,7 +3,7 @@
 const versionDiff = require('semver/functions/diff');
 const getInstalledModuleVersion = require('../getInstalledModuleVersion');
 
-const allowedVersionDifference = [null, 'patch']; // versionDiff returns null if versions are equal
+const allowedVersionDifference = [null, 'patch', 'minor']; // versionDiff returns null if versions are equal
 
 function isQuestionnaireVersionValid(questionnaireVersion) {
     const installedQuestionnaireVersion = getInstalledModuleVersion('q-templates-application');

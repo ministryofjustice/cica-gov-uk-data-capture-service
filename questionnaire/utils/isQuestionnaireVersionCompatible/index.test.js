@@ -22,9 +22,9 @@ describe('VersionComparison', () => {
     });
 
     describe("There's a minor semver difference", () => {
-        it('Should return false', () => {
+        it('Should return true', () => {
             const actual = isVersionValid(minorVersionBump);
-            expect(actual).toBe(false);
+            expect(actual).toBe(true);
         });
     });
 
