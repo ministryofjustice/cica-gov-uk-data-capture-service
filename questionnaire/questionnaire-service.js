@@ -196,6 +196,38 @@ function createQuestionnaireService({
         return resourceCollection;
     }
 
+    function getTaskDefinitionById(questionnaireDefinition, taskId) {
+        let taskDefinition;
+
+        questionnaireDefinition['task-list'].sections.forEach(section => {
+            if (taskDefinition) {
+                return;
+            }
+            taskDefinition = section.tasks.find(task => {
+                return task.id === taskId;
+            });
+        });
+
+        return taskDefinition;
+    }
+
+    function updateTaskStatus(questionnaireDefinition, schemaTaskListData) {
+        if (schemaTaskListData === undefined) {
+            return;
+        }
+
+        const taskDefinition = getTaskDefinitionById(
+            questionnaireDefinition,
+            schemaTaskListData.task
+        );
+
+        if (schemaTaskListData?.taskFinalPage === true) {
+            taskDefinition.status = 'completed';
+        } else {
+            taskDefinition.status = 'incomplete';
+        }
+    }
+
     async function createAnswers(questionnaireId, sectionId, answers) {
         // Make a copy of the supplied answers. These will be returned if they fail validation
         const rawAnswers = JSON.parse(JSON.stringify(answers));
@@ -247,6 +279,8 @@ function createQuestionnaireService({
                 const nextSection = qRouter.next(coercedAnswers, sectionDetails.id);
                 answeredQuestionnaire = nextSection.context;
             }
+
+            updateTaskStatus(answeredQuestionnaire, sectionSchema?.meta?.['task-list']);
 
             // Store the updated questionnaire object
             await db.updateQuestionnaireByOwner(questionnaireId, answeredQuestionnaire);

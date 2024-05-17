@@ -462,6 +462,60 @@
                 }
             }
         },
+        "/questionnaires/{questionnaireId}/task-list": {
+            "get": {
+                "tags": ["Task List"],
+                "summary": "Get the Task List associated with a specific questionnaires",
+                "description": "Gets a single questionnaire's Task List.",
+                "operationId": "getQuestionnaireTaskList",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/questionnaireId"
+                    },
+                    {
+                        "$ref": "#/components/parameters/onBehalfOf"
+                    },
+                    {
+                        "$ref": "#/components/parameters/apiVersion"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/vnd.api+json": {
+                                "schema": {
+                                    "$ref": "json-schemas/api/_questionnaires_{questionnaireId}_task-list/get/res/200.json"
+                                },
+                                "example": {
+                                    "data": [
+                                        {
+                                            "type": "task-list",
+                                            "id": "285cb104-0c15-4a9c-9840-cb1007f098fb",
+                                            "attributes": {
+                                                "foo": "bar"
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/UnauthorizedError"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/Forbidden"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    }
+                }
+            }
+        },
         "/questionnaires/{questionnaireId}/session/keep-alive": {
             "get": {
                 "tags": ["Sessions"],

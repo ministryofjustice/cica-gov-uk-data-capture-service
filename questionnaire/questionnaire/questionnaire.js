@@ -108,6 +108,10 @@ function createQuestionnaire({
         return deepClone(getSectionDefinitions()[sectionId]);
     }
 
+    function getTaskListDefinition() {
+        return questionnaireDefinition['task-list'];
+    }
+
     function getSectionAnswers(sectionId) {
         return getAnswers()[sectionId];
     }
@@ -146,29 +150,9 @@ function createQuestionnaire({
         return transformedData;
     }
 
-    function getRelevantStepsForGivenRoles() {
-        const taskListSections = questionnaireDefinition['task-list'].sections;
+    // function getAnchorHrefValueForTask(taskDefinition) {
 
-        if (taskListSections) {
-            const answersAndRoles = {
-                answers: getAnswers(),
-                attributes: {
-                    q__roles: getRoles()
-                }
-            };
-            const relevantSteps = taskListSections.filter(section => {
-                if ('cond' in section) {
-                    const isRelevantStep = qExpression.evaluate(section.cond, answersAndRoles);
-                    return isRelevantStep;
-                }
-                return true;
-            });
-
-            return relevantSteps;
-        }
-
-        return [];
-    }
+    // }
 
     function evaluateJsonExpression(value, sectionId) {
         const fnName = value[0];
@@ -190,35 +174,33 @@ function createQuestionnaire({
             return summary;
         }
 
-        if (fnName === 'task-list') {
-            const taskListDefinition = questionnaireDefinition['task-list'];
+        // if (fnName === 'task-list') {
+        //     const taskListDefinition = questionnaireDefinition['task-list'];
 
-            // assigned not neccessary. object manipulated.
-            taskListDefinition.sections = getRelevantStepsForGivenRoles();
+        //     // assignment not actually neccessary. object manipulated.
+        //     taskListDefinition.sections = getRelevantStepsWithRelevantTasksForGivenRoles();
 
-            // TODO: implement the above logic for tasks as well!
+        //     if (taskListDefinition.l10n !== undefined) {
+        //         const orderedValueTransformers = [];
+        //         const allQuestionnaireAnswers = {answers: getAnswers()};
+        //         const jsonExpressionEvaluator = getJsonExpressionEvaluator({
+        //             ...allQuestionnaireAnswers,
+        //             attributes: {
+        //                 q__roles: getRoles()
+        //             }
+        //         });
 
-            if (taskListDefinition.l10n !== undefined) {
-                const orderedValueTransformers = [];
-                const allQuestionnaireAnswers = {answers: getAnswers()};
-                const jsonExpressionEvaluator = getJsonExpressionEvaluator({
-                    ...allQuestionnaireAnswers,
-                    attributes: {
-                        q__roles: getRoles()
-                    }
-                });
+        //         const valueContextualier = getValueContextualiser(
+        //             taskListDefinition,
+        //             allQuestionnaireAnswers
+        //         );
+        //         orderedValueTransformers.push(jsonExpressionEvaluator, valueContextualier);
 
-                const valueContextualier = getValueContextualiser(
-                    taskListDefinition,
-                    allQuestionnaireAnswers
-                );
-                orderedValueTransformers.push(jsonExpressionEvaluator, valueContextualier);
-
-                // TODO: DON'T MUTATE ORIGINAL!
-                mutateObjectValues(taskListDefinition, orderedValueTransformers);
-            }
-            return questionnaireDefinition['task-list'].sections;
-        }
+        //         // TODO: DON'T MUTATE ORIGINAL!
+        //         mutateObjectValues(taskListDefinition, orderedValueTransformers);
+        //     }
+        //     return questionnaireDefinition['task-list'].sections;
+        // }
 
         return value;
     }
@@ -260,14 +242,14 @@ function createQuestionnaire({
             ];
         }
 
-        if (schema && 'properties' in schema && 'task-list' in schema.properties) {
-            return [
-                {
-                    name: 'task-list',
-                    value: ['task-list'] // , {groupByTaxonomy: 'task-list'}]
-                }
-            ];
-        }
+        // if (schema && 'properties' in schema && 'task-list' in schema.properties) {
+        //     return [
+        //         {
+        //             name: 'task-list',
+        //             value: ['task-list'] // , {groupByTaxonomy: 'task-list'}]
+        //         }
+        //     ];
+        // }
 
         return undefined;
     }
@@ -444,7 +426,9 @@ function createQuestionnaire({
         getNormalisedDetailsForAttribute,
         getProgress, // TODO: remove this when declaration is handled correctly
         getAnswers, // TODO: remove this when declaration is handled correctly
-        getPermittedActions
+        getPermittedActions,
+        getTaskListDefinition,
+        getRoles
     });
 }
 

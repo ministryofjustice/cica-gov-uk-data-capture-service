@@ -1,0 +1,26 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Task List resource",
+    "allOf": [
+        {"$ref": "../json-api-base-resource.json"},
+        {
+            "properties": {
+                "type": {
+                    "const": "task-list"
+                },
+                "attributes": {
+                    "allOf": [
+                        {
+                            "required": ["task-list"],
+                            "properties": {
+                                "task-list": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    ]
+}

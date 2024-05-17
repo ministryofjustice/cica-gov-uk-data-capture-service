@@ -7,6 +7,7 @@ const createQuestionnaireService = require('./questionnaire-service');
 const permissions = require('../middleware/route-permissions');
 const metadataRouter = require('./metadata/metadata-routes.js');
 const submissionsRouter = require('./submissions/submissions-routes.js');
+const taskListRouter = require('./task-list/routes.js');
 
 const router = express.Router();
 const rxTemplateName = /^[a-zA-Z0-9-]{1,30}$/;
@@ -50,6 +51,7 @@ router.route('/').post(permissions('create:questionnaires'), async (req, res, ne
 
 router.use(metadataRouter);
 router.use(submissionsRouter);
+router.use(taskListRouter);
 
 router
     .route('/:questionnaireId/sections/answers')
