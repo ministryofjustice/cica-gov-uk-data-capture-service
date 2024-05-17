@@ -493,7 +493,26 @@
                                             "type": "task-list",
                                             "id": "285cb104-0c15-4a9c-9840-cb1007f098fb",
                                             "attributes": {
-                                                "foo": "bar"
+                                                "title": "Task List title",
+                                                "description": "Task List description of a certain length",
+                                                "sections": [
+                                                    {
+                                                        "id": "s_applicant_about-the-crime",
+                                                        "title": "Section 1 title",
+                                                        "cond": "",
+                                                        "tasks": [
+                                                            {
+                                                                "id": "t_applicant_about-the-crime",
+                                                                "title": "t_applicant_about-the-crime",
+                                                                "href": "/apply/task-list/task/t_applicant_about-the-crime",
+                                                                "status": "cannotStartYet"
+                                                            }
+                                                        ]
+                                                    }
+                                                ],
+                                                "labelCompleted": "completed",
+                                                "labelIncomplete": "incomplete",
+                                                "labelCannotStart": "cannot start yet"
                                             }
                                         }
                                     ]

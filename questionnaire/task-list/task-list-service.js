@@ -72,6 +72,7 @@ function createTaskListService({
                 let isRelevantStep = defaultRelevance;
                 if ('cond' in section) {
                     isRelevantStep = qExpression.evaluate(section.cond, answersAndRoles);
+                    delete section.cond;
                 }
 
                 // if this step is needed, now filter the tasks.
@@ -79,6 +80,7 @@ function createTaskListService({
                     const relevantTasks = section.tasks.filter(task => {
                         if ('cond' in task) {
                             const isRelevantTask = qExpression.evaluate(task.cond, answersAndRoles);
+                            delete task.cond;
                             return isRelevantTask;
                         }
                         return defaultRelevance;

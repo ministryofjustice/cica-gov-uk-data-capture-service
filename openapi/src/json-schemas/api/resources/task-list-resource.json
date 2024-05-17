@@ -8,13 +8,79 @@
                 "type": {
                     "const": "task-list"
                 },
+                "id": {
+                    "$ref": "../../models/definitions/uuid-v4.json"
+                },
                 "attributes": {
                     "allOf": [
                         {
-                            "required": ["task-list"],
+                            "required": ["title", "description", "sections"],
+                            "additionalProperties": false,
                             "properties": {
-                                "task-list": {
-                                    "type": "object"
+                                "title": {
+                                    "type": "string"
+                                },
+                                "description": {
+                                    "type": "string"
+                                },
+                                "sections": {
+                                    "type": "array",
+                                    "required": ["id", "title", "tasks"],
+                                    "additionalProperties": false,
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "id": {
+                                                "type": "string"
+                                            },
+                                            "title": {
+                                                "type": "string"
+                                            },
+                                            "cond": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "tasks": {
+                                                "type": "array",
+                                                "required": ["id", "title", "href", "status"],
+                                                "additionalProperties": false,
+                                                "items": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "string"
+                                                        },
+                                                        "title": {
+                                                            "type": "string"
+                                                        },
+                                                        "cond": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "href": {
+                                                            "type": "string"
+                                                        },
+                                                        "status": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "labelCompleted": {
+                                    "type": "string"
+                                },
+                                "labelIncomplete": {
+                                    "type": "string"
+                                },
+                                "labelCannotStart": {
+                                    "type": "string"
                                 }
                             }
                         }

@@ -1,6 +1,6 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema#",
-    "title": "Metadata document",
+    "title": "Task List document",
     "allOf": [
         {"$ref": "../../../json-api-base-document.json"},
         {
@@ -8,7 +8,7 @@
                 "data": {
                     "type": "array",
                     "items": {
-                        "$ref": "../../../resources/metadata-resource.json"
+                        "$ref": "../../../resources/task-list-resource.json"
                     }
                 }
             }

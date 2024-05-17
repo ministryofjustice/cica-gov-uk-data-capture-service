@@ -2552,7 +2552,7 @@
                         "content": {
                             "application/vnd.api+json": {
                                 "schema": {
-                                    "title": "Metadata document",
+                                    "title": "Task List document",
                                     "allOf": [
                                         {
                                             "title": "Loosely describes the JSON:API document format",
@@ -2588,7 +2588,7 @@
                                                 "data": {
                                                     "type": "array",
                                                     "items": {
-                                                        "title": "Metadata resource",
+                                                        "title": "Task List resource",
                                                         "allOf": [
                                                             {
                                                                 "title": "Loosely describes the JSON:API resource format",
@@ -2634,54 +2634,96 @@
                                                             {
                                                                 "properties": {
                                                                     "type": {
-                                                                        "enum": ["metadata"]
+                                                                        "enum": ["task-list"]
+                                                                    },
+                                                                    "id": {
+                                                                        "title": "UUID v4",
+                                                                        "type": "string",
+                                                                        "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
                                                                     },
                                                                     "attributes": {
                                                                         "allOf": [
                                                                             {
                                                                                 "required": [
-                                                                                    "questionnaire-id",
-                                                                                    "created",
-                                                                                    "modified",
-                                                                                    "submission-status",
-                                                                                    "expires",
-                                                                                    "external-id"
+                                                                                    "title",
+                                                                                    "description",
+                                                                                    "sections"
                                                                                 ],
+                                                                                "additionalProperties": false,
                                                                                 "properties": {
-                                                                                    "questionnaire-id": {
-                                                                                        "title": "UUID v4",
-                                                                                        "type": "string",
-                                                                                        "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+                                                                                    "title": {
+                                                                                        "type": "string"
                                                                                     },
-                                                                                    "created": {
-                                                                                        "title": "Timestamp",
-                                                                                        "type": "string",
-                                                                                        "format": "date-time"
+                                                                                    "description": {
+                                                                                        "type": "string"
                                                                                     },
-                                                                                    "modified": {
-                                                                                        "title": "Timestamp",
-                                                                                        "type": "string",
-                                                                                        "format": "date-time"
+                                                                                    "sections": {
+                                                                                        "type": "array",
+                                                                                        "required": [
+                                                                                            "id",
+                                                                                            "title",
+                                                                                            "tasks"
+                                                                                        ],
+                                                                                        "additionalProperties": false,
+                                                                                        "items": {
+                                                                                            "type": "object",
+                                                                                            "properties": {
+                                                                                                "id": {
+                                                                                                    "type": "string"
+                                                                                                },
+                                                                                                "title": {
+                                                                                                    "type": "string"
+                                                                                                },
+                                                                                                "cond": {
+                                                                                                    "type": "array",
+                                                                                                    "items": {
+                                                                                                        "type": "string"
+                                                                                                    }
+                                                                                                },
+                                                                                                "tasks": {
+                                                                                                    "type": "array",
+                                                                                                    "required": [
+                                                                                                        "id",
+                                                                                                        "title",
+                                                                                                        "href",
+                                                                                                        "status"
+                                                                                                    ],
+                                                                                                    "additionalProperties": false,
+                                                                                                    "items": {
+                                                                                                        "type": "object",
+                                                                                                        "properties": {
+                                                                                                            "id": {
+                                                                                                                "type": "string"
+                                                                                                            },
+                                                                                                            "title": {
+                                                                                                                "type": "string"
+                                                                                                            },
+                                                                                                            "cond": {
+                                                                                                                "type": "array",
+                                                                                                                "items": {
+                                                                                                                    "type": "string"
+                                                                                                                }
+                                                                                                            },
+                                                                                                            "href": {
+                                                                                                                "type": "string"
+                                                                                                            },
+                                                                                                            "status": {
+                                                                                                                "type": "string"
+                                                                                                            }
+                                                                                                        }
+                                                                                                    }
+                                                                                                }
+                                                                                            }
+                                                                                        }
                                                                                     },
-                                                                                    "submission-status": {
-                                                                                        "enum": [
-                                                                                            "NOT_STARTED",
-                                                                                            "IN_PROGRESS",
-                                                                                            "COMPLETED",
-                                                                                            "FAILED"
-                                                                                        ]
+                                                                                    "labelCompleted": {
+                                                                                        "type": "string"
                                                                                     },
-                                                                                    "expires": {
-                                                                                        "title": "Timestamp",
-                                                                                        "type": "string",
-                                                                                        "format": "date-time"
+                                                                                    "labelIncomplete": {
+                                                                                        "type": "string"
                                                                                     },
-                                                                                    "external-id": {
-                                                                                        "title": "External Id",
-                                                                                        "type": "string",
-                                                                                        "format": "uri",
-                                                                                        "maxLength": 64,
-                                                                                        "pattern": "^urn:uuid:"
+                                                                                    "labelCannotStart": {
+                                                                                        "type": "string"
                                                                                     }
                                                                                 }
                                                                             }
@@ -2702,7 +2744,26 @@
                                             "type": "task-list",
                                             "id": "285cb104-0c15-4a9c-9840-cb1007f098fb",
                                             "attributes": {
-                                                "foo": "bar"
+                                                "title": "Task List title",
+                                                "description": "Task List description of a certain length",
+                                                "sections": [
+                                                    {
+                                                        "id": "s_applicant_about-the-crime",
+                                                        "title": "Section 1 title",
+                                                        "cond": "",
+                                                        "tasks": [
+                                                            {
+                                                                "id": "t_applicant_about-the-crime",
+                                                                "title": "t_applicant_about-the-crime",
+                                                                "href": "/apply/task-list/task/t_applicant_about-the-crime",
+                                                                "status": "cannotStartYet"
+                                                            }
+                                                        ]
+                                                    }
+                                                ],
+                                                "labelCompleted": "completed",
+                                                "labelIncomplete": "incomplete",
+                                                "labelCannotStart": "cannot start yet"
                                             }
                                         }
                                     ]
