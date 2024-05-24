@@ -143,10 +143,12 @@ function transformQuestionnaire(questionnaire) {
     flattenAnswers(themeContent);
 
     const answers = questionnaire.getAnswers();
+    const questionnaireType = questionnaire.getType();
     const transformedQuestionnaire = {
         meta: {
             caseReference: answers.system['case-reference'],
-            funeralReference: answers.system['secondary-reference']
+            funeralReference: answers.system['secondary-reference'],
+            type: questionnaireType
         },
         themes: themeContent,
         declaration: getDeclaration(questionnaire)

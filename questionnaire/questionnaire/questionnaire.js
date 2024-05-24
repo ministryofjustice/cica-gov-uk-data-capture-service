@@ -45,6 +45,10 @@ function createQuestionnaire({
         return questionnaireDefinition.answers;
     }
 
+    function getType() {
+        return questionnaireDefinition.type;
+    }
+
     function getOrderedAnswers() {
         const progress = getProgress(questionnaireDefinition);
         const answers = getAnswers();
@@ -391,6 +395,7 @@ function createQuestionnaire({
         getNormalisedDetailsForAttribute,
         getProgress, // TODO: remove this when declaration is handled correctly
         getAnswers, // TODO: remove this when declaration is handled correctly
+        getType,
         getPermittedActions
     });
 }

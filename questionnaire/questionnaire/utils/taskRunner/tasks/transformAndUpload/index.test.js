@@ -43,9 +43,10 @@ describe('Transform and Upload task', () => {
         expect(getDeclaration(questionnaireObjNoDeclaration)).toBeUndefined();
     });
 
-    it('Should transform correctly and include the correct CRN in the metadata.', () => {
+    it('Should transform correctly and include the correct type and CRN in the metadata.', () => {
         result = transformQuestionnaire(questionnaireObj);
         expect(result.meta.caseReference).toBe('19\\751194');
+        expect(result.meta.type).toBe('apply-for-compensation');
     });
 
     it('Should transform correctly and include the correct channel in the metadata.', () => {
