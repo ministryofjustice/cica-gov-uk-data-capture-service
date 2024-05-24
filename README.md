@@ -1,4 +1,4 @@
-# Data Capture Service
+# Apply Data Capture Service
 [![GitHub repo size](https://img.shields.io/github/repo-size/CriminalInjuriesCompensationAuthority/data-capture-service)](https://github.com/CriminalInjuriesCompensationAuthority/data-capture-service)
 [![GitHub repo version](https://img.shields.io/github/package-json/v/CriminalInjuriesCompensationAuthority/data-capture-service)](https://github.com/CriminalInjuriesCompensationAuthority/data-capture-service/releases/latest)
 [![GitHub repo npm version](https://img.shields.io/badge/npm_version->=9.5.0-blue)](https://github.com/CriminalInjuriesCompensationAuthority/data-capture-service/blob/master/package.json#L5)
