@@ -3,7 +3,6 @@
 function questionnaireResource(spec) {
     const {questionnaire} = spec;
     const {id, type, version, routes} = questionnaire;
-
     return Object.freeze({
         type: 'questionnaires',
         id: questionnaire.id,
@@ -12,7 +11,7 @@ function questionnaireResource(spec) {
             type,
             version,
             routes: {
-                initial: routes.initial
+                initial: routes.states[routes.initial].initial
             }
         }
     });

@@ -341,9 +341,21 @@ function createQuestionnaireService({
         };
     }
 
+    function getSectionBySectionId(questionnaire, sectionId) {
+        const tasks = questionnaire.routes.states;
+        const taskIds = Object.keys(tasks);
+        for (let i = 0; i < taskIds.length; i += 1) {
+            if (sectionId in tasks[taskIds[i]].states) {
+                return tasks[taskIds[i]].states[sectionId];
+            }
+        }
+
+        throw new VError(`Section "${sectionId}" not found`);
+    }
+
     async function buildMetaBlock(questionnaire, sectionId) {
         // TODO: move this meta on to the appropriate section resource
-        const sectionType = questionnaire.routes.states[sectionId].type;
+        const sectionType = getSectionBySectionId(questionnaire, sectionId).type;
         const isFinalType = sectionType && sectionType === 'final';
         return {
             summary: questionnaire.routes.summary,
