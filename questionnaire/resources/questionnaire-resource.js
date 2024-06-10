@@ -3,7 +3,7 @@
 function questionnaireResource(spec) {
     const {questionnaire} = spec;
     const {id, type, version, routes} = questionnaire;
-    const initial = routes.states ? routes.states[0].initial : routes.initial;
+    const initial = Array.isArray(routes.states) ? routes.states[0].initial : routes.initial;
 
     return Object.freeze({
         type: 'questionnaires',

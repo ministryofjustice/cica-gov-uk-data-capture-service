@@ -368,9 +368,9 @@ function createQuestionnaireService({
     async function buildMetaBlock(questionnaire, sectionId) {
         // TODO: move this meta on to the appropriate section resource
         const task = Array.isArray(questionnaire.routes.states)
-            ? questionnaire.routes.states.find(staskState => sectionId in staskState.states)
+            ? questionnaire.routes.states.find(taskState => sectionId in taskState.states)
             : Object.keys(questionnaire.routes.states).find(
-                  staskState => sectionId in questionnaire.routes.states[staskState].states
+                  taskState => sectionId in questionnaire.routes.states[taskState].states
               );
         const sectionType = Array.isArray(questionnaire.routes.states)
             ? task.states[sectionId].type
@@ -407,7 +407,7 @@ function createQuestionnaireService({
     }
 
     function getInitial(routes) {
-        return routes.states ? routes.states[0].initial : routes.initial;
+        return Array.isArray(routes.states) ? routes.states[0].initial : routes.initial;
     }
 
     async function getProgressEntries(questionnaireId, query) {
