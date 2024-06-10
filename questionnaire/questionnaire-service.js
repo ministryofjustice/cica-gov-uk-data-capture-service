@@ -343,10 +343,10 @@ function createQuestionnaireService({
 
     function getSectionBySectionId(questionnaire, sectionId) {
         const tasks = questionnaire.routes.states;
-        const taskIds = Object.keys(tasks);
-        for (let i = 0; i < taskIds.length; i += 1) {
-            if (sectionId in tasks[taskIds[i]].states) {
-                return tasks[taskIds[i]].states[sectionId];
+        // const taskIds = Object.keys(tasks);
+        for (let i = 0; i < tasks.length; i += 1) {
+            if (sectionId in tasks[i].states) {
+                return tasks[i].states[sectionId];
             }
         }
 
