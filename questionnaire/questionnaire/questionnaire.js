@@ -1,5 +1,7 @@
 'use strict';
 
+const createTaskListService = require('../task-list/task-list-service');
+
 const defaults = {};
 defaults.createSection = require('./section');
 defaults.createTaxonomy = require('./taxonomy/taxonomy');
@@ -229,11 +231,20 @@ function createQuestionnaire({
     }
 
     function getSection(sectionId, allowSummary = true) {
+        const taskListService = createTaskListService();
         const sectionDefinition = getSectionDefinition(sectionId);
         const sectionDefinitionVars = getSectionDefinitionVars(sectionDefinition);
         const allQuestionnaireAnswers = {answers: getAnswers()};
         const orderedValueTransformers = [];
         const valueInterpolator = getValueInterpolator(allQuestionnaireAnswers);
+
+        // task list
+        // remove unneeded tasks and sections depending on the current roles and answered questions
+        // add the relevant hrefs
+        // add the relevant statuses
+        if (taskListService.isTaskListSchema(sectionDefinition)) {
+            taskListService.UpdateTaskListSchema(questionnaireDefinition, sectionDefinition);
+        }
 
         if (sectionDefinition.l10n !== undefined) {
             const jsonExpressionEvaluator = getJsonExpressionEvaluator({

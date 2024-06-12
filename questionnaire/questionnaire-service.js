@@ -12,6 +12,7 @@ const templates = require('./templates');
 const questionnaireResource = require('./resources/questionnaire-resource');
 const createQuestionnaireHelper = require('./questionnaire/questionnaire');
 const isQuestionnaireCompatible = require('./utils/isQuestionnaireVersionCompatible');
+const createTaskListService = require('./task-list/task-list-service');
 
 const defaults = {};
 defaults.createQuestionnaireDAL = require('./questionnaire-dal');
@@ -268,12 +269,16 @@ function createQuestionnaireService({
     }
 
     function buildSectionResource(sectionId, questionnaireDefinition) {
+        // const taskListService = createTaskListService();
         const questionnaire = createQuestionnaireHelper({questionnaireDefinition});
         const section = questionnaire.getSection(sectionId);
         const sectionResource = {
             type: 'sections',
             id: sectionId,
             attributes: section.getSchema()
+            // attributes: taskListService.isTaskListSchema(section.getSchema())
+            //     ? taskListService.getPopulatedSchema(questionnaireDefinition, section.getSchema())
+            //     : section.getSchema()
         };
 
         // Add any answer relationships
@@ -341,13 +346,21 @@ function createQuestionnaireService({
         };
     }
 
-    function getSectionBySectionId(questionnaire, sectionId) {
-        const tasks = questionnaire.routes.states;
-        // const taskIds = Object.keys(tasks);
-        for (let i = 0; i < tasks.length; i += 1) {
-            if (sectionId in tasks[i].states) {
-                return tasks[i].states[sectionId];
+    function getSectionRouteBySectionId(questionnaire, sectionId) {
+        if (sectionId === 'p-task-list') {
+            return {};
+        }
+        const {states} = questionnaire.routes;
+
+        if (Array.isArray(states)) {
+            const tasks = states;
+            for (let i = 0; i < tasks.length; i += 1) {
+                if (sectionId in tasks[i].states) {
+                    return tasks[i].states[sectionId];
+                }
             }
+        } else if (sectionId in states) {
+            return states[sectionId];
         }
 
         throw new VError(`Section "${sectionId}" not found`);
@@ -355,7 +368,7 @@ function createQuestionnaireService({
 
     async function buildMetaBlock(questionnaire, sectionId) {
         // TODO: move this meta on to the appropriate section resource
-        const sectionType = getSectionBySectionId(questionnaire, sectionId).type;
+        const sectionType = getSectionRouteBySectionId(questionnaire, sectionId).type;
         const isFinalType = sectionType && sectionType === 'final';
         return {
             summary: questionnaire.routes.summary,
@@ -463,6 +476,7 @@ function createQuestionnaireService({
 
             // Is the progress entry available
             if (section) {
+                const taskListService = createTaskListService();
                 if (isQuestionnaireModified) {
                     // Store the updated questionnaire object
                     await db.updateQuestionnaireByOwner(questionnaireId, section.context);
@@ -471,12 +485,16 @@ function createQuestionnaireService({
                 sectionId = section.id;
 
                 // Create the progress entry compound document
-                const previousProgressEntryLink =
-                    section.id === section.context.routes.initial
-                        ? questionnaire.routes.referrer
-                        : `${process.env.DCS_URL}/api/questionnaires/${
-                              questionnaire.id
-                          }/progress-entries?filter[sectionId]=${qRouter.previous(sectionId).id}`;
+                let previousProgressEntryLink;
+                if (section.id === section.context.routes.initial) {
+                    previousProgressEntryLink = questionnaire.routes.referrer;
+                } else if (taskListService.isTaskListSchema(section)) {
+                    previousProgressEntryLink = undefined;
+                } else {
+                    previousProgressEntryLink = `${process.env.DCS_URL}/api/questionnaires/${
+                        questionnaire.id
+                    }/progress-entries?filter[sectionId]=${qRouter.previous(sectionId).id}`;
+                }
 
                 compoundDocument.data = [buildProgressEntryResource(sectionId)];
                 // Include related resources
