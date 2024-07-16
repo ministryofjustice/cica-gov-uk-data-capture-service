@@ -35,7 +35,7 @@ RUN npm ci --omit=dev
 COPY . .
 
 # Download RDS certificates bundle for SSL verification
-ADD --chown=dc_user https://s3.amazonaws.com/rds-downloads/rds-combined-ca-bundle.pem ./ca/rds-combined-ca-bundle.pem
+ADD --chown=dc_user https://truststore.pki.rds.amazonaws.com/global/global-bundle.pem ./ca/rds-combined-ca-bundle.pem
 
 USER 1015
 # the command line to run when the container is started
@@ -63,12 +63,12 @@ COPY package*.json ./
 
 ENV NODE_ENV=development
 
-RUN npm ci 
+RUN npm ci
 
 # Bundle app source
 COPY . .
 
-ADD --chown=dc_user https://s3.amazonaws.com/rds-downloads/rds-combined-ca-bundle.pem ./ca/rds-combined-ca-bundle.pem
+ADD --chown=dc_user https://truststore.pki.rds.amazonaws.com/global/global-bundle.pem ./ca/rds-combined-ca-bundle.pem
 # Expose port 3100 inside the container to the outside world
 # so that http://localhost:3100 routes the network traffic to
 # the container
