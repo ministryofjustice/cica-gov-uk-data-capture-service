@@ -34,11 +34,21 @@ function createSubmissionService({
         ownerId
     });
 
+    function getProgress(questionnaireDefinition) {
+        const progress = [];
+        Object.keys(questionnaireDefinition.routes.states).forEach(task => {
+            progress.push(...questionnaireDefinition.routes.states[task].progress);
+        });
+
+        // Filter out unwanted states, e.g. "completed", "notApplicable", etc
+        return progress.filter(sectionId => sectionId.startsWith('p-'));
+    }
+
     function hasSummaryIdInProgressEntries(questionnaireDefinition) {
         // are we currently, or have we been on this questionnaire's summary page?
         // we infer a questionnaire is complete if the user has visited the summary page.
         const summarySectionIds = questionnaireDefinition.routes.summary;
-        const progressEntries = questionnaireDefinition.progress;
+        const progressEntries = getProgress(questionnaireDefinition);
 
         return summarySectionIds.some(summarySectionId =>
             progressEntries.includes(summarySectionId)

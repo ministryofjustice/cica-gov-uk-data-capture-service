@@ -192,9 +192,20 @@ function createQuestionnaireService({
         return answerResource;
     }
 
+    function getProgress(questionnaire) {
+        const progress = [];
+        Object.keys(questionnaire.routes.states).forEach(task => {
+            progress.push(...questionnaire.routes.states[task].progress);
+        });
+
+        // Filter out unwanted states, e.g. "completed", "notApplicable", etc
+        return progress.filter(sectionId => sectionId.startsWith('p-'));
+    }
+
     async function getAnswers(questionnaireId) {
         const questionnaire = await getQuestionnaire(questionnaireId);
-        const resourceCollection = questionnaire.progress.reduce((acc, sectionAnswersId) => {
+        const progress = getProgress(questionnaire);
+        const resourceCollection = progress.reduce((acc, sectionAnswersId) => {
             // Does this section have answers
             if (questionnaire.answers[sectionAnswersId]) {
                 acc.push(buildAnswerResource(sectionAnswersId, questionnaire));
@@ -573,8 +584,9 @@ function createQuestionnaireService({
 
     async function getAnswersBySectionId(questionnaireId, sectionId) {
         const questionnaire = await getQuestionnaire(questionnaireId);
+        const progress = getProgress(questionnaire);
 
-        if (questionnaire.progress.includes(sectionId)) {
+        if (progress.includes(sectionId)) {
             return {
                 data: buildAnswerResource(sectionId, questionnaire)
             };
