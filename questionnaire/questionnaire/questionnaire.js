@@ -32,7 +32,13 @@ function createQuestionnaire({
     }
 
     function getProgress() {
-        return questionnaireDefinition.progress || [];
+        const progress = [];
+        Object.keys(questionnaireDefinition.routes.states).forEach(task => {
+            progress.push(...questionnaireDefinition.routes.states[task].progress);
+        });
+
+        // Filter out unwanted states, e.g. "completed", "notApplicable", etc
+        return progress.filter(sectionId => sectionId.startsWith('p-'));
     }
 
     function getProgressUntil(sectionId) {
