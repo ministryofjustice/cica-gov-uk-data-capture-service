@@ -47,6 +47,8 @@ function createQuestionnaireService({
 
     ajv.addFormat('mobile-uk', ajvFormatsMobileUk);
 
+    ajv.addFormat('global-mobile', '^[\\+\\d][\\d \\(\\)\\+\\-\\#]{7,19}$');
+
     async function updateExpiryForAuthenticatedOwner(questionnaireId, owner) {
         await db.updateExpiryForAuthenticatedOwner(questionnaireId, owner);
     }
