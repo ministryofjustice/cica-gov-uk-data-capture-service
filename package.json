@@ -1,6 +1,6 @@
 {
     "name": "data-capture-service",
-    "version": "9.5.2",
+    "version": "9.5.4",
     "engines": {
         "npm": ">=9.5.0",
         "node": ">=18.16.1"
@@ -42,9 +42,9 @@
         "pg": "^8.7.3",
         "pino-http": "^5.5.0",
         "pino-std-serializers": "^6.2.2",
-        "q-expressions": "github:CriminalInjuriesCompensationAuthority/q-expressions",
-        "q-router": "github:CriminalInjuriesCompensationAuthority/q-router#v3.0.2",
-        "q-templates-application": "github:CriminalInjuriesCompensationAuthority/q-templates-application#v12.1.1",
+        "q-expressions": "github:CriminalInjuriesCompensationAuthority/q-expressions#feature/task-list/wip",
+        "q-router": "github:CriminalInjuriesCompensationAuthority/q-router#feature/cica-1315/task-list-statuses",
+        "q-templates-application": "github:CriminalInjuriesCompensationAuthority/q-templates-application#task-list/rc-with-valitdator",
         "semver": "^7.5.4",
         "swagger-ui-express": "^4.6.3",
         "uuid": "^3.3.2",
@@ -63,7 +63,7 @@
         "jest-json-schema": "^2.0.2",
         "json-schema-ref-parser": "^6.1.0",
         "lint-staged": "^11.0.0",
-        "nodemon": "^2.0.19",
+        "nodemon": "^3.0.0",
         "pino-pretty": "^10.3.0",
         "prettier": "^1.19.1",
         "speccy": "github:wework/speccy#740d19d88935db7735250c16abc2ad09256b5854",
