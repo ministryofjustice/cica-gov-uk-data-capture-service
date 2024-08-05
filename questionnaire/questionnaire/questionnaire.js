@@ -32,16 +32,23 @@ function createQuestionnaire({
     }
 
     function getProgress() {
-        const progress = [];
-        Object.keys(questionnaireDefinition.routes.states).forEach(task => {
-            progress.push(...questionnaireDefinition.routes.states[task].progress);
-        });
+        if (
+            questionnaireDefinition.routes?.type &&
+            questionnaireDefinition.routes.type === 'parallel'
+        ) {
+            const progress = [];
+            Object.keys(questionnaireDefinition.routes.states).forEach(task => {
+                progress.push(...questionnaireDefinition.routes.states[task].progress);
+            });
 
-        // Filter out unwanted states, e.g. "completed", "notApplicable", etc
-        return progress.filter(sectionId => sectionId.startsWith('p-'));
+            // Filter out unwanted states, e.g. "completed", "notApplicable", etc
+            return progress.filter(sectionId => sectionId.startsWith('p-'));
+        }
+
+        return questionnaireDefinition.progress;
     }
 
-    function getProgressUntil(sectionId) {
+    /* function getProgressUntil(sectionId) {
         const allProgress = getProgress();
         const endIndex = allProgress.indexOf(sectionId);
 
@@ -51,7 +58,7 @@ function createQuestionnaire({
         }
 
         return allProgress;
-    }
+    } */
 
     function getRoles() {
         return questionnaireDefinition?.attributes?.q__roles || {};
@@ -156,12 +163,13 @@ function createQuestionnaire({
         return transformedData;
     }
 
-    function evaluateJsonExpression(value, sectionId) {
+    function evaluateJsonExpression(value /* , sectionId */) {
         const fnName = value[0];
 
         if (fnName === 'summary') {
             // TODO: handle multiple summary pages e.g. summarise between last summary and this one
-            const progressSubset = getProgressUntil(sectionId);
+            // const progressSubset = getProgressUntil(sectionId);
+            const progressSubset = getProgress();
             const summaryOptions = value[1];
 
             // eslint-disable-next-line no-use-before-define
