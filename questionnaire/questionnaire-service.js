@@ -13,6 +13,7 @@ const questionnaireResource = require('./resources/questionnaire-resource');
 const createQuestionnaireHelper = require('./questionnaire/questionnaire');
 const isQuestionnaireCompatible = require('./utils/isQuestionnaireVersionCompatible');
 const createTaskListService = require('./task-list/task-list-service');
+const getProgress = require('./utils/getProgressArray');
 
 const defaults = {};
 defaults.createQuestionnaireDAL = require('./questionnaire-dal');
@@ -188,16 +189,6 @@ function createQuestionnaireService({
         };
 
         return answerResource;
-    }
-
-    function getProgress(questionnaire) {
-        const progress = [];
-        Object.keys(questionnaire.routes.states).forEach(task => {
-            progress.push(...questionnaire.routes.states[task].progress);
-        });
-
-        // Filter out unwanted states, e.g. "completed", "notApplicable", etc
-        return progress.filter(sectionId => sectionId.startsWith('p-'));
     }
 
     async function getAnswers(questionnaireId) {
