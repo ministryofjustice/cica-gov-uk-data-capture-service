@@ -13,6 +13,7 @@ defaults.deepClone = require('./utils/deepCloneJsonDerivedObject');
 defaults.getJsonExpressionEvaluator = require('./utils/getJsonExpressionEvaluator');
 defaults.qExpression = require('q-expressions');
 defaults.sortThemedAnswers = require('./utils/sortThemedAnswers');
+defaults.getProgressArray = require('../utils/getProgressArray');
 
 function createQuestionnaire({
     questionnaireDefinition,
@@ -25,40 +26,16 @@ function createQuestionnaire({
     deepClone = defaults.deepClone,
     getJsonExpressionEvaluator = defaults.getJsonExpressionEvaluator,
     qExpression = defaults.qExpression,
-    sortThemedAnswers = defaults.sortThemedAnswers
+    sortThemedAnswers = defaults.sortThemedAnswers,
+    getProgressArray = defaults.getProgressArray
 }) {
     function getId() {
         return questionnaireDefinition.id;
     }
 
     function getProgress() {
-        if (
-            questionnaireDefinition.routes?.type &&
-            questionnaireDefinition.routes.type === 'parallel'
-        ) {
-            const progress = [];
-            Object.keys(questionnaireDefinition.routes.states).forEach(task => {
-                progress.push(...questionnaireDefinition.routes.states[task].progress);
-            });
-
-            // Filter out unwanted states, e.g. "completed", "notApplicable", etc
-            return progress.filter(sectionId => sectionId.startsWith('p-'));
-        }
-
-        return questionnaireDefinition.progress;
+        return getProgressArray(questionnaireDefinition);
     }
-
-    /* function getProgressUntil(sectionId) {
-        const allProgress = getProgress();
-        const endIndex = allProgress.indexOf(sectionId);
-
-        if (endIndex > -1) {
-            const progressSubset = allProgress.slice(0, endIndex);
-            return progressSubset;
-        }
-
-        return allProgress;
-    } */
 
     function getRoles() {
         return questionnaireDefinition?.attributes?.q__roles || {};
@@ -69,7 +46,7 @@ function createQuestionnaire({
     }
 
     function getOrderedAnswers() {
-        const progress = getProgress();
+        const progress = getProgress(questionnaireDefinition);
         const answers = getAnswers();
         const orderedAnswers = {};
 
@@ -169,7 +146,7 @@ function createQuestionnaire({
         if (fnName === 'summary') {
             // TODO: handle multiple summary pages e.g. summarise between last summary and this one
             // const progressSubset = getProgressUntil(sectionId);
-            const progressSubset = getProgress();
+            const progressSubset = getProgress(questionnaireDefinition);
             const summaryOptions = value[1];
 
             // eslint-disable-next-line no-use-before-define
@@ -315,7 +292,7 @@ function createQuestionnaire({
     }
 
     function getDataAttributes({
-        progress = getProgress(),
+        progress = getProgress(questionnaireDefinition),
         dataAttributeTransformer,
         includeMetadata = true
     } = {}) {
