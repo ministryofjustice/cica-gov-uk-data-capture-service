@@ -11,7 +11,7 @@ const {
 } = require('../questionnaire/utils/taskRunner/tasks/generateCaseReference');
 const {sendSubmissionMessageToSQS} = require('../questionnaire/utils/taskRunner/tasks/postToSQS');
 const sendNotifyMessageToSQS = require('../questionnaire/utils/taskRunner/tasks/postToNotify');
-
+const getProgress = require('../utils/getProgressArray');
 const {createAppError} = require('../../middleware/error-handler/createAppError');
 
 function createSubmissionService({
@@ -33,16 +33,6 @@ function createSubmissionService({
         apiVersion,
         ownerId
     });
-
-    function getProgress(questionnaireDefinition) {
-        const progress = [];
-        Object.keys(questionnaireDefinition.routes.states).forEach(task => {
-            progress.push(...questionnaireDefinition.routes.states[task].progress);
-        });
-
-        // Filter out unwanted states, e.g. "completed", "notApplicable", etc
-        return progress.filter(sectionId => sectionId.startsWith('p-'));
-    }
 
     function hasSummaryIdInProgressEntries(questionnaireDefinition) {
         // are we currently, or have we been on this questionnaire's summary page?

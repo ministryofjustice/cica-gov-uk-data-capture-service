@@ -42,13 +42,9 @@ function sortThemes(themeContent, sortingInstructions) {
         return themesWithAnswers;
     }
     const orderMap = new Map();
-    let orderIndex = 0;
 
-    sortingInstructions.sections.forEach(obj => {
-        // eslint-disable-next-line no-unused-vars
-        const [key, ids] = Object.entries(obj)[0];
-        // eslint-disable-next-line no-plusplus
-        ids.forEach(id => orderMap.set(id, orderIndex++));
+    sortingInstructions.sections.forEach((id, index) => {
+        orderMap.set(id, index);
     });
 
     return themesWithAnswers.sort((a, b) => {
