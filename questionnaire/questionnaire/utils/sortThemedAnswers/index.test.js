@@ -275,10 +275,7 @@ describe('sort-themed-answers', () => {
                     'q-applicant-what-other-names-have-you-used'
                 ]
             },
-            sections: [
-                {'s-about-application': ['contact-details']},
-                {s_applicant_details: ['default', 'applicant-details']}
-            ]
+            sections: ['contact-details', 'default', 'applicant-details']
         };
         const themedAnswers = [
             {
