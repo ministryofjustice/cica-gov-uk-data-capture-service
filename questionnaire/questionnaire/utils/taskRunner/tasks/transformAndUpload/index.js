@@ -121,6 +121,16 @@ function getDeclaration(questionnaire) {
 }
 
 /**
+ *
+ * @param {*} answers
+ * @returns
+ */
+function getOwner(ownerInfo) {
+    const {'is-authenticated': isAuthenticated} = ownerInfo;
+    return {isAuthenticated};
+}
+
+/**
  * Transforms the questionnaire object into the necessary downstream format.
  * @param {questionnaire} questionnaire - The raw questionnaire object
  * @returns A themed object with attached metadata and declaration content.
@@ -144,6 +154,10 @@ function transformQuestionnaire(questionnaire) {
 
     if (answers.origin) {
         transformedQuestionnaire.meta.channel = answers.origin.channel;
+    }
+
+    if (answers.owner) {
+        transformedQuestionnaire.meta.owner = getOwner(answers.owner);
     }
 
     return transformedQuestionnaire;
