@@ -73,21 +73,6 @@ spec:
                 secretKeyRef:
                   name: shared-secrets
                   key: session_duration
-            - name: WEBHOOK_TEAM_REPORTER_SLACK
-              valueFrom:
-                secretKeyRef:
-                  name: shared-secrets
-                  key: webhook_team_reporter_slack
-            - name: WEBHOOK_DEV_REPORTER_SLACK
-              valueFrom:
-                secretKeyRef:
-                  name: shared-secrets
-                  key: webhook_dev_reporter_slack
-            - name: WEBHOOK_SUPPORTTEAM_REPORTER_SLACK
-              valueFrom:
-                secretKeyRef:
-                  name: shared-secrets
-                  key: webhook_supportteam_reporter_slack
             - name: S3_BUCKET_NAME
               valueFrom:
                 secretKeyRef:
