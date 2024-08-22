@@ -36,6 +36,10 @@ To build and run the API, run these commands:
 
 Once it is built and running, navigate to http://localhost:3100/docs to use the API Swagger UI.
 
+## Container scanning
+A trivy.openvex.json file has been to ignore CVE-2023-45853 during trivy container scanning.. 
+see the [WIKI](https://github.com/CriminalInjuriesCompensationAuthority/q-dev-utilities/wiki/Trivy-scanning-and-vulnerability-management) for more information.
+
 ## Contributors
 Thanks to the following people who have contributed to this project:
 * [@armoj](https://github.com/armoj)
