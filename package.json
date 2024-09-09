@@ -3,7 +3,7 @@
     "version": "9.5.12",
     "engines": {
         "npm": ">=9.5.0",
-        "node": ">=18.16.1"
+        "node": ">=22.8.0"
     },
     "scripts": {
         "start": "node ./bin/www",

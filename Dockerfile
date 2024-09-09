@@ -1,5 +1,5 @@
 # lets start from an image that already has nodejs installed
-FROM node:20.16.0-bookworm-slim AS base
+FROM node:22.8.0-bookworm-slim AS base
 
 RUN groupadd -g 1014 dc_user \
     && useradd -rm -d /usr/src/app -u 1015 -g dc_user dc_user
@@ -46,7 +46,7 @@ CMD [ "npm", "start" ]
 # Change this when changing the production image
 # keep both in sync, production -slim variant
 # dev the non-slim variant
-FROM node:20.16.0-bookworm as dev
+FROM node:22.8.0-bookworm as dev
 
 RUN groupadd -g 1014 dc_user \
     && useradd -rm -d /usr/src/app -u 1015 -g dc_user dc_user
