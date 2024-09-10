@@ -78,7 +78,7 @@ describe('Openapi version 2023-05-17 validation - Metadata', () => {
                 expect(response.body).toHaveProperty('errors');
                 expect(response.body.errors[0].status).toEqual(400);
                 expect(response.body.errors[0].detail).toEqual(
-                    "should have required property 'on-behalf-of'"
+                    "must have required property 'on-behalf-of'"
                 );
             });
 
@@ -103,7 +103,7 @@ describe('Openapi version 2023-05-17 validation - Metadata', () => {
                 expect(response.body).toHaveProperty('errors');
                 expect(response.body.errors[0].status).toEqual(400);
                 expect(response.body.errors[0].detail).toEqual(
-                    "should have required property 'dcs-api-version'"
+                    "must have required property 'dcs-api-version'"
                 );
             });
 
@@ -171,7 +171,7 @@ describe('Openapi version 2023-05-17 validation - Metadata', () => {
                 expect(response.body).toHaveProperty('errors');
                 expect(response.body.errors[0].status).toEqual(400);
                 expect(response.body.errors[0].detail).toEqual(
-                    "should have required property 'on-behalf-of'"
+                    "must have required property 'on-behalf-of'"
                 );
             });
 
@@ -196,7 +196,7 @@ describe('Openapi version 2023-05-17 validation - Metadata', () => {
                 expect(response.body).toHaveProperty('errors');
                 expect(response.body.errors[0].status).toEqual(400);
                 expect(response.body.errors[0].detail).toEqual(
-                    "should have required property 'dcs-api-version'"
+                    "must have required property 'dcs-api-version'"
                 );
             });
 
