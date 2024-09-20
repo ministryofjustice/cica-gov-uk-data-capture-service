@@ -2,12 +2,14 @@
 
 [![GitHub repo size](https://img.shields.io/github/repo-size/CriminalInjuriesCompensationAuthority/data-capture-service)](https://github.com/CriminalInjuriesCompensationAuthority/data-capture-service)
 [![GitHub repo version](https://img.shields.io/github/package-json/v/CriminalInjuriesCompensationAuthority/data-capture-service)](https://github.com/CriminalInjuriesCompensationAuthority/data-capture-service/releases/latest)
-[![GitHub repo npm version](https://img.shields.io/badge/npm_version->=9.5.0-blue)](https://github.com/CriminalInjuriesCompensationAuthority/data-capture-service/blob/master/package.json#L5)
-[![GitHub repo node version](https://img.shields.io/badge/node_version->=18.16.1-blue)](https://github.com/CriminalInjuriesCompensationAuthority/data-capture-service/blob/master/package.json#L6)
+[![GitHub repo npm version](https://img.shields.io/badge/npm_version->=10.8.2-blue)](https://github.com/CriminalInjuriesCompensationAuthority/data-capture-service/blob/master/package.json#L5)
+[![GitHub repo node version](https://img.shields.io/badge/node_version->=22.8.0-blue)](https://github.com/CriminalInjuriesCompensationAuthority/data-capture-service/blob/master/package.json#L6)
 [![GitHub repo contributors](https://img.shields.io/github/contributors/CriminalInjuriesCompensationAuthority/data-capture-service)](https://github.com/CriminalInjuriesCompensationAuthority/data-capture-service/graphs/contributors)
 [![GitHub repo license](https://img.shields.io/github/package-json/license/CriminalInjuriesCompensationAuthority/data-capture-service)](https://github.com/CriminalInjuriesCompensationAuthority/data-capture-service/blob/master/LICENSE)
 
 Data Capture Service is an API that returns data about an application for compensation. Back-office API for the [Apply](https://claim-criminal-injuries-compensation.service.justice.gov.uk/apply/) service. Consumed by [Cica Web](https://github.com/CriminalInjuriesCompensationAuthority/cica-web).
+
+
 
 ## Prerequisites
 
