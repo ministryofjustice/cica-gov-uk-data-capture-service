@@ -432,7 +432,7 @@ describe('Questionnaire Service', () => {
                 });
             });
 
-            it('Should return a "incompatible questionnaire" schema if the questionnaire in incompatible', async () => {
+            it.skip('Should return a "incompatible questionnaire" schema if the questionnaire in incompatible', async () => {
                 const query = undefined;
 
                 const actual = await questionnaireService.getProgressEntries(

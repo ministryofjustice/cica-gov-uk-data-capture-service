@@ -255,7 +255,7 @@ function createQuestionnaire({
         if (sectionDefinitionVars !== undefined && allowSummary === true) {
             const resolvedVars = getResolvedVars(sectionId, sectionDefinitionVars);
             if (resolvedVars.summary) {
-                if (sectionDefinition.schema.options) {
+                if (sectionDefinition.schema.options?.ordering) {
                     const sortingInstructions = sectionDefinition.schema.options.ordering;
                     resolvedVars.summary = sortThemedAnswers(
                         resolvedVars.summary,

@@ -78,6 +78,15 @@ describe('Openapi version 2023-05-17 validation', () => {
                         `Resource /api/questionnaires/${id}/sections/${section}/answers does not exist`
                     );
                 }
+                return {
+                    data: {
+                        type: 'answers',
+                        id: 'id',
+                        attributes: 'coerced answers'
+                    }
+                };
+            }),
+            getSectionSubmission: jest.fn(() => {
                 return 'ok';
             }),
             updateQuestionnaireSubmissionStatus: jest.fn(() => {

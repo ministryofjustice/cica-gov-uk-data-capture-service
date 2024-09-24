@@ -125,10 +125,14 @@ router
                 apiVersion: req.get('Dcs-Api-Version'),
                 ownerId: req.get('On-Behalf-Of')
             });
-            const response = await questionnaireService.createAnswers(
+            let response = await questionnaireService.createAnswers(
                 req.params.questionnaireId,
                 req.params.sectionId,
                 answers
+            );
+            response.submission = await questionnaireService.getSectionSubmission(
+                req.params.questionnaireId,
+                req.params.sectionId
             );
             res.status(201).json(response);
         } catch (err) {
