@@ -47,14 +47,14 @@ describe('replace-json-pointer', () => {
         expect(result).toEqual('foo, 0, 1, 2, 3, 4, 5, true, false, null');
     });
 
-    it('should return an empty string if the JSON pointer maps to no value', () => {
+    it('should return the JSON pointer if it maps to no value', () => {
         const content = 'foo ||/foo/does-not-exist|| baz';
         const result = replaceJsonPointer(content, {
             foo: {
                 bar: 'bar'
             }
         });
-        expect(result).toBe('foo  baz');
+        expect(result).toBe(content);
     });
 
     it('should throw if the JSON pointer maps to a non-primitive value e.g. Object/Array', () => {

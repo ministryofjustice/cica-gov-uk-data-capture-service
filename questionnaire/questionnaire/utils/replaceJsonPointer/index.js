@@ -9,7 +9,7 @@ function replaceJsonPointer(content, data) {
         const value = pointer.get(data, jsonPointer);
 
         if (value === undefined) {
-            return '';
+            return token;
         }
 
         // Only deal with primitive values. JSON only allows arrays, objects, and null, as non-primitive values
