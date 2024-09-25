@@ -20,6 +20,10 @@ defaults.createQuestionnaireDAL = require('./questionnaire-dal');
 
 defaults.apiVersion = '2023-05-17';
 
+const createTaskRunner = require('./questionnaire/utils/taskRunner');
+const sendNotifyMessageToSQS = require('./questionnaire/utils/taskRunner/tasks/postToNotify');
+const sequential = require('./questionnaire/utils/taskRunner/tasks/sequential');
+
 function createQuestionnaireService({
     logger,
     apiVersion = defaults.apiVersion,
@@ -104,6 +108,25 @@ function createQuestionnaireService({
         }
 
         await db.createQuestionnaire(uuidV4, questionnaire);
+
+        const taskImplementations = {
+            sendNotifyMessageToSQS
+        };
+
+        if (questionnaire.onCreate) {
+            const onCreateTaskDefinition = JSON.parse(JSON.stringify(questionnaire.onCreate));
+            const taskRunner = createTaskRunner({
+                taskImplementations: {
+                    sequential,
+                    ...taskImplementations
+                },
+                context: {
+                    logger,
+                    questionnaireDef: questionnaire
+                }
+            });
+            await taskRunner.run(onCreateTaskDefinition);
+        }
 
         if (ownerData.isAuthenticated) {
             await updateExpiryForAuthenticatedOwner(uuidV4, ownerData.id);
