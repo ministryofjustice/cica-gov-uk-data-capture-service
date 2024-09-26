@@ -13,7 +13,8 @@ const metadataCollection = [
         modified: '2023-06-08 00:00:00.000000+00',
         expires: '2023-06-08 00:30:00.000000+00',
         submission_status: 'NOT_STARTED',
-        external_id: 'urn:uuid:f81d4fae-7dec-11d0-a765-123456789123'
+        external_id: 'urn:uuid:f81d4fae-7dec-11d0-a765-123456789123',
+        template_type: 'apply-for-compensation'
     },
     {
         id: validQuestionnaireId2,
@@ -21,7 +22,8 @@ const metadataCollection = [
         modified: '2023-06-08 00:00:00.000000+00',
         expires: '2023-06-08 00:30:00.000000+00',
         submission_status: 'NOT_STARTED',
-        external_id: 'urn:uuid:f81d4fae-7dec-11d0-a765-123456789321'
+        external_id: 'urn:uuid:f81d4fae-7dec-11d0-a765-123456789321',
+        template_type: 'apply-for-compensation'
     }
 ];
 const metadataByOwnerCollection = [
@@ -31,7 +33,8 @@ const metadataByOwnerCollection = [
         modified: '2023-06-08 00:00:00.000000+00',
         expires: '2023-06-08 00:30:00.000000+00',
         submission_status: 'NOT_STARTED',
-        external_id: 'urn:uuid:f81d4fae-7dec-11d0-a765-123456789123'
+        external_id: 'urn:uuid:f81d4fae-7dec-11d0-a765-123456789123',
+        template_type: 'apply-for-compensation'
     }
 ];
 
@@ -75,7 +78,8 @@ describe('Metadata Service', () => {
                             modified: '2023-06-08 00:00:00.000000+00',
                             expires: '2023-06-08 00:30:00.000000+00',
                             'submission-status': 'NOT_STARTED',
-                            'external-id': 'urn:uuid:f81d4fae-7dec-11d0-a765-123456789123'
+                            'external-id': 'urn:uuid:f81d4fae-7dec-11d0-a765-123456789123',
+                            'template-type': 'apply-for-compensation'
                         }
                     },
                     {
@@ -87,7 +91,8 @@ describe('Metadata Service', () => {
                             modified: '2023-06-08 00:00:00.000000+00',
                             expires: '2023-06-08 00:30:00.000000+00',
                             'submission-status': 'NOT_STARTED',
-                            'external-id': 'urn:uuid:f81d4fae-7dec-11d0-a765-123456789321'
+                            'external-id': 'urn:uuid:f81d4fae-7dec-11d0-a765-123456789321',
+                            'template-type': 'apply-for-compensation'
                         }
                     }
                 ];
@@ -146,7 +151,8 @@ describe('Metadata Service', () => {
                             modified: '2023-06-08 00:00:00.000000+00',
                             expires: '2023-06-08 00:30:00.000000+00',
                             'submission-status': 'NOT_STARTED',
-                            'external-id': 'urn:uuid:f81d4fae-7dec-11d0-a765-123456789123'
+                            'external-id': 'urn:uuid:f81d4fae-7dec-11d0-a765-123456789123',
+                            'template-type': 'apply-for-compensation'
                         }
                     }
                 ];

@@ -33,7 +33,8 @@ function createMetadataService({
                     modified: data.modified,
                     expires: data.expires,
                     'submission-status': data.submission_status,
-                    'external-id': data.external_id
+                    'external-id': data.external_id,
+                    'template-type': data.template_type
                 }
             };
         });
@@ -63,7 +64,8 @@ function createMetadataService({
                     modified: data.modified,
                     'submission-status': data.submission_status,
                     expires: data.expires,
-                    'external-id': data.external_id
+                    'external-id': data.external_id,
+                    'template-type': data.template_type
                 }
             };
         });
