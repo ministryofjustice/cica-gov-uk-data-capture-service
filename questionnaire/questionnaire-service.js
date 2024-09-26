@@ -67,7 +67,13 @@ function createQuestionnaireService({
         return false;
     }
 
-    async function createQuestionnaire(templateName, ownerData, originData, externalData) {
+    async function createQuestionnaire(
+        templateName,
+        ownerData,
+        originData,
+        externalData,
+        userData
+    ) {
         if (!(templateName in templates)) {
             throw new VError(
                 {
@@ -106,6 +112,11 @@ function createQuestionnaireService({
             questionnaire.answers.system = {
                 'external-id': externalData.id
             };
+        }
+
+        if (userData) {
+            questionnaire.meta.personalisation = userData.personalisation;
+            questionnaire.answers.system['case-reference'] = userData.caseReference;
         }
 
         await db.createQuestionnaire(uuidV4, questionnaire);
