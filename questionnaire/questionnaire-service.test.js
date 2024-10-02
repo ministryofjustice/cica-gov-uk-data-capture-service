@@ -33,6 +33,22 @@ const failedSubmissionStatus = 'FAILED';
 const originData = {
     channel: 'telephone'
 };
+const onCreateTasks = {
+    id: 'task0',
+    type: 'sequential',
+    retries: 0,
+    data: [
+        {
+            id: 'task1',
+            type: 'sendNotifyMessageToSQS',
+            retries: 0,
+            data: {
+                questionnaire: '$.questionnaireDef',
+                logger: '$.logger'
+            }
+        }
+    ]
+};
 
 beforeEach(() => {
     jest.clearAllMocks();
@@ -207,9 +223,29 @@ jest.doMock('./utils/isQuestionnaireVersionCompatible', () => questionnaireVersi
     return questionnaireVersion !== incompatibleQuestionnaireFixture.version;
 });
 
+jest.doMock('./questionnaire/utils/taskRunner', () => {
+    const taskRunnerMock = {
+        createTaskRunner: jest.fn(() => {
+            return true;
+        }),
+        run: jest.fn(() => {
+            return true;
+        })
+    };
+    return () => taskRunnerMock;
+});
+
 const mockDalService = require('./questionnaire-dal')();
+const mockTaskRunner = require('./questionnaire/utils/taskRunner')();
 
 const createQuestionnaireService = require('./questionnaire-service');
+
+jest.mock('q-templates-application', () => {
+    return {
+        ...jest.requireActual('q-templates-application'),
+        onCreate: onCreateTasks
+    };
+});
 
 describe('Questionnaire Service', () => {
     describe('Unknown API version', () => {
@@ -350,6 +386,17 @@ describe('Questionnaire Service', () => {
                 await expect(
                     questionnaireService.createQuestionnaire(templatename, ownerData)
                 ).rejects.toThrow('Owner data must be defined');
+            });
+
+            it('Should run any onCreate tasks defined in the questionnaire', async () => {
+                await questionnaireService.createQuestionnaire(
+                    templatename,
+                    ownerData,
+                    originData,
+                    externalData
+                );
+
+                expect(mockTaskRunner.run).toHaveBeenCalledWith(onCreateTasks);
             });
         });
 
