@@ -382,10 +382,12 @@ function createQuestionnaireService({
         // TODO: move this meta on to the appropriate section resource
         const sectionType = getSectionRouteBySectionId(questionnaire, sectionId).type;
         const isFinalType = sectionType && sectionType === 'final';
+        const sectionMeta = questionnaire.sections[sectionId]?.schema?.meta;
         return {
             summary: questionnaire.routes.summary,
             confirmation: questionnaire.routes.confirmation,
-            pageType: questionnaire.sections[sectionId]?.schema?.meta?.pageType,
+            pageType: sectionMeta?.pageType,
+            authenticationRedirectionUrl: sectionMeta?.authenticationRedirectionUrl,
             final: isFinalType
         };
     }
