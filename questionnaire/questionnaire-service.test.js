@@ -398,6 +398,33 @@ describe('Questionnaire Service', () => {
 
                 expect(mockTaskRunner.run).toHaveBeenCalledWith(onCreateTasks);
             });
+
+            it('Should throw an error if any onCreate tasks fail', async () => {
+                jest.doMock('./questionnaire/utils/taskRunner', () => {
+                    const taskRunnerMock = {
+                        createTaskRunner: jest.fn(() => {
+                            return true;
+                        }),
+                        run: jest.fn(() => {
+                            throw new Error('task failed to run');
+                        })
+                    };
+                    return () => taskRunnerMock;
+                });
+                const createQuestionnaireService = require('./questionnaire-service');
+                const questionnaireService = createQuestionnaireService({
+                    logger: () => 'Logged from createQuestionnaire test',
+                    apiVersion
+                });
+                await expect(
+                    questionnaireService.createQuestionnaire(
+                        templatename,
+                        ownerData,
+                        originData,
+                        externalData
+                    )
+                ).rejects.toThrow();
+            });
         });
 
         describe('getProgressEntries', () => {
