@@ -20,7 +20,7 @@ defaults.createQuestionnaireDAL = require('./questionnaire-dal');
 
 defaults.apiVersion = '2023-05-17';
 
-const createTaskRunner = require('./questionnaire/utils/taskRunner');
+defaults.createTaskRunner = require('./questionnaire/utils/taskRunner');
 const sendNotifyMessageToSQS = require('./questionnaire/utils/taskRunner/tasks/postToNotify');
 const sequential = require('./questionnaire/utils/taskRunner/tasks/sequential');
 
@@ -28,7 +28,8 @@ function createQuestionnaireService({
     logger,
     apiVersion = defaults.apiVersion,
     ownerId,
-    createQuestionnaireDAL = defaults.createQuestionnaireDAL
+    createQuestionnaireDAL = defaults.createQuestionnaireDAL,
+    createTaskRunner = defaults.createTaskRunner
 } = {}) {
     const db = createQuestionnaireDAL({logger, ownerId});
 
@@ -125,7 +126,11 @@ function createQuestionnaireService({
                     questionnaireDef: questionnaire
                 }
             });
-            await taskRunner.run(onCreateTaskDefinition);
+            try {
+                await taskRunner.run(onCreateTaskDefinition);
+            } catch (error) {
+                logger.info(error);
+            }
         }
 
         if (ownerData.isAuthenticated) {
