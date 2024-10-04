@@ -1260,4 +1260,43 @@ describe('Questionnaire', () => {
             });
         });
     });
+    describe('Given both "onComplete" and "onCreate" actions definitions', () => {
+        it('should return actions of the correct type', () => {
+            const questionnaire = createQuestionnaire({
+                questionnaireDefinition: {
+                    meta: {
+                        onComplete: {
+                            actions: [
+                                {
+                                    type: 'actionA'
+                                },
+                                {
+                                    type: 'actionD'
+                                }
+                            ]
+                        },
+                        onCreate: {
+                            actions: [
+                                {
+                                    type: 'actionC'
+                                },
+                                {
+                                    type: 'actionB'
+                                }
+                            ]
+                        }
+                    }
+                }
+            });
+            const completeActions = questionnaire.getPermittedActions('onComplete');
+            const completeActionTypes = completeActions.map(action => action.type);
+            expect(completeActionTypes.length).toEqual(2);
+            expect(completeActionTypes).toEqual(['actionA', 'actionD']);
+
+            const createActions = questionnaire.getPermittedActions('onCreate');
+            const createActionTypes = createActions.map(action => action.type);
+            expect(createActionTypes.length).toEqual(2);
+            expect(createActionTypes).toEqual(['actionC', 'actionB']);
+        });
+    });
 });

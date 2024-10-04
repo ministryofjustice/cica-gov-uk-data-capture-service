@@ -90,7 +90,8 @@ function createSubmissionService({
                 },
                 context: {
                     logger,
-                    questionnaireDef: questionnaireDefinition
+                    questionnaireDef: questionnaireDefinition,
+                    type: 'onComplete'
                 }
             });
 

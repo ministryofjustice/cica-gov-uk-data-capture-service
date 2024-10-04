@@ -344,8 +344,8 @@ function createQuestionnaire({
         return undefined;
     }
 
-    function getPermittedActions() {
-        const actions = questionnaireDefinition?.meta?.onComplete?.actions;
+    function getPermittedActions(type = 'onComplete') {
+        const actions = questionnaireDefinition?.meta?.[type]?.actions;
 
         if (actions) {
             const answersAndRoles = {

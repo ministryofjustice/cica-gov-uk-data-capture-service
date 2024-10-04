@@ -68,4 +68,26 @@ describe('Post to Notify task', () => {
         expect(sendMock).toHaveBeenCalledTimes(1);
         expect(mockLogger.info).toHaveBeenCalledTimes(1);
     });
+
+    it('Should complete onCreate actions if the type is onCreate', async () => {
+        sendMock = mockSqsService.mockImplementation(() => ({
+            send: payload => payload
+        }));
+        const data = {
+            questionnaire: questionnaireWithEmail,
+            logger: mockLogger,
+            type: 'onCreate'
+        };
+        const messageResult = await sendNotifyMessageToSQS(data);
+        expect(sendMock).toHaveBeenCalledTimes(1);
+        expect(messageResult).toEqual({
+            reference: null,
+            templateId: '00000000-aaaa-0000-aaaa-000000000000',
+            emailAddress: 'foo@bar.com',
+            personalisation: {
+                caseReference: '12/34567',
+                content: undefined
+            }
+        });
+    });
 });
