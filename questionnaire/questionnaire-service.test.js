@@ -684,13 +684,15 @@ describe('Questionnaire Service', () => {
             it('Should execute the updateExpiryForAuthenticatedOwner db call', async () => {
                 await questionnaireService.updateExpiryForAuthenticatedOwner(
                     validQuestionnaireId,
-                    ownerId
+                    ownerId,
+                    31
                 );
 
                 expect(mockDalService.updateExpiryForAuthenticatedOwner).toHaveBeenCalledTimes(1);
                 expect(mockDalService.updateExpiryForAuthenticatedOwner).toHaveBeenCalledWith(
                     validQuestionnaireId,
-                    ownerId
+                    ownerId,
+                    31
                 );
             });
         });

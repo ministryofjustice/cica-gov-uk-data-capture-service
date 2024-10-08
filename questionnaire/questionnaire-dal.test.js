@@ -355,14 +355,23 @@ describe('questionnaire data access layer', () => {
 
     describe('updateExpiryForAuthenticatedOwner', () => {
         const query =
-            "UPDATE questionnaire SET expires = date_trunc('day', created) + INTERVAL '31 days' WHERE id = $1 AND questionnaire -> 'answers' -> 'owner' ->> 'owner-id' = $2";
+            "UPDATE questionnaire SET expires = date_trunc('day', created) + INTERVAL '1 days' * $1 WHERE id = $2 AND questionnaire -> 'answers' -> 'owner' ->> 'owner-id' = $3";
         it('Should run an update expiry query and filter by questionnaireId and owner', async () => {
             const questionnaireId = DB_QUERY_SUCCESS_QUESTIONNAIRE_ID;
+            const expiry = 31;
             const questionnaireDAL = createQuestionnaireDAL({logger: jest.fn(), ownerId});
-            await questionnaireDAL.updateExpiryForAuthenticatedOwner(questionnaireId, ownerId);
+            await questionnaireDAL.updateExpiryForAuthenticatedOwner(
+                questionnaireId,
+                ownerId,
+                expiry
+            );
 
             expect(mockedDbService.query).toHaveBeenCalledTimes(1);
-            expect(mockedDbService.query).toHaveBeenCalledWith(query, [questionnaireId, ownerId]);
+            expect(mockedDbService.query).toHaveBeenCalledWith(query, [
+                expiry,
+                questionnaireId,
+                ownerId
+            ]);
         });
 
         it('Should error gracefully if no rows are updated', async () => {

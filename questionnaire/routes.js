@@ -86,9 +86,12 @@ router
                 answers
             );
 
+            // TODO: consider moving expiry into templates/not hardcoding it
+
             await questionnaireService.updateExpiryForAuthenticatedOwner(
                 req.params.questionnaireId,
-                answers['owner-id']
+                answers['owner-id'],
+                31
             );
 
             res.status(201).json(response);

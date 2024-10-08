@@ -56,8 +56,8 @@ function createQuestionnaireService({
 
     ajv.addFormat('global-mobile', '^[\\+\\d][\\d \\(\\)\\+\\-\\#]{7,19}$');
 
-    async function updateExpiryForAuthenticatedOwner(questionnaireId, owner) {
-        await db.updateExpiryForAuthenticatedOwner(questionnaireId, owner);
+    async function updateExpiryForAuthenticatedOwner(questionnaireId, owner, expiry) {
+        await db.updateExpiryForAuthenticatedOwner(questionnaireId, owner, expiry);
     }
 
     function supportsTaskList(questionnaireDefinition) {
@@ -146,7 +146,8 @@ function createQuestionnaireService({
         }
 
         if (ownerData.isAuthenticated) {
-            await updateExpiryForAuthenticatedOwner(uuidV4, ownerData.id);
+            const expiry = userData?.expiry ? userData.expiry : 31;
+            await updateExpiryForAuthenticatedOwner(uuidV4, ownerData.id, expiry);
         }
 
         return {

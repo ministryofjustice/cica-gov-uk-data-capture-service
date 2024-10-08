@@ -300,12 +300,12 @@ function questionnaireDAL(spec) {
         return result.rowCount ? result.rows : [];
     }
 
-    async function updateExpiryForAuthenticatedOwner(questionnaireId, owner) {
+    async function updateExpiryForAuthenticatedOwner(questionnaireId, owner, expiry) {
         let result;
         try {
             result = await db.query(
-                "UPDATE questionnaire SET expires = date_trunc('day', created) + INTERVAL '31 days' WHERE id = $1 AND questionnaire -> 'answers' -> 'owner' ->> 'owner-id' = $2",
-                [questionnaireId, owner]
+                "UPDATE questionnaire SET expires = date_trunc('day', created) + INTERVAL '1 days' * $1 WHERE id = $2 AND questionnaire -> 'answers' -> 'owner' ->> 'owner-id' = $3",
+                [expiry, questionnaireId, owner]
             );
 
             if (result.rowCount === 0) {

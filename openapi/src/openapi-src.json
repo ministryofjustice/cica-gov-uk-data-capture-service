@@ -82,7 +82,8 @@
                                                 "first-name": "Test",
                                                 "surname": "Test case"
                                             },
-                                            "caseReference": "123456"
+                                            "caseReference": "123456",
+                                            "expiry": 56
                                         }
                                     }
                                 }
