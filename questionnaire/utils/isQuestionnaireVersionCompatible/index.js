@@ -5,8 +5,8 @@ const getInstalledModuleVersion = require('../getInstalledModuleVersion');
 
 const allowedVersionDifference = [null, 'patch', 'minor']; // versionDiff returns null if versions are equal
 
-function isQuestionnaireVersionValid(questionnaireVersion) {
-    const installedQuestionnaireVersion = getInstalledModuleVersion('q-templates-application');
+function isQuestionnaireVersionValid(questionnaireVersion, packageName) {
+    const installedQuestionnaireVersion = getInstalledModuleVersion(packageName);
     return allowedVersionDifference.includes(
         versionDiff(questionnaireVersion, installedQuestionnaireVersion)
     );
