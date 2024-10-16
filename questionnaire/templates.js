@@ -31,7 +31,7 @@ module.exports = {
         id,
         ...getTcqeTemplateCopy()
     }),
-    decisionletter: id => ({
+    'decision-letter': id => ({
         id,
         ...getDecisionLetterTemplateCopy()
     })
