@@ -388,6 +388,7 @@ function createQuestionnaireService({
             confirmation: questionnaire.routes.confirmation,
             pageType: sectionMeta?.pageType,
             authenticationRedirectionUrl: sectionMeta?.authenticationRedirectionUrl,
+            isSubmittable: sectionMeta?.isSubmittable,
             final: isFinalType
         };
     }
