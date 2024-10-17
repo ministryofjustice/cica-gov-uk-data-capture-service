@@ -76,6 +76,13 @@
                                         },
                                         "external": {
                                             "id": "urn:uuid:f81d4fae-7dec-11d0-a765-123456781234"
+                                        },
+                                        "userData": {
+                                            "personalisation": {
+                                                "first-name": "Test",
+                                                "surname": "Test case"
+                                            },
+                                            "caseReference": "123456"
                                         }
                                     }
                                 }
