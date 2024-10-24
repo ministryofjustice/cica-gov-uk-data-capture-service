@@ -42,7 +42,7 @@
         "pino-http": "^5.5.0",
         "pino-std-serializers": "^6.2.2",
         "q-expressions": "github:CriminalInjuriesCompensationAuthority/q-expressions",
-        "q-router": "github:CriminalInjuriesCompensationAuthority/q-router#v3.1.0",
+        "q-router": "github:CriminalInjuriesCompensationAuthority/q-router#v3.1.1",
         "q-templates-application": "github:CriminalInjuriesCompensationAuthority/q-templates-application#v12.1.8",
         "semver": "^7.5.4",
         "swagger-ui-express": "^4.6.3",
