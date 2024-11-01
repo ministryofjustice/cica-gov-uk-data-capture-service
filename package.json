@@ -33,6 +33,7 @@
         "express-openapi-validator": "^5.3.5",
         "got": "^11.8.5",
         "helmet": "^3.21.2",
+        "json-rules": "github:CriminalInjuriesCompensationAuthority/json-rules#bp-fix/undefined-bug",
         "json-translator": "github:CriminalInjuriesCompensationAuthority/json-translator#v2.0.0",
         "jsonpointer": "^5.0.0",
         "lodash.merge": "^4.6.2",
