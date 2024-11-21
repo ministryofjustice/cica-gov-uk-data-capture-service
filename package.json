@@ -24,6 +24,7 @@
         "@aws-sdk/client-sqs": "^3.345.0",
         "ajv": "^8.17.1",
         "ajv-errors": "^3.0.0",
+        "ajv-formats-date-comparison": "github:CriminalInjuriesCompensationAuthority/ajv-formats-date-comparison#feature/cica-1261/add-future-date-format",
         "ajv-formats-mobile-uk": "github:CriminalInjuriesCompensationAuthority/ajv-formats-mobile-uk#v1.0.0",
         "ajv-keywords": "^5.1.0",
         "cookie-parser": "~1.4.3",
