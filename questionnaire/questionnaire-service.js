@@ -51,6 +51,11 @@ function createQuestionnaireService({
 
     ajv.addFormat('global-mobile', '^[\\+\\d][\\d \\(\\)\\+\\-\\#]{7,19}$');
 
+    // https://ajv.js.org/strict-mode.html#unknown-keywords
+    // shouldn't really be a DCS concern to configure this.
+    // should be defined per-template.
+    ajv.addVocabulary(['meta']);
+
     async function updateExpiryForAuthenticatedOwner(questionnaireId, owner) {
         await db.updateExpiryForAuthenticatedOwner(questionnaireId, owner);
     }
