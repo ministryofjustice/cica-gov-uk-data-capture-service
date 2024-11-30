@@ -20,11 +20,16 @@ defaults.createQuestionnaireDAL = require('./questionnaire-dal');
 
 defaults.apiVersion = '2023-05-17';
 
+defaults.createTaskRunner = require('./questionnaire/utils/taskRunner');
+const sendNotifyMessageToSQS = require('./questionnaire/utils/taskRunner/tasks/postToNotify');
+const sequential = require('./questionnaire/utils/taskRunner/tasks/sequential');
+
 function createQuestionnaireService({
     logger,
     apiVersion = defaults.apiVersion,
     ownerId,
-    createQuestionnaireDAL = defaults.createQuestionnaireDAL
+    createQuestionnaireDAL = defaults.createQuestionnaireDAL,
+    createTaskRunner = defaults.createTaskRunner
 } = {}) {
     const db = createQuestionnaireDAL({logger, ownerId});
 
@@ -62,7 +67,13 @@ function createQuestionnaireService({
         return false;
     }
 
-    async function createQuestionnaire(templateName, ownerData, originData, externalData) {
+    async function createQuestionnaire(
+        templateName,
+        ownerData,
+        originData,
+        externalData,
+        userData
+    ) {
         if (!(templateName in templates)) {
             throw new VError(
                 {
@@ -103,7 +114,36 @@ function createQuestionnaireService({
             };
         }
 
+        if (userData) {
+            questionnaire.meta.personalisation = userData.personalisation;
+            questionnaire.answers.system['case-reference'] = userData.caseReference;
+        }
+
         await db.createQuestionnaire(uuidV4, questionnaire);
+
+        const taskImplementations = {
+            sendNotifyMessageToSQS
+        };
+
+        if (questionnaire.onCreate) {
+            const onCreateTaskDefinition = JSON.parse(JSON.stringify(questionnaire.onCreate));
+            const taskRunner = createTaskRunner({
+                taskImplementations: {
+                    sequential,
+                    ...taskImplementations
+                },
+                context: {
+                    logger,
+                    questionnaireDef: questionnaire,
+                    type: 'onCreate'
+                }
+            });
+            try {
+                await taskRunner.run(onCreateTaskDefinition);
+            } catch (error) {
+                logger.info(error);
+            }
+        }
 
         if (ownerData.isAuthenticated) {
             await updateExpiryForAuthenticatedOwner(uuidV4, ownerData.id);

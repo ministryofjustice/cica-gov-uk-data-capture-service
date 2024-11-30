@@ -3,12 +3,12 @@
 const createSqsService = require('../../../../../../services/sqs/index');
 const createQuestionnaireHelper = require('../../../../questionnaire');
 
-async function sendNotifyMessageToSQS({questionnaire, logger}) {
+async function sendNotifyMessageToSQS({questionnaire, logger, type}) {
     const questionnaireId = questionnaire.id;
     logger.info(`Sending notify message to SQS for questionnaire with id ${questionnaireId}`);
     const sqsService = createSqsService({logger});
     const questionnaireDef = createQuestionnaireHelper({questionnaireDefinition: questionnaire});
-    const permittedActions = questionnaireDef.getPermittedActions();
+    const permittedActions = questionnaireDef.getPermittedActions(type);
     let sqsResponse = {MessageId: 'MessageId'};
 
     await Promise.all(

@@ -53,6 +53,18 @@
                                     "$ref": "../../../../models/definitions/external-id.json"
                                 }
                             }
+                        },
+                        "userData": {
+                            "type": "object",
+                            "required": ["personalisation", "caseReference"],
+                            "properties": {
+                                "personalisation": {
+                                    "type": "object"
+                                },
+                                "caseReference": {
+                                    "type": "string"
+                                }
+                            }
                         }
                     }
                 }

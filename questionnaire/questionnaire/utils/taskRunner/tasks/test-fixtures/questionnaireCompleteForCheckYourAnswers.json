@@ -296,6 +296,22 @@
                 }
             ]
         },
+        "onCreate": {
+            "actions": [
+                {
+                    "data": {
+                        "reference": null,
+                        "templateId": "00000000-aaaa-0000-aaaa-000000000000",
+                        "emailAddress": "foo@bar.com",
+                        "personalisation": {
+                            "caseReference": "12/34567"
+                        }
+                    },
+                    "type": "sendEmail",
+                    "description": "Notification email - applicant:adult"
+                }
+            ]
+        },
         "questionnaireDocumentVersion": "4.2.0"
     },
     "type": "apply-for-compensation",
