@@ -70,12 +70,12 @@ function createSubmissionService({
         return JSON.parse(JSON.stringify(onSubmitTaskDefinition));
     }
 
-    async function submit(questionnaireId) {
+    async function submit(questionnaireId, maintenanceMode) {
         try {
             const questionnaireDefinition = await questionnaireService.getQuestionnaire(
                 questionnaireId
             );
-
+            questionnaireDefinition.meta.maintenanceMode = maintenanceMode;
             if ((await isSubmittable(questionnaireId, questionnaireDefinition)) === false) {
                 throw Error(
                     `Questionnaire with ID "${questionnaireId}" is not in a submittable state`

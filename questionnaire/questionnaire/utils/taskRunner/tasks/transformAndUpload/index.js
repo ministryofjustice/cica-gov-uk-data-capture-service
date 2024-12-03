@@ -143,11 +143,13 @@ function transformQuestionnaire(questionnaire) {
     flattenAnswers(themeContent);
 
     const answers = questionnaire.getAnswers();
+    const {maintenanceMode} = questionnaire.getMetaData();
     const transformedQuestionnaire = {
         meta: {
             caseReference: answers.system['case-reference'],
             funeralReference: answers.system['secondary-reference'],
-            answers
+            answers,
+            maintenanceMode
         },
         themes: themeContent,
         declaration: getDeclaration(questionnaire)

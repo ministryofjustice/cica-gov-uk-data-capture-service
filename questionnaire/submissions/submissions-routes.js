@@ -41,7 +41,7 @@ router
         }
     })
     .post(permissions('update:questionnaires'), async (req, res, next) => {
-        const {questionnaireId} = req.params;
+        const {questionnaireId, maintenanceMode} = req.params;
 
         try {
             const questionnaireService = createQuestionnaireService({
@@ -62,7 +62,10 @@ router
                 apiVersion: req.get('Dcs-Api-Version'),
                 ownerId: req.get('On-Behalf-Of')
             });
-            const submissionResource = await submissionService.submit(questionnaireId);
+            const submissionResource = await submissionService.submit(
+                questionnaireId,
+                maintenanceMode
+            );
 
             res.status(201).json(submissionResource);
         } catch (err) {
