@@ -31,7 +31,6 @@
         "express-jwt": "^8.0.0",
         "express-jwt-authz": "^2.4.1",
         "express-openapi-validator": "^5.3.5",
-        "got": "^11.8.5",
         "helmet": "^3.21.2",
         "json-translator": "github:CriminalInjuriesCompensationAuthority/json-translator#v2.0.0",
         "jsonpointer": "^5.0.0",
