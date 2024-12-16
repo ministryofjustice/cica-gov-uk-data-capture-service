@@ -6,7 +6,7 @@ Security updates are applied only to the most recent releases.
 
 ## Reporting a Vulnerability
 
-To securely report a vulnerability, please [open an advisory on GitHub](https://github.com/CriminalInjuriesCompensationAuthority/data-capture-service/security/advisories/new).
+To securely report a vulnerability, please [open an advisory on GitHub](https://github.com/ministryofjustice/cica-apply-data-capture-service/security/advisories/new).
 
 ## Vulnerability Process
 
