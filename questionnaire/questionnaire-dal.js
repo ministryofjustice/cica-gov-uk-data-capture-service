@@ -371,6 +371,19 @@ function questionnaireDAL(spec) {
         return result;
     }
 
+    async function getInflightQuestionnaireVersions() {
+        let result;
+        try {
+            result = await db.query(
+                `SELECT questionnaire -> 'version' AS "template-version", count(questionnaire -> 'version') AS "version-count" FROM QUESTIONNAIRE GROUP BY questionnaire -> 'version'`
+            );
+        } catch (err) {
+            throw err;
+        }
+
+        return result.rowCount ? result.rows.map(x => x['template-version']) : [];
+    }
+
     return Object.freeze({
         createQuestionnaire,
         updateQuestionnaire,
@@ -388,7 +401,8 @@ function questionnaireDAL(spec) {
         updateExpiryForAuthenticatedOwner,
         updateQuestionnaireModifiedDateByOwner,
         getQuestionnaireSubmissionStatusByOwner,
-        updateQuestionnaireSubmissionStatusByOwner
+        updateQuestionnaireSubmissionStatusByOwner,
+        getInflightQuestionnaireVersions
     });
 }
 

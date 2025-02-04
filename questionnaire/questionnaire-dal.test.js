@@ -19,28 +19,28 @@ beforeEach(() => {
 jest.doMock('../db/index.js', () => {
     const dbServiceMock = {
         query: jest.fn((query, parameters) => {
-            if (parameters.includes(DB_QUERY_ERROR_QUESTIONNAIRE_ID)) {
+            if (parameters?.includes(DB_QUERY_ERROR_QUESTIONNAIRE_ID)) {
                 throw new Error('DB_QUERY_ERROR');
             }
 
-            if (parameters.includes(DB_QUERY_ERROR_SUBMISSION_STATUS_ID)) {
+            if (parameters?.includes(DB_QUERY_ERROR_SUBMISSION_STATUS_ID)) {
                 throw new Error('DB_QUERY_ERROR');
             }
 
-            if (parameters.includes(dbQueryErrorOwnerId)) {
+            if (parameters?.includes(dbQueryErrorOwnerId)) {
                 throw new Error('DB_QUERY_ERROR');
             }
 
-            if (parameters.includes(DB_QUERY_ROW_COUNT_ZERO_QUESTIONNAIRE_ID)) {
+            if (parameters?.includes(DB_QUERY_ROW_COUNT_ZERO_QUESTIONNAIRE_ID)) {
                 return {
                     rows: [],
                     rowCount: 0
                 };
             }
-            if (parameters.includes(isFatalError)) {
+            if (parameters?.includes(isFatalError)) {
                 throw new Error('DB_QUERY_ERROR');
             }
-            if (parameters.includes(isFatalNoRows)) {
+            if (parameters?.includes(isFatalNoRows)) {
                 return {
                     rows: [],
                     rowCount: 0
@@ -489,6 +489,17 @@ describe('questionnaire data access layer', () => {
                     validSubmissionStatus
                 )
             ).rejects.toThrow('DB_QUERY_ERROR');
+        });
+    });
+
+    describe('getInflightQuestionnaireVersions', () => {
+        const query = `SELECT questionnaire -> 'version' AS "template-version", count(questionnaire -> 'version') AS "version-count" FROM QUESTIONNAIRE GROUP BY questionnaire -> 'version'`;
+        it('Should get all versions of the questionnaire currently in the database', async () => {
+            const questionnaireDAL = createQuestionnaireDAL({logger: jest.fn()});
+            await questionnaireDAL.getInflightQuestionnaireVersions();
+
+            expect(mockedDbService.query).toHaveBeenCalledTimes(1);
+            expect(mockedDbService.query).toHaveBeenCalledWith(query);
         });
     });
 });
