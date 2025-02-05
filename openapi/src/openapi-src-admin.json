@@ -22,7 +22,7 @@
             "bearerAuth": []
         }
     ],
-    "tags": [{"name": "Submissions"}],
+    "tags": [{"name": "Submissions"}, {"name": "Questionnaires"}],
     "paths": {
         "/questionnaires/resubmit-failed": {
             "post": {
@@ -44,6 +44,33 @@
                                         "submitted": true
                                     }
                                 ]
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/UnauthorizedError"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/Forbidden"
+                    }
+                }
+            }
+        },
+        "/questionnaires/versions": {
+            "get": {
+                "tags": ["Questionnaires"],
+                "summary": "Get all versions of questionnaire currently in the database.",
+                "description": "Get all versions of questionnaire currently in the database. Only available to admin users.",
+                "operationId": "GetVersions",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/vnd.api+json": {
+                                "schema": {
+                                    "$ref": "./json-schemas/api/admin_questionnaires_versions/get/res/200.json"
+                                },
+                                "example": ["1.2.3", "8.2.15"]
                             }
                         }
                     },
