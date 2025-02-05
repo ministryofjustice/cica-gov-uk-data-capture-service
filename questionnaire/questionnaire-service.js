@@ -595,6 +595,10 @@ function createQuestionnaireService({
         return db.getQuestionnaireIdsBySubmissionStatus(status);
     }
 
+    async function getInflightQuestionnaireVersions() {
+        return db.getInflightQuestionnaireVersions();
+    }
+
     return Object.freeze({
         createQuestionnaire,
         createAnswers,
@@ -608,7 +612,8 @@ function createQuestionnaireService({
         getSessionResource,
         getAnswersBySectionId,
         updateExpiryForAuthenticatedOwner,
-        getQuestionnaireIdsBySubmissionStatus
+        getQuestionnaireIdsBySubmissionStatus,
+        getInflightQuestionnaireVersions
     });
 }
 

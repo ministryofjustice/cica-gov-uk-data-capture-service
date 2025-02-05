@@ -175,4 +175,18 @@ router
         }
     });
 
+router.route('/versions').get(permissions('admin'), async (req, res, next) => {
+    let response;
+    try {
+        const questionnaireService = createQuestionnaireService({
+            logger: req.log,
+            ownerId: undefined
+        });
+        response = await questionnaireService.getInflightQuestionnaireVersions();
+    } catch (err) {
+        next(err);
+    }
+    res.status(200).json(response);
+});
+
 module.exports = router;
