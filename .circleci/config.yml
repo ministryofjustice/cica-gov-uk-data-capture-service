@@ -56,6 +56,17 @@ jobs:
       - run:
           name: Lint codebase
           command: npx --no-install eslint .
+  validate-versions:
+    docker:
+      - image: node:22.8.0-bookworm-slim
+    steps:
+      - attach_workspace:
+          at: ./
+      - restore_cache:
+          key: v1-npm-{{ checksum "package.json" }}-{{checksum "package-lock.json" }}
+      - run:
+          name: Validate template version compatibility
+          command: node ./utils/checkTemplateSupport/index.js
   build:
     executor: docker-publisher
     steps:
@@ -230,6 +241,9 @@ workflows:
           requires:
             - build-for-test
       - lint:
+          requires:
+            - build-for-test
+      - validate-versions:
           requires:
             - build-for-test
       - build:

@@ -1,6 +1,6 @@
 'use strict';
 
-const getRouterInstance = require('./index');
+const getRouterInstance = require('.');
 const legacyRouter = require('./fixtures/q-router');
 const linearRouter = require('./fixtures/q-router-2');
 const taskListRouter = require('./fixtures/q-router-3');
